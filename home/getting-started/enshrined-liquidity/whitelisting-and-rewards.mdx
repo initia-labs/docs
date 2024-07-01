@@ -1,0 +1,25 @@
+---
+title: Whitelisting and Rewards
+---
+
+## Eligibility
+
+To be eligible for staking and earning rewards on InitiaDEX, an LP pair must be whitelisted through L1 governance. Before whitelisting, the LP token must meet the following prerequisites:
+
+1. The LP token must include INIT as part of its pair.
+2. For Balancer pool positions, the INIT weight within the pool must be equal to or greater than 50%.
+
+## Determining Rewards and Reward Weights
+
+When a new LP token $a$ is whitelisted, the proposal must also include a suggested reward weight $w_a$ for the token. This weight represents the relative amount of rewards allocated to the token per block compared to the overall distribution among all whitelisted tokens. This weight can be later adjusted by governance once the asset is whitelisted..
+
+To determine the distribution of rewards per token per block for a stakable asset $a$ among $N$ total stakable assets, we use the following formula that incorporates individual reward weights:
+$$
+r_a = \frac{w_a \times r_{\text{total}}}{\sum_{i=1}^{N} w_i}
+$$
+
+where:
+- $r_a$ represents the inflationary INIT rewards for the asset $a$.
+- $r_{\text{total}}$ denotes the total INIT rewards allocated for a given block.
+- $w_a$ is the governance-set reward weight parameter for the asset $a$.
+- $\sum_{i=1}^{N} w_i$ is the sum of reward weights for all $N$ whitelisted tokens.

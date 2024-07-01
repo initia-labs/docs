@@ -1,0 +1,64 @@
+---
+title: Deploying a Standalone Minitia
+---
+
+Minitias can be run as a standalone rollup chain. While we strongly recommend the full setup using OPInit bots and IBC as outlined above, this setup can be useful for developers who want to quickly test the core Minitias functionality and deploy contracts on top of it.
+
+## Setting up the Minitia
+
+Before we configure the minitia, choose and enter the chain ID that you'd like to use for your minitia. 
+
+This is a unique identifier for your blockchain that is used to identify the network, prevent cross-chain transaction replay attacks, idenfiy genesis files, amongst other things.
+
+```sh
+export $CHAIN_ID=minitia
+```
+
+Then, run the following command to initialize the Minitia. This includes the operator/sequencer, Minitia genesis, and configuration files.
+
+<CodeGroup>
+```sh CLI
+minitiad init operator --chain-id testnet
+```
+```sh Docker
+Coming Soon
+```
+</CodeGroup>
+
+Next, we need to create a key that'll be used as the minitia's operator (aka. sequencer, validator)
+
+<CodeGroup>
+```sh CLI
+minitiad keys add operator
+```
+```sh Docker
+Coming Soon
+```
+</CodeGroup>
+
+The above command will create a key for you and and save it to your device's keyring. We recommend writing down the mnemonic somewhere safe as there is no way to show it again.
+
+Once the key is ready, we proceed to modify the minitia's genesis file in 2 ways:
+
+1. give initial gas token balances to the `operator` account.
+2. add the `operator` account as the minitia's sequencer
+
+First, we give the `operator` account an initial gas balance to be able to send transactions.
+
+```sh
+minitiad genesis add-genesis-account operator 10000000000umin
+```
+
+Repeat the command for any additional accounts that you'd like to fund. We then need to set the `operator` account as the minitia's sequencer.
+
+```sh
+minitiad genesis add-genesis-validator operator
+```
+
+Finally, we run and start the minitia:
+
+```sh
+minitiad start
+```
+
+Your minitia should now be producing blocks

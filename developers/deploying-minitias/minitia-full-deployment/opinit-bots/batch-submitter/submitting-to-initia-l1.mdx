@@ -1,0 +1,75 @@
+---
+title: Submitting Batches to Initia L1
+---
+
+Submitting batches to Initia L1 leverages the minitia and OPInit frameworks' built-in compatability with the Initia L1 and its ecosystem.
+
+## Set Batch Submitter Environment Variables
+
+- `BATCH_SUBMITTER_MNEMONIC` and `BRIDGE_ID` can be found in `$HOME/.minitia/artifacts/config.json`
+- `L2_CHAIN_ID` is your minitia's chain ID and bridge executor menmonic found in `$HOME/.minitia/artifacts/config.json`
+- `BRIDGE_ID` can be found in `$HOME/.minitia/artifacts/artifacts.json`
+
+```sh .env.batch
+# .env.batch
+TYPEORM_CONNECTION=postgres               # database connection (currently only support `postgres`)
+TYPEORM_HOST=localhost                    # database host
+TYPEORM_USERNAME=username                 # database username
+TYPEORM_PASSWORD=password                 # database password
+TYPEORM_DATABASE=rollup                   # database name
+TYPEORM_PORT=5432                         # database port
+TYPEORM_SYNCHRONIZE=true                  # synchronize database schema
+TYPEORM_LOGGING=false                     # enable logging
+TYPEORM_ENTITIES=dist/orm/*Entity.js      # entity path
+
+L1_CHAIN_ID=initiation-1
+L2_CHAIN_ID=local-minitia
+L1_LCD_URI=https://lcd.initiation-1.initia.xyz,
+L1_RPC_URI=https://rpc.initiation-1.initia.xyz,
+L2_LCD_URI=http://127.0.0.1:1317
+L2_RPC_URI=http://127.0.0.1:26657
+BRIDGE_ID=1
+PUBLISH_BATCH_TARGET=l1
+
+BATCH_SUBMITTER_MNEMONIC='tent apple ...'
+
+# if you use 'celestia' as DA, set following configs
+# PUBLISH_BATCH_TARGET=celestia
+# BATCH_CHAIN_ID=arabica-11
+# BATCH_LCD_URI=https://api.celestia-arabica-11.com
+# BATCH_CHAIN_RPC_URI=https://rpc.celestia-arabica-11.com
+# BATCH_GAS_PRICES='0.2utia'
+# BATCH_DENOM=utia
+# CELESTIA_TOKEN_AUTH=eyJ...
+# CELESTIA_NAMESPACE_ID=00000000000000000000000000000000000000000000000123456789
+```
+
+| Name                        | Description                                 | Default                          |
+|-----------------------------|---------------------------------------------|----------------------------------|
+| L1_LCD_URI                  | L1 node LCD URI                             | [http://127.0.0.1:1317](http://127.0.0.1:1317)  |
+| L1_RPC_URI                  | L1 node RPC URI                             | [http://127.0.0.1:26657](http://127.0.0.1:26657)|
+| L2_LCD_URI                  | L2 node LCD URI                             | [http://127.0.0.1:1317](http://127.0.0.1:1317)  |
+| L2_RPC_URI                  | L2 node RPC URI                             | [http://127.0.0.1:26657](http://127.0.0.1:26657)|
+| BRIDGE_ID                   | Bridge ID                                   | "                                |
+| BATCH_PORT                  | Batch submitter port                        | 5001                             |
+| BATCH_SUBMITTER_MNEMONIC    | Mnemonic seed for submitter                 | "                                |
+| SLACK_WEB_HOOK              | Slack web hook for notification (optional)  | "                                |
+| BATCH_CHAIN_ID              | DA chain's chain-id                         | "                                |
+| BATCH_CHAIN_RPC_URI         | DA chain node RPC URI                       | L1_RPC_URI if target is l1       |
+| BATCH_LCD_URI               | DA chain node LCD URI                       | [http://127.0.0.1:1317](http://127.0.0.1:1317)  |
+| BATCH_GAS_PRICES            | Gas prices for DA chain                     | "                                |
+| BATCH_DENOM                 | Fee denom for DA chain                      | "                                |
+| CELESTIA_NAMESPACE_ID       | Celestia namespace id (optional)            | "                                |
+| PUBLISH_BATCH_TARGET        | Target chain to publish batch               | ['l1', 'celestia']               |
+| ENABLE_API_ONLY             | Enable API only mode (optional)             | false                            |
+
+## Run the Batch Submitter Bot
+
+<CodeGroup>
+```sh Node
+npm run prod:batch
+```
+```sh Docker
+docker run -d -p 5432:5432 --network host ghcr.io/initia-labs/opinit-bots:v0.1.16 prod:batch --env-file .env.batch
+```
+</CodeGroup>

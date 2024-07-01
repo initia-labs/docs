@@ -1,91 +1,162 @@
 {
   "$schema": "https://mintlify.com/schema.json",
-  "name": "Starter Kit",
+  "name": "Initia Docs",
   "logo": {
-    "dark": "/logo/dark.svg",
-    "light": "/logo/light.svg"
+    "dark": "/logo/logo_dark.svg",
+    "light": "/logo/logo_light.svg"
   },
   "favicon": "/favicon.svg",
   "colors": {
-    "primary": "#0D9373",
-    "light": "#07C983",
-    "dark": "#0D9373",
+    "primary": "#2AB9FC",
+    "light": "#5FC1EE",
+    "dark": "#5FC1EE",
     "anchors": {
-      "from": "#0D9373",
-      "to": "#07C983"
+      "from": "#000000",
+      "to": "#5FC1EE"
     }
+  },
+  "modeToggle": {
+    "default": "dark"
   },
   "topbarLinks": [
     {
       "name": "Support",
-      "url": "mailto:hi@mintlify.com"
+      "url": "https://discord.gg/initia"
     }
   ],
   "topbarCtaButton": {
     "name": "Dashboard",
     "url": "https://dashboard.mintlify.com"
   },
+  "primaryTab": {
+    "name": "Home"
+  },
   "tabs": [
     {
-      "name": "API Reference",
-      "url": "api-reference"
+      "name": "Developers",
+      "url": "developers"
     }
   ],
   "anchors": [
     {
-      "name": "Documentation",
-      "icon": "book-open-cover",
-      "url": "https://mintlify.com/docs"
+      "name": "Twitter",
+      "icon": "twitter",
+      "url": "https://twitter.com.com/initiafdn"
     },
     {
-      "name": "Community",
-      "icon": "slack",
-      "url": "https://mintlify.com/community"
+      "name": "Discord",
+      "icon": "discord",
+      "url": "https://discord.gg/initia"
     },
     {
-      "name": "Blog",
-      "icon": "newspaper",
-      "url": "https://mintlify.com/blog"
+      "name": "GitHub",
+      "icon": "github",
+      "url": "https://github.com.com/initia-labs"
     }
   ],
   "navigation": [
     {
-      "group": "Get Started",
+      "group": "General",
       "pages": [
-        "introduction",
-        "quickstart",
-        "development"
+        "home/general/introduction"
       ]
     },
     {
-      "group": "Essentials",
+      "group": "Initia",
       "pages": [
-        "essentials/markdown",
-        "essentials/code",
-        "essentials/images",
-        "essentials/settings",
-        "essentials/navigation",
-        "essentials/reusable-snippets"
+        {
+          "group": "Network Architecture",
+          "pages": [
+            "home/getting-started/network-architecture/network-overview",
+            "home/getting-started/network-architecture/initia-layer-1",
+            "home/getting-started/network-architecture/minitia-layer-2",
+            "home/getting-started/network-architecture/opinit-stack"
+          ]
+        },
+        "home/getting-started/initiadex",
+        {
+          "group": "Enshrined Liquidity",
+          "pages": [
+            "home/getting-started/enshrined-liquidity/introduction",
+            "home/getting-started/enshrined-liquidity/whitelisting-and-rewards"
+          ]
+        },
+        {
+          "group": "Minitswap",
+          "pages": [
+            "home/getting-started/minitswap/introduction",
+            "home/getting-started/minitswap/architecture",
+            "home/getting-started/minitswap/terminology"
+          ]
+        },
+        "home/getting-started/vested-interest-program/introduction"
       ]
     },
     {
-      "group": "API Documentation",
+      "group": "Deploying Minitias",
       "pages": [
-        "api-reference/introduction"
+        "developers/deploying-minitias/setting-up",
+        "developers/deploying-minitias/deploying-standalone-minitia",
+        {
+          "group": "Minitia Full Deployment",
+          "pages": [
+            "developers/deploying-minitias/minitia-full-deployment/introduction",
+            "developers/deploying-minitias/minitia-full-deployment/running-the-minitia",
+            {
+              "group": "OPInit Bots",
+              "pages": [
+                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/introduction",
+                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/bridge-executor",
+                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/output-submitter",
+                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/challenger",
+                {
+                  "group": "Batch Submitter",
+                  "pages": [
+                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/introduction",
+                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/submitting-to-initia-l1",
+                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/submitting-to-celestia"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       ]
     },
     {
-      "group": "Endpoint Examples",
+      "group": "Developer Resources",
       "pages": [
-        "api-reference/endpoint/get",
-        "api-reference/endpoint/create",
-        "api-reference/endpoint/delete"
+        {
+          "group": "Developer Tools",
+          "pages": [
+            "developers/resources/developer-tools/initiascan",
+            "developers/resources/developer-tools/slinky"
+          ]
+        },
+        {
+          "group": "Networks",
+          "pages": [
+            "developers/resources/networks/testnet"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Core Applications",
+      "pages": [
+        "home/core-applications/introduction",
+        "home/core-applications/initia-wallet",
+        "home/core-applications/initia-app",
+        "home/core-applications/initia-bridge",
+        "home/core-applications/initia-scan",
+        "home/core-applications/initia-usernames",
+        "home/core-applications/initia-faucet"
       ]
     }
   ],
   "footerSocials": {
-    "x": "https://x.com/mintlify",
-    "github": "https://github.com/mintlify",
-    "linkedin": "https://www.linkedin.com/company/mintsearch"
+    "twitter": "https://x.com/initiafdn",
+    "discord": "https://discord.gg/initia",
+    "github": "https://github.com/initia-labs"
   }
 }
