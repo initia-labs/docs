@@ -1,0 +1,34 @@
+---
+title: Introduction
+---
+
+The following guide will walk you through the steps of how to run an Initia node and optionally to join the Initia network as a validator.
+
+<Warning>
+  This guide has been tested agains Linux distributions only. While it might be possible to run an
+  Initia node on other operating systems, the process is not as straightforward and may require
+  additional configuration.
+</Warning>
+
+## Hardware Requirements
+
+We recommend the following hardware configurations for running and Initia node:
+
+| Network                | CPU      | Memory   | Disk                          | Bandwidth |
+| ---------------------- | -------- | -------- | ----------------------------- | --------- |
+| Testnet (initiation-1) | 16 cores | 32GB RAM | 2TB NVMe SSD, 1000 MiBps IOPS | 1000Mbps  |
+
+## Dependencies
+
+<Accordion title="Install Go (v1.22)" icon="golang">
+The Initia node is built using [Go](https://golang.org/), a performant, easy-to-learn, and expressive programming language that is widely used in distributed systems.
+
+To install Go, follow the instructions on the [Go website](https://golang.org/doc/install).
+
+To verify your installation, run the following command in your terminal
+
+```bash
+go version
+```
+
+</Accordion>

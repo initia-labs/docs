@@ -1,0 +1,15 @@
+---
+title: Single Asset Price
+api: GET /slinky/oracle/v1/get_price?currency_pair.Base={baseCurrency}&currency_pair.Quote={quoteCurrency}
+---
+
+<ParamField path="baseCurrency" type="string" required="true">
+  The base currency of the asset to get the price for (e.g. `BTC`)
+</ParamField>
+<ParamField path="quoteCurrency" type="string" required="true">
+  The quote currency of the asset to get the price for (e.g. `USD`)
+</ParamField>
+
+This endpoint returns the latest price data for a given `baseCurrency` and `quoteCurrency` pair. Note that `baseCurrency` and `quoteCurrency` must be a pair supported and found in the [supported feeds](/developers/developer-guides/oracles/slinky/getting-supported-feeds) endpoint, and combinations are not supported.
+
+For example, even if `BTC`/`USD` and `ETH`/`USD` are supported, `BTC`/`ETH` is not supported.

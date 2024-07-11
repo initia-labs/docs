@@ -89,7 +89,35 @@
             "home/getting-started/minitswap/terminology"
           ]
         },
-        "home/getting-started/vested-interest-program/introduction"
+        {
+          "group":"Vested Interest Program",
+          "pages":[
+            "home/getting-started/vested-interest-program/introduction",
+            "home/getting-started/vested-interest-program/rewards-distribution",
+            "home/getting-started/vested-interest-program/scoring"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Full Architecture",
+      "pages": [
+        "developers/full-architecture/introduction",
+        {
+          "group": "OPInit Stack",
+          "pages": [
+            "developers/full-architecture/opinit-stack/introduction",
+            {
+              "group":"OPInit Bots",
+              "pages":[
+                "developers/full-architecture/opinit-stack/opinit-bots/bridge-executor",
+                "developers/full-architecture/opinit-stack/opinit-bots/output-submitter",
+                "developers/full-architecture/opinit-stack/opinit-bots/challenger",
+                "developers/full-architecture/opinit-stack/opinit-bots/batch-submitter"
+              ]
+            }
+          ]
+        }
       ]
     },
     {
@@ -101,24 +129,97 @@
           "group": "Minitia Full Deployment",
           "pages": [
             "developers/deploying-minitias/minitia-full-deployment/introduction",
-            "developers/deploying-minitias/minitia-full-deployment/running-the-minitia",
+            "developers/deploying-minitias/minitia-full-deployment/running-the-minitia"
+          ]
+        },
+        {
+          "group": "OPInit Bots",
+          "pages": [
+            "developers/deploying-minitias/opinit-bots/introduction",
+            "developers/deploying-minitias/opinit-bots/bridge-executor",
+            "developers/deploying-minitias/opinit-bots/output-submitter",
+            "developers/deploying-minitias/opinit-bots/challenger",
             {
-              "group": "OPInit Bots",
+              "group": "Batch Submitter",
               "pages": [
-                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/introduction",
-                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/bridge-executor",
-                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/output-submitter",
-                "developers/deploying-minitias/minitia-full-deployment/opinit-bots/challenger",
-                {
-                  "group": "Batch Submitter",
-                  "pages": [
-                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/introduction",
-                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/submitting-to-initia-l1",
-                    "developers/deploying-minitias/minitia-full-deployment/opinit-bots/batch-submitter/submitting-to-celestia"
-                  ]
-                }
+                "developers/deploying-minitias/opinit-bots/batch-submitter/introduction",
+                "developers/deploying-minitias/opinit-bots/batch-submitter/submitting-to-initia-l1",
+                "developers/deploying-minitias/opinit-bots/batch-submitter/submitting-to-celestia"
               ]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "group":"Developer Guides",
+      "pages": [
+        {"group": "Initia Oracles",
+          "pages": [
+            {"group": "Slinky",
+              "pages": [
+                "developers/developer-guides/oracles/slinky/introduction",
+                {
+                  "group": "Fetching Prices from API",
+                  "pages": [
+                    "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
+                    "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
+                  ]
+                },
+                "developers/developer-guides/oracles/slinky/fetching-prices-from-contracts"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "VM Specific Tutorials",
+          "pages": [
+            {
+              "group":"EVM",
+              "pages":[
+                "developers/developer-guides/vm-specific-tutorials/evm/oracles"
+              ]
+            },
+            {
+              "group":"MoveVM",
+              "pages":[
+                "developers/developer-guides/vm-specific-tutorials/movevm/oracles"
+              ]
+            },
+            {
+              "group":"WasmVM",
+              "pages":[
+                "developers/developer-guides/vm-specific-tutorials/wasmvm/oracles"
+              ]
+            }
+          ]
+        },
+        {
+          "group":"Integrating with Initia Apps",
+          "pages": [
+            "developers/developer-guides/integrating-initia-apps/usernames",
+            "developers/developer-guides/integrating-initia-apps/vip"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Running an Initia Node",
+      "pages": [
+        "developers/running-a-node/introduction",
+        {
+          "group": "Manual Setup",
+          "pages": [
+            "developers/running-a-node/manual-setup/node-setup",
+            "developers/running-a-node/manual-setup/node-configuration",
+            "developers/running-a-node/manual-setup/starting-the-node"
+          ]
+        },
+        {
+          "group": "Running a Validator",
+          "pages": [
+            "developers/running-a-node/running-a-validator/becoming-a-validator",
+            "developers/running-a-node/running-a-validator/oracle-sidecar"
           ]
         }
       ]
@@ -133,12 +234,7 @@
             "developers/resources/developer-tools/slinky"
           ]
         },
-        {
-          "group": "Networks",
-          "pages": [
-            "developers/resources/networks/testnet"
-          ]
-        }
+        "developers/resources/networks"
       ]
     },
     {
@@ -158,5 +254,10 @@
     "twitter": "https://x.com/initiafdn",
     "discord": "https://discord.gg/initia",
     "github": "https://github.com/initia-labs"
-  }
+  },
+  "api":{
+    "baseUrl":["https://lcd.initiation-1.initia.xyz","https://initia-testnet-api.polkachu.com"]
+    
+  },
+  "openapi":"https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
 }

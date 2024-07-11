@@ -1,0 +1,88 @@
+---
+title: Integrating Initia Usernames
+---
+
+[Initia Usernames](/home/core-applications/initia-usernames)
+
+## Module Addresses
+
+| Network           | Address |
+| ----------------- | ------- |
+| Testnet (initiation-1) | [0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a](https://scan.testnet.initia.xyz/initiation-1/modules/0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a/usernames) |
+
+## Tutorials
+
+### Getting Address from Usernames
+
+To retrieve an address from a username, the `get_address_from_name` view function is used. The function interface is as follows:
+
+```move
+#[view]
+public fun get_address_from_name(name: String): Option<address>
+```
+
+```js InitiaJS
+const { LCDClient, bcs } = require('@initia/initia.js');
+
+const moduleAddress = '0x...';
+const lcdUri = 'https://...';
+const name = 'initia';
+const lcd = new LCDClient(lcdUri);
+
+lcd.move
+  .view(
+    moduleAddress,
+    'usernames',
+    'get_address_from_name',
+    [],
+    [bcs.string().serialize(name).toBase64()]
+  )
+  .then(console.log);
+
+// Response:
+// {
+//   data: '"0x.."',
+//   events: [],
+//   gas_used: '5699'
+// }
+```
+
+### Getting Usernames from Address
+
+To retrieve a username from an address, the `get_name_from_address` view function is utilized:
+
+```move
+#[view]
+public fun get_name_from_address(addr: address): Option<String>
+```
+
+```js InitiaJS
+const { LCDClient, bcs } = require('@initia/initia.js');
+
+const moduleAddress = '0x...';
+const lcdUri = 'https://...';
+const address = "init1...";
+const lcd = new LCDClient(lcdUri);
+
+lcd.move
+  .view(
+    moduleAddress
+    'usernames',
+    'get_name_from_address',
+    [],
+    [
+      bcs
+        .address()
+        .serialize(address)
+        .toBase64(),
+    ]
+  )
+  .then(console.log);
+
+// Response:
+// {
+//   data: '"abc..."',
+//   events: [],
+//   gas_used: '5699'
+// }
+```

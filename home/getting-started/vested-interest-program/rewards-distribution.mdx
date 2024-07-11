@@ -1,0 +1,139 @@
+---
+title: VIP Rewards Distribution
+---
+
+## Minitia Whitelisting
+
+Before a minitia can be eligible for VIP rewards, it must first be whitelisted by the Initia L1 governance through an on-chain proposal.
+
+
+## Distribution Mechanism
+
+At network genesis, a portion of the total INIT token supply will be set aside as rewards for the VIP program, which will be distributed over several years. Let's call this portion of the supply $R$. These rewards are given out at regular intervals, or epochs.
+
+The total rewards is then first distributed to each minitias, then subsequently the minitia's users and operators.
+
+### Rewards Split Between Minitias
+
+At each epoch $t$, the total VIP rewards for that epoch $R_t$ are distributed amongst each minitia ecosystem. The total rewards are then split into two pools: the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
+
+These two pools aim to incentivize and reward different aspects of minitia operations, which are described in the sections below. The ratio between $R_B$ and $R_W$ is set by the Initia L1 governance and can be changed through on-chain proposals, and its sum follows the following equation:
+
+$$
+R_t = R_B + R_W
+$$
+
+The rewards for each minitia $m$ are then calculated as follows:
+
+$$
+R_{m,t} = R_{B,m,t} + R_{W,m,t}
+$$
+
+Where:
+-	$R_{B,m,t}$ represents the portion of rewards from the Balance Pool $R_B$ allocated to minitia $m$ at epoch $t$.
+-	$R_{W,m,t}$ represents the portion of rewards from the Weight Pool $R_W$ allocated to minitia $m$ at epoch $t$.
+
+#### Balance Pool
+
+The Balance Pools aim to encourage minitias to find new and interesting uses for the INIT token by distributing rewards based on the proportion of INIT tokens locked in the chain. Specifically, at each epoch $t$, the rewards are allocated according to the amount of INIT locked on each minitia $m$ relative to the total amount locked on all minitias. 
+
+Specifically, the amount of INIT tokens locked is calculated from the tokens deposited on the Optimistic Bridge that are bridged to each minitia. This calculation is expressed as:
+
+$$
+R_{B,m,t} = R_{B,t} \frac{I_{m,t}}{\sum_{i=1}^{N,t} I_{i,t}}
+$$
+
+Where:
+-	$R_{B,t}$ is the total rewards from the Balance Pool for the epoch.
+-	$I_{m,t}$ is the amount of INIT tokens locked by minitia $m$ during the epoch.
+-	$N_{t}$ is the total number of minitias in the epoch.
+
+#### Weight Pool
+
+The Weight Pool ($R_W$) rewards minitias based on their weight value, which is determined by a gauge weight voting process similar to protocols such as Curve's. 
+
+//TODO: Explain Gauge Voting
+
+For a given minitia $m$, the rewards from the Weight Pool during an epoch are calculated as:
+
+$$
+R_{W,m,t} = R_{W,t} \frac{W_{m,t}}{\sum_{i=1}^{N,t} W_{i,t}}
+$$
+
+Where:
+- $R_{W,t}$ is the total rewards from the Weight Pool for the epoch.
+- $W_{m,t}$ is the weight of minitia $m$ during the epoch.
+- $N_{t}$ is the total number of minitias in the epoch.
+
+## Distribution to Minitia Users
+
+Once we know how much rewards each minitia receives for a given epoch, we then further distribute these rewards to the users of the minitia. The amount of VIP rewards to each user is defined by a scoring methodology decided by the minitia team. The scoring method could be based factors such as:
+
+- Number of transactions a user makes on the minitia.
+- Value of assets a user borrows.
+- Trading volume or liquidity provided by the user.
+
+or the combination of any multiple metrics. At the end of each epoch, the rewards for each user are calculated and stored. Once the rewards for each minitia are known, the rewards are then directly distributed to the users of the minitia.
+
+If a user $u$ on minitia $m$ has a score of $S_{u,m,t}$, their rewards are:
+
+$$
+R_{u,m,t} = R_{m,t} \frac{S_{u,m,t}}{\sum_{i=1}^{N_{u,m,t}} S_{i,m,t}}
+$$
+
+Where:
+- $R_{m,t}$ is the total rewards from the VIP program for the epoch.
+- $S_{u,m,t}$ is the score of the user on minitia $m$ during epoch $t$.
+- $N_{u,m,t}$ is the total number of users on minitia $m$ during epoch $t$.
+
+
+## Distribution to Minitia Operators
+
+To ensure that minitia operators are also incentivized to keep their minitias active and useful, they can set a commission rate, $c$. This rate allows them to take a portion of the rewards for their minitia.
+
+The rewards for an operator $o$ of minitia $m$ during an epoch are:
+
+$$
+R_{o,m,t} = R_{m,t} c_{m}
+$$
+
+The commission rate is set when the minitia is first approved for VIP rewards and can be changed later, but only by a fixed amount amount each epoch to prevent abuse.
+
+Taking into account the operator commissions, the total rewards distributed to a user on a minitia  is then
+
+$$
+R_{u,m,t} = (1-c_{m}) R_{m,t} \frac{S_{u,m,t}}{\sum_{i=1}^{N_{u,m,t}} S_{i,m,t}}
+$$
+
+## Rewards Vesting
+
+Rewards from the VIP program are given in the form of escrowed INIT tokens (esINIT). These tokens are initially non-transferable and can be vested in two ways:
+
+1. **Maintain a VIP Score:** Keep a certain score over a number of periods $p$, with each period lasting $v$.
+2. **Zap into a Staking Position:** Convert the escrowed tokens into a whitelisted INIT:TOKEN staking position.
+
+### Maintaining a VIP Score
+
+To fully convert their rewards into regular INIT tokens, a user must maintain a portion of their score, $c_{user}$, over a certain number of periods, $p$, as determined by Initia L1 governance. The formula for this is:
+
+$$
+c_{user} = \frac{S_{u,m,t}}{S_{target,m,t}}
+$$
+
+Where:
+-   $S_{u,m,t}$ is the score of the user on minitia $m$ during epoch $t$.
+-   $S_{target,m,t}$ is the target score of the minitia $m$ during epoch $t$.
+
+The target score $S_{target,m,t}$ is the user's score for epoch $t$ multiplied by a factor $f$. For example, if a user $u$ has a score of 100 at epoch $t$, their target score to fully vest their esINIT after $p$ epochs is $100f$.
+
+If a user fails to meet the score requirement, they will only be able to vest a percentage of their esINIT, determined by $c_{user}$. 
+
+For instance, if $f$ is 0.5, a user with a score of 100 must maintain a score of at least $S_{target,m,t}=100*0.5=50$ for the next $p$ epochs to fully vest their esINIT. If after $p$ epochs, their score $S_{u,m,t}$ is now only 30, their $c_{user}$ will be $30/50=0.6$, and they will only be able to vest 60% of their esINIT.
+
+### Zapping into a Whitelisted LP Staking Position
+
+Maintaining the score over several periods may be challenging for some users. Therefore, VIP allows users to immediately convert their esINIT into a locked, staked INIT:TOKEN LP position on the [InitiaDEX](/home/getting-started/initiadex), with the user providing the TOKEN side of the pair.
+
+By zapping:
+-   The user receives both native staking rewards and swap fees in return for committing liquidity to the chain. The locked staking position also means they receive a boosted reward rate.
+-   The Initia L1 and ecosystem benefit from the increased liquidity generated by the locked staking positions.
