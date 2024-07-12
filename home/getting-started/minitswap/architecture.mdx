@@ -2,75 +2,39 @@
 title: Architecture
 ---
 
-import { INIT, IbcOpINIT, TargetRatio, MaxRatio, Flexibility } from '/snippets/terminology.mdx';
+import { INIT, IbcOpINIT, FullyRecoveredRatio, MaxRatio, Flexibility } from '/snippets/terminology.mdx';
 
 ## Design
 
 Minitswap itself is designed as a virtual pool DEX between <Tooltip tip={INIT}>INIT</Tooltip> and the various <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the Minitias. The exchange rates on each swap are determined by the StableSwap formula.
 
-To achieve the above goal, two main improvements are made to the base design:
-- **Rate Limiting**: To protect against manipulation, the net amount of IbcOpINIT tokens that can be swapped back into INIT tokens is limited. This means that even in the unlikely scenario that a malicious sequencer is able to acquire or create a large amount of IbcOpINIT tokens, the amount of INIT that can be swapped back into the Initia L1 is still limited.
+To achieve the above goal, two main improvements are made to the base StableSwap pool design:
+- **Rate Limiting**: To protect against manipulation, the net amount of IbcOpINIT tokens that can be swapped back into INIT tokens is limited. This means that even in the unlikely scenario that a malicious sequencer is able to acquire or create a large amount of IbcOpINIT tokens on their minitia, the amount of tokens that can be swapped back into regular INIT tokens is still limited.
 - **Single INIT Token Pool**: To minimize liquidity fragmentation, a single INIT token pool that can be paired with multiple IbcOpINIT tokens pools, instead of having separate INIT token pools for each Minitia.
 
-## Internal Mechanisms
 
-### Target Ratio Calculation
-
-The <Tooltip tip={TargetRatio}>target ratio</Tooltip>, $R_{target}$, follows the follows the formula:
-
-$$
-R_{target}=0.5+(R_{max}-0.5) \times \frac{(fI)^3}{(1+|fI|^3)}
-$$
-
-In the example below, we have the lower bound 0.5 in green, and a <Tooltip tip={MaxRatio}>max ratio</Tooltip>, $R_\text{max}$, of 0.7. We get the purple and red curves when we let <Tooltip tip={Flexibility}>flexibility</Tooltip>, $f$, be 2 and 0.5 respectively.
-![Untitled](https://hackmd.io/_uploads/B1BbFej8R.png)
-
-### Peg Keeper Swaps
-The Peg Keeper Swap is designed to keep the exchange rate between $INIT$ and $IbcOpINIT$ close to 1 to facilitate efficient swaps for users.
-
-When run, the Peg Keeper swap follows the following procedure:
-
-1. Calculate the current $R_{target}$ and the `max_recover_amount`, which defines the maximum size of the pegkeeper swap that can be performed in this swap. This is to prevent a huge pegkeeper swap from happening.
-2. Check if another Peg Keeper has been run in the same block. Continue if no swaps have been run.
-3. Calculate the $INIT$ amount the Peg Keeper needs to reach $R_{target}$. Let's call this `swap_amount_to_reach_fr`.
-4. Check if `swap_amount_to_reach_fr > max_recover_amount`
-    - If true, swap only `max_recover_amount`.
-    - If false, swap `swap_amount_to_reach_fr`
-
-### Internal Rebalancing
-
-The system has an internal rebalancing procedure that aims to continuously recover some of the Peg Keeper's $INIT$ balance by converting its $IbcOpINIT$ into $INIT$ using IBC and OP Bridge. Specifically, it follows the steps:
-
-1. Bridge the Peg Keeper's $IbcOpINIT_m$ back to the Minitia $m$ using IBC, receiving $OpINIT_m$.
-2. This is then further bridged back into $INIT$ by using the OP Bridge.
-
-## Full Swap Mechanisms
-
-Now that we have defined the internal mechanisms, let's now see how they are integrated into the full swap process.
+## Swap Mechanisms
 
 ### L1 to L2
 
-Again, in this case, the user wants to efficiently bridge their $INIT$ tokens on the Initia L1 to a Minitia $m$ and ends up with the $OpINIT_m$ token for that Minitia.
+In this scenario, a user wants to efficiently bridge their $INIT$ tokens on the Initia L1 to a Minitia $m$ and ends up with the $OpINIT_m$ token for that Minitia.
 
 1.	**Initiate Swap on Minitswap DEX**: The user sends a transaction to the Minitswap DEX to swap their $INIT$ tokens into $IbcOpINIT_m$ tokens.
 2.	**Simulate Swap**: The DEX simulates swapping the user’s $INIT$ tokens into $IbcOpINIT_m$ tokens.
-3.	**Compare Swap and Direct Bridging**: The DEX compares the simulated amount of $IbcOpINIT_m$ tokens with the amount the user would receive if they bridged directly through the OP bridge.
+3.	**Compare Swap and Direct Bridging**: The DEX compares the simulated amount of $IbcOpINIT_m$ tokens with the amount the user would receive if they bridged directly through the OP Bridge.
 4.	**Perform Optimal Action**
 	-	If the amount of $IbcOpINIT_m$ tokens from the swap is greater, the DEX performs the swap. The output $IbcOpINIT_m$ tokens are then bridged to the destination L2 through IBC.
 	-	If the direct bridging through the OP bridge provides a better amount, the DEX initiates a direct transfer to the destination Minitia $m$ for the user using the OP bridge.
-5.	**Final Outcome**: In both cases, once the OP Bridge or IBC transfer is complete, the user receives the most amount of $OpINIT_m$ tokens in their wallet on the destination Minitia possible.
-
-In details, the swap process itself is as follows:
-
-1.	**Calculate $IbcOpINIT_m$ Received**: Minitswap calculates how much $IbcOpINIT_m$ the user will receive based on the current Virtual Pool state, updating the state in the process.
-2.	**Fee Deduction**: Minitswap deducts a fee based on a predefined value and an additional fee from any extra $IbcOpINIT_m$ that the user receives.
-3.	**Peg Keeper Swap Check**: Once the user’s swap action and fee calculation are complete, Minitswap checks if a Peg Keeper Swap should be performed based on the latest Virtual Pool state.
-4.	**Internal Rebalancing Check**: After completing the Peg Keeper Swap, Minitswap checks if internal rebalancing is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is initiated.
+5.  **Minitswap Swap Process**
+	- **Calculate $IbcOpINIT_m$ Received**: Minitswap calculates how much $IbcOpINIT_m$ the user will receive based on the current Virtual Pool state, updating the state in the process.
+	- **Fee Deduction**: Minitswap deducts a fee based on a predefined value and an additional fee from any extra $IbcOpINIT_m$ that the user receives.
+	- **Peg Keeper Swap Check**: Once the user’s swap action and fee calculation are complete, Minitswap checks if a [Peg Keeper Swap](#peg-keeper-swaps) should be performed based on the latest Virtual Pool state.
+	- **Internal Rebalancing Check**: After completing the Peg Keeper Swap, Minitswap checks if [Internal Rebalancing](#internal-rebalancing) is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is initiated.
+6.	**Final Outcome**: In both cases, once the OP Bridge or IBC transfer is complete, the user receives the most amount of $OpINIT_m$ tokens in their wallet on the destination Minitia possible.
 
 ### L2 to L1
 
 In this case, the user is currently holding $OpINIT_m$ tokens on a Minitia L2 $m$ and would like to bridge it back to  $INIT$ tokens on the Initia L1.
-
 
 1.	**Transfer to Initia L1 via IBC**: The user begins by transferring their $OpINIT_m$ tokens on the Minitia L2 back to Initia L1 using IBC. As a result, they receive $IbcOpINIT_m$ tokens on the Initia L1.
 2.	**Swap on Minitswap DEX**: Once the IBC transfer is complete and the user has $IbcOpINIT_m$ tokens on Initia L1, they initiate a swap transaction on the Minitswap DEX to convert their $IbcOpINIT_m$ tokens into $INIT$ tokens.
@@ -78,17 +42,55 @@ In this case, the user is currently holding $OpINIT_m$ tokens on a Minitia L2 $m
     - **Peg Keeper Swap Check**: Minitswap first checks if a Peg Keeper Swap can be performed. If this is possible, the swap is executed directly through the Peg Keeper.
 	-	**Calculate $INIT$ Received**: If the Peg Keeper Swap is not applicable, Minitswap calculates the amount of $INIT$ the user will receive based on the updated state of the Virtual Pool.
 	-	**Fee Deduction**: Minitswap deducts a predefined fee amount from the transaction.
-	- **Internal Rebalancing Check**: After completing the user’s swap transaction, Minitswap checks if internal rebalancing is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is executed to maintain market stability.
+	- **Internal Rebalancing Check**: After completing the user’s swap transaction, Minitswap checks if [Internal Rebalancing](#internal-rebalancing) is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is executed to maintain market stability.
 4. **Final Outcome**: If the swap is successful, the user receives $INIT$ tokens in their wallet on Initia L1.
 
 By using Minitswap, the user is able to instantaneously bridge tokens from any Minitia back to Initia L1 without loss of fungibility that comes with utilizing IBC directly and without having to wait for the OP Bridge challenge period.
 
 ### Direct Swap
 
-In addition to the standard directional swap, Minitswap also exposes a unique Direct Swap option.
+In addition to the standard directional swap, Minitswap also implements a unique **Direct Swap** option. It aims to incentivize users to help the Peg Keeper replenish its $INIT$ token balance, which gets depleted over time.
 
-The Direct Swap is an alternative swap process available to users, allowing them to directly exchange their $INIT$ tokens for the Peg Keeper’s $IbcOpINIT$ tokens. This exchange happens at the average price at which the Peg Keeper has purchased $INIT$ tokens.
 
-The Direct Swap mechanism aims to incentivize users to help the Peg Keeper replenish its $INIT$ token balance, which gets depleted over time.
+The Direct Swap allows any user to directly exchange their $INIT$ tokens for the Peg Keeper’s $IbcOpINIT$ tokens. This exchange happens at the average price at which the Peg Keeper has purchased $INIT$ tokens, which could occassionally be lower than the price that they would get by going through a traditional swap process. Initially, the Direct Swap might not seem attractive due to the Target Ratio being close to 0.5. However, as the Peg Keeper’s balance of OP bridged tokens increases, the Direct Swap option becomes more appealing to users.
 
-Initially, the Direct Swap might not seem attractive due to the Target Ratio being close to 0.5. However, as the Peg Keeper’s balance of OP bridged tokens increases, the Direct Swap option becomes more appealing to users.
+## Swap Logic
+
+### Parameters
+
+#### Max Ratio
+
+The Max Ratio, $R_{max}$, is a Intiia L1 governance-controlled parameter that dictates the maximum pool ratio between IbcOpINIT and regular INIT:
+
+#### Fully Recovered Ratio
+
+The Fully Recovered Ratio, $R_{fr}$ then uses the Max Ratio and the Flexibility to calculate the final target IbcOpINIT:INIT ratio for the pool. The ratio is calculated as follows
+
+$$
+R_{fr}=0.5+(R_{max}-0.5) \cdot \frac{(fI)^3}{(1+|fI|^3)}
+$$
+
+In the graph below, we have the lower bound 0.5 in green, and a <Tooltip tip={MaxRatio}>max ratio</Tooltip>, $R_\text{max}$, of 0.7. We get the purple and red curves when we let <Tooltip tip={Flexibility}>flexibility</Tooltip>, $f$, be 2 and 0.5 respectively.
+![Untitled](https://hackmd.io/_uploads/B1BbFej8R.png)
+
+### Mechanisms
+
+#### Peg Keeper Swaps
+
+The Peg Keeper Swap is designed to keep the exchange rate between $INIT$ and $IbcOpINIT$ close to 1 to facilitate efficient swaps for users.  Whenever a user performs a swap, the Fully Recovered Ratio is compared to the current ratio of the pool. If the current ratio is greater than the Fully Recovered ratio, a Peg Keeper Swap is executed.
+
+When run, the Peg Keeper swap follows the following procedure:
+
+1. Calculate the current $R_{fr}$ and the `max_recover_amount`, which defines the maximum size of the pegkeeper swap that can be performed in this swap. This is to prevent a huge pegkeeper swap from happening.
+2. Check if another Peg Keeper has been run in the same block. Continue if no swaps have been run.
+3. Calculate the $INIT$ amount the Peg Keeper needs to reach $R_{fr}$. Let's call this `swap_amount_to_reach_fr`.
+4. Check if `swap_amount_to_reach_fr > max_recover_amount`
+    - If true, swap only `max_recover_amount`.
+    - If false, swap `swap_amount_to_reach_fr`
+
+#### Internal Rebalancing
+
+The system has an internal rebalancing procedure that aims to continuously recover some of the Peg Keeper's $INIT$ balance by converting its $IbcOpINIT$ into $INIT$ using IBC and OP Bridge. Specifically, it follows the steps:
+
+1. Bridge the Peg Keeper's $IbcOpINIT_m$ back to the Minitia $m$ using IBC, receiving $OpINIT_m$.
+2. This is then further bridged back into $INIT$ by using the OP Bridge.
