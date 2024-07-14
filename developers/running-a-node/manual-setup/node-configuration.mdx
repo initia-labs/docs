@@ -33,10 +33,12 @@ Once the node is initialized, we then need to replace the generated `genesis.jso
 
 To do this, we need to download the `genesis.json` file for the network you are joining and replace the one in the `~/.initia/config/` directory.
 
-```sh
+<CodeGroup>
+```sh initiation-1
 curl -Ls https://initia.s3.ap-southeast-1.amazonaws.com/initiation-1/genesis.json > \
          $HOME/.initia/config/genesis.json
 ```
+</CodeGroup>
 
 Refer to the [Networks](/developers/resources/networks) section of the docs to find the `genesis-url` for the network you are joining.
 
@@ -44,7 +46,8 @@ Refer to the [Networks](/developers/resources/networks) section of the docs to f
 
 To connect to the network, we need to define a set of seed and/or peer nodes for our node to sync block and transaction data. Additionally, we must define the correct prices for the network to enable our node to validate transactions correctly.
 
-```sh
+<CodeGroup>
+```sh initiation-1
 # Refer to the Network's section of the docs for the chain-specific information.
 export SEEDS="2eaa272622d1ba6796100ab39f58c75d458b9dbc@34.142.181.82:26656,c28827cb96c14c905b127b92065a3fb4cd77d7f6@testnet-seeds.whispernode.com:25756"
 export PEERS="093e1b89a498b6a8760ad2188fbda30a05e4f300@35.240.207.217:26656,2c729d33d22d8cdae6658bed97b3097241ca586c@195.14.6.129:26019"
@@ -64,6 +67,7 @@ sed -E -i \
   "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"${GAS_PRICE}\"/" \
   $HOME/.initia/config/app.toml
 ```
+</CodeGroup>
 
 ## Updating Address Book
 
@@ -71,7 +75,9 @@ We need to update the address book for the network we are joining.
 
 To do this, run the following command:
 
-```sh
+<CodeGroup>
+```sh initiation-1
 curl -Ls https://initia.s3.ap-southeast-1.amazonaws.com/initiation-1/addrbook.json > \
          $HOME/.initia/config/addrbook.json
 ```
+</CodeGroup>

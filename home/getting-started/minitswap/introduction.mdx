@@ -1,12 +1,10 @@
 ---
-title: Introduction
+title: Minitswap Introduction
 ---
 
 import { INIT, m, OpINIT, IbcOpINIT, OPInitBridge } from '/snippets/terminology.mdx';
 
-Minitswap is Initia's proprietary solution to address the user experience challenges posed by the lengthy withdrawal [challenge periods](https://docs.optimism.io/builders/app-developers/bridging/messaging#understanding-the-challenge-period) of [optimistic bridges](https://medium.com/connext/optimistic-bridges-fb800dc7b0e0). Furthermore, while setting the period to a longer timeframe increases the duration in which a challenge can be made, it simultaneously increases the wait time required for withdrawals.
-
-The Minitswap DEX is then to designed to allow users to freely, quickly, and efficiently bridge tokens between Initita L1 and Minitias.
+Minitswap is Initia's proprietary solution to address the user experience challenges posed by the lengthy withdrawal [challenge periods](https://docs.optimism.io/builders/app-developers/bridging/messaging#understanding-the-challenge-period) of [optimistic bridges](https://medium.com/connext/optimistic-bridges-fb800dc7b0e0). Furthermore, while a longer challenge period increases the duration in which a challenge can be made, it simultaneously increases the wait time required for withdrawals.
 
 ## Motivation
 
@@ -16,32 +14,8 @@ While optimistic token bridges between a Layer 1 (L1) and a Layer 2 (L2) chain p
 - **Single Sequencer Risks**: Creating a DEX pair between the original token on L1 and the bridged tokens can mitigate long withdrawal times. However, most L2s currently operate with a single sequencer, raising security, reliability, and centralization concerns for liquidity providers.
 - **Lack of Liquidity**: The sequencer risk issues can result in insufficient liquidity in the token pool, leading to unfavorable swap prices, high volatility, and significant [slippage](https://www.coinbase.com/learn/crypto-glossary/what-is-slippage-in-crypto-and-how-to-minimize-its-impact#:~:text=Understanding%20Slippage%20in%20Crypto&text=It%20refers%20to%20the%20difference,placed%20and%20when%20it's%20executed.) for users bridging tokens back to L1.
 
-## Goal 
+## Solution
 
-- **Manipulation Resistance**: The architecture of the Minitia and related systems themselves already has safeguards in place to prevent various forms of manipulation from malicious actors. The Minitswap DEX is further designed to ensure that, in any unforeseen events, any subsequent damages are minimized.
-- **Capital Efficiency**: As the number of Minitias continue to increase, naively, the same number of DEX pairs must also exists. This results in liquidity fragmentation, high slippage and volatility, and subpar user experience.
+The Minitswap DEX is then to designed to allow users to freely, quickly, and efficiently bridge tokens between Initia L1 and Minitias. Users looking to bridge back to Initia L1 from a minitia can simply utilize Minitswap (along with IBC) to swap their tokens back to INIT without waiting for the challenge period to expire.
 
-## User Flow
-
-The flow that the user experiences when using Minitswap slightly differs depending on whether they're bridging from the Initia L1 to a minitia or vice versa.
-
-### Initia to Minitia
-
-In this case, the user wants to efficiently bridge their <Tooltip tip={INIT}>INIT</Tooltip> tokens on the Initia L1 to a minitia m and ends up with the <Tooltip tip={OpINIT}>OpINIT</Tooltip> token for that minitia.
-
-1.	The user sends a transaction to the Minitswap DEX to swap their INIT into <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip>
-2.	The DEX simulates swapping the user’s INIT tokens into IbcOpINIT tokens.
-3.	The DEX compares the simulated amount of IbcOpINIT tokens with the amount the user would get if they bridged directly through the OP bridge.
-4. If the amount of IbcOpINIT tokens from the swap is greater:
-    - The DEX performs the swap.
-    - The output IbcOpINIT tokens are then bridged to the destination L2 through IBC.
-5. If the direct bridging through the OP bridge gives a better amount, the DEX initiates a direct transfer to the destination minitia for the user using the OP bridge.
-6. In both cases, once the OP Bridge or IBC transfer completes, the user now have OpINIT tokens on in their wallet on the destination minitias
-
-### Minitia to Initia
-
-In this case, the user is currently holding OpINIT tokens on a minitia L2 m and would like to bridge it back to  INIT tokens on the L1.
-
-1. The user first transfers their OpINIT token on the minitia L2 back to the Initia L1 thrugh IBC, receiving IbcOpINIT
-2. Once their IBC transfer is complete, they then send a swap transaction to the Minitswap DEX to convert their IbcOpINIT back into vanilla INIT
-3. If the swap is successful, they now received INIT in their wallet
+The full architecture, design decisions, and how the above risks issues are mitigated are detailed in the following section.
