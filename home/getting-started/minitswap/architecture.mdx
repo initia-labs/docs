@@ -84,6 +84,8 @@ In the graph below, we have the lower bound 0.5 in green, and a <Tooltip tip={Ma
 
 #### Peg Keeper Swaps
 
+//TODO: Diagram
+
 The Peg Keeper Swap is a mechanism designed to keep the exchange rate between $INIT$ and $IbcOpINIT$ close to 1:1. This ensures that users always receive the best swap rates.
 
 When users move their INIT tokens from a minitia back to Initia L1 using Minitswap, they are essentially selling their $IbcOpINIT$ tokens for $INIT$ tokens. As more users do this, the supply of $IbcOpINIT$ increases relative to $INIT$, which raises the price of future Minitia -> Initia L1 swaps.
@@ -105,6 +107,8 @@ Note that the Peg Keeper Swap check is done
 - *after* a L1 -> L2 swap to make sure the user's swap rate doesn't get affected by the Peg Keeper Swap
 
 #### Internal Rebalancing
+
+//TODO: Diagram
 
 As more Peg Keeper Swaps are performed, the $INIT$ balance of the Peg Keeper gradually decreases. To replenish its $INIT$ balance, the system has an internal rebalancing procedure that converts the Peg Keeper's $IbcOpINIT$ back into $INIT$ using IBC and OP Bridge.
 

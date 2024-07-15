@@ -41,7 +41,7 @@
     {
       "name": "Twitter",
       "icon": "twitter",
-      "url": "https://twitter.com.com/initiafdn"
+      "url": "https://twitter.com/initiafdn"
     },
     {
       "name": "Discord",
@@ -51,7 +51,7 @@
     {
       "name": "GitHub",
       "icon": "github",
-      "url": "https://github.com.com/initia-labs"
+      "url": "https://github.com/initia-labs"
     }
   ],
   "navigation": [
