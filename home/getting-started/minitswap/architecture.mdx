@@ -23,7 +23,9 @@ To achieve the above goals, two main improvements are made to the base StableSwa
 
 ### Initia L1 to Minitia
 
-//TODO: Diagram
+<Frame caption="Initia L1 to Minitia Minitswap Flow">
+![Initia L1 to Minitia Minitswap Flow](/images/minitswap/minitswap_l1_l2.svg)
+</Frame>
 
 In this scenario, a user wants to efficiently bridge their $INIT$ tokens on the Initia L1 to a Minitia $m$ and ends up with the $OpINIT_m$ token for that Minitia.
 
@@ -44,7 +46,7 @@ And while bridging from Initia L1 to a Minitia is instantaneous, users may occas
 
 ### Minitia to Initia L1
 
-//TODO: Diagram
+![Minitia to Initia L1 Minitswap Flow](/images/minitswap/minitswap_l2_l1.svg)
 
 When bridging from a Minitia to Initia L1, the user is currently holding $OpINIT_m$ tokens on a Minitia L2 $m$ and would like to bridge it back to  $INIT$ tokens on the Initia L1.
 
@@ -53,7 +55,7 @@ In this scenario, utilizing Minitswap will enable them to bridging their INIT ba
 1.	**Transfer to Initia L1 via IBC**: The user begins by transferring their $OpINIT_m$ tokens on the Minitia L2 back to Initia L1 using IBC. As a result, they receive $IbcOpINIT_m$ tokens on the Initia L1.
 2.	**Swap on Minitswap DEX**: Once the IBC transfer is complete and the user has $IbcOpINIT_m$ tokens on Initia L1, they initiate a swap transaction on the Minitswap DEX to convert their $IbcOpINIT_m$ tokens into $INIT$ tokens.
 3. **Minitswap Swap Process**
-  - **Peg Keeper Swap Check**: Minitswap first checks if a Peg Keeper Swap can be performed. If this is possible, the swap is executed directly through the Peg Keeper.
+	- **Peg Keeper Swap Check**: Minitswap first checks if a Peg Keeper Swap can be performed. If this is possible, the swap is executed directly through the Peg Keeper.
 	-	**Calculate $INIT$ Received**: If the Peg Keeper Swap is not applicable, Minitswap calculates the amount of $INIT$ the user will receive based on the updated state of the Virtual Pool.
 	-	**Fee Deduction**: Minitswap deducts a predefined fee amount from the transaction.
 	- **Internal Rebalancing Check**: After completing the user’s swap transaction, Minitswap checks if [Internal Rebalancing](#internal-rebalancing) is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is executed to maintain market stability.
@@ -84,7 +86,9 @@ In the graph below, we have the lower bound 0.5 in green, and a <Tooltip tip={Ma
 
 #### Peg Keeper Swaps
 
-//TODO: Diagram
+<Frame caption="Peg Keeper Swaps">
+![Peg Keeper Swaps](/images/minitswap/minitswap_peg_keeper_swaps.svg)
+</Frame>
 
 The Peg Keeper Swap is a mechanism designed to keep the exchange rate between $INIT$ and $IbcOpINIT$ close to 1:1. This ensures that users always receive the best swap rates.
 
@@ -108,7 +112,9 @@ Note that the Peg Keeper Swap check is done
 
 #### Internal Rebalancing
 
-//TODO: Diagram
+<Frame caption="Internal Rebalancing">
+![Internal Rebalancing](/images/minitswap/minitswap_internal_rebalancing.svg)
+</Frame>
 
 As more Peg Keeper Swaps are performed, the $INIT$ balance of the Peg Keeper gradually decreases. To replenish its $INIT$ balance, the system has an internal rebalancing procedure that converts the Peg Keeper's $IbcOpINIT$ back into $INIT$ using IBC and OP Bridge.
 
