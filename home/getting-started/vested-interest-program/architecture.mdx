@@ -22,7 +22,9 @@ At each rewards distribution epoch $t$, the total VIP rewards for that stage $R_
 
 At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each minitia ecosystem. The total rewards are then split into two pools: the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
 
-//TODO: DIAGRAM
+<Frame caption="VIP Rewards Distribution">
+![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.svg)
+</Frame>
 
 These two pools aim to incentivize and reward different aspects of minitia operations. The ratio between $R_B$ and $R_W$, called `poolSplitRatio`, is set by the Initia L1 governance and can be changed through on-chain proposals. The sum follows the equation:
 
@@ -77,7 +79,10 @@ Once we know how much rewards each minitia receives for a given stage, we then f
 - Value of assets a user borrows.
 - Trading volume or liquidity provided by the user.
 
-//TODO: DIAGRAM
+
+<Frame caption="VIP Rewards Distribution to Minitia Users">
+![VIP User Rewards Distribution](/images/vip/vip_distribution_to_minitia_users.svg)
+</Frame>
 
 At the end of each stage, the rewards for each user are calculated and stored. Once the rewards for each minitia are known, the rewards are then directly distributed to the users of the minitia.
 
@@ -97,7 +102,9 @@ Where:
 
 To ensure that minitia operators are also incentivized to keep their minitias active and useful, they can set an `operatorCommissionRate`, $c$. This rate allows them to take a portion of the rewards for their minitia.
 
-//TODO: DIAGRAM
+<Frame caption="VIP Operator Rewards Distribution">
+![VIP Operator Rewards Distribution](/images/vip/vip_distribution_to_minitia_operators.svg)
+</Frame>
 
 The rewards for an operator $o$ of minitia $m$ during a stage are:
 
@@ -123,6 +130,10 @@ These tokens are initially non-transferable and can be vested in two ways:
 
 1. **Maintain a VIP Score:** Keep a certain score over a number of `vestingPeriod`, with each period lasting `stageDuration`.
 2. **Zap into a Staking Position:** Convert the escrowed tokens into a whitelisted INIT:TOKEN staking position.
+
+<Frame caption="VIP Minitia User Vesting">
+![VIP User Vesting](/images/vip/vip_rewards_vesting_users.svg)
+</Frame>
 
 #### Maintaining a VIP Score
 
@@ -205,8 +216,6 @@ Explanation
 
 Maintaining the score over several periods may be challenging for some users. Therefore, VIP allows users to immediately convert their esINIT into a locked, staked INIT:TOKEN LP position on the InitiaDEX, with the user providing the TOKEN side of the pair. This zapped staking position is then locked for a certain `zapLockPeriod` $z$.
 
-//TODO: DIAGRAM
-
 By zapping:
 
 - The user receives both native staking rewards and swap fees in return for committing liquidity to the chain. The locked staking position also means they receive a boosted reward rate.
@@ -214,6 +223,8 @@ By zapping:
 
 ### Operator Vesting
 
-//TODO: DIAGRAM
+<Frame caption="VIP Minitia Operator Vesting">
+![VIP Operator Vesting](/images/vip/vip_rewards_vesting_operators.svg)
+</Frame>
 
 Similarly, minitia operators' esINIT rewards are also vested. However, the vesting process is slightly different. Operator esINIT rewards are solely linearly released over a number of `operatorVestingStages`. For example, if the operator vesting period is 10 stages, the operator will receive $\frac{1}{10}$ of their esINIT at each stage.

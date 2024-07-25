@@ -1,0 +1,17 @@
+---
+title: MiniEVM Introduction
+---
+
+## Compatibility
+
+The MiniEVM framework is compatible with all standard EVM developer workflows, tooling, and libraries that developers are already familiar. This includes popular tools like [Foundry](https://github.com/foundry-rs/foundry), [Hardhat](https://hardhat.org/), and [Remix IDE](https://remix.ethereum.org/). However, there are minor differences in the way the MiniEVM operates that may require some adjustments to your existing development workflows.
+
+### Foundry
+
+**EIP-1559 Transactions**
+
+MiniEVM currently does not support EIP-1559 transactions. This means that if you are using Foundry to deploy your contracts, you will need to use the `--legacy` flag whenever you send transactions to the MiniEVM.
+
+**Precompiles and Foundry Scripts**
+
+Foundry's forge script feature always simulates all script transactions on a local standard EVM (without precompiles), and there is currently [no way to skip this simulation](https://github.com/foundry-rs/foundry/issues/5776). Consequently, any contract deployment or transaction that relies on MiniEVM precompiles will fail.

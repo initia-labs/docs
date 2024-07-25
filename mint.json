@@ -134,7 +134,7 @@
           ]
         },
         {
-          "group": "OPInit Bots",
+          "group": "Running OPInit Bots",
           "pages": [
             "developers/deploying-minitias/opinit-bots/introduction",
             "developers/deploying-minitias/opinit-bots/bridge-executor",
@@ -155,46 +155,54 @@
     {
       "group":"Developer Guides",
       "pages": [
-        {"group": "Initia Oracles",
-          "pages": [
-            {"group": "Slinky",
-              "pages": [
-                "developers/developer-guides/oracles/slinky/introduction",
-                {
-                  "group": "Fetching Prices from API",
-                  "pages": [
-                    "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
-                    "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
-                  ]
-                },
-                "developers/developer-guides/oracles/slinky/fetching-prices-from-contracts"
-              ]
-            }
-          ]
-        },
         {
           "group": "VM Specific Tutorials",
           "pages": [
             {
               "group":"EVM",
               "pages":[
-                "developers/developer-guides/vm-specific-tutorials/evm/oracles"
+                "developers/developer-guides/vm-specific-tutorials/evm/introduction",
+                {
+                  "group": "Creating ERC20s",
+                  "pages": [
+                    "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
+                    "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
+                  ] 
+                },
+                "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles"
               ]
             },
             {
               "group":"MoveVM",
               "pages":[
-                "developers/developer-guides/vm-specific-tutorials/movevm/oracles"
+                "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles"
               ]
             },
             {
               "group":"WasmVM",
               "pages":[
-                "developers/developer-guides/vm-specific-tutorials/wasmvm/oracles"
+                "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles"
               ]
             }
           ]
         },
+        {"group": "Oracles",
+        "pages": [
+          {"group": "Slinky",
+            "pages": [
+              "developers/developer-guides/oracles/slinky/introduction",
+              {
+                "group": "Fetching Prices from API",
+                "pages": [
+                  "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
+                  "developers/developer-guides/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
+                ]
+              },
+              "developers/developer-guides/oracles/slinky/fetching-prices-from-contracts"
+            ]
+          }
+        ]
+      },
         {
           "group":"Integrating with Initia Apps",
           "pages": [
@@ -229,12 +237,34 @@
       "group": "Developer Resources",
       "pages": [
         {
-          "group": "Developer Tools",
+          "group":"Networks",
           "pages": [
-            "developers/resources/developer-tools/initiascan"
+            "developers/resources/developer-tools/networks/initia-l1",
+            "developers/resources/developer-tools/networks/minievm"
           ]
         },
-        "developers/resources/networks"
+        {
+          "group": "Deployed Contracts",
+          "pages": [
+            "developers/resources/deployed-contracts/minievm"
+          ]
+        },
+        {
+          "group": "Contracts References",
+          "pages": [
+            {"group": "EVM",
+              "pages": [
+                "developers/resources/contract-references/evm/slinky",
+                "developers/resources/contract-references/evm/cosmos",
+                "developers/resources/contract-references/evm/erc20-acl",
+                "developers/resources/contract-references/evm/erc20-registry",
+                "developers/resources/contract-references/evm/initia-erc20",
+                "developers/resources/contract-references/evm/erc20-factory",
+                "developers/resources/contract-references/evm/initia-custom-erc20"
+              ]
+            }
+          ]
+        }
       ]
     },
     {

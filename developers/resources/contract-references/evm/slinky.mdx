@@ -1,0 +1,141 @@
+---
+title: Slinky
+---
+
+GitHub: [ERC20Registry](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/Slinky.sol)
+
+## Overview
+
+The `Slinky` contract is designed to interact with the Cosmos blockchain to fetch and process price data for various currency pairs from the Slinky oracle.
+
+## Imports
+
+| Import File    | Description                                                   |
+|----------------|---------------------------------------------------------------|
+| `ICosmos.sol`  | Interface for interacting with the Cosmos blockchain.         |
+| `JsmnSolLib.sol` | Library for JSON parsing.                                   |
+| `IsoToUnix.sol`  | Library for converting ISO date strings to Unix timestamps. |
+
+## Structs
+
+### Price
+
+A struct to hold price information.
+- `uint256 price`: The price value.
+- `uint256 timestamp`: The timestamp of the price.
+- `uint64 height`: The block height at which the price was recorded.
+- `uint64 nonce`: A unique identifier for the price record.
+- `uint64 decimal`: The decimal precision of the price.
+- `uint64 id`: The ID of the price record.
+
+## Constructor
+
+```solidity
+constructor() {}
+```
+
+The constructor initializes the contract. It does not take any parameters or perform any actions upon deployment.
+
+## Functions
+
+### get_all_currency_pairs
+
+Fetches all available currency pairs from the Cosmos blockchain.
+
+```solidity
+function get_all_currency_pairs() external returns (string memory)
+```
+
+#### Returns
+
+| Type           | Description                                |
+| -------------- | ------------------------------------------ |
+| `string memory`| A JSON string containing all currency pairs|
+
+### get_price
+
+Fetches the price for a specific currency pair from the Cosmos blockchain.
+
+```solidity
+function get_price(string memory base, string memory quote) external returns (Price memory)
+```
+
+#### Parameters
+
+| Name            | Type             | Description                 |
+| --------------- | ---------------- | --------------------------- |
+| `base`          | `string memory`  | The base currency of the pair|
+| `quote`         | `string memory`  | The quote currency of the pair|
+
+#### Returns
+
+| Type          | Description                       |
+| ------------- | --------------------------------- |
+| `Price memory`| A struct containing the price information|
+
+### get_prices
+
+Fetches prices for multiple currency pairs from the Cosmos blockchain.
+
+```solidity
+function get_prices(string[] memory pair_ids) external returns (Price[] memory)
+```
+
+#### Parameters
+
+| Name           | Type               | Description                  |
+| -------------- | ------------------ | ---------------------------- |
+| `pair_ids`     | `string[] memory`  | An array of currency pair IDs|
+
+#### Returns
+
+| Type            | Description                                                |
+| --------------- | ---------------------------------------------------------- |
+| `Price[] memory`| An array of `Price` structs containing the price information for each pair|
+
+### join
+
+Concatenates an array of strings with a specified separator.
+
+```solidity
+function join(string[] memory strs, string memory separator) internal pure returns (string memory)
+```
+
+#### Parameters
+
+| Name         | Type               | Description                          |
+| ------------ | ------------------ | ------------------------------------ |
+| `strs`       | `string[] memory`  | An array of strings to be concatenated|
+| `separator`  | `string memory`    | A separator to be used between the strings|
+
+#### Returns
+
+| Type            | Description                |
+| --------------- | -------------------------- |
+| `string memory` | The concatenated string    |
+
+### get_price_from_tokens
+
+Parses a JSON string to extract price information and populate a `Price` struct.
+
+```solidity
+function get_price_from_tokens(
+    string memory json,
+    JsmnSolLib.Token[] memory tokens,
+    uint256 priceObjectIndex
+) internal pure returns (Price memory)
+```
+
+#### Parameters
+
+| Name               | Type                     | Description                                           |
+| ------------------ | ------------------------ | ----------------------------------------------------- |
+| `json`             | `string memory`          | The JSON string containing the price information      |
+| `tokens`           | `JsmnSolLib.Token[] memory` | An array of JSON tokens                               |
+| `priceObjectIndex` | `uint256`                | The starting index of the price object in the tokens array|
+
+#### Returns
+
+| Type            | Description                       |
+| --------------- | --------------------------------- |
+| `Price memory`  | A struct containing the parsed price information |

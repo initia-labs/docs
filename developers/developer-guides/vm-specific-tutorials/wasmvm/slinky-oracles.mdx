@@ -1,5 +1,5 @@
 ---
-title: Fetching Price Oracle Data
+title: Using Slinky Oracle
 ---
 
 To query prices from Slinky oracle on WasmVM, you need to utilize the queries provided by the [wasm-slinky-query](https://github.com/initia-labs/wasm-slinky-query) contract. Specifically, the contract provides 3 queries:
@@ -24,11 +24,11 @@ This query takes no arguments and returns the list of all of the currently suppo
 **Example Usage (Simplified)**
 
 ```rust
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct GetAllCurrencyPairsResponse {
     pub currency_pairs: Vec<CurrencyPairResponse>,
 }
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 pub struct CurrencyPairResponse {
     pub Base: String,
@@ -74,14 +74,14 @@ This query takes two arguments: `base` and `quote`, which represent the base and
 **Example Usage (Simplified)**
 
 ```rust
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct QuotePrice {
     pub price: Uint256,
     pub block_timestamp: Timestamp,
     pub block_height: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct GetPriceResponse {
     pub price: QuotePrice,
     pub nonce: u64,
@@ -130,14 +130,14 @@ This query takes a list of asset pair IDs and returns the prices of the asset pa
 **Example Usage (Simplified)**
 
 ```rust
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct QuotePrice {
     pub price: Uint256,
     pub block_timestamp: Timestamp,
     pub block_height: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct GetPriceResponse {
     pub price: QuotePrice,
     pub nonce: u64,
@@ -145,7 +145,7 @@ pub struct GetPriceResponse {
     pub id: u64,
 }
 
-#[derive(Clone, Debug, PartialEq, serde::Deserialize, serde::Serialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
 pub struct GetPricesResponse {
     pub prices: Vec<GetPriceResponse>,
 }

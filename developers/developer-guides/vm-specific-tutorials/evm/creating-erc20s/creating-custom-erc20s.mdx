@@ -1,0 +1,136 @@
+---
+title: Creating Custom ERC20s
+---
+
+[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/initia-custom-erc20)
+
+## Prerequisites
+
+### Foundry
+
+For this tutorial, we will be using [Foundry](https://github.com/foundry-rs/foundry) toolkit to develop, compile, and deploy our contracts. If you do not have Foundry installed, follow the [Foundry installation instructions](https://getfoundry.sh/).
+
+## Setup
+
+First, we need to create a new directory for our project.
+
+```sh
+mkdir initia-erc20
+cd initia-erc20
+```
+
+Next, we will initialize a new Foundry project side that directory.
+
+```sh
+forge init
+```
+
+Once the project is initialized, we can proceed to installing the required dependencies needed for this tutorial. In this case, we only need Initia's [EVM contracts](https://github.com/initia-labs/initia-evm-contracts).
+
+```sh
+forge install initia-labs/initia-evm-contracts
+```
+
+## Implementing the Contract
+
+Before writing our contract, we first need to rename the template contract to `NewInitiaERC20.sol`
+
+```sh
+mv src/Counter.sol src/NewInitiaERC20.sol
+```
+
+We then update the contract from the template to be our custom ERC20 contract. Start by importing the `InitiaCustomERC20` contract from the `@initia/initia-evm-contracts` package.
+
+```solidity src/NewInitiaERC20.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "initia-evm-contracts/src/InitiaCustomERC20.sol";
+```
+
+Next, we need to extend the `InitiaCustomERC20` contract and add the constructor to initialize the contract with the name, symbol, and decimals of our custom ERC20. For this tutorial, we will simply customize the base contract by adding a logic to mint tokens to the contract deployer. during deployment.
+
+```solidity src/NewInitiaERC20.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "initia-evm-contracts/src/InitiaCustomERC20.sol";
+
+/**
+ * @title NewInitiaERC20
+ * @dev Demo extension of InitiaERC20 token contract with initial minting functionality
+ */
+contract NewInitiaERC20 is InitiaCustomERC20 {
+    /**
+     * @dev Constructor for creating a new InitiaERC20 token with initial minted supply
+     * @param name_ The name of the token
+     * @param symbol_ The symbol of the token
+     * @param decimals_ The number of decimal places for token precision
+     * @param mintedTokens_ The initial amount of tokens to mint to the contract deployer
+     */
+    constructor(string memory name_, string memory symbol_, uint8 decimals_, uint256 mintedTokens_) InitiaCustomERC20(name_, symbol_, decimals_) {
+        _mint(msg.sender, mintedTokens_);
+    }
+}
+```
+
+Our contract implementation is now ready. However, if we try to compile the contract using `forge compile`, we will get an error.
+
+This is because the default `Counter.t.sol` expects the original `Counter.sol` contract to be available. To fix this, we will rename `Counter.t.sol` to `NewInitiaERC20.t.sol`.
+
+```sh
+mv test/Counter.t.sol test/NewInitiaERC20.t.sol
+```
+
+We will also replace the file contents with placeholder content.
+
+```solidity test/NewInitiaERC20.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+import {NewInitiaERC20} from "../src/NewInitiaERC20.sol";
+
+contract NewInitiaERC20Test is Test {
+
+}
+```
+
+Now running `forge compile` should work without any errors.
+
+```sh
+forge compile;
+
+# [Expected Output]:
+# [⠢] Compiling...
+# [⠰] Compiling 27 files with 0.8.21
+# [⠃] Solc 0.8.21 finished in 6.25s
+# Compiler run successful!
+```
+
+## Deploying the Contract
+
+Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge create` command
+
+```sh
+export PRIVATE_KEY=0x...
+export RPC_URL=http://...
+forge create src/NewInitiaERC20.sol:NewInitiaERC20 --private-key $PRIVATE_KEY --rpc-url $RPC_URL --constructor-args "MyToken" "MTK" 18 100 --legacy
+
+# [Expected Output]:
+# No files changed, compilation skipped
+# Deployer: 0xc5D26D0281e28599c7790aacc810226BBDf0E431
+# Deployed to: 0x3cc54047D191eeeBDcde081D8708490F6df49Be8
+# Transaction hash: 0xed1d23b69014ee066be9b761df3c1fb28bedc46cc1c3f2188960550dbf7862a1
+```
+
+To confirm that the contract was deployed successfully, we can try querying the balance of our deployer account using Foundry's `cast call` command.
+
+```sh
+cast call 0x3cc54047D191eeeBDcde081D8708490F6df49Be8 \
+"balanceOf(address)(uint256)" 0xc5D26D0281e28599c7790aacc810226BBDf0E431 \
+--rpc-url "https://json-rpc.stoneevm-16.initia.xyz"
+
+# [Expected Output]:
+# 100
+```
