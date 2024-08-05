@@ -3,3 +3,188 @@ title: Cosmos
 ---
 
 GitHub: [ICosmos](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/interfaces/ICosmos.sol)
+
+## Overview
+
+The `ICosmos` interface defines a set of functions for interacting with the Cosmos blockchain from an Ethereum Virtual Machine (EVM) environment. It includes functions for address conversion, querying, and executing Cosmos messages.
+
+## Constants
+
+### `COSMOS_ADDRESS`
+
+The address of the `Cosmos` precompile contract.
+
+```solidity
+address constant COSMOS_ADDRESS = 0x00000000000000000000000000000000000000f1;
+```
+
+### `COSMOS_CONTRACT`
+
+The instance of the ICosmos contract.
+
+```solidity
+ICosmos constant COSMOS_CONTRACT = ICosmos(COSMOS_ADDRESS);
+```
+
+## Functions
+
+### `is_blocked_address`
+
+Checks if an address is blocked by the Cosmos SDK bank module.
+
+```solidity
+function is_blocked_address(address account) external view returns (bool blocked);
+```
+
+#### Parameters
+
+| Name      | Type             | Description                    |
+| --------- | ---------------- | ------------------------------ |
+| `account` | `address`        | The address to check           |
+
+#### Returns
+
+| Type       | Description                          |
+| ---------- | ------------------------------------ |
+| `bool`     | `true` if the address is blocked, `false` otherwise |
+
+### `is_module_address`
+
+Checks if an address is a Cosmos SDK module account.
+
+```solidity
+function is_module_address(address account) external view returns (bool module);
+```
+
+#### Parameters
+
+| Name      | Type             | Description                    |
+| --------- | ---------------- | ------------------------------ |
+| `account` | `address`        | The address to check           |
+
+#### Returns
+
+| Type       | Description                          |
+| ---------- | ------------------------------------ |
+| `bool`     | `true` if the address is a module account, `false` otherwise |
+
+### `to_cosmos_address`
+
+Converts an EVM hex format address to a Cosmos bech32 format address.
+
+```solidity
+function to_cosmos_address(address evm_address) external returns (string memory cosmos_address);
+```
+
+#### Parameters
+
+| Name         | Type             | Description                    |
+| ------------ | ---------------- | ------------------------------ |
+| `evm_address`| `address`        | The EVM address to convert     |
+
+#### Returns
+
+| Type              | Description                          |
+| ----------------- | ------------------------------------ |
+| `string memory`   | The corresponding Cosmos address     |
+
+### `to_evm_address`
+
+Convert a Cosmos bech32 format address to an EVM hex format address.
+
+```solidity
+function to_evm_address(string memory cosmos_address) external returns (address evm_address);
+```
+
+#### Parameters
+
+| Name             | Type             | Description                    |
+| ---------------- | ---------------- | ------------------------------ |
+| `cosmos_address` | `string memory`  | The Cosmos address to convert  |
+
+#### Returns
+
+| Type       | Description                          |
+| ---------- | ------------------------------------ |
+| `address`  | The corresponding EVM address        |
+
+### `to_denom`
+
+Converts an ERC20 address to a Cosmos coin denom.
+
+```solidity
+function to_denom(address erc20_address) external returns (string memory denom);
+```
+
+#### Parameters
+
+| Name             | Type             | Description                    |
+| ---------------- | ---------------- | ------------------------------ |
+| `erc20_address`  | `address`        | The ERC20 address to convert   |
+
+#### Returns
+
+| Type              | Description                          |
+| ----------------- | ------------------------------------ |
+| `string memory`   | The corresponding Cosmos denom       |
+
+### `to_erc20`
+
+Converts a Cosmos coin denom to an ERC20 address.
+
+```solidity
+function to_erc20(string memory denom) external returns (address erc20_address);
+```
+
+#### Parameters
+
+| Name        | Type             | Description                    |
+| ----------- | ---------------- | ------------------------------ |
+| `denom`     | `string memory`  | The Cosmos denom to convert    |
+
+#### Returns
+
+| Type       | Description                          |
+| ---------- | ------------------------------------ |
+| `address`  | The corresponding ERC20 address      |
+
+### `execute_cosmos`
+
+Records a Cosmos message to be executed after the current message execution. The message should be in JSON string format.
+
+```solidity
+function execute_cosmos(string memory msg) external returns (bool dummy);
+```
+
+#### Parameters
+
+| Name  | Type             | Description                    |
+| ----- | ---------------- | ------------------------------ |
+| `msg` | `string memory`  | The Cosmos message in JSON format |
+
+#### Returns
+
+| Type   | Description                          |
+| ------ | ------------------------------------ |
+| `bool` | Dummy return value                   |
+
+### `query_cosmos`
+
+Queries a whitelisted Cosmos SDK query.
+
+```solidity
+function query_cosmos(string memory path, string memory req) external returns (string memory result);
+```
+
+#### Parameters
+
+| Name  | Type             | Description                    |
+| ----- | ---------------- | ------------------------------ |
+| `path`| `string memory`  | The query path                 |
+| `req` | `string memory`  | The query request in JSON format |
+
+#### Returns
+
+| Type              | Description                          |
+| ----------------- | ------------------------------------ |
+| `string memory`   | The query result in JSON format      |

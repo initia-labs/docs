@@ -1,0 +1,116 @@
+---
+title: Enabling Oracle Price Feeds
+---
+
+Minitias can also be configured to relay Slinky oracle price data from the Initia L1 to their respective minitias. This allows Minitias and their applications easily access all of the price data available on the network.
+
+## Enabling Oracle Relaying
+
+Before price feeds can be relayed onto the Minitia, you need to first configure the Bridge Executor to perform the relaying. This can be done by updating the Bridge Executor's `ENABLE_ORACLE` environment variable to `true`.
+
+## Registering Price Feeds
+
+Once the Bridge Executor is configured to relay price feeds, you can then register the price feeds that you want to be relayed. This can be done in 2 ways:
+
+1. Updating the Minitia's genesis file
+2. Sending a `execute-messages` tx to the Minitia's `opchild` module
+
+### Updating the Minitia's Genesis File
+
+If the chain has yet to be started for the first time, you can update the Minitia's genesis file to enable the oracle to relay price feeds. This can be done by adding the following field to the `genesis.json` file.
+
+```json genesis.json
+{
+  "oracle": {
+      "currency_pair_genesis": [
+          "currency_pair": {
+              "Base": "BTC",
+              "Quote": "USD"
+          }
+      ]
+  }
+}
+```
+
+Replace the `currency_pair` with the currency pair(s) you want to enable the oracle to relay.
+
+### Registering via OpChild Module
+
+In the case where the chain has already been started, you can register the price feeds via the `opchild` module. This can be done by sending a `execute-messages` tx.
+
+<AccordionGroup>
+<Accordion title="Adding a Single Price Feed" icon="file">
+First, we need to create a file to store the `execute-messages` tx payload.
+
+```sh
+touch add-currency.json
+```
+
+Next, we need to add the `execute-messages` payload to the file. To do so, we can use the following template:
+
+```json
+{
+  "messages": [
+    {
+      "@type": "/slinky.oracle.v1.MsgAddCurrencyPairs",
+      "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
+      "currency_pairs": [
+        {
+          "Base": "BTC",
+          "Quote": "USD"
+        }
+      ]
+    }
+  ]
+}
+```
+
+The required fields are:
+- `authority`: The address of the account that will be signing the transaction
+- `currency_pairs`: An array of currency pairs to be registered
+</Accordion>
+<Accordion title="Adding All Available Price Feeds" icon="book">
+You can also add all of the available price feeds by first querying the Initia L1's LCD endpoint.
+
+First, we need to create a file to store the `execute-messages` tx payload. To do so, run the following command:
+
+```sh
+touch add-currency.json
+```
+
+Next, we need to add the `execute-messages` payload to the file. To do so, we can use the following script:
+
+```sh
+#!/bin/bash
+
+# Replace the following URL with the LCD endpoint of the Initia L1 your Minitia is connected to
+url="https://lcd.initiation-1.initia.xyz/slinky/oracle/v1/get_all_tickers"
+headers="accept: application/json"
+
+# Perform the GET request and store the response
+response=$(curl -s -X GET "$url" -H "$headers")
+
+# Extract currency pairs from the response
+currency_pairs=$(echo "$response" | jq '.currency_pairs')
+
+# Construct the nessage template
+template=$(jq -n --argjson pairs "$currency_pairs" \
+  '{
+    "messages": [
+      {
+        "@type": "/slinky.oracle.v1.MsgAddCurrencyPairs",
+        "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
+        "currency_pairs": $pairs
+      }
+    ]
+  }')
+
+# Save the template to add-currency.json
+echo "$template" > add-currency.json
+```
+
+The required fields are:
+- `authority`: The address of the account that will be signing the transaction
+- `currency_pairs`: An array of currency pairs to be registered
+</Accordion>
+</AccordionGroup>

@@ -1,0 +1,81 @@
+---
+title: Converting Addresses between EVM and Cosmos
+---
+
+[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/address-conversion)
+
+## Prerequisites
+
+- [NodeJS](https://nodejs.org)
+
+## Project Setup
+
+First, we need to create a new directory for our project.
+
+```sh
+mkdir address-conversion
+cd address-conversion
+```
+
+Next, we will initialize the project and installed the `bech32-converting` package.
+
+```sh
+npm init
+npm install bech32-converting
+```
+
+We then create a new file called `index.js` in the `src` directory where we will write our code.
+
+<Note>
+You can use any package that allows you to encode and decode bech32-prefixed addresses. However, the specific steps for using those packages may vary.
+</Note>
+
+## Development
+
+For this tutorial, we will assume that we have an EVM address `0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636` that we want to convert to a Cosmos address, and then convert it back to an EVM address.
+
+First, we import the `bech32-converting` package and initialize the variable for the chain's Bech32 prefix.
+
+```js src/index.js
+const converter = require("bech32-converting")
+let bech32Address = "init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr";
+```
+
+### EVM Address to Cosmos Address
+
+To convert an EVM address to a Cosmos address, we will be using the `bech32-converting` package's `toHex` function.
+
+```js src/index.js
+const hexAddress = converter('init').toHex(bech32Address)
+console.log(hexAddress) // 0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636
+```
+
+### Cosmos Address to EVM Address
+
+To convert a Cosmos address to an EVM address, we will be using the `bech32-converting` package's `fromHex` function.
+
+```js src/index.js
+bech32Address = converter('init').toBech32(hexAddress)
+console.log(bech32Address) // init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr
+```
+
+The full code for the script is then as follows:
+
+```js src/index.js
+const converter = require("bech32-converting")
+
+let bech32Address = "init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr";
+
+const hexAddress = converter('init').toHex(bech32Address)
+console.log(hexAddress) // 0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636
+
+bech32Address = converter('init').toBech32(hexAddress)
+console.log(bech32Address) // init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr
+```
+
+If we run this script, we should see the following output:
+
+```sh
+0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636
+init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr
+```

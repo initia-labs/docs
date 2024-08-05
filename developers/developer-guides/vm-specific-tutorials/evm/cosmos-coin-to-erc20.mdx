@@ -1,0 +1,106 @@
+---
+title: Converting Coin Denoms Between EVM and Cosmos
+---
+
+[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/cosmos-coin-to-erc20)
+
+## Prerequisites
+
+- [NodeJS](https://nodejs.org)
+
+## Project Setup
+
+First, we need to create a new directory for our project.
+
+```sh
+mkdir cosmos-coin-to-erc20
+cd cosmos-coin-to-erc20
+```
+
+Next, we will initialize the project and create a `index.js` file in a `src` directory.
+
+```sh
+npm init
+touch src/index.js
+```
+
+## Development
+
+For this tutorial, we will assume that we have an ERC20 token address `0x5E5f1a92eECA58053E8364630b66763aa6265Ab0` that we want to convert to a Cosmos coin denom, and then convert it back to an ERC20 token address.
+
+First, we initialize the variable for the chain's LCD endpoint and the ERC20 token address.
+
+```js src/index.js
+const lcdUrl = `https://lcd.stoneevm-16.initia.xyz`;
+const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
+```
+
+### ERC20 to Cosmos Denom
+
+To actually do the conversion, we will be using the LCD's `/minievm/evm/v1/denoms/{contractAddress}` endpoint.
+
+```js src/index.js
+// previous code
+async function erc20ToCoinDenom(contractAddress) {
+  const response = await fetch(`${lcdUrl}/minievm/evm/v1/denoms/${contractAddress}`);
+  const data = await response.json();
+  return data;
+}
+```
+
+If the address is a valid ERC20 token address, the response just returns the token's Cosmos coin denom.
+
+```sh
+evm/5E5f1a92eECA58053E8364630b66763aa6265Ab0
+```
+
+### Cosmos Denom to ERC20 Address
+
+To convert a Cosmos coin denom back to an ERC20 token address, we will be using the LCD's `/minievm/evm/v1/contracts/by_denom?denom={denom}` endpoint.
+
+```js src/index.js
+// previous code
+async function coinDenomToErc20(denom) {
+  const response = await fetch(`${lcdUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
+  const data = await response.json();
+  return data;
+}
+```
+
+If the denom is a valid Cosmos coin denom, the response just returns the token's ERC20 token address.
+
+```sh
+0x5E5f1a92eECA58053E8364630b66763aa6265Ab0
+```
+
+The full code for the script, including the section to actually call the function is as follows:
+
+```js src/index.js
+const lcdUrl = `https://lcd.stoneevm-16.initia.xyz`;
+const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
+
+async function erc20ToCoinDenom(contractAddress) {
+  const response = await fetch(`${lcdUrl}/minievm/evm/v1/denoms/${contractAddress}`);
+  const data = await response.json();
+  return data;
+}
+async function coinDenomToErc20(denom) {
+  const response = await fetch(`${lcdUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
+  const data = await response.json();
+  return data;
+}
+
+(async () => {
+  const coinDenomResponse = await erc20ToCoinDenom(erc20Address);
+  console.log(coinDenomResponse.denom);
+  const erc20Response = await coinDenomToErc20(coinDenomResponse.denom);
+  console.log(erc20Response.address);
+})();
+```
+
+If we run this script, we should see the following output:
+
+```sh
+evm/5E5f1a92eECA58053E8364630b66763aa6265Ab0
+0x5E5f1a92eECA58053E8364630b66763aa6265Ab0
+```

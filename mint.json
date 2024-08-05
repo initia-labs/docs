@@ -95,6 +95,7 @@
             "home/getting-started/vested-interest-program/introduction",
             "home/getting-started/vested-interest-program/architecture",
             "home/getting-started/vested-interest-program/gauges",
+            "home/getting-started/vested-interest-program/timelines",
             "home/getting-started/vested-interest-program/scoring"
           ]
         }
@@ -115,6 +116,18 @@
                 "developers/full-architecture/opinit-stack/opinit-bots/output-submitter",
                 "developers/full-architecture/opinit-stack/opinit-bots/challenger",
                 "developers/full-architecture/opinit-stack/opinit-bots/batch-submitter"
+              ]
+            }
+          ]
+        },
+        {
+          "group":"Minitias",
+          "pages":[
+            {
+              "group": "MiniEVM",
+              "pages": [
+                "developers/full-architecture/minitias/minievm/introduction",
+                "developers/full-architecture/minitias/minievm/evm-compatability-and-changes"
               ]
             }
           ]
@@ -149,6 +162,17 @@
               ]
             }
           ]
+        },
+        "developers/deploying-minitias/ibc-relayers",
+        "developers/deploying-minitias/enabling-oracle-price-feeds",
+        {
+          "group": "Preparing for Launch",
+          "pages": [
+            "developers/deploying-minitias/preparing-for-launch/initia-registry",
+            "developers/deploying-minitias/preparing-for-launch/initiadex",
+            "developers/deploying-minitias/preparing-for-launch/vip",
+            "developers/deploying-minitias/preparing-for-launch/minitswap"
+          ]
         }
       ]
     },
@@ -161,7 +185,8 @@
             {
               "group":"EVM",
               "pages":[
-                "developers/developer-guides/vm-specific-tutorials/evm/introduction",
+                "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
+                "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
                 {
                   "group": "Creating ERC20s",
                   "pages": [
@@ -221,7 +246,8 @@
           "pages": [
             "developers/running-a-node/manual-setup/node-setup",
             "developers/running-a-node/manual-setup/node-configuration",
-            "developers/running-a-node/manual-setup/starting-the-node"
+            "developers/running-a-node/manual-setup/starting-the-node",
+            "developers/running-a-node/manual-setup/cosmovisor"
           ]
         },
         {

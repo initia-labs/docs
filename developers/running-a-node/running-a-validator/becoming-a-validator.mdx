@@ -45,6 +45,8 @@ initiad tx mstaking create-validator \\
 | `commission-max-rate`        | The maximum commission rate you can charge as a validator.                                                                                                                                                                                                 |
 | `commission-max-change-rate` | The maximum daily change in commission rate that is permissible for the validator.                                                                                                                                                                        |
 
+Once the message is submitted and successfully confirmed, your validator will be active and participating in the network.
+
 ## Checking Validator Activeness
 
 Finally, to check whether your validator is active, you can run the following command:
@@ -56,7 +58,7 @@ initiad query tendermint-validator-set | grep "$(initiad tendermint show-validat
 If the command returns something, your validator is in the active and is actively proposing and signing blocks.
 
 <Note>
-Only the top 130 validators in voting power are included in the active validator set. This means that even if you `CreateValidator` transaction passes, your validator might not be active until it has sufficient delegations.
+Only the top 130 validators in voting power are included in the active validator set. This means that even if you `CreateValidator` transaction passes, your validator might not be active until it has sufficient token delegations.
 </Note>
 
 ## Secure Your Validator Keys

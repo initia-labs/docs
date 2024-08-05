@@ -21,7 +21,7 @@ cd erc20-factory
 
 Next, we will initialize the project and install the Viem package.
 
-```sh npm
+```sh
 npm init
 npm install viem
 ```
@@ -31,7 +31,7 @@ We then create two directories:
 - `src`: For our contract source code
 - `abis`: For our contract [ABIs](https://docs.alchemy.com/docs/smart-contract-abi)
 
-```sh npm
+```sh
 mkdir src
 mkdir abis
 ```
@@ -46,7 +46,7 @@ To be able to interact with the MiniEVM via Viem, we need to create a chain conf
 
 Let's create a new file called `chain.js` in the `src` directory.
 
-```sh npm
+```sh
 touch src/chain.js
 ```
 
@@ -77,7 +77,7 @@ module.exports = miniEVM;
 
 Now that we have our chain configuration file, we can start writing the script to interact ERC20Factory contract. We will create a `index.js` in the `src` directory.
 
-```sh npm
+```sh
 touch src/index.js
 ```
 

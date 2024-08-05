@@ -3,3 +3,81 @@ title: ERC20ACL
 ---
 
 GitHub: [ERC20ACL](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20ACL.sol)
+
+## Overview
+
+The `ERC20ACL` contract provides access control mechanisms for ERC20 token operations. It includes modifiers to restrict certain actions based on conditions such as whether an address is a module address or a blocked address.
+
+## Constants
+
+### `CHAIN_ADDRESS`
+
+The address of the chain signer.
+
+```solidity
+address constant CHAIN_ADDRESS = 0x0000000000000000000000000000000000000001;
+```
+
+## Modifiers
+
+### `onlyChain`
+
+Restricts the function to be called only by the chain signer.
+
+```solidity
+modifier onlyChain() {
+    require(msg.sender == CHAIN_ADDRESS, "ERC20: caller is not the chain");
+    _;
+}
+```
+
+### `burnable`
+
+Restricts the function to ensure the sender is not a module address.
+
+```solidity
+modifier burnable(address from) {
+    require(!COSMOS_CONTRACT.is_module_address(from), "ERC20: burn from module address");
+    _;
+}
+```
+
+#### Parameters
+
+| Name    | Type      | Description                      |
+| ------- | --------- | -------------------------------- |
+| `from`  | `address` | The address to check             |
+
+### `mintable`
+
+Restricts the function to ensure the recipient is not a blocked address.
+
+```solidity
+modifier mintable(address to) {
+    require(!COSMOS_CONTRACT.is_blocked_address(to), "ERC20: mint to blocked address");
+    _;
+}
+```
+
+#### Parameters
+
+| Name    | Type      | Description                      |
+| ------- | --------- | -------------------------------- |
+| `to`    | `address` | The address to check             |
+
+### `transferable`
+
+Restricts the function to ensure the recipient is not a blocked address.
+
+```solidity
+modifier transferable(address to) {
+    require(!COSMOS_CONTRACT.is_blocked_address(to), "ERC20: transfer to blocked address");
+    _;
+}
+```
+
+#### Parameters
+
+| Name    | Type      | Description                      |
+| ------- | --------- | -------------------------------- |
+| `to`    | `address` | The address to check             |

@@ -2,7 +2,7 @@
 title: VIP Architecture
 ---
 
-At network genesis, a portion of the total INIT token supply will be set aside as rewards for the VIP program, which will be distributed over several years. Let's call this portion of the supply $R$. These rewards are given out at regular intervals, or **epoch** $t$, throughout the distribution period.
+At network genesis, a portion of the total INIT token supply will be set aside as rewards for the VIP program, which will be distributed over several years. Let's call this portion of the supply $R$. These rewards are given out at regular intervals, or **stage** $t$, throughout the distribution period.
 
 The total rewards are first distributed to each minitia, then subsequently to the minitia's users and operators.
 
@@ -12,9 +12,9 @@ Before a minitia can be eligible for VIP rewards, it must first be whitelisted b
 
 ## Rewards Distribution
 
-At each rewards distribution epoch $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each minitia ecosystem. The distribution is split into multiple steps:
+At each rewards distribution stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each minitia ecosystem. The distribution is split into multiple steps:
 
-1. Splitting the total rewards allocated for that epoch, $R_t$, between all whitelisted minitias.
+1. Splitting the total rewards allocated for that stage, $R_t$, between all whitelisted minitias.
 2. Distributing the rewards to each minitia's users.
 3. Distributing the rewards to each minitia's operators.
 
@@ -170,47 +170,47 @@ For instance, if $f$ is 0.5, a user with a score of 100 must maintain a score of
 
 #### Example Scenario
 
-- **Vesting Period ($p$)**: 50 epochs
+- **Vesting Period ($p$)**: 50 stages
 - **Minimum Score Factor ($f$)**: 0.5
 
-Epoch 1 ($t=1$)
+stage 1 ($t=1$)
 
 - **User Score**: 100
-- **esINIT Received for Epoch 1**: 100
-- **Vesting Rate**: 100 esINIT / 50 epochs = 2 INIT per epoch
+- **esINIT Received for stage 1**: 100
+- **Vesting Rate**: 100 esINIT / 50 stages = 2 INIT per stage
 
-Epoch 2 ($t=2$)
+stage 2 ($t=2$)
 
-- **Minimum Score Needed from Epoch 1**: 100 \* 0.5 = 50
+- **Minimum Score Needed from stage 1**: 100 \* 0.5 = 50
 - **User Score**: 60
-- **Vesting from Epoch 1**: Since 60 >= 50, the user vests the full 2 INIT
-- **Vesting Rate for Epoch 2**: 60 esINIT / 50 epochs = 1.2 INIT per epoch
-- **esINIT Received for Epoch 2**: 60
+- **Vesting from stage 1**: Since 60 >= 50, the user vests the full 2 INIT
+- **Vesting Rate for stage 2**: 60 esINIT / 50 stages = 1.2 INIT per stage
+- **esINIT Received for stage 2**: 60
 
-Epoch 3 ($t=3$)
+stage 3 ($t=3$)
 
-- **Minimum Score Needed from Epoch 1**: 100 \* 0.5 = 50
-- **Minimum Score Needed from Epoch 2**: 60 \* 0.5 = 30
+- **Minimum Score Needed from stage 1**: 100 \* 0.5 = 50
+- **Minimum Score Needed from stage 2**: 60 \* 0.5 = 30
 - **User Score**: 40
 
-- **Vesting from Epoch 1**: Since 40 < 50, the user vests (40/50) \* 2 = 1.6 INIT
-- **Vesting from Epoch 2**: Since 40 >= 30, the user vests the full 1.2 INIT
+- **Vesting from stage 1**: Since 40 < 50, the user vests (40/50) \* 2 = 1.6 INIT
+- **Vesting from stage 2**: Since 40 >= 30, the user vests the full 1.2 INIT
 
-- **Total Vesting for Epoch 3**: 1.6 INIT (from Epoch 1) + 1.2 INIT (from Epoch 2) = 2.8 INIT
+- **Total Vesting for stage 3**: 1.6 INIT (from stage 1) + 1.2 INIT (from stage 2) = 2.8 INIT
 
 Summary Table
 
-| Epoch | User Score | esINIT Received | Vesting Rate (per epoch) | Min Score Needed         | Actual Vesting       |
+| stage | User Score | esINIT Received | Vesting Rate (per stage) | Min Score Needed         | Actual Vesting       |
 | ----- | ---------- | --------------- | ------------------------ | ------------------------ | -------------------- |
 | 1     | 100        | 100             | 2 INIT                   | -                        | -                    |
-| 2     | 60         | 60              | 1.2 INIT                 | 50 (Epoch1)              | 2 INIT               |
-| 3     | 40         | -               | -                        | 50 (Epoch1), 30 (Epoch2) | 1.6 + 1.2 = 2.8 INIT |
+| 2     | 60         | 60              | 1.2 INIT                 | 50 (stage1)              | 2 INIT               |
+| 3     | 40         | -               | -                        | 50 (stage1), 30 (stage2) | 1.6 + 1.2 = 2.8 INIT |
 
 Explanation
 
-1. **Epoch 1**: The user scores 100 and receives 100 esINIT, which will be unlocked at a rate of 2 INIT per epoch over 50 epochs.
-2. **Epoch 2**: The user needs to score at least 50 to unlock the full 2 INIT from Epoch 1. They score 60, so they unlock the full 2 INIT and receive 60 esINIT for Epoch 2, which will be unlocked at a rate of 1.2 INIT per epoch.
-3. **Epoch 3**: The user needs to score at least 50 to unlock the full 2 INIT from Epoch 1 and at least 30 to unlock the full 1.2 INIT from Epoch 2. They score 40, so they unlock 1.6 INIT from Epoch 1 and the full 1.2 INIT from Epoch 2, totaling 2.8 INIT.
+1. **stage 1**: The user scores 100 and receives 100 esINIT, which will be unlocked at a rate of 2 INIT per stage over 50 stages.
+2. **stage 2**: The user needs to score at least 50 to unlock the full 2 INIT from stage 1. They score 60, so they unlock the full 2 INIT and receive 60 esINIT for stage 2, which will be unlocked at a rate of 1.2 INIT per stage.
+3. **stage 3**: The user needs to score at least 50 to unlock the full 2 INIT from stage 1 and at least 30 to unlock the full 1.2 INIT from stage 2. They score 40, so they unlock 1.6 INIT from stage 1 and the full 1.2 INIT from stage 2, totaling 2.8 INIT.
 
 #### Zapping into a Whitelisted LP Staking Position
 
