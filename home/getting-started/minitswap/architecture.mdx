@@ -71,16 +71,13 @@ The Direct Swap allows any user to directly exchange their $INIT$ tokens for the
 
 ### Parameters
 
-- **Max Ratio**: The Max Ratio, $R_{max}$, is a Initia L1 governance-controlled parameter that dictates the maximum pool ratio between IbcOpINIT and regular INIT:
+- **Max Ratio**: The Max Ratio, $R_{max}$, is a Initia L1 governance-controlled parameter that dictates the maximum pool ratio between IbcOpINIT and regular INIT
 
 - **Fully Recovered Ratio**: The Fully Recovered Ratio, $R_{fr}$ then uses the Max Ratio and the Flexibility to calculate the final target IbcOpINIT:INIT ratio for the pool. The ratio is calculated as follows
 
-{/* $$
+$$
 R_{fr}=0.5+(R_{max}-0.5) \cdot \frac{(fI)^3}{(1+|fI|^3)}
 $$
-
-In the graph below, we have the lower bound 0.5 in green, and a <Tooltip tip={MaxRatio}>max ratio</Tooltip>, $R_\text{max}$, of 0.7. We get the purple and red curves when we let <Tooltip tip={Flexibility}>flexibility</Tooltip>, $f$, be 2 and 0.5 respectively.
-![Untitled](https://hackmd.io/_uploads/B1BbFej8R.png) */}
 
 ### Mechanisms
 
