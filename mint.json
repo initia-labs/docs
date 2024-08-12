@@ -106,11 +106,11 @@
       "pages": [
         "developers/full-architecture/introduction",
         {
-          "group": "OPInit Stack",
+          "group": "OPinit Stack",
           "pages": [
             "developers/full-architecture/opinit-stack/introduction",
             {
-              "group":"OPInit Bots",
+              "group":"OPinit Bots",
               "pages":[
                 "developers/full-architecture/opinit-stack/opinit-bots/bridge-executor",
                 "developers/full-architecture/opinit-stack/opinit-bots/output-submitter",
@@ -127,9 +127,17 @@
               "group": "MiniEVM",
               "pages": [
                 "developers/full-architecture/minitias/minievm/introduction",
-                "developers/full-architecture/minitias/minievm/evm-compatability-and-changes"
+                "developers/full-architecture/minitias/minievm/evm-compatibility-and-changes"
               ]
             }
+          ]
+        },
+        {
+          "group": "Design Rationale",
+          "pages": [
+            "developers/full-architecture/design-rationale/opinit-bridge",
+            "developers/full-architecture/design-rationale/movevm",
+            "developers/full-architecture/design-rationale/initia-evm"
           ]
         }
       ]
@@ -147,7 +155,7 @@
           ]
         },
         {
-          "group": "Running OPInit Bots",
+          "group": "Running OPinit Bots",
           "pages": [
             "developers/deploying-minitias/opinit-bots/introduction",
             "developers/deploying-minitias/opinit-bots/bridge-executor",
@@ -193,6 +201,15 @@
                     "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
                     "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
                   ] 
+                },
+                {
+                  "group": "API Endpoints",
+                  "pages": [
+                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-collections-by-account",
+                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-collection-details",
+                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-tokens-by-collection",
+                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-tokens-by-account"
+                  ]
                 },
                 "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles"
               ]
