@@ -68,7 +68,7 @@
       "pages": ["home/general/introduction"]
     },
     {
-      "group": "Core C",
+      "group": "Core Concepts",
       "pages": [
         {
           "group": "Initia & Minitias",
