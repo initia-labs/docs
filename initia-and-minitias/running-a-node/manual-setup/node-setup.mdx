@@ -1,0 +1,113 @@
+---
+title: Node Setup
+---
+
+## Install and Update Required Packages
+
+```sh
+sudo apt-get update && \
+sudo apt-get upgrade -y && \
+sudo apt-get install -y build-essential curl wget jq
+```
+
+## Install the Initia Daemon
+
+Then, we need to clone the Initia repository and checkout the latest or desired version.
+
+```sh
+git clone https://github.com/initia-labs/initia
+cd initia
+git checkout [version]
+```
+
+Once we have the correct version, we can build the binary. This will install the `initiad` executable to your `GOPATH` environment variable.
+
+```sh
+make install
+```
+
+To verify that the installation was successful, run the following command:
+
+
+```sh
+initiad version --long
+```
+
+If installed correctly, this should give you an output similar to the following:
+
+```sh
+name: initia
+server_name: initiad
+version: v0.1.0-beta.14-3-gfb27858
+commit: fb278587666dde8ae2d46c51a9f8a760c8d0c3c2
+build_tags: netgo,ledger
+go: go version go1.20.1 darwin/amd64
+build_deps:
+- cosmossdk.io/api@v0.2.6
+- cosmossdk.io/core@v0.5.1
+```
+
+<Tip>
+If you get a `initiad: command not found` message from running `initiad`, you may need to add the `GOPATH/bin` directory to your `PATH` environment variable.
+
+```sh
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+</Tip>
+
+## Increases File Descriptors Limit
+
+Linux systems by default set the maximum number of file descriptors that can be opened by a process to 1024. It is recomemneded that you increase this amount.
+
+To do so, modify `/etc/security/limits.conf` to increase the amount. The `nofile` is the number of files a process may open at a time.
+
+<Tip>
+If you are using a non-root user, replace `*` with the username of the user.
+</Tip>
+
+```sh limits.conf
+* soft nofile 65535
+* hard nofile 65535
+```
+
+## Register Initia as a Service
+
+While you can run your initia node manually, it is recomemnded that you register it as a Linux service. This will allow you to more easily manage your node and also to run it as a background process.
+
+To do so, create a file at `/etc/systemd/system/initiad.service` with the contents below. replace
+
+- **User:** with the accout name that you will be running `initiad` from
+- **ExecStart:** with the full path to the `initiad` binary + `start` command
+
+```sh initiad.service
+[Unit]
+Description=initiad
+
+[Service]
+Type=simple
+User=ubuntu
+ExecStart=/usr/bin/initiad start
+Restart=on-abort
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=initiad
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Once the file is created, run the following command to enable the service and start it:
+
+```sh
+sudo systemctl enable initiad
+```
+
+<Note>
+Whenever you modify the `initiad.service` file after you enabled it, you need to run the following commands first before the changes are applied
+
+```sh
+systemctl daemon-reload
+systemctl restart initiad
+```
+</Note>

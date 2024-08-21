@@ -12,7 +12,7 @@ export const OpINIT = "The variation of the INIT tokens bridged directly from th
 export const IbcOpINIT = "The variation of the INIT token that was bridged from Initia L1 to the Minitia m through OP Bridge, then subsequently back to the L1 through IBC"
 
 export const IBCBridge = "The Inter-Blockchain Communication Protocol used as a bridging solution between Minitias. Bridging in both directions is instantaneous."
-export const OPInitBridge = "Initia's implementation of an optimistic bridge to be used as the primary bridge between the Initia L1 and all Minitias. Deposits into Minitias are instantaneous, but withdrawals have a waiting period."
+export const OPinitBridge = "Initia's implementation of an optimistic bridge to be used as the primary bridge between the Initia L1 and all Minitias. Deposits into Minitias are instantaneous, but withdrawals have a waiting period."
 
 export const VirtualPool = "The liquidity pool used to facilitate the swaps. Initially, the pool starts at a size V, with a virtual IbcOpINIT balance of V and a virtual INIT balance of V. The exchange rate for swaps through the pool is determined by the StableSwap formula. The Virtual Pool does not allow the amount of IbcOpINIT tokens to be less than V because, in such cases, it is more economical for the user to use the OP Bridge directly."
 export const LiquidityProvider = "A user that provides INIT token liquidity to the Minitswap DEX. Unlike conventional DEXes, Minitswap only allows for single-sided INIT token deposits."

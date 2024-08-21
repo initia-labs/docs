@@ -1,0 +1,15 @@
+---
+title: Architecture
+---
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Node
+    participant Sequencer
+
+    User ->> Node: Submit Transaction
+    Node ->> Sequencer: Gossip Transaction
+    Sequencer ->> Node: Transaction Processed & Result
+    Node -->> User: Transaction Result
+```

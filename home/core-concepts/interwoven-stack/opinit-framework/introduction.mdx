@@ -1,0 +1,46 @@
+---
+title: OPinit Framework
+---
+
+The OPinit Framework is the Interwoven Stack's solution for building rollups with ease. Implemented as a set of Cosmos SDK modules and services, it enables Minitias to connect seamlessly with the Initia L1 network using an [optimistic rollup](https://ethereum.org/en/developers/docs/scaling/optimistic-rollups/) model.
+
+## Key Features
+
+The OPinit Framework offers:
+
+1. An optimistic token bridge with a challenge period
+2. Submission of outputs to the L1 chain for Minitia state finalization
+3. Transaction batch submissions to [Celestia](https://celestia.org/)'s [Data Availability](https://docs.celestia.org/learn/how-celestia-works/data-availability-layer) layer
+
+## Benefits
+
+While both Initia L1 and Minitias are Cosmos SDK chains with native IBC support, the OPinit Framework offers several advantages over using IBC alone for rollup communication:
+
+### Enhanced Security Through Enforced Withdrawal Period
+
+Initia's Minitia rollups typically operate with a single sequencer, which, while efficient, can pose security risks. Malicious or compromised Minitias can manipulate the rollup state and token balances, in turn allowing them to steal or bridge out fake or stolen assets and transfer them to other chains before detection  . Once the funds are bridged out, reversing the action becomes extremely difficult.
+
+The OPinit Bridge mitigates these risks by implementing:
+
+- A 7-day finalization period for withdrawals
+- A challenge feature to detect and prevent malicious activities
+
+This approach provides a crucial safeguard against potential exploits, allowing time for:
+- Detection of malicious activity
+- Rolling back the L2 chain if necessary
+- Cancellation of suspicious withdrawal requests
+
+### Reduced Maintenance and Upkeep
+
+The OPinit Bridge offers streamlined maintenance compared to IBC:
+
+- Focused feature set tailored to the Initia ecosystem
+- Fewer security patches and updates required
+- Simplified verification and security measures
+
+### Complementary to IBC
+
+While the OPinit Bridge serves as the primary communication channel between Minitias and Initia L1, it doesn't replace IBC entirely:
+
+- Minitias can still use IBC for connections to other Cosmos SDK chains
+- [Minitswap](/home/core-concepts/minitswap/introduction.mdx) leverages IBC to enhance user experience, particularly in mitigating issues related to optimistic bridge withdrawal periods

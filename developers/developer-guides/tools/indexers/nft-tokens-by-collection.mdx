@@ -1,0 +1,10 @@
+---
+title: NFT Tokens by Collection
+api: GET https://lcd.stoneevm-16.initia.xyz/indexer/nft/v1/tokens/by_collection/{collection_addr}
+---
+
+This endpoint returns all the ERC721 NFT tokens within a specific collection.
+
+<ParamField path="collection_addr" type="string" required="true">
+  The address of the NFT collection to retrieve tokens from
+</ParamField>

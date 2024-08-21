@@ -1,0 +1,42 @@
+---
+title: Introduction
+---
+
+As both the Initia L1 and Minitia variants are Cosmos SDK chains, they come with IBC support by default. While it is straightforward for the Initia L1 and Minitias to communicate and facilitate token transfers through IBC, there are some issues and limitations when using IBC with rollups. To address these challenges, we designed the **OPinit Framework**.
+
+## What is the OPinit Framework?
+
+The OPinit Framework is a comprehensive solution consisting of Cosmos SDK modules and bots that enable Minitia networks to connect with the Initia L1 network using an optimistic rollup model. This framework provides essential features for the rollup:
+
+- Optimistic token bridge with a challenge period
+- L1 state finalization through output submission
+- Transaction batch submission to Celestia's Data Availability layer
+
+## Key Benefits of the OPinit Framework
+
+### Enhanced Security through Enforced Withdrawal Period
+
+Minitia rollups, typically operated by a single sequencer, lack the native security of traditional Layer 1 blockchains. This model, while offering benefits, introduces significant risks if not properly managed. The OPinit Bridge addresses this vulnerability by implementing:
+
+- A 7-day finalization period for withdrawals
+- A challenge feature to detect and prevent malicious activities
+- Time buffer for detecting compromises and rolling back the L2 chain if necessary
+
+This approach significantly reduces the risk of quick exploitation and asset theft, providing a crucial security layer for the Initia ecosystem.
+
+### Reduced Maintenance and Upkeep
+
+Compared to IBC, the OPinit Bridge offers:
+
+- Lower maintenance requirements
+- Fewer security patches
+- Tailored functionality specific to the Initia ecosystem
+
+By focusing on essential features, we can ensure a more streamlined and efficient bridging solution.
+
+### Flexibility: Combining IBC and OPinit Bridge
+
+While the OPinit Bridge serves as the primary communication channel between Minitias and Initia L1, the framework maintains compatibility with IBC:
+
+- Minitias can still utilize IBC for connecting to other Cosmos SDK chains
+- [Minitswap](/home/core-concepts/minitswap/introduction.mdx) leverages IBC to enhance user experience, mitigating issues related to optimistic bridge withdrawal periods

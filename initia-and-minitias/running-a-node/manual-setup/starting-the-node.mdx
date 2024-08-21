@@ -1,0 +1,32 @@
+---
+title: Starting the Node
+---
+
+## Running the Initia Node
+
+Once everything is set up, you can now start to run the Initia node
+
+```sh
+systemctl start initiad
+```
+
+Once the process is up and running, you can inspect the logs by using the `journalctl` command.
+
+```sh
+journalctl -f -u initiad.service
+```
+
+## Syncing Historical Blocks
+
+When running nodes for networks that are already live, you first need to sync and process the historical chain data. This can be done in a few main ways; snapshot syncing and StateSync
+
+<Tabs>  
+  <Tab title="Snapshots">
+    A chain snapshot sync works by downloading the entire state of the chain at a certain height and then running the node off of that states. Nodes that uses snapshos usually have more historical transaction and block data compared to nodes that use StateSync. However, in exchange, snapshot syncing is typically much slower due to more information required to be downloaded.
+  </Tab>
+  <Tab title="StateSync">
+  A StateSync works by directly downloading the application state from other nodes in the network. Unlike syncing from a snapshot, StateSync focuses on the downloading the processing the current state of the chain, ignoring historical transactions and block. However, in exchange for this, state-syncing is typically much faster
+  </Tab>
+</Tabs>
+
+Information regarding Snapshot and StateSync provider for Initia can be found in the [Networks page](/resources/developer/networks).
