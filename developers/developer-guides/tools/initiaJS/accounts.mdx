@@ -1,0 +1,18 @@
+---
+title: Creating Accounts
+---
+
+Create an account either through `initia.js`.
+
+```typescript
+import { MnemonicKey } from '@initia/initia.js'
+
+const key = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar', // (optional) if undefined, generate a new Mnemonic key
+    account: 0,    // (optional) BIP44 account number. default = 0
+    index: 0,      // (optional) BIP44 index number. defualt = 0
+    coinType: 118, // (optional) BIP44 coinType. default = 118
+})
+```
+
+

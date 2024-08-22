@@ -1,0 +1,130 @@
+---
+title: Messages
+---
+
+Msgs are objects whose end-goal is to trigger state-transitions. They are wrapped in transaction, which may contain one or more of them.
+
+
+# Generic Messages
+
+- `MsgSend()`: send coins to other address
+```typescript
+const msg = new MsgSend(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu',   // sender address
+    'init18sj3x80fdjc6gzfvwl7lf8sxcvuvqjpvcmp6np',   // recipient address
+    '1000uinit'                                      // send amount
+)
+```
+
+- `MsgDelegate()`: delegate governance coin to validators (staking)
+```typescript
+const msg = new MsgDelegate(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // delegator address
+    'init18sj3x80fdjc6gzfvwl7lf8sxcvuvqjpvcmp6np', // validator's operator addres
+    '100000uinit',                                 // delegate amount
+)
+```
+
+# VM-specific Messages
+
+{/* TODO: Move these example to vm-specific tutorials and link them */}
+
+## MoveVM
+- `MsgExecute()`: execute move contract entry functions
+
+```typescript
+const msg = new MsgExecute(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // sender address
+    '0x1',                                         // module owner address
+    'dex',                                         // module name
+    'swap_script',                                 // function name
+    [],                                            // type arguments
+    [
+        bcs.address().serialize('0x2').toBase64(), // arguments, BCS-encoded
+        bcs.address().serialize('0x3').toBase64(), // arguments, BCS-encoded
+        bcs.u64().serialize(10000).toBase64()      // arguments, BCS-encoded
+    ], 
+)
+```
+
+## WasmVM
+- `MsgStoreCode()`:
+```typescript
+const wasmByteCode = fs
+      .readFileSync('./wasm-modules/miniwasm/example.wasm') // path of wasm file
+      .toString('base64'),
+
+const msg = new MsgStoreCode(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // sender address
+    wasmByteCode,                                  // raw or gzip compressed wasm bytecode
+    undefined                                      // instantiate permission (optional)
+  )
+```
+
+- `MsgInstantiateContract()`:
+```typescript
+const instantiateMsg = Buffer.from(JSON.stringify({ init_list: ['init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu'] })).toString('base64')
+
+const msg = new MsgInstantiateContract(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // sender address
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // admin address
+    9,                                             // code id
+    'example',                                     // label
+    instantiateMsg,                                // instantiate msg
+    new Coins(),                                   // init funds
+  )
+```
+
+- `MsgExecuteContract()`:
+```typescript
+const jsonEncodedMsg = Buffer.from(
+      JSON.stringify({
+        prepare_point: {
+          stage: 1,
+        },
+      })
+    ).toString('base64')
+
+const msg = new MsgExecuteContract(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu',                     // sender address
+    'init1jue5rlc9dkurt3etr57duutqu7prchqrk2mes2227m52kkrual3qdrydg6', // contract address
+    jsonEncodedMsg,                                                    // json encoded input msg
+    new Coins()                                                        // coins transferred to the contract on execution
+  ),
+```
+
+## EVM
+- `MsgCreate()`:
+```typescript
+const contractInfo = JSON.parse(
+  fs
+    .readFileSync(
+      '../solidity/evm-example/artifacts/contracts/example.sol/example.json' // path of build response
+    )
+    .toString()
+);
+
+const msg = new MsgCreate(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu', // sender address
+    contractInfo.bytecode.slice(2)                 // hex encoded raw contract bytes code
+),
+```
+
+- `MsgCall()`: execute EVM contract functions
+```typescript
+const contractAddress = '0x1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu'
+const contractInfo = JSON.parse(
+  fs
+    .readFileSync(
+      '../solidity/evm-example/artifacts/contracts/example.sol/example.json' // path of build response
+    )
+    .toString()
+);
+const contract = new ethers.Contract(contractAddress, contractInfo.abi)
+
+const msg = new MsgCall(
+    'init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu',                      // sender address
+    contractAddress,                                                    // contract address
+    contract.interface.encodeFunctionData('preparePoint', [2]).slice(2) // hex encoded execution input bytes
+  )
+```

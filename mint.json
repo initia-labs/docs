@@ -272,6 +272,15 @@
                   ]
                 }
               ]
+            },
+            {
+              "group": "initiaJS",
+              "pages": [
+                "developers/developer-guides/tools/initiaJS/accounts",
+                "developers/developer-guides/tools/initiaJS/fetching-data",
+                "developers/developer-guides/tools/initiaJS/messages",
+                "developers/developer-guides/tools/initiaJS/transactions"
+              ]
             }
           ]
         },
@@ -410,6 +419,5 @@
   },
   "api": {
     "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
-  },
-  "openapi": "https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
+  }
 }

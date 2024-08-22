@@ -1,0 +1,38 @@
+---
+title: Transactions
+---
+
+Transactions allow you to change on-chain data or trigger events.
+
+# TxBroadcasting
+
+- `createAndSignTx()`: create and sign transaction
+
+```typescript
+import { Wallet, LCDClient, MnemonicKey } from '@initia/initia.js'
+
+const key = new MnemonicKey({ mnemonic: 'moral wise ... repair coyote' })
+const lcd = new LCDClient('https://lcd.[chain-id].initia.xyz')
+const wallet = new Wallet(lcd, key)
+
+const sendMsg = new MsgSend(
+    'init14l3c2vxrdvu6y0sqykppey930s4kufsvt97aeu',   // sender address
+    'init18sj3x80fdjc6gzfvwl7lf8sxcvuvqjpvcmp6np',   // recipient address
+    '1000uinit',                                     // send amount
+)
+
+const signedTx = await wallet.createAndSignTx({
+    msgs: [sendMsg],
+    memo: 'sample memo',
+})
+```
+
+- `estimateFee()`: simulate the transaction and estimate the gas
+```typescript
+const fee = await lcd.tx.estimateFee(signedTx)
+```
+
+- `broadcast()`: send/broadcast your transaction to the blockchain
+```typescript
+const broadcastResult = await lcd.tx.broadcast(signedTx)
+```
