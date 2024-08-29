@@ -1,0 +1,7 @@
+---
+title: Move IBC hooks
+---
+
+
+The Wasm hook is an IBC middleware which is used to allow ICS20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of usecases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
+The mechanism enabling this is a memo field on every ICS20 or ICS721 transfer packet as of IBC v3.4.0. Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a wasm contract call. We now detail the memo format for wasm contract calls, and the execution guarantees provided.

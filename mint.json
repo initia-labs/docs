@@ -224,11 +224,17 @@
             },
             {
               "group": "MoveVM",
-              "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles"]
+              "pages": [
+                "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles",
+                "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+              ]
             },
             {
               "group": "WasmVM",
-              "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles"]
+              "pages": [
+                "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles",
+                "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+              ]
             }
           ]
         },
@@ -419,5 +425,6 @@
   },
   "api": {
     "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
-  }
+  },
+  "openapi":"https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
 }
