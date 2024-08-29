@@ -2,76 +2,15 @@
 title: Minitia (Layer 2)
 ---
 
+<Tip>
+For a more technical overview of Minitias and its architecture, please refer to the [Technical Architecture](/home/technical-architecture/minitias/introduction) section.
+</Tip>
+
 ## Overview
 
-Minitias are Initia's high-performance, customizable rollup chains. They provide a secure, scalable, and user-friendly environment for a wide range of applications and use cases. The integrated technology stack of Minitias ensures a seamless and efficient experience for both developers and users.
+Minitias are Initia's high-performance, customizable rollup chains. Leveraging the Initia L1 for security, interoperability, incentives, and more, Minitias offer a secure, scalable, and user-friendly environment for a wide range of applications and use cases. With Minitias, rollup developers and teams can benefit from:
 
-## Benefits
-
-<Frame type="glass" caption="Minitia Tech Stack">
-  ![minitia stack](/images/minitia-stack.avif)
-</Frame>
-
-### Enhanced Security
-
-Minitias leverage Initia L1 for critical security functions:
-- Governance
-- Transaction finalization
-- Fraud prevention
-
-This approach ensures robust security without the need for separate infrastructure.
-
-### Multi-VM Support
-
-Minitia architecture supports multiple virtual machines:
-- [EVM](https://ethereum.org/en/developers/docs/evm/) ([MiniEVM](/initia-and-minitias/technical-architecture/minitias/vms/minievm/introduction))
-- [MoveVM](https://aptos.dev/en/network/blockchain/move) ([MiniMove](/initia-and-minitias/technical-architecture/minitias/vms/minimove/introduction))
-- [WasmVM](https://cosmwasm.com) ([MiniWasm](/initia-and-minitias/technical-architecture/minitias/vms/miniwasm/introduction))
-
-Developers can choose the VM that best suits their project requirements.
-
-### Scalability
-
-Minitia rollups framework enhances the Cosmos SDK to deliver:
-- High-performance transaction processing
-- Secure smart contract execution
-- 500ms block times for responsive user experience
-- Elastic block times to optimize resource consumption during off-peak periods
-
-### Interoperability
-
-Minitias offer seamless integration with various blockchain ecosystems:
-- [IBC Protocol](https://www.ibcprotocol.dev) for Cosmos SDK chain bridging
-- Automatic integration with [LayerZero](https://layerzero.network/)
-- Support for USDC's [CCTP](https://www.circle.com/en/cross-chain-transfer-protocol)
-
-### Native Integration
-
-<Frame type="glass" caption="Minitia Out-of-the-Box Solutions">
-  ![minitia solutions](/images/minitia-solutions.avif)
-</Frame>
-
-Minitias come with a suite of pre-integrated solutions:
-
-- **Initia Product Suite:**
-  - Initia App
-  - Initia Wallet
-  - Initia Usernames
-  - Initia Scan
-
-- **Financial Infrastructure:**
-  - Native USDC through [Noble](https://nobleassets.xyz)
-  - Fiat on-ramps via [Kado](https://kado.money)
-
-- **Advanced Block Management:**
-  - [Skip](https://skip.money)'s [Block SDK](https://skip-protocol-docs.netlify.app/blocksdk/overview/) for programmable mempools and blocks
-
-### Aligned Incentives
-
-Qualified Minitias can receive a portion of the total INIT supply, promoting:
-- User engagement in key actions beneficial to the application
-- Long-term alignment with the Initia ecosystem
-
-## The Interwoven Stack
-
-The combination of Initia L1, Minitia framework, and various Initia products and services forms the [**Interwoven Stack**](/home/core-concepts/interwoven-stack).
+- **High Customizability:** Developers and teams building on Minitias can easily customize various aspects of the Minitia, such as the virtual machine, gas token configuration, and more.
+- **Fastest Time-to-Market:** Traditionally, deploying a rollup involves much more than just deploying the rollup itself. Teams needs to spend time and efforts on building, choosing, and  integrating peripheral services and products like wallets, explorers, bridges, and more. Through the Interwoven Stack, Minitia developers already have access to all these services and products out of the box.
+- **Natively Interoperable:** All Minitias are natively supported and integrated into various major bridging and interoperability protocols, including OPinit, IBC, CCTP, and LayerZero. This ensure that Minitias can easily connect and interact with other blockchain ecosystems and protocols.
+- **Enhanced Security:** Minitias inherently leverages the Initia L1 and its validator set for security. Through integration with Celestia DA layer, anyone can also leverage the data posted to the DA layer to verify the validity of rollup transactions.
