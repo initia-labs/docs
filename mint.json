@@ -219,7 +219,8 @@
                     "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-tokens-by-account"
                   ]
                 },
-                "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles"
+                "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+                "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
               ]
             },
             {

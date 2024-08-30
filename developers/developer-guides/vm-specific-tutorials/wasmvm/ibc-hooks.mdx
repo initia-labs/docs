@@ -3,11 +3,11 @@ title: WasmVM IBC hooks
 ---
 
 The Wasm hook is an IBC middleware which is used to allow ICS20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of usecases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
-The mechanism enabling this is a memo field on every ICS20 or ICS721 transfer packet as of IBC v3.4.0. Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a wasm contract call. We now detail the memo format for wasm contract calls, and the execution guarantees provided.
+The mechanism enabling this is a `memo` field on every ICS20 or ICS721 transfer packet as of [IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b). Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a wasm contract call. We now detail the memo format for wasm contract calls, and the execution guarantees provided.
 
 # Cosmwasm Contract Execution Format
 
-Before we dive into the IBC metadata format, we show the CosmWasm execute message format, so the reader has a sense of what are the fields we need to be setting in. The CosmWasm MsgExecuteContract is defined here as the following type:
+Before we dive into the IBC metadata format, we show the CosmWasm execute message format, so the reader has a sense of what are the fields we need to be setting in. The CosmWasm `MsgExecuteContract` is defined [here](https://github.com/CosmWasm/wasmd/blob/4fe2fbc8f322efdaf187e2e5c99ce32fd1df06f0/x/wasm/types/tx.pb.go#L340-L349) as the following type:
 
 ```go
 // HookData defines a wrapper for wasm execute message
@@ -40,8 +40,7 @@ So we detail where we want to get each of these fields from:
 - `Msg`: This field should be directly obtained from the ICS-20 packet metadata.
 - `Funds`: This field is set to the amount of funds being sent over in the ICS 20 packet. One detail is that the denom in the packet is the counterparty chains representation of the denom, so we have to translate it to Osmosis' representation.
 
-Due to a bug in the packet forward middleware, we cannot trust the sender from chains that use PFM. Until that is fixed, we recommend chains to not trust the sender on contracts executed via IBC hooks.
-So our constructed CosmWasm message that we execute will look like:
+<Hint>Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the packet forward middleware, we cannot trust the sender from chains that use PFM. Until that is fixed, we recommend chains to not trust the sender on contracts executed via IBC hooks.</Hint>
 
 ```go
 msg := MsgExecuteContract{
@@ -85,18 +84,18 @@ So given the details above, we propagate the implied ICS20 packet data structure
 
 An ICS20 packet is formatted correctly for wasmhooks iff the following all hold:
 
-- [x] memo is not blank
-- [x] memo is valid JSON
-- [x] memo has at least one key, with value "wasm"
-- [x] memo["wasm"]["message"] has exactly two entries, "contract", "msg" and "fund"
-- [x] memo["wasm"]["message"]["msg"] is a valid JSON object
-- [x] receiver == "" || receiver == memo["wasm"]["contract"]
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with value `"wasm"`
+- [x] `memo["wasm"]["message"]` has exactly two entries, `"contract"`, `"msg"` and `"fund"`
+- [x] `memo["wasm"]["message"]["msg"]` is a valid JSON object
+- [x] `receiver` == "" || `receiver` == `memo["wasm"]["contract"]`
 
 We consider an ICS20 packet as directed towards wasmhooks iff all of the following hold:
 
-- [x] memo is not blank
-- [x] memo is valid JSON
-- [x] memo has at least one key, with name "wasm"
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with name `"wasm"`
 
 If an ICS20 packet is not directed towards wasmhooks, wasmhooks doesn't do anything. If an ICS20 packet is directed towards wasmhooks, and is formatted incorrectly, then wasmhooks returns an error.
 
@@ -218,7 +217,9 @@ pub fn simple_transfer(
 
 ## Step 2. Update IBC hook ACL for the contract
 
-If you want to update MiniWasm ACL, you need to use `MsgExecuteMessages` in OPchild module.
+IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
+So, we need to set the ACL for the contract to prevent unauthorized access.
+To update MiniWasm ACL, you need to use `MsgExecuteMessages` in OPchild module.
 
 ```typescript
 const aclMsg = new MsgUpdateACL(

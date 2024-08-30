@@ -3,7 +3,7 @@ title: Move IBC hooks
 ---
 
 The Move hook is an IBC middleware which is used to allow ICS-20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of use cases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
-The mechanism enabling this is a memo field on every ICS20 and ICS721 transfer packet as of IBC v3.4.0. Move hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a Move contract call. We now detail the memo format for Move contract calls, and the execution guarantees provided.
+The mechanism enabling this is a `memo` field on every ICS20 and ICS721 transfer packet as of IBC v3.4.0. Move hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a Move contract call. We now detail the memo format for Move contract calls, and the execution guarantees provided.
 
 # Move Contract Execution Format
 
@@ -117,18 +117,17 @@ So given the details above, we propagate the implied ICS20 packet data structure
 
 An ICS20 packet is formatted correctly for movehooks if the following all hold:
 
-
-- [x] memo is not blank
-- [x] memo is valid JSON
-- [x] memo has at least one key, with value "move"
-- [x] memo["move"]["message"] has exactly five entries, "module_address", "module_name", "function_name", "type_args" and "args"
-- [x] receiver == "" || receiver == "module_address::module_name::function_name"
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with value `"move"`
+- [x] `memo["move"]["message"]` has exactly five entries, `"module_address"`, `"module_name"`, `"function_name"`, `"type_args"` and `"args"`
+- [x] `receiver` == "" || `receiver` == `"module_address::module_name::function_name"`
 
 We consider an ICS20 packet as directed towards movehooks if all of the following hold:
 
-- [x] memo is not blank
-- [x] memo is valid JSON
-- [x] memo has at least one key, with name "move"
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with name "move"
 
 If an ICS20 packet is not directed towards movehooks, movehooks doesn't do anything. If an ICS20 packet is directed towards movehooks, and is formatted incorrectly, then movehooks returns an error.
 
@@ -173,9 +172,9 @@ public entry fun ibc_timeout(
 
 Also when a contract make IBC transfer request, it should provide async callback data through memo field.
 
-- memo['move']['async_callback']['id']: the async callback id is assigned from the contract. so later it will be passed as argument of ibc_ack and ibc_timeout.
-- memo['move']['async_callback']['module_address']: The address of module which defines the callback function.
-- memo['move']['async_callback']['module_name']: The name of module which defines the callback function.
+- `memo['move']['async_callback']['id']`: the async callback id is assigned from the contract. so later it will be passed as argument of ibc_ack and ibc_timeout.
+- `memo['move']['async_callback']['module_address']`: The address of module which defines the callback function.
+- `memo['move']['async_callback']['module_name']`: The name of module which defines the callback function.
 
 # Tutorials
 
