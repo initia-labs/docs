@@ -48,7 +48,7 @@ const msg = new MsgExecute(
 ```
 
 ## WasmVM
-- `MsgStoreCode()`:
+- `MsgStoreCode()`: store wasm contract code
 ```typescript
 const wasmByteCode = fs
       .readFileSync('./wasm-modules/miniwasm/example.wasm') // path of wasm file
@@ -61,7 +61,7 @@ const msg = new MsgStoreCode(
   )
 ```
 
-- `MsgInstantiateContract()`:
+- `MsgInstantiateContract()`: instantiate wasm contract
 ```typescript
 const instantiateMsg = Buffer.from(JSON.stringify({ init_list: ['init1kdwzpz3wzvpdj90gtga4fw5zm9tk4cyrgnjauu'] })).toString('base64')
 
@@ -75,7 +75,7 @@ const msg = new MsgInstantiateContract(
   )
 ```
 
-- `MsgExecuteContract()`:
+- `MsgExecuteContract()`: execute wasm contract functions
 ```typescript
 const jsonEncodedMsg = Buffer.from(
       JSON.stringify({
@@ -94,7 +94,7 @@ const msg = new MsgExecuteContract(
 ```
 
 ## EVM
-- `MsgCreate()`:
+- `MsgCreate()`: create EVM contract code
 ```typescript
 const contractInfo = JSON.parse(
   fs
