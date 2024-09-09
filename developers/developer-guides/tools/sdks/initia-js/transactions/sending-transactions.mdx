@@ -1,10 +1,6 @@
 ---
-title: Transactions
+title: Sending Transactions
 ---
-
-InitiaJS also provides a `Wallet` class that simplifies the process of creating, signing, and broadcasting transactions. This section will provide examples on how to use do each of these actions.
-
-## Sending Transactions
 
 Sending transactions using InitiaJS is straightforward. First, we need to import the necessary classes and functions.
 
@@ -34,7 +30,7 @@ const amount = process.env.AMOUNT || '1000uinit';
 We can then use the use these variables to ultimately create the `wallet` client, as well as the `sendMsg` object. Since for this example we're making a token transfer, we'll use the `MsgSend` object. But the SDK provides many other message types for different actions related to staking, governance, and more.
 
 ```ts
-const key: MnemonicKey = new MnemonicKey({ mnemonic });
+const key: MnemonicKey = new MnemonicKey({ mnemonic }); // Create a key from the mnemonic
 const lcd: LCDClient = new LCDClient(lcdUrl, { gasPrices });
 const wallet: Wallet = new Wallet(lcd, key);
 
@@ -77,7 +73,7 @@ sendTransaction()
   .catch(() => process.exit(1));
 ```
 
-If you then run the script using `npx ts-node src/transactions.ts`, you should see an output similar to the following:
+If you then run the script using `npx ts-node src/sending-transactions.ts`, you should see an output similar to the following:
 
 ```
 Transaction successful
@@ -86,7 +82,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
 
 ### Full Example
 
-```ts src/transactions.ts
+```ts src/sending-transactions.ts
   import { Wallet, LCDClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
 
   const mnemonic = process.env.MNEMONIC;
@@ -128,11 +124,3 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
     .then(() => process.exit(0))
     .catch(() => process.exit(1));
 ```
-
-## Signing Transactions
-
-Coming Soon.
-
-## Simulating Transactions
-
-Coming Soon.
