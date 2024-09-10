@@ -1,0 +1,214 @@
+---
+title: VIP Scoring Tutorial
+---
+
+## Introduction
+
+In VIP, a scoring system exists in order to distribute esINIT rewards to the users based on their activities in a Minitia.
+
+VIP scoring process is as follows:
+
+1. Whitelist a Minitia on VIP system
+- Minitias are whitelisted through a whitelisting proposal on Initia's governance.
+- The information required to whitelist a Minitia are `bridge id`, `bridge address`, `vip score contract`, `operator addresses` etc.
+2. Minitias score users based on their activities on each stage.
+- The scoring policy is determined completely by Minitias.
+- Initia provides vip_score contracts as default.
+- For scoring user, Minitia should whitelist deployer address on vip_score contract.
+- The deployer could call vip_score contract to score users.
+- See Scoring section for detailed information about how to score users.
+- Finalize the stage when scoring is done. After finalization, no more scoring is allowed
+3. The VIP agent will take a snapshot of the scores.
+- VIP agent is an entity that is in charge of submitting snapshots of the scores, and is selected through Initia governance.
+- VIP agent will only take snapshots of Minitias that have finalized the stage.
+- Rewards will be distributed to the users based on the snapshot.
+4. User can claim the reward.
+- User can claim the reward after the snapshot is taken.
+- User's reward will be decreased if the user not meet the minimum score for the stage.
+
+## Interacting with the `vip_score` contract
+
+Note that the main purpose of vip_score is to score users based on the Minitia's scoring policy. The VIP agent does not interfere with the scoring policies, but Minitias should record the score of users on the same `vip_score` contract interface for snapshot.
+
+#### How to Setup
+
+For deploy the `vip_score` contract, refer the [CosmWasm official docs](https://docs.cosmwasm.com/). 
+You can deploy [VIP CosmWasm contract](https://github.com/initia-labs/vip-cosmwasm) as same as other CosmWasm contracts.
+
+#### How to Use
+
+This section explains how to use the `vip_score` contract to score users.
+
+<Steps>
+    <Step title="Whitelist deployer">
+        When you instantiate the contract, you should provide the `allow_list` as arguments.
+
+        ```ts InitiaJS
+        const msg = new MsgInstantiateContract(
+            key.accAddress, // sender
+            key.accAddress, // admin
+            9, // code id
+            'vip_score', // label
+            Buffer.from(JSON.stringify({ allow_list: [key.accAddress] })).toString('base64'), // instantiate msg
+            new Coins()
+        )
+        ```
+    </Step>
+    <Step title="Prepare stage">
+        Prepare the stage before scoring users. This function should be called only once for each stage. This function will initialize the stage and set the stage as active.
+    
+        ```ts InitiaJS
+        const msg = new MsgExecuteContract(
+            key.accAddress,
+            'init1jue5rlc9dkurt3etr57duutqu7prchqrk2mes2227m52kkrual3qdrydg6', // contract address
+            Buffer.from(
+            JSON.stringify({
+                prepare_stage: {
+                   stage: 1,
+                },
+            })).toString('base64'),
+            new Coins()
+        )
+        ```
+    </Step> 
+    <Step title="Scoring">
+        There are two ways to score users.
+        <Tabs>
+            <Tab title="Integrate with a smart contract">
+                This method integrates scoring logic with the smart contract. This is useful when the scoring logic is simple and can be done in a single transaction. 
+                <Note>For integrate with contract, you should call `prepare_stage` function before scoring users. You can call this function only once for each stage. This function will initialize the stage and set the stage as active. See `fun prepare_stage_script()` function in [score_helper.move](./example/1.integrate-with-contract/sources/score_helper.move).</Note>            
+            </Tab>
+            <Tab title="Update with script">
+                This method is useful when the scoring logic is complex and requires multiple transactions. In this case, you can update all scores at once by calling `update_score` function.
+                Calling `update_score` function might exceed the gas limit if the number of users is too large. In this case, you can divide the users into multiple transactions. 
+
+                ```ts InitiaJS
+                const msg = new MsgExecuteContract(
+                    key.accAddress,
+                    'init1jue5rlc9dkurt3etr57duutqu7prchqrk2mes2227m52kkrual3qdrydg6', // contract address
+                    Buffer.from(
+                    JSON.stringify({
+                        update_scores: {
+                        stage: 1,
+                        scores: [
+                            ['init1lf0swvvhy3vqautdemmvunfmp0grfrjgzznx9s', 400],
+                            ['init1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqpqr5e3d', 300],
+                            [
+                            'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8',
+                            700,
+                            ],
+                        ],
+                        },
+                    })
+                    ).toString('base64'),
+                    new Coins()
+                )
+                ```
+            </Tab>
+        </Tabs>
+    </Step>
+    <Step title="Finalize stage">
+        Finalizing the stage is the last step of the scoring process. After this, no more scoring is allowed until the next stage. Stage must be finalized in order for the VIP agent to take a snapshot of the scoring result. If not finalized, reward distribution will not happen. 
+
+        ```move
+        // vip_score.move
+        public entry fun finalize_script(deployer: &signer, stage: u64) acquires ModuleStore {}
+        ```
+
+        ```ts InitiaJS
+        const msg = new MsgExecuteContract(
+            key.accAddress,
+            'init1jue5rlc9dkurt3etr57duutqu7prchqrk2mes2227m52kkrual3qdrydg6', // contract address
+            Buffer.from(
+            JSON.stringify({
+                finalize_stage: {
+                    stage: 1,
+                },
+            })
+            ).toString('base64'),
+            new Coins()
+        )
+        ```
+    </Step>
+</Steps>
+
+
+#### Claiming Operator Reward
+
+This is a guide for claiming operator reward on VIP system. 
+
+- The operator address and bridge_id should match the information whitelisted during registration in the VIP system. 
+- The operator reward must be claimed on the L1 chain, not on the L2 chain.
+- All stages that can be claimed must be provided in sequence.
+
+<Tabs>
+    <Tab title="InitiaJS">
+    ```ts InitiaJS
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+    
+    async function claimOperatorVesting() {
+        const lcd = new LCDClient('[rest-url]', {
+        gasPrices: '0.15uinit',
+        gasAdjustment: '1.5',
+        });
+    
+        const key = new MnemonicKey({
+        mnemonic: 'beauty sniff protect ...',
+        });
+        const wallet = new Wallet(lcd, key);
+
+        const bridgeId = 1;
+        const stages = [1,2,3]; // stages to claim
+        const msgs = [
+        new MsgExecute(
+            key.accAddress,
+            '0x1',
+            'vip',
+            'batch_claim_operator_reward_script',
+            [],
+            [
+                bcs.u64().serialize(bridgeId).toBase64(),
+                bcs.vector(bcs.u64()).serialize(stages).toBase64(),
+            ]
+        ),
+        ];
+    
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs });
+        // broadcast tx
+        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        // {
+        //   height: 0,
+        //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+        //   raw_log: '[]'
+        // }
+    }
+    
+    claimOperatorVesting();
+    ```
+    </Tab>
+    <Tab title="initiad">
+    ```bash
+    # assume that claiming operator reward for stages 1,2,3
+    initiad tx move execute 0x1 vip batch_claim_operator_reward_script \
+    --args '["u64:1", "vector<u64>:1,2,3"]' \ 
+    --from [key-name] \
+    --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+    --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+</Tabs>
+
+## Reference
+
+Following are the reference links for VIP system:
+- [VIP contract](https://github.com/initia-labs/vip-contract)
+- [VIP score contract for MoveVM](https://github.com/initia-labs/vip-scoring-tutorial)
+- [VIP score contract for WasmVM](https://github.com/initia-labs/vip-cosmwasm)
+- [VIP agent contract for EVM](https://github.com/initia-labs/vip-evm)
