@@ -202,18 +202,19 @@
                 "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
               ]
             },
-            "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles"
+            "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
           ]
         },
         {
           "group": "MoveVM",
           "icon": "note-sticky",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles"]
+          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"]
         },
         {
           "group": "WasmVM",
           "icon": "rust",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles"]
+          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"]
         }
       ]
     },
