@@ -229,6 +229,11 @@
           "group":"VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+        },
+        {
+          "group":"OPinit bots",
+          "icon": "robot",
+          "pages": ["developers/developer-guides/integrating-initia-apps/opinit-bots"]
         }
       ]
     },
@@ -384,17 +389,8 @@
           "icon": "circle-nodes",
           "pages": [
             "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
-            "initia-and-minitias/deploying-minitias/opinit-bots/bridge-executor",
-            "initia-and-minitias/deploying-minitias/opinit-bots/output-submitter",
-            "initia-and-minitias/deploying-minitias/opinit-bots/challenger",
-            {
-              "group": "Batch Submitter",
-              "pages": [
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/introduction",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-initia-l1",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-celestia"
-              ]
-            }
+            "initia-and-minitias/deploying-minitias/opinit-bots/executor",
+            "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
           ]
         },
         "initia-and-minitias/deploying-minitias/ibc-relayers",
@@ -443,5 +439,5 @@
   "api": {
     "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
   },
-  "openapi": "https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
+  "openapi":"https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
 }

@@ -1,0 +1,88 @@
+---
+title: Executor
+---
+
+The Executor is responsible for
+
+1. relaying L1 token deposit transactions to L2 and periodically submitting L2 output roots to L1.
+2. relaying L1 oracle data to L2.
+3. submitting L2 block data to DA.
+4. providing withdrawal proofs for user's token withdrawals.
+
+## Initialize Executor Bot
+
+To initialize the Executor bot, use the following command:
+
+```bash
+opinitd init executor
+``` 
+
+## Configuration
+
+To configure the Executor, fill in the values in the `~/.opinit/executor.json file`.
+
+```json executor.json
+{
+  // Version is the version used to build output root.
+  "version": 1,
+  // ListenAddress is the address to listen for incoming requests.
+  "listen_address": "localhost:3000",
+  "l1_node": {
+    "chain_id": "testnet-l1-1",
+    "bech32_prefix": "init",
+    "rpc_address": "tcp://localhost:26657",
+    "gas_price": "0.15uinit",
+    "gas_adjustment": 1.5,
+    "tx_timeout": 60
+  },
+  "l2_node": {
+    "chain_id": "testnet-l2-1",
+    "bech32_prefix": "init",
+    "rpc_address": "tcp://localhost:27657",
+    "gas_price": "",
+    "gas_adjustment": 1.5,
+    "tx_timeout": 60
+  },
+  "da_node": {
+    "chain_id": "testnet-l1-1",
+    "bech32_prefix": "init",
+    "rpc_address": "tcp://localhost:26657",
+    "gas_price": "0.15uinit",
+    "gas_adjustment": 1.5,
+    "tx_timeout": 60
+  },
+  // OutputSubmitter is the key name in the keyring for the output submitter,
+  // which is used to relay the output transaction from l2 to l1.
+  //
+  // If you don't want to use the output submitter feature, you can leave it empty.
+  "output_submitter": "",
+
+  // BridgeExecutor is the key name in the keyring for the bridge executor,
+  // which is used to relay initiate token bridge transaction from l1 to l2.
+  //
+  // If you don't want to use the bridge executor feature, you can leave it empty.
+  "bridge_executor": "",
+  // MaxChunks is the maximum number of chunks in a batch.
+  "max_chunks": 5000,
+  // MaxChunkSize is the maximum size of a chunk in a batch.
+  "max_chunk_size": 300000,
+  // MaxSubmissionTime is the maximum time to submit a batch.
+  "max_submission_time": 3600,
+  // L2StartHeight is the height to start the l2 node. If it is 0, it will start from the latest height.
+  // If the latest height stored in the db is not 0, this config is ignored.
+  // L2 starts from the last submitted output l2 block number + 1 before L2StartHeight.
+  // L1 starts from the block number of the output tx + 1
+  "l2_start_height": 0,
+  // StartBatchHeight is the height to start the batch. If it is 0, it will start from the latest height.
+  // If the latest height stored in the db is not 0, this config is ignored.
+  "batch_start_height": 0
+}
+```
+
+## Start Bot
+
+To start the bot, use the following command:
+
+```bash
+opinitd start executor
+```
