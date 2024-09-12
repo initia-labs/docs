@@ -1,12 +1,54 @@
 ---
-title: Accounts
+title: Creating Accounts
 ---
 
 ## Introduction 
 
+Before you can start building and transacting, you'll need to create an account. 
+
+This tutorial will guide you through the process of account creation using the command-line interface (CLI) and Initia's JavaScript library, initia.js.
+
 InitiaJS provides a `Wallet` class that can be used to create and manage accounts.
 
 ## Creating an Account
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > initiad keys add [key-name]
+
+        - address: init17exjfvgtpn5ne4pgmuatjg52mvvtj08773tgfx
+        name: test-account
+        pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ap+WnRzOsJGgfgsrgc4APi/EiTzl3t52ruiKGev7X9LW"}'
+        type: local
+
+
+        **Important** write this mnemonic phrase in a safe place.
+        It is the only way to recover your account if you ever forget your password.
+
+        angry opera upper ...
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import { MnemonicKey } from '@initia/initia.js'
+
+        const key = new MnemonicKey({
+            mnemonic: 'bird upset ... evil cigar', // (optional) if undefined, generate a new Mnemonic key
+            account: 0,    // (optional) BIP44 account number. default = 0, Account number for HD derivation (less than equal 2147483647)
+            index: 0,      // (optional) BIP44 index number. defualt = 0, Address index number for HD derivation (less than equal 2147483647)
+            coinType: 118, // (optional) BIP44 coinType. default = 118, coin type number for HD derivation
+        })
+
+        console.log('mnemonic:', key.mnemonic);
+        // mnemonic: bird upset ... evil cigar
+        console.log('account address:', key.accAddress);
+        // account address: init10m5nnevplkzvv5svqf0xjx6dc4705u5dxfn2st
+        ```
+    </Tab>
+</Tabs>
+
+<Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
 
 ## Importing an Account
 

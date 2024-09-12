@@ -252,9 +252,11 @@
                 "developers/developer-guides/tools/sdks/initia-js/introduction",
                 "developers/developer-guides/tools/sdks/initia-js/quickstart",
                 "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                "developers/developer-guides/tools/sdks/initia-js/accounts",
                 {
                   "group":"Transactions",
                   "pages": [
+                    "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
                   ]
