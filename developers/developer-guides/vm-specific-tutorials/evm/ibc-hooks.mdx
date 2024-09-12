@@ -1,5 +1,5 @@
 ---
-title: EVM IBC hooks
+title: EVM IBC Hooks
 ---
 
 EVM hooks, implemented as IBC middleware, play a critical role in facilitating cross-chain contract calls that involve token transfers. This capability is particularly crucial for cross-chain swaps, providing a robust mechanism for decentralized trading across different blockchain networks. The key to this functionality is the `memo` field in the ICS20 and ICS721 transfer packets, as introduced in [IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b).
@@ -149,7 +149,6 @@ Also when a contract make IBC transfer request, it should provide async callback
 # Tutorials
 
 This tutorial will guide you through the process of deploying a EVM contract and calling it from another chain using IBC hooks.
-
 We will use IBC hook from Initia chain to call a EVM contract on MiniEVM chain in this example.
 
 ## Step 1. Deploy a contract on MiniEVM chain
@@ -159,17 +158,12 @@ Write and deploy a simple [counter contract](https://github.com/initia-labs/mini
 ```soliditiy
 contract Counter is IIBCAsyncCallback {
     uint256 public count;
-
     event increased(uint256 oldCount, uint256 newCount);
-
     constructor() payable {}
-
     function increase() external payable {
         count++;
-
         emit increased(count - 1, count);
     }
-
     function ibc_ack(uint64 callback_id, bool success) external {
         if (success) {
             count += callback_id;
@@ -177,11 +171,9 @@ contract Counter is IIBCAsyncCallback {
             count++;
         }
     }
-
     function ibc_timeout(uint64 callback_id) external {
         count += callback_id;
     }
-
     function query_cosmos(
         string memory path,
         string memory req
@@ -194,9 +186,7 @@ contract Counter is IIBCAsyncCallback {
 ## Step 2. Update IBC hook ACL for the contract
 
 IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
-
 So, we need to set the ACL for the contract to prevent unauthorized access.
-
 To update MiniEVM ACL, you need to use `MsgExecuteMessages` in OPchild module.
 
 ```typescript
@@ -258,14 +248,14 @@ async function main() {
         gasAdjustment: '1.75',
         gasPrices: '0.15uinit'
     })
-    
+
     const sender = new Wallet(
         l1lcd,
         new MnemonicKey({
             mnemonic: 'power elder gather acoustic valid ... '
         })
     )
-    
+
     const amount = "1000"
 
     const contractInfo = JSON.parse(

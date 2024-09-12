@@ -123,11 +123,9 @@
       "pages": [
         "home/technical-architecture/introduction",
         {
-          "group":"Initia L1",
-          "icon":"globe",
-          "pages":[
-            "home/technical-architecture/initia-l1/introduction"
-          ]
+          "group": "Initia L1",
+          "icon": "globe",
+          "pages": ["home/technical-architecture/initia-l1/introduction"]
         },
         {
           "group": "Minitias",
@@ -146,15 +144,11 @@
                 },
                 {
                   "group": "MiniMove",
-                  "pages": [
-                    "home/technical-architecture/minitias/vms/minimove/introduction"
-                  ]
+                  "pages": ["home/technical-architecture/minitias/vms/minimove/introduction"]
                 },
                 {
                   "group": "MiniWasm",
-                  "pages": [
-                    "home/technical-architecture/minitias/vms/miniwasm/introduction"
-                  ]
+                  "pages": ["home/technical-architecture/minitias/vms/miniwasm/introduction"]
                 }
               ]
             }
@@ -178,7 +172,7 @@
               "group": "Action Flows",
               "pages": [
                 "home/technical-architecture/opinit-framework/action-flows/token-transfers",
-              "home/technical-architecture/opinit-framework/action-flows/output-submission",
+                "home/technical-architecture/opinit-framework/action-flows/output-submission",
                 "home/technical-architecture/opinit-framework/action-flows/oracle-data-relay",
                 "home/technical-architecture/opinit-framework/action-flows/submitting-to-da-layer"
               ]
@@ -192,14 +186,17 @@
       "pages": ["developers/introduction"]
     },
     {
-      "group": "Developer Guides",
+      "group": "VM Specific Tutorials",
+      "icon": "book",
       "pages": [
         {
-          "group": "VM Specific Tutorials",
-          "icon": "book",
+          "group": "EVM",
+          "icon": "ethereum",
           "pages": [
+            "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
+            "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
             {
-              "group": "EVM",
+              "group": "Creating ERC20s",
               "pages": [
                 "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
                 "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
@@ -240,16 +237,82 @@
           ]
         },
         {
-          "group": "Frontend",
+          "group": "MoveVM",
+          "icon": "note-sticky",
+          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"]
+        },
+        {
+          "group": "WasmVM",
+          "icon": "rust",
+          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"]
+        }
+      ]
+    },
+    {
+      "group": "Integrating with Initia Apps",
+      "pages": [
+        {
+          "group":"Initia Usernames",
+          "icon": "user",
+          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+        },
+        {
+          "group":"VIP",
+          "icon": "award",
+          "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+        }
+      ]
+    },
+    {
+      "group": "Tools",
+      "icon": "screwdriver-wrench",
+      "pages": [
+        {
+          "group":"Frontend",
           "icon": "desktop",
           "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
         },
         {
-          "group": "Tools",
-          "icon": "screwdriver-wrench",
+          "group": "SDKs",
+          "icon":"toolbox",
           "pages": [
             {
-              "group": "Indexers",
+              "group": "InitiaJS",
+              "pages": [
+                "developers/developer-guides/tools/sdks/initia-js/introduction",
+                "developers/developer-guides/tools/sdks/initia-js/quickstart",
+                "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                {
+                  "group":"Transactions",
+                  "pages": [
+                    "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
+                    "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "group": "CLIs",
+          "icon":"terminal",
+          "pages": [
+            {
+              "group": "Initia CLI",
+              "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
+            },
+            {
+              "group": "Minitia CLI",
+              "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+            }
+          ]
+        },
+        {
+          "group": "Indexers",
+          "icon": "database",
+          "pages": [
+            {
+              "group": "Minitia Indexers",
               "pages": [
                 "developers/developer-guides/tools/indexers/indexer-introduction",
                 "developers/developer-guides/tools/indexers/transactions-by-account",
@@ -292,11 +355,23 @@
           ]
         },
         {
-          "group": "Integrating with Initia Apps",
-          "icon": "handshake",
+          "group": "Oracles",
+          "icon":"list-ol",
           "pages": [
-            "developers/developer-guides/integrating-initia-apps/usernames",
-            "developers/developer-guides/integrating-initia-apps/vip"
+            {
+              "group": "Slinky",
+              "pages": [
+                "developers/developer-guides/tools/oracles/slinky/introduction",
+                {
+                  "group": "Fetching Prices from API",
+                  "pages": [
+                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
+                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
+                  ]
+                },
+                "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-contracts"
+              ]
+            }
           ]
         }
       ]

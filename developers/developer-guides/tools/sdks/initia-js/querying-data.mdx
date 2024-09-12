@@ -1,0 +1,85 @@
+---
+title: Querying Data
+---
+
+The InitiaJS SDK offers a powerful `LCDClient` that simplifies the process of querying data from both the Initia L1 and Minitias. This client encapsulates various endpoints and methods into user-friendly helper functions, organized under sub-categories of the `lcd` client based on their corresponding Cosmos SDK modules.
+
+In this tutorial, we'll explore several examples demonstrating how to leverage these helper functions to retrieve key data points efficiently using the SDK.
+
+For demonstration purposes, we will assume that all of these examples are implemented in a file named `src/query.ts`.
+
+## Querying Account Balance
+
+To query the balance of an account, we can use the `balance` function from the `bank` module. This function takes in an address and returns the balance of the account.
+
+First, we will make the necessary imports and initialize the `LCDClient`.
+
+```ts
+import { LCDClient, Coin } from '@initia/initia.js';
+
+const lcdUrl = 'https://lcd.testnet.initia.xyz';
+const lcd: LCDClient = new LCDClient(lcdUrl, {});
+```
+
+Next, we will create a function to query the balance of an account. This function will take in an address and return the balance of the account.
+
+Note that response from the query is paginated, so we need to handle the pagination properly in the function. Specifically, response that are paginated will return a `next_key` in the pagination object, which we can use to get the next page of results. We will then keep looping through the results until we have all the pages, which we will know is the case when `next_key` is `null`.
+
+```ts
+async function queryBalance(address: string) {
+  let allCoins: Coin[] = [];
+  let nextKey: string | null = null;
+
+  do {
+    const [coins, pagination] = await lcd.bank.balance(address, { 'pagination.key': nextKey || undefined });
+    allCoins = [...allCoins, ...coins];
+    nextKey = pagination.next_key || null;
+  } while (nextKey);
+
+  console.log(`${address} has:`);
+  allCoins.forEach((coin: Coin) => {
+    console.log(`- ${coin.amount.toString()} ${coin.denom}`);
+  });
+}
+```
+
+We can then call the function with an address to query the balance of the account.
+
+```ts
+queryBalance('init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu');
+```
+
+If successful, you should see an output similar to the following:
+
+```sh
+init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu has:
+- 721662 move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff
+- 1000000 uinit
+```
+
+## Complete Example
+
+```ts src/query.ts
+import { LCDClient, Coin } from '@initia/initia.js';
+
+const lcdUrl = 'https://lcd.testnet.initia.xyz';
+const lcd: LCDClient = new LCDClient(lcdUrl, {});
+
+async function queryBalance(address: string) {
+  let allCoins: Coin[] = [];
+  let nextKey: string | null = null;
+
+  do {
+    const [coins, pagination] = await lcd.bank.balance(address, { 'pagination.key': nextKey || undefined });
+    allCoins = [...allCoins, ...coins];
+    nextKey = pagination.next_key || null;
+  } while (nextKey);
+
+  console.log(`${address} has:`);
+  allCoins.forEach((coin: Coin) => {
+    console.log(`- ${coin.amount.toString()} ${coin.denom}`);
+  });
+}
+
+queryBalance('init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu');
+```

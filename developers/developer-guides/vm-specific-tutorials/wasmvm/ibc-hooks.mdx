@@ -1,5 +1,5 @@
 ---
-title: WasmVM IBC hooks
+title: WasmVM IBC Hooks
 ---
 
 The Wasm hook is an IBC middleware which is used to allow ICS20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of usecases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
@@ -283,7 +283,7 @@ async function main() {
         gasAdjustment: '1.75',
         gasPrices: '0.15uinit' // set l1 gas price
     })
-    
+
     const sender = new Wallet(
         l1lcd,
         new MnemonicKey({
