@@ -282,13 +282,24 @@
                 "developers/developer-guides/tools/sdks/initia-js/introduction",
                 "developers/developer-guides/tools/sdks/initia-js/quickstart",
                 "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                "developers/developer-guides/tools/sdks/initia-js/accounts",
                 {
                   "group":"Transactions",
                   "pages": [
+                    "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
                   ]
                 }
+              ]
+            },
+            {
+              "group": "initiaJS",
+              "pages": [
+                "developers/developer-guides/tools/initiaJS/accounts",
+                "developers/developer-guides/tools/initiaJS/fetching-data",
+                "developers/developer-guides/tools/initiaJS/messages",
+                "developers/developer-guides/tools/initiaJS/transactions"
               ]
             }
           ]
@@ -322,34 +333,6 @@
                 "developers/developer-guides/tools/indexers/nft-collection-details",
                 "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
                 "developers/developer-guides/tools/indexers/nft-tokens-by-account"
-              ]
-            },
-            {
-              "group": "Oracles",
-              "pages": [
-                {
-                  "group": "Slinky",
-                  "pages": [
-                    "developers/developer-guides/tools/oracles/slinky/introduction",
-                    {
-                      "group": "Fetching Prices from API",
-                      "pages": [
-                        "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
-                        "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
-                      ]
-                    },
-                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-contracts"
-                  ]
-                }
-              ]
-            },
-            {
-              "group": "initiaJS",
-              "pages": [
-                "developers/developer-guides/tools/initiaJS/accounts",
-                "developers/developer-guides/tools/initiaJS/fetching-data",
-                "developers/developer-guides/tools/initiaJS/messages",
-                "developers/developer-guides/tools/initiaJS/transactions"
               ]
             }
           ]
