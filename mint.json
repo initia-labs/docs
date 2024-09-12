@@ -203,24 +203,19 @@
               ]
             },
             "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks",
             "developers/developer-guides/vm-specific-tutorials/evm/vip-scoring-tutorial"
           ]
         },
         {
           "group": "MoveVM",
           "icon": "note-sticky",
-          "pages": [
-            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles",
-            "developers/developer-guides/vm-specific-tutorials/movevm/vip-scoring-tutorial"
-          ]
+          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles"]
         },
         {
           "group": "WasmVM",
           "icon": "rust",
-          "pages": [
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles",
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/vip-scoring-tutorial"
-          ]
+          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles"]
         }
       ]
     },
