@@ -76,7 +76,7 @@ This section explains how to use the `vip_score` contract to score users.
         <Tabs>
             <Tab title="Integrate with a smart contract">
                 This method integrates scoring logic with the smart contract. This is useful when the scoring logic is simple and can be done in a single transaction. 
-                <Note>For integrate with contract, you should call `prepare_stage` function before scoring users. You can call this function only once for each stage. This function will initialize the stage and set the stage as active. See `fun prepare_stage_script()` function in [score_helper.move](./example/1.integrate-with-contract/sources/score_helper.move).</Note>            
+                <Note>For integrate with contract, you should call `prepare_stage` function before scoring users. You can call this function only once for each stage. This function will initialize the stage and set the stage as active.</Note>
             </Tab>
             <Tab title="Update with script">
                 This method is useful when the scoring logic is complex and requires multiple transactions. In this case, you can update all scores at once by calling `update_score` function.
@@ -109,12 +109,6 @@ This section explains how to use the `vip_score` contract to score users.
     </Step>
     <Step title="Finalize stage">
         Finalizing the stage is the last step of the scoring process. After this, no more scoring is allowed until the next stage. Stage must be finalized in order for the VIP agent to take a snapshot of the scoring result. If not finalized, reward distribution will not happen. 
-
-        ```move
-        // vip_score.move
-        public entry fun finalize_script(deployer: &signer, stage: u64) acquires ModuleStore {}
-        ```
-
         ```ts InitiaJS
         const msg = new MsgExecuteContract(
             key.accAddress,
