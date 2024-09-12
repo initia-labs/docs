@@ -198,42 +198,12 @@
             {
               "group": "Creating ERC20s",
               "pages": [
-                "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
-                "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
-                {
-                  "group": "Creating ERC20s",
-                  "pages": [
-                    "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
-                    "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
-                  ]
-                },
-                {
-                  "group": "API Endpoints",
-                  "pages": [
-                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-collections-by-account",
-                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-collection-details",
-                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-tokens-by-collection",
-                    "developers/developer-guides/vm-specific-tutorials/evm/api-endpoints/nft-tokens-by-account"
-                  ]
-                },
-                "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
-                "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
+                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
+                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
               ]
             },
-            {
-              "group": "MoveVM",
-              "pages": [
-                "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles",
-                "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
-              ]
-            },
-            {
-              "group": "WasmVM",
-              "pages": [
-                "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles",
-                "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
-              ]
-            }
+            "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
           ]
         },
         {
@@ -291,15 +261,6 @@
                     "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
                   ]
                 }
-              ]
-            },
-            {
-              "group": "initiaJS",
-              "pages": [
-                "developers/developer-guides/tools/initiaJS/accounts",
-                "developers/developer-guides/tools/initiaJS/fetching-data",
-                "developers/developer-guides/tools/initiaJS/messages",
-                "developers/developer-guides/tools/initiaJS/transactions"
               ]
             }
           ]
