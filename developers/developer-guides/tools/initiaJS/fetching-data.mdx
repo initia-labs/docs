@@ -2,11 +2,11 @@
 title: Fetching Data
 ---
 
-You can use the Initia LCDClient to get on-chain data using a variety of helper functions. Here’s an example showing how to fetch common data you may need in your application.
+You can use the Initia `LCDClient` to get on-chain data using a variety of helper functions. Here’s an example showing how to fetch common data you may need in your application.
 
 # LCD Client
 
-The LCD (Light Client Daemon) class enables easy interaction with the Initia blockchain.
+The LCD (Light Client Daemon) class enables easy interactions with the Initia L1 and all Minitias such as Milkyway, Blackwing and more.
 
 ```typescript
 import { LCDClient } from '@initia/initia.js'
@@ -18,9 +18,11 @@ const lcd = new LCDClient('https://lcd.[chain-id].initia.xyz', {
 })
 ```
 
-<Note> Adjust gasPrices and gasAdjustment according to current network conditions for optimal transaction processing. </Note>
+<Note> Adjust gasPrices and gasAdjustment according to current [network](/resources/developer/networks) conditions for optimal transaction processing. </Note>
 
-# Generic Queries
+# VM-agnostic Queries
+
+VM-agnostic queries are queries that can be used across all VMs.
 
 - `balance()` : query the balance of an account
 ```typescript
@@ -41,9 +43,11 @@ const price = await lcd.oracle.price(currenyPair)
 ```
 
 # VM-specific Queries
+
 {/* TODO: Move these example to vm-specific tutorials and link them */}
 
 ## MoveVM
+
 - `viewfunction()`: query the move contract view functions
 
 ```typescript
@@ -100,6 +104,7 @@ const tableEntry = await lcd.move.tableEntry(tableHandle,entryKeyBytes)
 ```
 
 ## WasmVM
+
 - `contractInfo()`: query the wasm contract info
 ```typescript
 const contractInfo = await lcd.wasm.contractInfo('init14mv62l7x4ducykg0crfa9a22egf8yrltmxzy84zn0wqgmr496jqs5z7k0c')
@@ -123,6 +128,7 @@ const allContractStates = await lcd.wasm.allContractState('init14mv62l7x4ducykg0
 ```
 
 ## EVM
+
 - `call()`: query the evm contract
 ```typescript
 const contractInfo = JSON.parse(

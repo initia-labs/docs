@@ -5,7 +5,9 @@ title: Messages
 Msgs are objects whose end-goal is to trigger state-transitions. They are wrapped in transaction, which may contain one or more of them.
 
 
-# Generic Messages
+# VM-agnostic Messages
+
+VM-agnostic messages are messages that can be used across all VMs.
 
 - `MsgSend()`: send coins to other address
 ```typescript
@@ -48,6 +50,7 @@ const msg = new MsgExecute(
 ```
 
 ## WasmVM
+
 - `MsgStoreCode()`: store wasm contract code
 ```typescript
 const wasmByteCode = fs
@@ -94,6 +97,7 @@ const msg = new MsgExecuteContract(
 ```
 
 ## EVM
+
 - `MsgCreate()`: create EVM contract code
 ```typescript
 const contractInfo = JSON.parse(

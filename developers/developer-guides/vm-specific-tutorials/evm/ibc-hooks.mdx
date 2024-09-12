@@ -149,6 +149,7 @@ Also when a contract make IBC transfer request, it should provide async callback
 # Tutorials
 
 This tutorial will guide you through the process of deploying a EVM contract and calling it from another chain using IBC hooks.
+
 We will use IBC hook from Initia chain to call a EVM contract on MiniEVM chain in this example.
 
 ## Step 1. Deploy a contract on MiniEVM chain
@@ -193,7 +194,9 @@ contract Counter is IIBCAsyncCallback {
 ## Step 2. Update IBC hook ACL for the contract
 
 IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
+
 So, we need to set the ACL for the contract to prevent unauthorized access.
+
 To update MiniEVM ACL, you need to use `MsgExecuteMessages` in OPchild module.
 
 ```typescript
