@@ -1,0 +1,293 @@
+---
+title: EVM IBC Hooks
+---
+
+EVM hooks, implemented as IBC middleware, play a critical role in facilitating cross-chain contract calls that involve token transfers. This capability is particularly crucial for cross-chain swaps, providing a robust mechanism for decentralized trading across different blockchain networks. The key to this functionality is the `memo` field in the ICS20 and ICS721 transfer packets, as introduced in [IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b).
+
+# EVM Contract Execution Format
+
+Before we dive into the IBC metadata format, let's take a look at the hook data format and address which fields we need to be setting. The EVM `MsgCall` is defined [here](https://github.com/initia-labs/minievm/blob/main/x/evm/types/tx.pb.go) and other types are defined [here](https://github.com/initia-labs/minievm/blob/main/app/ibc-hooks/message.go).
+
+```go
+// HookData defines a wrapper for evm execute message
+// and async callback.
+type HookData struct {
+ // Message is a evm execute message which will be executed
+ // at `OnRecvPacket` of receiver chain.
+ Message evmtypes.MsgCall `json:"message"`
+
+ // AsyncCallback is a callback message which will be executed
+ // at `OnTimeoutPacket` and `OnAcknowledgementPacket` of
+ // sender chain.
+ AsyncCallback *AsyncCallback `json:"async_callback,omitempty"`
+}
+
+// AsyncCallback is data wrapper which is required
+// when we implement async callback.
+type AsyncCallback struct {
+ // callback id should be issued form the executor contract
+ Id            uint64 `json:"id"`
+ ContractAddr  string `json:"contract_addr"`
+}
+
+// MsgCall is a message to call an Ethereum contract.
+type MsgCall struct {
+ // Sender is the that actor that signed the messages
+ Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+ // ContractAddr is the contract address to be executed.
+ // It can be cosmos address or hex encoded address.
+ ContractAddr string `protobuf:"bytes,2,opt,name=contract_addr,json=contractAddr,proto3" json:"contract_addr,omitempty"`
+ // Hex encoded execution input bytes.
+ Input string `protobuf:"bytes,3,opt,name=input,proto3" json:"input,omitempty"`
+}
+```
+
+So we detail where we want to get each of these fields from:
+
+- `Sender`: We cannot trust the sender of an IBC packet, the counter-party chain has full ability to lie about it. We cannot risk this sender being confused for a particular user or module address on Initia. So we replace the sender with an account to represent the sender prefixed by the channel and a evm module prefix. This is done by setting the sender to `Bech32(Hash(Hash("ibc-evm-hook-intermediary") + channelID/sender))`, where the channelId is the channel id on the local chain.
+- `ContractAddr`: This field should be directly obtained from the ICS-20 packet metadata
+- `Input`: This field should be directly obtained from the ICS-20 packet metadata.
+
+So our constructed EVM call message that we execute will look like:
+
+```go
+msg := MsgCall{
+ // Sender is the that actor that signed the messages
+ Sender: "init1-hash-of-channel-and-sender",
+ // ContractAddr is the contract address to be executed.
+ // It can be cosmos address or hex encoded address.
+ ContractAddr: packet.data.memo["evm"]["message"]["contract_addr"],
+ // Hex encoded execution input bytes.
+ Input: packet.data.memo["evm"]["message"]["input"],
+}
+```
+
+# ICS20 packet structure
+
+So given the details above, we propagate the implied ICS20 packet data structure. ICS20 is JSON native, so we use JSON for the memo format.
+
+```json
+{
+  //... other ibc fields that we don't care about
+  "data": {
+    "denom": "denom on counterparty chain (e.g. uatom)", // will be transformed to the local denom (ibc/...)
+    "amount": "1000",
+    "sender": "addr on counterparty chain", // will be transformed
+    "receiver": "ModuleAddr::ModuleName::FunctionName",
+    "memo": {
+      "evm": {
+        // execute message on receive packet
+        "message": {
+          "contract_addr": "0x1",
+          "input": "hex encoded byte string",
+        },
+        // optional field to get async callback (ack and timeout)
+        "async_callback": {
+          "id": 1,
+          "contract_addr": "0x1"
+        }
+      }
+    }
+  }
+}
+```
+
+An ICS20 packet is formatted correctly for evmhooks iff the following all hold:
+
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with value `"evm"`
+- [x] `memo["evm"]["message"]` has exactly five entries, `"contract_addr"` and `"input"`
+- [x] `receiver` == "" || `receiver` == `"module_address::module_name::function_name"`
+
+We consider an ICS20 packet as directed towards evmhooks iff all of the following hold:
+
+- `memo` is not blank
+- `memo` is valid JSON
+- `memo` has at least one key, with name `"evm"`
+
+If an ICS20 packet is not directed towards evmhooks, evmhooks doesn't do anything. If an ICS20 packet is directed towards evmhooks, and is formatted incorrectly, then evmhooks returns an error.
+
+# Execution flow
+
+Pre evm hooks:
+
+- Ensure the incoming IBC packet is cryptogaphically valid
+- Ensure the incoming IBC packet is not timed out.
+
+In evm hooks, pre packet execution:
+
+- Ensure the packet is correctly formatted (as defined above)
+- Edit the receiver to be the hardcoded IBC module account
+
+In evm hooks, post packet execution:
+
+- Construct evm message as defined before
+- Execute evm message
+- if evm message has error, return ErrAck
+- otherwise continue through middleware
+
+# Async Callback
+
+A contract that sends an IBC transfer, may need to listen for the ACK from that packet. To allow contracts to listen on the ack of specific packets, we provide Ack callbacks. The contract, which wants to receive ack callback, have to implement two functions.
+
+- ibc_ack
+- ibc_timeout
+
+```go
+interface IIBCAsyncCallback {
+    function ibc_ack(uint64 callback_id, bool success) external;
+    function ibc_timeout(uint64 callback_id) external;
+}
+```
+
+Also when a contract make IBC transfer request, it should provide async callback data through memo field.
+
+- `memo['evm']['async_callback']['id']`: the async callback id is assigned from the contract. so later it will be passed as argument of `ibc_ack` and `ibc_timeout`.
+- `memo['evm']['async_callback']['contract_addr']`: The address of module which defines the callback function.
+
+# Tutorials
+
+This tutorial will guide you through the process of deploying a EVM contract and calling it from another chain using IBC hooks.
+We will use IBC hook from Initia chain to call a EVM contract on MiniEVM chain in this example.
+
+## Step 1. Deploy a contract on MiniEVM chain
+
+Write and deploy a simple [counter contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/counter/Counter.sol) to Initia.
+
+```soliditiy
+contract Counter is IIBCAsyncCallback {
+    uint256 public count;
+    event increased(uint256 oldCount, uint256 newCount);
+    constructor() payable {}
+    function increase() external payable {
+        count++;
+        emit increased(count - 1, count);
+    }
+    function ibc_ack(uint64 callback_id, bool success) external {
+        if (success) {
+            count += callback_id;
+        } else {
+            count++;
+        }
+    }
+    function ibc_timeout(uint64 callback_id) external {
+        count += callback_id;
+    }
+    function query_cosmos(
+        string memory path,
+        string memory req
+    ) external returns (string memory result) {
+        return COSMOS_CONTRACT.query_cosmos(path, req);
+    }
+}
+```
+
+## Step 2. Update IBC hook ACL for the contract
+
+IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
+So, we need to set the ACL for the contract to prevent unauthorized access.
+To update MiniEVM ACL, you need to use `MsgExecuteMessages` in OPchild module.
+
+```typescript
+const aclMsg = new MsgUpdateACL(
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',                     // autority
+  'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8', // contract address
+  true                                                               // allow
+)
+
+const msgs = [
+  new MsgExecuteMessages(
+    proposer.key.accAddress, 
+    [aclMsg]
+  )
+]
+const signedTx = await proposer.createAndSignTx({ msgs })
+await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
+```
+
+```bash
+curl -X GET "https://lcd.minievm-1.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+```
+
+Response:
+
+```json
+{
+  "acls": [
+    {
+      "address": "init1fj6uuyhrhwznfpu350xafhp6tdurvfcwmq655f", // 0x4cb5cE12e3bB85348791A3cDd4dc3A5b7836270e
+      "allowed": true
+    }
+  ],
+  "pagination": {
+    "next_key": null,
+    "total": "1"
+  }
+}
+```
+
+## Step 3. Execute IBC Hooks Message
+
+
+After the contract is deployed and the ACL is set, we can execute the IBC hooks message to call the contract.
+
+
+```typescript
+import { Coin, Height, LCDClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
+import { ethers } from "ethers";
+import * as fs from 'fs'
+
+function createHook(params: object) {
+    const hook = { evm: { message: params } }
+    return JSON.stringify(hook)
+}
+
+async function main() {
+    const l1lcd = new LCDClient('https://lcd.stone-16.initia.xyz', {
+        gasAdjustment: '1.75',
+        gasPrices: '0.15uinit'
+    })
+
+    const sender = new Wallet(
+        l1lcd,
+        new MnemonicKey({
+            mnemonic: 'power elder gather acoustic valid ... '
+        })
+    )
+
+    const amount = "1000"
+
+    const contractInfo = JSON.parse(
+        fs.readFileSync('./bin/Counter.json').toString()
+    )
+    const abi = contractInfo.abi
+
+    const contractAddress = "0x4cb5cE12e3bB85348791A3cDd4dc3A5b7836270e"
+    const contract = new ethers.Contract(contractAddress, abi);
+    const methodName = "increase"
+    const args: any[] = []
+
+    const encodedData = contract.interface.encodeFunctionData(methodName, args) 
+    const msgs = [
+        new MsgTransfer(
+            'transfer',
+            'channel-10',
+            new Coin("uinit", amount),
+            sender.key.accAddress,
+            contractAddress,
+            new Height(0, 0),
+            ((new Date().valueOf() + 100000) * 1000000).toString(),
+            createHook({
+                contract_addr: contractAddress,
+                input: encodedData
+            })
+        )
+    ]
+
+    const signedTx = await sender.createAndSignTx({ msgs });
+    await l1lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+}
+
+main()
+```
