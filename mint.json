@@ -230,11 +230,6 @@
           "group":"VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
-        },
-        {
-          "group":"OPinit bots",
-          "icon": "robot",
-          "pages": ["developers/developer-guides/integrating-initia-apps/opinit-bots"]
         }
       ]
     },
@@ -440,5 +435,5 @@
   "api": {
     "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
   },
-  "openapi":"https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
+  "openapi": "https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
 }
