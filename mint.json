@@ -210,12 +210,18 @@
         {
           "group": "MoveVM",
           "icon": "note-sticky",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles"]
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/movevm/vip-scoring-tutorial"
+          ]
         },
         {
           "group": "WasmVM",
           "icon": "rust",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles"]
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/vip-scoring-tutorial"
+          ]
         }
       ]
     },
@@ -445,5 +451,5 @@
   "api": {
     "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
   },
-  "openapi": "https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
+  "openapi":"https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
 }

@@ -8,31 +8,22 @@ In VIP, a scoring system exists in order to distribute esINIT rewards to the use
 
 VIP scoring process is as follows:
 
-1. Whitelist a Minitia on VIP system
-- Minitias are whitelisted through a whitelisting proposal on Initia's governance.
-- The information required to whitelist a Minitia are `bridge id`, `bridge address`, `vip score contract`, `operator addresses` etc.
-2. Minitias score users based on their activities on each stage.
-- The scoring policy is determined completely by Minitias.
-- Initia provides vip_score contracts as default.
-- For scoring user, Minitia should whitelist deployer address on vip_score contract.
-- The deployer could call vip_score contract to score users.
-- See Scoring section for detailed information about how to score users.
-- Finalize the stage when scoring is done. After finalization, no more scoring is allowed
-3. The VIP agent will take a snapshot of the scores.
-- VIP agent is an entity that is in charge of submitting snapshots of the scores, and is selected through Initia governance.
-- VIP agent will only take snapshots of Minitias that have finalized the stage.
-- Rewards will be distributed to the users based on the snapshot.
-4. User can claim the reward.
-- User can claim the reward after the snapshot is taken.
-- User's reward will be decreased if the user not meet the minimum score for the stage.
+1. **Whitelist a Minitia**: Minitias are whitelisted via Initia governance, requiring details like `bridge id`, `vip score contract address`, and `operator address` etc.
+2. **Score Users**: Minitias score users based on activities using the `vip_score` contract. After scoring, the stage is finalized, preventing further updates.
+3. **Snapshot by VIP Agent**: The VIP agent, selected through governance, takes snapshots of finalized scores for reward distribution.
+4. **Claim Reward**: Users can claim rewards after the snapshot is taken.
 
 ## Interacting with the `vip_score` contract
 
-Note that the main purpose of vip_score is to score users based on the Minitia's scoring policy. The VIP agent does not interfere with the scoring policies, but Minitias should record the score of users on the same `vip_score` contract interface for snapshot.
+Note that the main purpose of `vip_score` is to score users based on the Minitia's scoring policy. 
+
+The VIP agent does not interfere with the scoring policies, but Minitias should record the score of users on the same `vip_score` contract interface for snapshot.
 
 #### How to Setup
 
 This section explains how to compile and deploy the `vip_score` contract.
+
+[VIP Move contract](https://github.com/initia-labs/movevm/blob/main/precompile/modules/minitia_stdlib/sources/vip/score.move) is deployed default on MiniMove Chain
 
 <Steps>
     <Step title="Compile the contract">
@@ -238,7 +229,9 @@ This section explains how to use the `vip_score` contract to score users.
         </Tabs>
     </Step>
     <Step title="Finalize stage">
-        Finalizing the stage is the last step of the scoring process. After this, no more scoring is allowed until the next stage. Stage must be finalized in order for the VIP agent to take a snapshot of the scoring result. If not finalized, reward distribution will not happen. 
+        Finalizing the stage is the last step of the scoring process. 
+        Stage must be finalized in order for the VIP agent to take a snapshot of the scoring result. 
+        If not finalized, reward distribution will not happen. 
 
         ```move
         // vip_score.move
@@ -255,6 +248,9 @@ This section explains how to use the `vip_score` contract to score users.
             [bcs.u64().serialize(stage).toBase64()]
         )
         ```
+        <Warning>
+            No more scoring is allowed after finalizing the stage.
+        </Warning>
     </Step>
 </Steps>
 
@@ -330,11 +326,3 @@ This is a guide for claiming operator reward on VIP system.
     ```
     </Tab>
 </Tabs>
-
-## Reference
-
-Following are the reference links for VIP system:
-- [VIP contract](https://github.com/initia-labs/vip-contract)
-- [VIP score contract for MoveVM](https://github.com/initia-labs/vip-scoring-tutorial)
-- [VIP score contract for WasmVM](https://github.com/initia-labs/vip-cosmwasm)
-- [VIP agent contract for EVM](https://github.com/initia-labs/vip-evm)
