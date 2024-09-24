@@ -10,72 +10,9 @@ Once Minitia is up and running with the initial connections established, the nex
 
 These bots play key roles in ensuring the secure operation of Minitia within the Initia ecosystem. Each bot performs essential functions to manage data consistency, security, and correctness in the interactions between the two blockchains.
 
-For more details on the specific functions of each bot and the overall OPinit stack, refer to the relevant sections.
+For more details on the specific functions of each bot and the overall OPinit stack, refer to each section in the links above.
 
 <Warning>
 For testing purposes, OPinit bots can be hosted on the same machine as your Minitia service.
 However, for production or mainnet environments, we highly recommend hosting your OPinit bots on separate machines to ensure optimal performance and security. 
 </Warning>
-
-
-## Install Dependencies
-
-Before running OPinit bots, make sure you have the following prerequisites installed:
-- Go 1.22.2+
-
-<Steps>
-  <Step title="Build opinitd">
-    To build the `opinitd` binary, use the following command:
-    ```bash
-    git clone https://github.com/initia-labs/opinit-bots.git
-    cd opinit-bots
-    make install
-    ```
-  </Step>
-  <Step title="Initialize Bot">
-    To configure the OPinit bots, which include both the **Executor** and **Challenger**, follow these steps:
-    ```bash
-    opinitd init [bot-name] # bot-name can be either 'executor' or 'challenger'
-    # opinitd init executor
-    # opinitd init challenger
-    ```
-    
-    Default config path is `~/.opinit/[bot-name].json`
-    You can register keys using the following command:
-    
-    ```bash
-    opinitd keys add [chain-id] [key-name]
-    ### with mnemonic file
-    opinitd keys add [chain-id] [key-name] --recover --source [mnemonic-file-path]
-    ### with mnemonic input
-    opinitd keys add [chain-id] [key-name] --recover
-    ### with bech32 prefix
-    opinitd keys add [chain-id] [key-name] --bech32=celestia
-    ```
-    
-    These keys will be used for the bot to sign transactions.
-  </Step>
-  <Step title="Start Bot">
-    To start the bot, use the following command:
-    
-    ```bash
-    opinitd start [bot-name]
-    ```
-
-    The following options can be set:
-
-    - `--log-level`: log level can be set. Default log level is `info`.
-    - `--polling-interval`: polling interval can be set. Default polling interval is `100ms`.
-    - `--config`: config file name can be set. Default config file name is `[bot-name].json`.
-    - `--home`: home dir can be set. Default home dir is `~/.opinit`.
-  </Step>
-</Steps>
-
-
-## Reset Bot DB
-
-To reset the bot database, use the following command:
-
-```bash
-opinitd reset-db [bot-name]
-```

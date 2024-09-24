@@ -2,7 +2,44 @@
 title: Executor
 ---
 
-## How to Run Executor
+## Set up Dependencies
+
+Before running OPinit bots, make sure you have the following prerequisites installed:
+- [Go 1.22.2+](https://go.dev/doc/install)
+
+<Steps>
+  <Step title="Build opinitd">
+    To build the `opinitd` binary, use the following command:
+    ```bash
+    git clone https://github.com/initia-labs/opinit-bots.git
+    cd opinit-bots
+    make install
+    ```
+  </Step>
+  <Step title="Initialize Bot">
+    To initialize the OPinit bots, follow these steps:
+    ```bash
+    opinitd init executor
+    ```
+    
+    Default config path is `~/.opinit/executor.json`
+    You can register keys using the following command:
+    
+    ```bash
+    opinitd keys add [chain-id] [key-name]
+    ### with mnemonic file
+    opinitd keys add [chain-id] [key-name] --recover --source [mnemonic-file-path]
+    ### with mnemonic input
+    opinitd keys add [chain-id] [key-name] --recover
+    ### with bech32 prefix
+    opinitd keys add [chain-id] [key-name] --bech32=celestia
+    ```
+    
+    These keys will be used for the bot to sign transactions.
+  </Step>
+</Steps>
+
+## Run Executor
 
 <Steps>
   <Step title="Build opinitd">
@@ -58,7 +95,7 @@ title: Executor
       "batch_start_height": 0
     }
     ```
-    - `version`: Indicates the version of the protocol used.
+    - `version`: Indicates the version of the OPinit spec (basically 1).
     - `listen_address`: The address where the Challenger bot listens for incoming requests.
     - `l1_node`: Information about the L1 node, including chain ID and RPC address.
     - `l2_node`: Information about the L2 node, including chain ID and RPC address.
@@ -68,89 +105,23 @@ title: Executor
     - `max_chunks`: The maximum number of chunks in a batch.
     - `max_chunk_size`: The maximum size of a chunk in a batch.
     - `max_submission_time`: The maximum time to submit a batch.
-    - `l2_start_height`: This allows you to specify the starting height for the L2 chain. If set to 0, the bot will start from the latest block height. See the [Understanding Start Height Configuration](#understanding-start-height-configuration) section for more details.
-    - `batch_start_height`: This allows you to specify the starting height for the DA chain. If set to 0, the bot will start from the latest block height. See the [Understanding Start Height Configuration](#understanding-start-height-configuration) section for more details.
+    - `l2_start_height`: Executor automatically sets the starting height for output proposal based on this value. If set to 0, the bot will start from the latest block height.
+    - `batch_start_height`: Executor automatically sets the starting height for batch submitting based on this value. If set to 0, the bot will start from the latest block height.
   </Step>
   <Step title="Start Bot">
     To start the bot, use the following command:
     ```bash
     opinitd start executor
     ```
+
+    The following options can be set:
+
+    - `--log-level`: log level can be set. Default log level is `info`.
+    - `--polling-interval`: polling interval can be set. Default polling interval is `100ms`.
+    - `--config`: config file name can be set. Default config file name is `[bot-name].json`.
+    - `--home`: home dir can be set. Default home dir is `~/.opinit`.
   </Step>
 </Steps>
-
-## Understanding Start Height Configuration
-
-The Executor can be configured to start from a specific height on the L2 chain. This configuration is useful when you want to reprocess events from a certain point. If a height is already stored in the database, this configuration is ignored.
-
-To understand the start height configuration, consider the following assumptions:
-
-- Assume
-
-```
-Output tx #1 
-- L1BlockNumber: 10
-- L2BlockNumber: 100
-
-Output tx #2
-- L1BlockNumber: 20
-- L2BlockNumber: 200
-
-InitializeTokenDeposit tx #1
-- Height: 5
-- L1Sequence: 1
-
-InitializeTokenDeposit tx #2
-- Height: 15
-- L1Sequence: 2
-
-FinalizedTokenDeposit tx #1
-- L1Sequence: 1
-
-FinalizedTokenDeposit tx #2
-- L1Sequence: 2
-```
-
-### Example #1
-
-```json executor.json
-{
-  "l2_start_height": 150, 
-  "batch_start_height": 0
-}
-```
-
-- **Scenario**: When Child's last L1 Sequence is `2`,
-  - L1 starts from the block height `11` (L1BlockNumber 10 + 1).
-  - L2 starts from the block height `101` (L2BlockNumber 100 + 1).
-  - Batch starts from the height `1`
-
-### Example #2
-
-```json executor.json
-{
-  "l2_start_height": 150, 
-  "batch_start_height": 150
-}
-```
-
-- **Scenario**: When Child's last L1 Sequence is `2`,
-  - L1 starts from the block height `11` (L1BlockNumber 10 + 1).
-  - L2 starts from the block height `101` (L2BlockNumber 100 + 1).
-  - Batch starts from the height `150`
-
-### Example #3
-
-```json executor.json
-{
-  "l2_start_height": 150, 
-  "batch_start_height": 150
-}
-```
-- **Scenario**: When Child's last L1 Sequence is `1`,
-  - L1 starts from the block height `6` (L1BlockNumber 5 + 1).
-  - L2 starts from the block height `101` (L2BlockNumber 100 + 1).
-  - Batch starts from the height `150`
 
 ## Query
 
@@ -226,4 +197,15 @@ Executor bot can provide withdrawal information for a given sequence:
 ```bash
 curl localhost:3000/withdrawal/{sequence} | jq . > ./withdrawal-info.json
 initiad tx ophost finalize-token-withdrawal ./withdrawal-info.json --gas= --gas-prices= --chain-id= --from=
+```
+
+
+## Reset Bot DB
+
+If the database becomes corrupted or is moved to a new one, you need to initialize or reset it.
+
+To reset the bot database, use the following command:
+
+```bash
+opinitd reset-db executor
 ```
