@@ -105,8 +105,8 @@ Before running OPinit bots, make sure you have the following prerequisites insta
     - `max_chunks`: The maximum number of chunks in a batch.
     - `max_chunk_size`: The maximum size of a chunk in a batch.
     - `max_submission_time`: The maximum time to submit a batch.
-    - `l2_start_height`: Executor automatically sets the starting height for output proposal based on this value. If set to 0, the bot will start from the latest block height.
-    - `batch_start_height`: Executor automatically sets the starting height for batch submitting based on this value. If set to 0, the bot will start from the latest block height.
+    - `l2_start_height`: Executor automatically sets the starting height for output proposal based on this value. If the value is already stored in the db, this config is ignored.
+    - `batch_start_height`: Executor automatically sets the starting height for batch submitting based on this value. If the value is already stored in the db, this config is ignored.
   </Step>
   <Step title="Start Bot">
     To start the bot, use the following command:

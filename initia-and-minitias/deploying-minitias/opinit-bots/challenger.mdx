@@ -80,7 +80,7 @@ Before running OPinit bots, make sure you have the following prerequisites insta
     - `listen_address`: The address where the Challenger bot listens for incoming requests.
     - `l1_node`: Information about the L1 node, including chain ID and RPC address.
     - `l2_node`: Information about the L2 node, including chain ID and RPC address.
-    - `l2_start_height`: Challenger automatically sets the starting height for challenge processing. If set to 0, the bot will start from the latest block height.
+    - `l2_start_height`: Challenger automatically sets the starting height for challenge processing. If the value is already stored in the db, this config is ignored.
   </Step>
   <Step title="Start Bot">
     To start the bot, use the following command:
