@@ -230,6 +230,11 @@
           "group":"VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+        },
+        {
+          "group":"Initia Dex",
+          "icon": "swap",
+          "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
         }
       ]
     },
@@ -447,6 +452,5 @@
   },
   "api": {
     "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
-  },
-  "openapi": "https://lcd.initiation-2.initia.xyz/swagger/swagger.yaml"
+  }
 }
