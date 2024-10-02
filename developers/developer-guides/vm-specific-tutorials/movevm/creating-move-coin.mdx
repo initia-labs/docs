@@ -1,0 +1,244 @@
+# Creating Move Coin
+
+This tutorial guides you through the process of creating and minting your own coin using the `0x1::managed_coin` module on the Initia blockchain. It includes initializing your coin, obtaining metadata, minting coins, and checking the balances.
+
+# Step 1: Initialize Your Coin
+
+To initialize your coin, you must call the `0x1::managed_coin::initialize` function. 
+
+```move
+public entry fun initialize(
+    account: &signer,
+    maximum_supply: Option<u128>,
+    name: String,
+    symbol: String,
+    decimals: u8,
+    icon_uri: String,
+    project_uri: String,
+)
+```
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 managed_coin initialize \
+        --args "option<u128>:null string:my_coin string:MYCOIN u8:6 string: string:" \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function createCoin() {
+    const lcd = new LCDClient('[rest-url]', {
+        gasPrices: '0.15uinit',
+        gasAdjustment: '1.5',
+    });
+
+    const key = new MnemonicKey({
+        mnemonic: 'beauty sniff protect ...',
+    });
+    const wallet = new Wallet(lcd, key);
+
+    const msgs = [
+        new MsgExecute(
+        key.accAddress,
+        '0x1',
+        'managed_coin',
+        'initialize',
+        [],
+        [
+            // max supply, if you want to set max supply, insert number instaed of null
+            bcs.option(bcs.u128()).serialize(null).toBase64(),
+            bcs.string().serialize('my_coin').toBase64(), // name
+            bcs.string().serialize('MYCOIN').toBase64(), // symbol
+            // decimal point (raw value 1 consider to 10 ** (- decimalPoint))
+            bcs.u8().serialize(6).toBase64(),
+            bcs.string().serialize('').toBase64(), // icon uri
+            bcs.string().serialize('').toBase64(), // project uri
+        ]
+        ),
+    ];
+
+    // sign tx
+    const signedTx = await wallet.createAndSignTx({ msgs });
+    // send(broadcast) tx
+    lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+    // {
+    //   height: 0,
+    //   txhash: '40E0D5633D37E207B2463D275F5B479FC67D545B666C37DC7B121ED551FA18FC',
+    //   raw_log: '[]'
+    // }
+    }
+
+    createCoin();
+    ```
+    </Tab>
+</Tabs>
+
+# Step 2: Mint Coin
+
+To mint coins, you will use the `0x1::managed_coin::mint` function.
+
+```move
+public entry fun mint(
+    account: &signer,
+    dst_addr: address,
+    metadata: Object<Metadata>,
+    amount: u64,
+)
+```
+
+Before minting, you need to obtain the metadata for your coin, which can be done through the `0x1::coin::metadata` view function or by using `sha3_256(creator+symbol+0xFE)`.
+
+## Obtaining Metadata
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad query move view 0x1 coin metadata \
+        --args "address:[addr] string:MYCOIN" \
+        --node [rpc-url]:[rpc-port]
+
+    # data: '"0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb"'
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import { bcs, LCDClient, MnemonicKey } from '@initia/initia.js';
+    import * as crypto from 'crypto';
+
+    async function getCoinMetadata() {
+        const lcd = new LCDClient('https://stone-rest.initia.tech', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5',
+        });
+
+        const key = new MnemonicKey({
+            mnemonic: 'beauty sniff protect ...',
+        });
+
+        // Method 1: use view function
+        lcd.move
+            .viewFunction(
+            '0x1',
+            'coin',
+            'metadata',
+            [],
+            [
+                bcs.address().serialize(key.accAddress).toBase64(),
+                bcs.string().serialize('MYCOIN').toBase64(),
+            ]
+            )
+            .then(console.log);
+        // 0xcf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
+
+        // Method 2: use sha3-256
+        console.log(coinMetadata(key.accAddress, 'MYCOIN'));
+        // cf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
+    }
+
+    getCoinMetadata();
+
+    function coinMetadata(creator: string, symbol: string): string {
+        const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe;
+        const addrBytes = bcs.address().serialize(creator).toBytes();
+        const seed = Buffer.from(symbol, 'ascii');
+        const bytes = [...addrBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME];
+        const hash = crypto.createHash('SHA3-256');
+        const digest = hash.update(Buffer.from(bytes)).digest();
+        return digest.toString('hex');
+    }
+    ```
+    </Tab>
+</Tabs>
+
+
+## Minting Coins
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 managed_coin mint \
+        --args "address:[addr] object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb u64:100000000" \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+    import * as crypto from 'crypto';
+
+    async function mintCoin() {
+        const lcd = new LCDClient('[rest-url]', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5',
+        });
+
+        const key = new MnemonicKey({
+            mnemonic: 'beauty sniff protect ...',
+        });
+        const wallet = new Wallet(lcd, key);
+
+        const msgs = [
+            new MsgExecute(
+            key.accAddress,
+            '0x1',
+            'managed_coin',
+            'mint',
+            [],
+            [
+                bcs.address().serialize(key.accAddress).toBase64(),
+                bcs
+                .object()
+                .serialize(coinMetadata(key.accAddress, 'MYCOIN'))
+                .toBase64(),
+                bcs.u64().serialize(100000000).toBase64(),
+            ]
+            ),
+        ];
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs });
+        // send(broadcast) tx
+        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        // {
+        //   height: 0,
+        //   txhash: '593827F58F3E811686EC6FFDAD2E27E91DA707965F0FF33093DC071D47A46786',
+        //   raw_log: '[]'
+        // }
+    }
+
+    mintCoin();
+
+    function coinMetadata(creator: string, symbol: string): string {
+        const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe;
+        const addrBytes = bcs.address().serialize(creator).toBytes();
+        const seed = Buffer.from(symbol, 'ascii');
+        const bytes = [...addrBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME];
+        const hash = crypto.createHash('SHA3-256');
+        const digest = hash.update(Buffer.from(bytes)).digest();
+        return digest.toString('hex');
+    }
+    ```
+    </Tab>
+</Tabs>
+
+After minting, you can check the balances to verify the minting process.
