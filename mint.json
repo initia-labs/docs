@@ -230,6 +230,11 @@
           "group":"VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+        },
+        {
+          "group":"Minitswap",
+          "icon": "swap",
+          "pages": ["developers/developer-guides/integrating-initia-apps/minitswap"]
         }
       ]
     },
