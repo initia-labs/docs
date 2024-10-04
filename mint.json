@@ -209,7 +209,11 @@
         {
           "group": "MoveVM",
           "icon": "note-sticky",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"]
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
+            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", 
+            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+          ]
         },
         {
           "group": "WasmVM",
