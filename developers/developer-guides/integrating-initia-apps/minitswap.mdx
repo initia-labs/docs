@@ -375,7 +375,321 @@ public entry fun finalize_arb(
     </Tab>
     <Tab title="InitiaJS">
     ```ts
+    import {
+        APIRequester,
+        AccAddress,
+        LCDClient,
+        MnemonicKey,
+        Msg,
+        MsgExecute,
+        Wallet,
+        bcs,
+    } from '@initia/initia.js';
+    import { sha3_256 } from "@noble/hashes/sha3";
+    import { bytesToHex, concatBytes, toBytes } from "@noble/hashes/utils";
+    import { toHex } from "@cosmjs/encoding"
+    import { sha256 } from "@noble/hashes/sha256";
+    
+    function denomToHash(channelId: string, denom: string) {
+        const fullTrace = `transfer/${channelId}/${denom}`
+        const shaSum = sha256(Buffer.from(fullTrace))
+        return bytesToHex(shaSum)
+    }
 
+    function ibcDenom(channelId: string, denom: string) {
+        return 'ibc/' + denomToHash(channelId, denom).toUpperCase()
+    }
+
+    function be(num: bigint): number[] {
+        return num ? be(num >> 8n).concat([Number(num % 256n)]) : []
+    }
+    
+    function u64BE(num: bigint) {
+        const b = be(num)
+        return Buffer.from(
+        Array(8 - b.length)
+            .fill(0)
+            .concat(b)
+        )
+    }
+    
+    function intToUint8Array(value: number): Uint8Array {
+        let hex = value.toString(16);
+        if (hex.length % 2 !== 0) {
+        hex = '0' + hex;
+        }
+        return hexToBytes(hex);
+    }
+
+    function opdenom(id: bigint, l1Denom: string) {
+        const sum = sha3_256
+        .create()
+        .update(Buffer.from([...u64BE(id), ...Buffer.from(l1Denom)]))
+        .digest()
+    
+        return `l2/${Buffer.from(sum).toString('hex')}`
+    }
+    
+    function coinMetadata(creator: string, symbol: string) {
+        const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
+        const addrBytes = bcs.address().serialize(creator).toBytes()
+        const seed = toBytes(symbol)
+        const bytes = new Uint8Array([...concatBytes(addrBytes, seed), OBJECT_FROM_SEED_ADDRESS_SCHEME])
+        const sum = sha3_256.create().update(bytes).digest()
+        return toHex(sum)
+    }
+
+    const registryClient = new APIRequester('https://registry.testnet.initia.xyz/');
+    const lcd = new LCDClient(`https://lcd.initiation-2.initia.xyz`, {
+        chainId: 'initiation-2',
+        gasPrices: '0.15uinit',
+        gasAdjustment: '2.0',
+    });
+    const moduleAddr = '0x1';
+    
+    const key = new MnemonicKey({
+        mnemonic: '', // Put your mnemonic here
+    });
+    
+    const wallet = new Wallet(lcd, key);
+    
+    async function main() {
+        listUp();
+    }
+    main();
+    
+    async function listUp() {
+        const pools = await getPools();
+        console.log(pools.map(p => p.virtual_pool ? p.virtual_pool.inner : null));
+        const chains = await registryClient.get<Chain[]>('chains.json');
+        const msgs: Msg[] = [];
+        let arbCount = 0;
+        for (const pool of pools) {
+
+        if (pool.virtual_pool) {
+            const channel = pool.ibc_channel;
+            const bridgeId = pool.op_bridge_id;
+            const ibcOpInitDenom = ibcDenom(
+            channel,
+            opdenom(BigInt(bridgeId), 'uinit')
+            );
+            const ibcOpInitMetadata = '0x' + coinMetadata('0x1', ibcOpInitDenom);
+            const infos = await lcd.move.viewFunction<ArbInfo[]>(
+            moduleAddr,
+            'minitswap',
+            'get_arb_infos',
+            [],
+            [
+                bcs.object().serialize(ibcOpInitMetadata).toBase64(),
+                bcs.option(bcs.u64()).serialize(null).toBase64(),
+                bcs.u64().serialize(100).toBase64(),
+            ]
+            );
+    
+            for (const info of infos) {
+            arbCount++;
+            const msg = await checkCanFinalize(chains, info, pool);
+            if (msg !== false) {
+                msgs.push(msg);
+            }
+            }
+        }
+        }
+        console.log(`${msgs.length} / ${arbCount}`);
+    
+        if (msgs.length === 0) return;
+        const signedTx = await wallet.createAndSignTx({ msgs });
+        console.log(await lcd.tx.broadcastSync(signedTx));
+    }
+    
+    async function getPools(): Promise<Pools[]> {
+        const moduleStore = await lcd.move.resource<ModuleStore>(
+        moduleAddr,
+        `${moduleAddr}::minitswap::ModuleStore`
+        );
+
+        const poolsTableHandle = moduleStore.data.pools.handle;
+        const [poolsTable] = await lcd.move.tableEntries(poolsTableHandle);
+        const pools = poolsTable.map(entity => JSON.parse(entity.value) as Pools);
+        return pools;
+    }
+    
+    async function checkCanFinalize(
+        chains: Chain[],
+        arbInfo: ArbInfo,
+        pools: Pools
+    ): Promise<Msg | false> {
+        const chain = chains.find(
+            chain => chain.metadata.op_bridge_id == pools.op_bridge_id
+        );
+        if (!chain) return false;
+    
+        if (!chain.metadata.executor_uri) return false;
+    
+        const executorClient = new APIRequester(chain.metadata.executor_uri);
+        const withdrawals = await executorClient.get<Withdrawal>('tx/withdrawal', {
+            address: pools.virtual_pool ? AccAddress.fromHex(pools.virtual_pool.inner) : '',
+        });
+    
+        const withdraw = withdrawals.withdrawalTxList.find(
+            w => w.l1Denom === 'uinit' && w.amount === arbInfo.ibc_op_init_sent
+        );
+    
+        if (!withdraw || withdraw.merkleRoot === '') return false;
+    
+        const lastFinalizedOutput = await lcd.ophost.lastFinalizedOutput(
+            Number(pools.op_bridge_id)
+        );
+    
+        if (lastFinalizedOutput.output_index < withdraw.outputIndex) return false;
+    
+        const outputRes = await executorClient.get<Output>('output', {
+            output_index: withdraw.outputIndex,
+        });
+    
+        if (outputRes.outputList.length === 0) return false;
+    
+        const output = outputRes.outputList[0];
+    
+        return new MsgExecute(
+            key.accAddress,
+            moduleAddr,
+            'minitswap',
+            'finalize_arb',
+            [],
+            [
+                bcs.u64().serialize(arbInfo.id),
+                bcs.u64().serialize(output.outputIndex),
+                bcs.vector(bcs.string()).serialize(withdraw.merkleProof),
+                bcs.address().serialize(withdraw.sender),
+                bcs.u64().serialize(withdraw.sequence),
+                (() => {
+                    const outputIndexBytes = intToUint8Array(withdraw.outputIndex);
+                    const hashBytes = sha3_256(outputIndexBytes);
+                    const base64Hash = Buffer.from(hashBytes).toString('base64');
+                    return bcs.string().serialize(base64Hash);
+                })(),
+                bcs.string().serialize(output.stateRoot),
+                bcs.string().serialize(output.merkleRoot),
+                bcs.string().serialize(output.lastBlockHash),
+            ].map(v => v.toBase64())
+        );
+    }
+    
+    interface ModuleStore {
+        admin: string;
+        arb_batch_index: string;
+        arb_fee_rate: string;
+        burn_cap: {
+            metadata: {
+                inner: string;
+            };
+        };
+        depositor_owned_init: string;
+        emergency_state: boolean;
+        extend_ref: {
+            self: string;
+            version: string;
+        };
+        global_arb_batch_map: {
+            handle: string;
+            length: string;
+        };
+        ibc_timeout: string;
+        max_arb_batch: string;
+        max_change_rate: string;
+        min_arb_interval: string;
+        min_arb_profit: string;
+        mint_cap: {
+        metadata: {
+            inner: string;
+        };
+        };
+        pools: {
+            handle: string;
+            length: string;
+        };
+        stableswap_ann: string;
+        stableswap_swap_fee_rate: string;
+        swap_fee_rate: string;
+        trigger_fee: string;
+        unbond_period: string;
+        unbond_wait_list: {
+            handle: string;
+            length: string;
+        };
+    }
+    
+    interface Pools {
+        ibc_channel: string;
+        op_bridge_id: string;
+        stableswap_pool: {
+            inner: string;
+        } | null;
+        virtual_pool: {
+            inner: string;
+        } | null;
+    }
+    
+    interface Chain {
+        chain_id: string;
+        chain_name: string;
+        pretty_name: string;
+        description: string;
+        website: string;
+    
+        metadata: {
+            op_bridge_id: string;
+            executor_uri: string;
+            assetlist: string;
+        };
+        logo_URIs: {
+            png: string;
+            svg: string;
+        };
+        bech32_prefix: string;
+        network_type: string;
+    }
+    
+    interface ArbInfo {
+        executed_time: string;
+        ibc_op_init_metadata: string;
+        ibc_op_init_sent: string;
+        id: string;
+        init_used: string;
+        triggering_fee: string;
+    }
+    
+    interface Withdrawal {
+        count: number;
+        limit: number;
+        withdrawalTxList: {
+            bridgeId: string;
+            sequence: string;
+            l1Denom: string;
+            l2Denom: string;
+            sender: string;
+            receiver: string;
+            amount: string;
+            outputIndex: number;
+            merkleRoot: string;
+            merkleProof: string[];
+        }[];
+    }
+    
+    interface Output {
+        count: number;
+        limit: number;
+        outputList: {
+            outputIndex: number;
+            outputRoot: string;
+            stateRoot: string;
+            merkleRoot: string;
+            lastBlockHash: string;
+            startBlockNumber: number;
+            endBlockNumber: number;
+        }[];
+    }
     ```
     </Tab>
 </Tabs>
