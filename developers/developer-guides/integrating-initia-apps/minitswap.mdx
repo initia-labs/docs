@@ -2,11 +2,13 @@
 title: Integrating Initia Minitswap
 ---
 
-# Interacting with Minitswap
+## Interacting with Minitswap
 
-## Provide
+### Provide
 
-`provide` is a function that allows users to supply INIT tokens to Initia L1. Providers earn swap fees from transactions processed via Minitswap.
+To provide INIT liquidity to Minitswap, you would need to use the `provide` function. 
+
+By adding liquidity, you will help facilitate swaps between L1 and L2 INIT tokens. In return, you'll earn swap fees and arbitrage fees generated from the transactions that occur on Minitswap.
 
 **Move Function Interface:**
 
@@ -86,7 +88,9 @@ public entry fun provide(
 
 ## Withdraw
 
-`withdraw` allows users to reclaim INIT tokens previously deposited.
+When you're ready to take back the liquidity you’ve provided, you can use the `withdraw` function to retrieve your INIT tokens from Minitswap.
+
+This allows you to freely exit your position whenever you'd like and reclaim your provided liquidity plus any fees you’ve earned along the way.
 
 **Move Function Interface:**
 
@@ -102,7 +106,6 @@ public entry fun withdraw(
 - `min_return_amount`: Transaction fails if the return is less than specified.
 
 **Example Usage:**
-
 
 <Tabs>
     <Tab title="CLI">
@@ -165,9 +168,9 @@ public entry fun withdraw(
     </Tab>
 </Tabs>
 
-## Swap
+### Swap
 
-`swap` allows the exchange of L1 INIT for L2 INIT transferred via IBC.
+The `swap` function allows you to exchange L2 INIT for L1 INIT or vice versa.
 
 **Move Function Interface:**
 
@@ -253,90 +256,6 @@ For more information on metadata, please refer to [obtaining metadata](/develope
     </Tab>
 </Tabs>
 
-## Rebalance
-
-`rebalance` allows the Pegkeeper to buy the L2 INIT in the average price that the Pegkeeper has bought. 
-
-**Move Function Interface:**
-
-```move
-public entry fun rebalance(
-    account: &signer,
-    l2_asset_metadata: Object<Metadata>,
-    amount: u64,
-    min_return_amount: Option<u64>
-)
-```
-
-- `l2_asset_metadata`: Metadata of the L2 INIT to be purchased.
-- `amount`: Amount of L1 INIT to be provided.
-- `min_return_amount`: Minimum amount of L2 INIT to be returned. If the actual return amount is smaller than min_return_amount, the tx will fail.
-
-**Example Usage:**
-
-<Tabs>
-    <Tab title="CLI">
-    ```bash
-    initiad tx move execute 0x1 minitswap rebalance \ 
-        --args "object:0x12.. u64:100 option<u64>:100" \
-        --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
-        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
-    ```
-    </Tab>
-    <Tab title="InitiaJS">
-    ```ts
-    import {
-        bcs,
-        LCDClient,
-        MnemonicKey,
-        MsgExecute,
-        Wallet,
-    } from '@initia/initia.js';
-
-    async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
-            gasAdjustment: '1.5',
-        });
-
-        const key = new MnemonicKey({
-            mnemonic: 'beauty sniff protect ...',
-        });
-        const wallet = new Wallet(lcd, key);
-
-        const msgs = [
-            new MsgExecute(
-            key.accAddress,
-            '0x1',
-            'minitswap',
-            'rebalance',
-            [],
-            [
-                bcs.object().serialize('0x...').toBase64(), // metadata of l2 init
-                bcs.u64().serialize(100).toBase64(), // offer amount
-                bcs.option(bcs.u64()).serialize(100).toBase64(), // min return amount
-            ]
-            ),
-        ];
-
-        // sign tx
-        const signedTx = await wallet.createAndSignTx({ msgs });
-        // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
-        // {
-        //   height: 0,
-        //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
-        //   raw_log: '[]'
-        // }
-    }
-
-    main();
-    ```
-    </Tab>
-</Tabs>
-
-
 `swap_simulation` is a view function to estimate the return value of said swap. 
 
 ```move
@@ -404,8 +323,64 @@ public fun swap_simulation(
     ```
     </Tab>
 </Tabs>
-  
-# Swap via IBC hook
+
+
+### Arbitrage
+
+Arbitrage on Minitswap helps balance L1 INIT and L2 INIT prices. 
+
+Use the `finalize_arb` function to complete arbitrage transactions after the L2 INIT challenge period. 
+
+Arbitrage profits are shared between the `function caller` and the `LP provider`. 
+
+Required arguments for `finalize_arb` can be obtained from the `OPinit Executor` and Minitswap view function
+
+**Move Function Interface:**
+
+```move
+public entry fun finalize_arb(
+    account: &signer,
+    arb_index: u64,
+    output_index: u64,
+    withdrawal_proofs: vector<String>,
+    sender: address,
+    sequence: u64,
+    version: String,
+    state_root: String,
+    storage_root: String,
+    latest_block_hash: String
+)
+```
+
+- `arb_index`: Arbitrage index.
+- `output_index`: Output index.
+- `withdrawal_proofs`: Withdrawal proofs.
+- `sender`: Sender of the withdrawal.
+- `version`: Version of the output root.
+- `state_root`: L2 state root
+- `storage_root`: Withdrawal storage root
+- `latest_block_hash`: L2 latest block hash
+
+**Example Usage:**
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 minitswap finalize_arb \ 
+        --args "" \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+
+    ```
+    </Tab>
+</Tabs>
+
+## Swap via IBC hook
 
 Generally, users will utilize minitswap in order to swap L2 INIT to L1 INIT. However, using minitswap requires two steps: 
 
@@ -414,13 +389,13 @@ Generally, users will utilize minitswap in order to swap L2 INIT to L1 INIT. How
 
 To resolve such burden, one can use the `swap_transfer` module and IBC hook so that the steps above can be done in one transaction.
 
-## Swap transfer
+### Swap transfer
 
-Swap transfer is a module built for seamless interchain swap and transfer. The published address is as follows:
+[swap-transfer.move](https://github.com/initia-labs/move-modules/blob/main/swap-transfer/sources/swap-transfer.move) is a module built for seamless interchain swap and transfer. The published address is as follows:
 
 - initiation-2: `0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a`
 
-## Minitswap to
+### Minitswap to
 
 `minit_swap_to` is a function for using minitswap through IBC hook. The Move function interface is as follows:
 
