@@ -16,7 +16,7 @@ This specifies the configuration of the Initial L1 that the minitia will be conn
 
 | Field       | Description                                                | Example                                                        |
 |-------------|------------------------------------------------------------|----------------------------------------------------------------|
-| `chain_id`  | the chain ID of the L1 to connect to                       | `initiation-1`                                                 |
+| `chain_id`  | the chain ID of the L1 to connect to                       | `initiation-2`                                                 |
 | `rpc_url`   | The Initia L1 RPC URL to use when sending transactions.    | [https://initia-testnet-rpc.polkachu.com:443](https://initia-testnet-rpc.polkachu.com:443) |
 | `gas_prices`| The minimum gas prices and gas denom                       | `0.15uinit`                                                    |
 
@@ -24,7 +24,7 @@ Example:
 
 ```json
 "l1_config": {
-  "chain_id": "initiation-1",
+  "chain_id": "initiation-2",
   "rpc_url": "https://initia-testnet-rpc.polkachu.com:443",
   "gas_prices": "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8bfbe5c16dbd"
 }
@@ -144,7 +144,7 @@ Examples of the minimal and full `config.json` file content can be found [here](
 Once we have a config file ready and the accounts funded, we can proceed to the launch process.
 
 ```bash
-export L1_CHAIN_ID=initiation-1 # replace with the desired Initia L1 chain ID
+export L1_CHAIN_ID=initiation-2 # replace with the desired Initia L1 chain ID
 minitiad launch $L1_CHAIN_ID --with-config config.json
 ```
 

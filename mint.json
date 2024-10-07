@@ -252,9 +252,11 @@
                 "developers/developer-guides/tools/sdks/initia-js/introduction",
                 "developers/developer-guides/tools/sdks/initia-js/quickstart",
                 "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                "developers/developer-guides/tools/sdks/initia-js/accounts",
                 {
                   "group":"Transactions",
                   "pages": [
+                    "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
                   ]
@@ -326,6 +328,8 @@
           "icon": "globe",
           "pages": [
             "resources/developer/networks/initia-l1",
+            "resources/developer/networks/minimove",
+            "resources/developer/networks/miniwasm",
             "resources/developer/networks/minievm"
           ]
         },
@@ -433,7 +437,7 @@
     "github": "https://github.com/initia-labs"
   },
   "api": {
-    "baseUrl": ["https://lcd.initiation-1.initia.xyz", "https://initia-testnet-api.polkachu.com"]
+    "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
   },
-  "openapi": "https://lcd.initiation-1.initia.xyz/swagger/swagger.yaml"
+  "openapi": "https://lcd.initiation-2.initia.xyz/swagger/swagger.yaml"
 }
