@@ -389,17 +389,8 @@
           "icon": "circle-nodes",
           "pages": [
             "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
-            "initia-and-minitias/deploying-minitias/opinit-bots/bridge-executor",
-            "initia-and-minitias/deploying-minitias/opinit-bots/output-submitter",
-            "initia-and-minitias/deploying-minitias/opinit-bots/challenger",
-            {
-              "group": "Batch Submitter",
-              "pages": [
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/introduction",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-initia-l1",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-celestia"
-              ]
-            }
+            "initia-and-minitias/deploying-minitias/opinit-bots/executor",
+            "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
           ]
         },
         "initia-and-minitias/deploying-minitias/ibc-relayers",
