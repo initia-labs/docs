@@ -2,58 +2,28 @@
 title: Executor
 ---
 
-## Set up Dependencies
+<Tip>
+  To learn more about what the Executor does, check out the [Executor](/home/technical-architecture/opinit-framework/components/executor) page.
+</Tip>
 
-Before running OPinit bots, make sure you have the following prerequisites installed:
-- [Go 1.22.2+](https://go.dev/doc/install)
-
-<Steps>
-  <Step title="Build opinitd">
-    To build the `opinitd` binary, use the following command:
-    ```bash
-    git clone https://github.com/initia-labs/opinit-bots.git
-    cd opinit-bots
-    make install
-    ```
-  </Step>
-  <Step title="Initialize Bot">
-    To initialize the OPinit bots, follow these steps:
-    ```bash
-    opinitd init executor
-    ```
-    
-    Default config path is `~/.opinit/executor.json`
-    You can register keys using the following command:
-    
-    ```bash
-    opinitd keys add [chain-id] [key-name]
-    ### with mnemonic file
-    opinitd keys add [chain-id] [key-name] --recover --source [mnemonic-file-path]
-    ### with mnemonic input
-    opinitd keys add [chain-id] [key-name] --recover
-    ### with bech32 prefix
-    opinitd keys add [chain-id] [key-name] --bech32=celestia
-    ```
-    
-    These keys will be used for the bot to sign transactions.
-  </Step>
-</Steps>
-
-## Run Executor
+## Running the Executor
 
 <Steps>
-  <Step title="Build opinitd">
-    To build the `opinitd` binary, use the following command:
-    ```bash
-    git clone https://github.com/initia-labs/opinit-bots.git
-    cd opinit-bots
-    make install
-    ```
-  </Step>
   <Step title="Initialize Executor Bot">
     To initialize the Executor bot, use the following command:
     ```bash
     opinitd init executor
+    ```
+  </Step>
+  <Step title="Set Up Keys">
+    For the Executor bot, we will be needing 2 keys:
+    - `output_submitter`
+    - `bridge_executor`
+
+    ```bash
+    ## needs to be the same account as in system_keys when spinning up the minitias
+    opinitd keys add <initia_chain_id> bridge_executor --recover
+    opinitd keys add <celestia_chain_id> output_submitter --recover --bech32=celestia
     ```
   </Step>
   <Step title= "Configuration">
@@ -86,8 +56,8 @@ Before running OPinit bots, make sure you have the following prerequisites insta
         "gas_adjustment": 1.5,
         "tx_timeout": 60
       },
-      "output_submitter": "",
       "bridge_executor": "",
+      "output_submitter": "",
       "max_chunks": 5000,
       "max_chunk_size": 300000,
       "max_submission_time": 3600,
@@ -95,18 +65,21 @@ Before running OPinit bots, make sure you have the following prerequisites insta
       "batch_start_height": 0
     }
     ```
-    - `version`: Indicates the version of the OPinit spec (basically 1).
-    - `listen_address`: The address where the Challenger bot listens for incoming requests.
-    - `l1_node`: Information about the L1 node, including chain ID and RPC address.
-    - `l2_node`: Information about the L2 node, including chain ID and RPC address.
-    - `da_node`: Information about the DA node (mainly L1 or Celestia), including chain ID and RPC address.
-    - `output_submitter`: The key name in the keyring for the output submitter.
-    - `bridge_executor`: The key name in the keyring for the bridge executor.
-    - `max_chunks`: The maximum number of chunks in a batch.
-    - `max_chunk_size`: The maximum size of a chunk in a batch.
-    - `max_submission_time`: The maximum time to submit a batch.
-    - `l2_start_height`: Executor automatically sets the starting height for output proposal based on this value. If the value is already stored in the db, this config is ignored.
-    - `batch_start_height`: Executor automatically sets the starting height for batch submitting based on this value. If the value is already stored in the db, this config is ignored.
+    where each field is as follows:
+    | Field | Description |
+    |-------|-------------|
+    | `version` | Indicates the version of the OPinit spec (basically 1). |
+    | `listen_address` | The address where the Challenger bot listens for incoming requests. |
+    | `l1_node` | Information about the L1 node, including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) page for more information. |
+    | `l2_node` | Information about the L2 node, including chain ID and RPC address. These configs are what you set when deploying the Minitia |
+    | `da_node` | Information about the DA node (mainly L1 or Celestia), including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) for more information. |
+    | `bridge_executor` | The key name in the keyring for the bridge executor. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `output_submitter` | The key name in the keyring for the output submitter. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `max_chunks` | The maximum number of chunks in a batch. |
+    | `max_chunk_size` | The maximum size of a chunk in a batch. |
+    | `max_submission_time` | The maximum time to submit a batch. |
+    | `l2_start_height` | Executor automatically sets the starting height for output proposal based on this value. If the value is already stored in the db, this config is ignored. |
+    | `batch_start_height` | Executor automatically sets the starting height for batch submitting based on this value. If the value is already stored in the db, this config is ignored. |
   </Step>
   <Step title="Start Bot">
     To start the bot, use the following command:
@@ -116,14 +89,16 @@ Before running OPinit bots, make sure you have the following prerequisites insta
 
     The following options can be set:
 
-    - `--log-level`: log level can be set. Default log level is `info`.
-    - `--polling-interval`: polling interval can be set. Default polling interval is `100ms`.
-    - `--config`: config file name can be set. Default config file name is `[bot-name].json`.
-    - `--home`: home dir can be set. Default home dir is `~/.opinit`.
+    | Option | Description | Default Value |
+    |--------|-------------|---------------|
+    | `--log-level` | Sets the log level | `info` |
+    | `--polling-interval` | Sets the polling interval | `100ms` |
+    | `--config` | Sets the config file name | `[bot-name].json` |
+    | `--home` | Sets the home directory | `~/.opinit` |
   </Step>
 </Steps>
 
-## Query
+## Queries
 
 You can query the Executor bot to get its status or view the withdrawal information:
 
@@ -200,7 +175,7 @@ initiad tx ophost finalize-token-withdrawal ./withdrawal-info.json --gas= --gas-
 ```
 
 
-## Reset Bot DB
+## Resetting The Bot Database
 
 If the database becomes corrupted or is moved to a new one, you need to initialize or reset it.
 

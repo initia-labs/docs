@@ -2,15 +2,7 @@
 title: Executor
 ---
 
-The OPinit Bot Executor is a critical component in maintaining the communication and operational integrity between the Initia L1 and Minitia blockchains. 
-
-It automates key tasks related to the OPinit Bridge, which facilitates cross-chain interactions and ensures that both blockchains remain synchronized and secure. 
-
-The Executor ensures that token transfers, output proposals, and other essential processes occur correctly and within the expected timeframes. 
-
-Furthermore, it provides an optional feature for relaying oracle updates, allowing real-time external data to be accurately reflected on the Minitia blockchain.
-
-Its role is vital in maintaining the flow of data and transactions between these two layers, while also ensuring that these processes adhere to the designed specifications of the OPinit framework
+The OPinit Bot Executor is a critical component in maintaining the communication and operational integrity between the Initia L1 and Minitia blockchains. It handles and automates key tasks related to the OPinit Bridge, which facilitates cross-chain interactions and ensures that both blockchains remain synchronized and secure.
 
 The primary responsibilities of the Executor include:
 
@@ -19,27 +11,11 @@ The primary responsibilities of the Executor include:
 3. **Transaction Batch DA Submission:** Submitting Minitia transaction batches to the DA layer
 4. **Relaying Oracle Update (Optional):** Relaying oracle price feed updates to the Minitias
 
-For a complete flow of these actions, refer to the [Action Flows](/initia-and-minitias/technical-architecture/opinit-framework/action-flows).
-
-## How to Use the Executor
-
-You can see how to use the Executor in the [OPinit Bot Executor](/initia-and-minitias/deploying-minitias/opinit-bots/executor.mdx) documentation.
-
 ## Detailed Architecture
-
-The OPinit Bot Executor's architecture is designed for efficient and reliable handling of cross-chain operations between Initia L1 and Minitia. 
-
-Each component focuses on specific tasks, such as token transfers, output proposals, and batch submissions to the DA layer. 
-
-This modular approach ensures that the system maintains high performance and accuracy while managing the complexities of cross-chain interactions.
 
 ### Transfer Token from L1 to L2 (Deposit)
 
-The Executor is responsible for ensuring that token transfers between Initia L1 and Minitia are securely executed. 
 
-When a `MsgInitiateTokenDeposit` is triggered on L1, the system records the transaction and submits it to L2 for finalization. 
-
-The Executor ensures this process is smooth and that any inconsistencies are caught and resolved before the finalization of the transfer.
 
 When the `initiate_token_deposit` event is detected in L1, the Executor submits a tx containing the `MsgFinalizeTokenDeposit` msg to L2. 
 
@@ -121,7 +97,7 @@ type QueryWithdrawalResponse struct {
 
 This contains all the necessary data for finalizing a withdrawal.
 
-### Oracle
+### Oracle Updates
 
 Oracle data is crucial for keeping the blockchain updated with external information. When the `oracle_enabled` setting is configured, the Executor relays oracle data from L1 to L2, ensuring applications depending on this data function without delay or outdated information.
 
@@ -129,7 +105,7 @@ Initia uses [slinky](https://github.com/skip-mev/connect) to relay oracle data, 
 
 Make sure the `oracle_enabled` setting is true in the bridge configuration to enable this process.
 
-### Batch
+### DA Batch Submission
 
 The Executor is responsible for batching and submitting transaction data to the Data Availability (DA) layer. It organizes the transaction data into chunks, ensuring efficient handling of large datasets. This process guarantees that all transaction data is correctly recorded and stored on the DA layer for future reference and audits.
 

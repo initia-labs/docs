@@ -2,55 +2,13 @@
 title: Challenger
 ---
 
-## Set up Dependencies
+<Tip>
+  To learn more about what the Challenger does, check out the [Challenger](/home/technical-architecture/opinit-framework/components/challenger) page.
+</Tip>
 
-Before running OPinit bots, make sure you have the following prerequisites installed:
-- [Go 1.22.2+](https://go.dev/doc/install)
-
-<Steps>
-  <Step title="Build opinitd">
-    To build the `opinitd` binary, use the following command:
-    ```bash
-    git clone https://github.com/initia-labs/opinit-bots.git
-    cd opinit-bots
-    make install
-    ```
-  </Step>
-  <Step title="Initialize Bot">
-    To initialize the OPinit bots, follow these steps:
-    ```bash
-    opinitd init challenger
-    ```
-    
-    Default config path is `~/.opinit/challenger.json`
-    You can register keys using the following command:
-    
-    ```bash
-    opinitd keys add [chain-id] [key-name]
-    ### with mnemonic file
-    opinitd keys add [chain-id] [key-name] --recover --source [mnemonic-file-path]
-    ### with mnemonic input
-    opinitd keys add [chain-id] [key-name] --recover
-    ### with bech32 prefix
-    opinitd keys add [chain-id] [key-name] --bech32=celestia
-    ```
-    
-    These keys will be used for the bot to sign transactions.
-  </Step>
-</Steps>
-
-
-## Run Challenger
+## Running the Challenger
 
 <Steps>
-  <Step title="Build opinitd">
-    To build the `opinitd` binary, use the following command:
-    ```bash
-    git clone https://github.com/initia-labs/opinit-bots.git
-    cd opinit-bots
-    make install
-    ```
-  </Step>
   <Step title="Initialize Challenger Bot">
     To initialize the `Challenger` bot, use the following command:
     ```bash
@@ -76,28 +34,32 @@ Before running OPinit bots, make sure you have the following prerequisites insta
       "l2_start_height": 0,
     }
     ```
-    - `version`: Indicates the version of the OPinit spec (basically 1).
-    - `listen_address`: The address where the Challenger bot listens for incoming requests.
-    - `l1_node`: Information about the L1 node, including chain ID and RPC address.
-    - `l2_node`: Information about the L2 node, including chain ID and RPC address.
-    - `l2_start_height`: Challenger automatically sets the starting height for challenge processing. If the value is already stored in the db, this config is ignored.
+    | Field | Description |
+    |-------|-------------|
+    | `version` | Indicates the version of the OPinit spec (basically 1). |
+    | `listen_address` | The address where the Challenger bot listens for incoming requests. |
+    | `l1_node` | Information about the L1 node, including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) page for more information. |
+    | `l2_node` | Information about the L2 node, including chain ID and RPC address. These configs are what you set when deploying the Minitia |
+    | `l2_start_height` | Challenger automatically sets the starting height for challenge processing. If the value is already stored in the db, this config is ignored. |
   </Step>
   <Step title="Start Bot">
     To start the bot, use the following command:
     ```bash
     opinitd start challenger
     ```
-    
+
     The following options can be set:
 
-    - `--log-level`: log level can be set. Default log level is `info`.
-    - `--polling-interval`: polling interval can be set. Default polling interval is `100ms`.
-    - `--config`: config file name can be set. Default config file name is `[bot-name].json`.
-    - `--home`: home dir can be set. Default home dir is `~/.opinit`.
+    | Option | Description | Default Value |
+    |--------|-------------|---------------|
+    | `--log-level` | Sets the log level | `info` |
+    | `--polling-interval` | Sets the polling interval | `100ms` |
+    | `--config` | Sets the config file name | `[bot-name].json` |
+    | `--home` | Sets the home directory | `~/.opinit` |
   </Step>
 </Steps>
 
-## Query
+## Queries
 
 You can query the Challenger bot to get its status or view pending events and challenges:
 
@@ -162,7 +124,7 @@ curl localhost:3001/challenges/{page}
 ]
 ```
 
-### Pending events
+### Pending Events
 
 Each event or transaction processed in a block is saved as a `pending event`. These events are processed atomically, meaning they are either fully processed or rolled back in case of an error. If a `pending event` matches a processed event or the event exceeds its timeout, a `Challenge` is created and stored in the database for further action.
 
@@ -201,7 +163,7 @@ curl localhost:3001/pending_events/child
 ]
 ```
 
-## Reset Bot DB
+## Resetting The Bot Database
 
 If the database becomes corrupted or is moved to a new one, you need to initialize or reset it.
 
