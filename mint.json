@@ -445,5 +445,16 @@
   },
   "api": {
     "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
+  },
+  "background": {
+    "style": "grid"
+  },
+  "sidebar": {
+    "items": "card"
+  },
+  "feedback": {
+    "raiseIssue": true,
+    "suggestEdit": true,
+    "thumbsRating": true
   }
 }
