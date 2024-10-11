@@ -186,6 +186,13 @@
       "pages": ["developers/introduction"]
     },
     {
+      "group": "Guides",
+      "icon": "book",
+      "pages": [
+        "developers/developer-guides/guides/exchange-integration"
+      ]
+    },
+    {
       "group": "VM Specific Tutorials",
       "icon": "book",
       "pages": [
