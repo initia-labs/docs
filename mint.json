@@ -189,7 +189,9 @@
       "group": "Guides",
       "icon": "book",
       "pages": [
-        "developers/developer-guides/guides/exchange-integration"
+        "developers/developer-guides/guides/exchange-integration",
+        "developers/developer-guides/guides/interchain-message",
+        "developers/developer-guides/guides/minitswap-arbitrage"
       ]
     },
     {
