@@ -40,7 +40,7 @@ public entry fun create_pair_script(
     <Tab title="CLI">
         ```bash
         initiad tx move execute 0x1 dex create_pair_script \
-            --args "string:name string:symbol decimal128:0.001 decimal128:0.8 decimal128:0.2 object:0x... object:0x... u64:100 u64:100" \
+            --args "string:name string:symbol bigdecimal:0.001 bigdecimal:0.8 bigdecimal:0.2 object:0x... object:0x... u64:100 u64:100" \
             --from [key-name] \
             --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
             --node [rpc-url]:[rpc-port] --chain-id [chain-id]
@@ -77,9 +77,9 @@ public entry fun create_pair_script(
               [
                   bcs.string().serialize('name'), // name
                   bcs.string().serialize('symbol'), // symbol
-                  bcs.decimal128().serialize('0.003'), // swap fee
-                  bcs.decimal128().serialize('0.2'), // coin a weight
-                  bcs.decimal128().serialize('0.8'), // coin b weight
+                  bcs.bigdecimal().serialize('0.003'), // swap fee
+                  bcs.bigdecimal().serialize('0.2'), // coin a weight
+                  bcs.bigdecimal().serialize('0.8'), // coin b weight
                   bcs.object().serialize('0x...'), // coin a
                   bcs.object().serialize('0x...'), // coin b
                   bcs.u64().serialize(7500000000000), // coin a amount
