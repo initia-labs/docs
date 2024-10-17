@@ -1,11 +1,11 @@
 ---
-title: Using Slinky Oracle
+title: Using Connect
 ---
 
-[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/slinky-oracle)
+[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/connect-oracle)
 
 <Warning>
-Compiling contracts that uses Slinky.sol requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
+Compiling contracts that uses ConnectOracle.sol requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
 </Warning>
 
 ### Foundry
@@ -17,8 +17,8 @@ For this tutorial, we will be using [Foundry](https://github.com/foundry-rs/foun
 First, we need to create a new directory for our project.
 
 ```sh
-mkdir slinky-oracle
-cd slinky-oracle
+mkdir connect-oracle
+cd connect-oracle
 ```
 
 Next, we will initialize a new Foundry project side that directory.
@@ -41,60 +41,60 @@ Before writing our contract, we first need to rename the template contract to `N
 mv src/Counter.sol src/Oracle.sol
 ```
 
-We then update the contract from the template to be our oracle contract. Start by importing the `ISlinky` interface from the `@initia/initia-evm-contracts` package.
+We then update the contract from the template to be our oracle contract. Start by importing the `IConnectOracle` interface from the `@initia/initia-evm-contracts` package.
 
 ```solidity src/Oracle.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "initia-evm-contracts/src/interfaces/ISlinky.sol";
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
 ```
 
 Next, we declare the variables that we will use in the contract's operations.
 
-- `slinky`: The interface of the Slinky contract
-- `currencyPair`: The variable that stores the currency pair response from Slinky
-- `price` The variable that stores the single pair price response from Slinky
-- `prices` The variable that stores the multiple pair prices response from Slinky
+- `connect`: The interface of the ConnectOracle contract
+- `currencyPair`: The variable that stores the currency pair response from ConnectOracle
+- `price` The variable that stores the single pair price response from ConnectOracle
+- `prices` The variable that stores the multiple pair prices response from ConnectOracle
 
 ```solidity src/Oracle.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "initia-evm-contracts/src/interfaces/ISlinky.sol";
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
 
 contract Oracle {
 
-    ISlinky immutable public slinky;
+    IConnectOracle immutable public connect;
 
     string public currencyPairs;
-    ISlinky.Price public price;
-    ISlinky.Price[] public prices;
+    IConnectOracle.Price public price;
+    IConnectOracle.Price[] public prices;
 ```
 
-We then need to define the constructor for our contract. This will be used to initialize the contract with the Slinky contract address.
+We then need to define the constructor for our contract. This will be used to initialize the contract with the ConnectOracle contract address.
 
 ```solidity src/Oracle.sol
-    constructor(address slinky_) {
-        slinky = ISlinky(slinky_);
+    constructor(address connect_) {
+        connect = IConnectOracle(connect_);
     }
 ```
 
 Once the constructor is implement, we move on to defining the different functions that our contract will have
 
-- `oracle_get_all_currency_pairs`: This function will return all of the asset pairs currently supported by Slinky
+- `oracle_get_all_currency_pairs`: This function will return all of the asset pairs currently supported by Connect
 - `oracle_get_price`: This function will return the price of a single asset pair
 - `oracle_get_prices`: This function will return the price of multiple asset pairs
 
 ```solidity src/Oracle.sol
     function oracle_get_all_currency_pairs() external {
-        currencyPairs = slinky.get_all_currency_pairs();
+        currencyPairs = connect.get_all_currency_pairs();
     }
 
     function oracle_get_price() external {
         string memory base = "BTC";
         string memory quote = "USD";
-        price = slinky.get_price(base, quote);
+        price = connect.get_price(base, quote);
     }
 
     function oracle_get_prices() external {
@@ -102,7 +102,7 @@ Once the constructor is implement, we move on to defining the different function
         pair_ids[0]= "BTC/USD";
         pair_ids[1]= "ETH/USD";
         
-        ISlinky.Price[] memory memoryPrices = slinky.get_prices(pair_ids);
+        IConnectOracle.Price[] memory memoryPrices = connect.get_prices(pair_ids);
 
         // Clear the existing storage array
         delete prices;
@@ -120,28 +120,28 @@ Our complete contract will then look like this:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import "initia-evm-contracts/src/interfaces/ISlinky.sol";
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
 
 contract Oracle {
 
-    ISlinky immutable public slinky;
+    IConnectOracle immutable public connect;
 
     string public currencyPairs;
-    ISlinky.Price public price;
-    ISlinky.Price[] public prices;
+    IConnectOracle.Price public price;
+    IConnectOracle.Price[] public prices;
 
-    constructor (address _slinky) {
-        slinky = ISlinky(_slinky);
+    constructor (address _connect) {
+        connect = IConnectOracle(_connect);
     }
 
     function oracle_get_all_currency_pairs() external {
-        currencyPairs = slinky.get_all_currency_pairs();
+        currencyPairs = connect.get_all_currency_pairs();
     }
 
     function oracle_get_price() external {
         string memory base = "BTC";
         string memory quote = "USD";
-        price = slinky.get_price(base, quote);
+        price = connect.get_price(base, quote);
     }
 
     function oracle_get_prices() external {
@@ -149,7 +149,7 @@ contract Oracle {
         pair_ids[0]= "BTC/USD";
         pair_ids[1]= "ETH/USD";
         
-        ISlinky.Price[] memory memoryPrices = slinky.get_prices(pair_ids);
+        IConnectOracle.Price[] memory memoryPrices = connect.get_prices(pair_ids);
 
         // Clear the existing storage array
         delete prices;
@@ -164,7 +164,7 @@ contract Oracle {
 
 Our contract implementation is now ready. However, if we try to compile the contract using `forge compile`, we will get an error.
 
-This is because the default `Counter.t.sol` expects the original `Counter.sol` contract to be available. To fix this, we will rename `Counter.t.sol` to `Oracle.t.sol`.
+This is because the default `Oracle.t.sol` expects the original `Oracle.sol` contract to be available. To fix this, we will rename `Oracle.t.sol` to `OracleTest.t.sol`.
 
 ```sh
 mv test/Counter.t.sol test/Oracle.t.sol
@@ -227,7 +227,7 @@ cast send 0xdDa3cB3675238f3264F417DF48bf559bE8704a47 \
 # ...
 ```
 
-If you then try querying the `currencyPairs` variable using Foundry's `cast call` command, you should see the response from Slinky.
+If you then try querying the `currencyPairs` variable using Foundry's `cast call` command, you should see the response from Connect.
 
 ```sh
 cast call 0xdDa3cB3675238f3264F417DF48bf559bE8704a47 \

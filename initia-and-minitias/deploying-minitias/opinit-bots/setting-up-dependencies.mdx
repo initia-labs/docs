@@ -1,0 +1,44 @@
+---
+title: Setting Up Dependencies
+---
+
+Before running OPinit bots, make sure you have the following prerequisites installed:
+- [Go 1.22.2+](https://go.dev/doc/install)
+
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the `opinit-bots` repository:
+    ```bash
+    git clone https://github.com/initia-labs/opinit-bots.git
+    ```
+  </Step>
+  <Step title="Build the Binary">
+    Build the `opinitd` binary:
+    ```bash
+    cd opinit-bots
+    make install
+    ```
+  </Step>
+  <Step title="Initialize Keys">
+    You can register keys using the following command:
+    
+    ```bash
+    ### automatically generate a new key
+    opinitd keys add [chain-id] [key-name]
+    ### with mnemonic file
+    opinitd keys add [chain-id] [key-name] --recover --source [mnemonic-file-path]
+    ### with mnemonic input
+    opinitd keys add [chain-id] [key-name] --recover
+    ### with bech32 prefix
+    opinitd keys add [chain-id] [key-name] --bech32=celestia
+    ```
+
+    For example, if you want to set up a key to be used for the executor's batch submission connected to Celestia's `arabica-11` testnet, you can use the following command:
+
+    ```bash
+    opinitd keys add arabica-11 batch --recover --bech32=celestia
+    ```
+
+    These keys will be used for the bot to sign transactions, with the `key-name` being used as reference.
+  </Step>
+</Steps>

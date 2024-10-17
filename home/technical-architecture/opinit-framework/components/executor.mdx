@@ -2,11 +2,171 @@
 title: Executor
 ---
 
-To handle and execute actions related to the OPinit Bridge, we have created the OPinit Bot Executor. This executor is responsible for: 
+The OPinit Bot Executor is a critical component in maintaining the communication and operational integrity between the Initia L1 and Minitia blockchains. It handles and automates key tasks related to the OPinit Bridge, which facilitates cross-chain interactions and ensures that both blockchains remain synchronized and secure.
 
-- **Executing Token Transfers:** Executing token transfers between Initia L1 and Minitias
-- **Submitting Output Proposals:** Submitting output proposals to the Initia L1
-- **Transaction Batch DA Submission:** Submitting Minitia transaction batches to the DA layer
-- **Relaying Oracle Update (Optional):** Relaying oracle price feed updates to the Minitias
+The primary responsibilities of the Executor include:
 
-The full flow for these actions is outlined in the [following section](/initia-and-minitias/technical-architecture/opinit-framework/action-flows).
+1. **Executing Token Transfers:** Executing token transfers between Initia L1 and Minitias
+2. **Submitting Output Proposals:** Submitting output proposals to the Initia L1
+3. **Transaction Batch DA Submission:** Submitting Minitia transaction batches to the DA layer
+4. **Relaying Oracle Update (Optional):** Relaying oracle price feed updates to the Minitias
+
+## Detailed Architecture
+
+### Transfer Token from L1 to L2 (Deposit)
+
+
+
+When the `initiate_token_deposit` event is detected in L1, the Executor submits a tx containing the `MsgFinalizeTokenDeposit` msg to L2. 
+
+### Transfer  Token from L2 to L1 (Withdrawal)
+
+The Executor compiles an output proposal for each L2 withdrawal, using a Merkle tree structure to ensure the integrity of the withdrawal data through cryptographic proofs.
+
+For each initiated withdrawal, a leaf node is added to the current working Merkle tree. The leaf index corresponds to the L2 sequence number of the withdrawal minus the tree’s start index. The withdrawal hash is then calculated according to the [OPinit spec](https://github.com/initia-labs/OPinit/blob/v0.4.3/x/ophost/types/output.go#L30).
+
+If the working tree for the previous block does not exist, the system raises an error (panic).
+
+For more details on Merkle tree creation, refer to the [Merkle Tree Documentation](https://github.com/initia-labs/opinit-bots/tree/main/merkle).
+
+This is the function used to generate the withdrawal hash:
+
+```go
+func GenerateWithdrawalHash(bridgeId uint64, l2Sequence uint64, sender string, receiver string, denom string, amount uint64) [32]byte {
+	var withdrawalHash [32]byte
+	seed := []byte{}
+	seed = binary.BigEndian.AppendUint64(seed, bridgeId)
+	seed = binary.BigEndian.AppendUint64(seed, l2Sequence)
+
+	// variable length
+	senderDigest := sha3.Sum256([]byte(sender))
+	seed = append(seed, senderDigest[:]...) // put utf8 encoded address
+	// variable length
+	receiverDigest := sha3.Sum256([]byte(receiver))
+	seed = append(seed, receiverDigest[:]...) // put utf8 encoded address
+	// variable length
+	denomDigest := sha3.Sum256([]byte(denom))
+	seed = append(seed, denomDigest[:]...)
+	seed = binary.BigEndian.AppendUint64(seed, amount)
+
+	// double hash the leaf node
+	withdrawalHash = sha3.Sum256(seed)
+	withdrawalHash = sha3.Sum256(withdrawalHash[:])
+
+	return withdrawalHash
+}
+```
+
+When `2/3` of the submission interval has passed since the previous submission time, the Executor finalizes the current working tree and submits the output root created with the tree’s root as a storage root. 
+
+The current version used is `0`.
+
+```go 
+func GenerateOutputRoot(version byte, storageRoot []byte, latestBlockHash []byte) [32]byte {
+	seed := make([]byte, 1+32+32)
+	seed[0] = version
+	copy(seed[1:], storageRoot[:32])
+	copy(seed[1+32:], latestBlockHash[:32])
+	return sha3.Sum256(seed)
+}
+```
+
+When the tree is finalized, the leaf nodes and internal nodes are stored to provide withdrawal proofs. 
+
+A query for a withdrawal sequence will return the following response:
+
+```go
+type QueryWithdrawalResponse struct {
+	// fields required to withdraw funds
+	BridgeId         uint64   `json:"bridge_id"`
+	OutputIndex      uint64   `json:"output_index"`
+	WithdrawalProofs [][]byte `json:"withdrawal_proofs"`
+	Sender           string   `json:"sender"`
+	Sequence         uint64   `json:"sequence"`
+	Amount           string   `json:"amount"`
+	Version          []byte   `json:"version"`
+	StorageRoot      []byte   `json:"storage_root"`
+	LatestBlockHash  []byte   `json:"latest_block_hash"`
+
+	// extra info
+	BlockNumber    uint64 `json:"block_number"`
+	Receiver       string `json:"receiver"`
+	WithdrawalHash []byte `json:"withdrawal_hash"`
+}
+```
+
+This contains all the necessary data for finalizing a withdrawal.
+
+### Oracle Updates
+
+Oracle data is crucial for keeping the blockchain updated with external information. When the `oracle_enabled` setting is configured, the Executor relays oracle data from L1 to L2, ensuring applications depending on this data function without delay or outdated information.
+
+Initia uses [Connect](https://github.com/skip-mev/connect) to relay oracle data, which is stored in the 0th transaction of each block. The Executor submits a MsgUpdateOracle with the 0th transaction from an L1 block to L2 whenever a new L1 block is created. Only up-to-date oracle data is used, with older data being discarded.
+
+Make sure the `oracle_enabled` setting is true in the bridge configuration to enable this process.
+
+### DA Batch Submission
+
+The Executor is responsible for batching and submitting transaction data to the Data Availability (DA) layer. It organizes the transaction data into chunks, ensuring efficient handling of large datasets. This process guarantees that all transaction data is correctly recorded and stored on the DA layer for future reference and audits.
+
+The `Batch` process queries batch information stored on the chain and submits it based on the account and chain ID. The user must configure the `RPC address`, `bech32-prefix`, and `gas-price`, and ensure that the account is registered in the keyring. Each block’s raw data is compressed using gzip and divided into chunks of maximum size as defined in the config.
+
+When 2/3 of the submission interval has passed, the Executor submits the batch header first, followed by the data chunks to the DA layer. The batch header includes the start and end L2 block heights, along with the checksums of each chunk.
+
+```go
+// BatchDataHeader is the header of a batch
+type BatchDataHeader struct {
+	Start     uint64
+	End       uint64
+	Checksums [][]byte
+}
+
+func MarshalBatchDataHeader(
+	start uint64,
+	end uint64,
+	checksums [][]byte,
+) []byte {
+	data := make([]byte, 1)
+	data[0] = byte(BatchDataTypeHeader)
+	data = binary.BigEndian.AppendUint64(data, start)
+	data = binary.BigEndian.AppendUint64(data, end)
+	data = binary.BigEndian.AppendUint64(data, uint64(len(checksums)))
+	for _, checksum := range checksums {
+		data = append(data, checksum...)
+	}
+	return data
+}
+
+// BatchDataChunk is the chunk of a batch
+type BatchDataChunk struct {
+	Start     uint64
+	End       uint64
+	Index     uint64
+	Length    uint64
+	ChunkData []byte
+}
+
+func MarshalBatchDataChunk(
+	start uint64,
+	end uint64,
+	index uint64,
+	length uint64,
+	chunkData []byte,
+) []byte {
+	data := make([]byte, 1)
+	data[0] = byte(BatchDataTypeChunk)
+	data = binary.BigEndian.AppendUint64(data, start)
+	data = binary.BigEndian.AppendUint64(data, end)
+	data = binary.BigEndian.AppendUint64(data, index)
+	data = binary.BigEndian.AppendUint64(data, length)
+	data = append(data, chunkData...)
+	return data
+}
+```
+
+<Note>
+* If a L2 block contains `MsgUpdateOracle`, only the data field is submitted empty to reduce block bytes since the oracle data is already stored in L1.
+* Batch data is stored in a `batch` file in the home directory until it is submitted, so be careful **not to change the file.**
+</Note>
+
+If the batch information registered in the chain changes, such as updating the account or DA chain, the `Host` module detects the `update_batch_info` event and notifies the Executor. The Executor will clear the temporary batch file and resubmit the batch data from the last finalized output block number.

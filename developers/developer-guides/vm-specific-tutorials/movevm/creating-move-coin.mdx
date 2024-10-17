@@ -24,7 +24,7 @@ public entry fun initialize(
     <Tab title="CLI">
     ```bash
     initiad tx move execute 0x1 managed_coin initialize \
-        --args "option<u128>:null string:my_coin string:MYCOIN u8:6 string: string:" \
+        --args '["option<u128>:null", "string:my_coin", "string:MYCOIN", "u8:6", "string:ICON_URI", "string:PROJECT_URI"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
@@ -108,7 +108,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     <Tab title="CLI">
     ```bash
     initiad query move view 0x1 coin metadata \
-        --args "address:[addr] string:MYCOIN" \
+        --args '["address:0x...", "string:MYCOIN"]' \
         --node [rpc-url]:[rpc-port]
 
     # data: '"0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb"'
@@ -171,7 +171,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     <Tab title="CLI">
     ```bash
     initiad tx move execute 0x1 managed_coin mint \
-        --args "address:[addr] object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb u64:100000000" \
+        --args '["address:0x...", "object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb", "u64:100000000"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]

@@ -65,7 +65,7 @@
   "navigation": [
     {
       "group": "Welcome",
-      "pages": ["home/general/introduction"]
+      "pages": ["home/general/welcome", "home/general/introduction"]
     },
     {
       "group": "Core Concepts",
@@ -202,13 +202,17 @@
                 "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
               ]
             },
-            "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
           ]
         },
         {
           "group": "MoveVM",
           "icon": "note-sticky",
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
+            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+          ]
           "pages": [
             "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
             "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", 
@@ -218,7 +222,10 @@
         {
           "group": "WasmVM",
           "icon": "rust",
-          "pages": ["developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles", "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"]
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+          ]
         }
       ]
     },
@@ -226,12 +233,12 @@
       "group": "Integrating with Initia Apps",
       "pages": [
         {
-          "group":"Initia Usernames",
+          "group": "Initia Usernames",
           "icon": "user",
           "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
         },
         {
-          "group":"VIP",
+          "group": "VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
         },
@@ -247,13 +254,13 @@
       "icon": "screwdriver-wrench",
       "pages": [
         {
-          "group":"Frontend",
+          "group": "Frontend",
           "icon": "desktop",
           "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
         },
         {
           "group": "SDKs",
-          "icon":"toolbox",
+          "icon": "toolbox",
           "pages": [
             {
               "group": "InitiaJS",
@@ -263,7 +270,7 @@
                 "developers/developer-guides/tools/sdks/initia-js/querying-data",
                 "developers/developer-guides/tools/sdks/initia-js/accounts",
                 {
-                  "group":"Transactions",
+                  "group": "Transactions",
                   "pages": [
                     "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
                     "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
@@ -276,7 +283,7 @@
         },
         {
           "group": "CLIs",
-          "icon":"terminal",
+          "icon": "terminal",
           "pages": [
             {
               "group": "Initia CLI",
@@ -309,20 +316,20 @@
         },
         {
           "group": "Oracles",
-          "icon":"list-ol",
+          "icon": "list-ol",
           "pages": [
             {
-              "group": "Slinky",
+              "group": "Connect",
               "pages": [
-                "developers/developer-guides/tools/oracles/slinky/introduction",
+                "developers/developer-guides/tools/oracles/connect/introduction",
                 {
                   "group": "Fetching Prices from API",
                   "pages": [
-                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
-                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
+                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
+                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
                   ]
                 },
-                "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-contracts"
+                "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
               ]
             }
           ]
@@ -354,7 +361,7 @@
             {
               "group": "EVM",
               "pages": [
-                "resources/developer/contract-references/evm/slinky",
+                "resources/developer/contract-references/evm/connect",
                 "resources/developer/contract-references/evm/cosmos",
                 "resources/developer/contract-references/evm/erc20-acl",
                 "resources/developer/contract-references/evm/erc20-registry",
@@ -398,17 +405,9 @@
           "icon": "circle-nodes",
           "pages": [
             "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
-            "initia-and-minitias/deploying-minitias/opinit-bots/bridge-executor",
-            "initia-and-minitias/deploying-minitias/opinit-bots/output-submitter",
-            "initia-and-minitias/deploying-minitias/opinit-bots/challenger",
-            {
-              "group": "Batch Submitter",
-              "pages": [
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/introduction",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-initia-l1",
-                "initia-and-minitias/deploying-minitias/opinit-bots/batch-submitter/submitting-to-celestia"
-              ]
-            }
+            "initia-and-minitias/deploying-minitias/opinit-bots/setting-up-dependencies",
+            "initia-and-minitias/deploying-minitias/opinit-bots/executor",
+            "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
           ]
         },
         "initia-and-minitias/deploying-minitias/ibc-relayers",
@@ -456,5 +455,16 @@
   },
   "api": {
     "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
+  },
+  "background": {
+    "style": "grid"
+  },
+  "sidebar": {
+    "items": "card"
+  },
+  "feedback": {
+    "raiseIssue": true,
+    "suggestEdit": true,
+    "thumbsRating": true
   }
 }
