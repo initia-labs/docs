@@ -202,7 +202,7 @@
                 "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
               ]
             },
-            "developers/developer-guides/vm-specific-tutorials/evm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
           ]
         },
@@ -210,7 +210,7 @@
           "group": "MoveVM",
           "icon": "note-sticky",
           "pages": [
-            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
           ]
         },
@@ -218,7 +218,7 @@
           "group": "WasmVM",
           "icon": "rust",
           "pages": [
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/slinky-oracles",
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
           ]
         }
@@ -309,17 +309,17 @@
           "icon": "list-ol",
           "pages": [
             {
-              "group": "Slinky",
+              "group": "Connect",
               "pages": [
-                "developers/developer-guides/tools/oracles/slinky/introduction",
+                "developers/developer-guides/tools/oracles/connect/introduction",
                 {
                   "group": "Fetching Prices from API",
                   "pages": [
-                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-supported-feeds",
-                    "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-api/getting-single-asset-price"
+                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
+                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
                   ]
                 },
-                "developers/developer-guides/tools/oracles/slinky/fetching-prices-from-contracts"
+                "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
               ]
             }
           ]
@@ -351,7 +351,7 @@
             {
               "group": "EVM",
               "pages": [
-                "resources/developer/contract-references/evm/slinky",
+                "resources/developer/contract-references/evm/connect",
                 "resources/developer/contract-references/evm/cosmos",
                 "resources/developer/contract-references/evm/erc20-acl",
                 "resources/developer/contract-references/evm/erc20-registry",

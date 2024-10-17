@@ -1,8 +1,8 @@
 ---
-title: Using Slinky Oracle
+title: Using Connect
 ---
 
-To query prices from Slinky oracle on WasmVM, you need to utilize the queries provided by the [wasm-slinky-query](https://github.com/initia-labs/wasm-slinky-query) contract. Specifically, the contract provides 3 queries:
+To query prices from Connect oracle on WasmVM, you need to utilize the queries provided by the [wasm-connect-query](https://github.com/initia-labs/wasm-connect-query) contract. Specifically, the contract provides 3 queries:
 
 1. `GetAllCurrencyPairs`: Returns all of the currently supported asset pairs
 2. `GetPrice`: Returns the price of a single asset pair
@@ -10,7 +10,7 @@ To query prices from Slinky oracle on WasmVM, you need to utilize the queries pr
 
 ## Integrating the Queries into Your Contract
 
-To make the queries from your own contracts, you can copy the `packages` folder found in the wasm-slinky-query contract repository into your own project. This folder contains the necessary files and definitions to make the queries from your own contracts.
+To make the queries from your own contracts, you can copy the `packages` folder found in the wasm-connect-query contract repository into your own project. This folder contains the necessary files and definitions to make the queries from your own contracts.
 
 
 See [here](https://github.com/initia-labs/examples/tree/main/wasmvm/examples) for an example contract that integrated the queries.
@@ -38,10 +38,10 @@ pub struct CurrencyPairResponse {
 
 pub fn example_get_all_curreny_pairs(deps: Deps) -> StdResult<GetAllCurrencyPairsResponse> {
     let state = STATE.load(deps.storage)?;
-    let slinky_addr = state.slinky;
+    let connect_addr = state.connect;
     deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
-        contract_addr: slinky_addr.to_string(),
-        msg: to_json_binary(&slinky_wasm::oracle::QueryMsg::GetAllCurrencyPairs {})?,
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetAllCurrencyPairs {})?,
     }))
 }
 ```
@@ -69,7 +69,7 @@ The response is of type `GetAllCurrencyPairsResponse` and is in the following fo
 
 ## GetPrice
 
-This query takes two arguments: `base` and `quote`, which represent the base and quote asset symbol strings of the asset pair you want to query. Note that the `base` and `quote` pair must be supported by Slinky and be included in the `GetAllCurrencyPairsResponse`. For example, "BTC" and "USD" is a valid pair, but "BTC" and "AAVE" is not.
+This query takes two arguments: `base` and `quote`, which represent the base and quote asset symbol strings of the asset pair you want to query. Note that the `base` and `quote` pair must be supported by Connect and be included in the `GetAllCurrencyPairsResponse`. For example, "BTC" and "USD" is a valid pair, but "BTC" and "AAVE" is not.
 
 **Example Usage (Simplified)**
 
@@ -91,14 +91,14 @@ pub struct GetPriceResponse {
 
 pub fn example_get_price(deps: Deps) -> StdResult<GetPriceResponse> {
     let state = STATE.load(deps.storage)?;
-    let slinky_addr = state.slinky;
+    let connect_addr = state.connect;
 
     let base_asset = "BTC";
     let quote_asset = "USD";
 
     deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
-        contract_addr: slinky_addr.to_string(),
-        msg: to_json_binary(&slinky_wasm::oracle::QueryMsg::GetPrice {
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetPrice {
             base: base_asset.to_string(),
             quote: quote_asset.to_string(),
         })?,
@@ -152,13 +152,13 @@ pub struct GetPricesResponse {
 
 pub fn example_get_prices(deps: Deps) -> StdResult<GetPricesResponse> {
     let state = STATE.load(deps.storage)?;
-    let slinky_addr = state.slinky;
+    let connect_addr = state.connect;
 
     let pair_ids = vec!["BTC/USD".to_string(), "ETH/USD".to_string()];
 
     deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
-        contract_addr: slinky_addr.to_string(),
-        msg: to_json_binary(&slinky_wasm::oracle::QueryMsg::GetPrices { pair_ids })?,
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetPrices { pair_ids })?,
     }))
 }
 ```

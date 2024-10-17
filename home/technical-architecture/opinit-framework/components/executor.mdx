@@ -101,7 +101,7 @@ This contains all the necessary data for finalizing a withdrawal.
 
 Oracle data is crucial for keeping the blockchain updated with external information. When the `oracle_enabled` setting is configured, the Executor relays oracle data from L1 to L2, ensuring applications depending on this data function without delay or outdated information.
 
-Initia uses [slinky](https://github.com/skip-mev/connect) to relay oracle data, which is stored in the 0th transaction of each block. The Executor submits a MsgUpdateOracle with the 0th transaction from an L1 block to L2 whenever a new L1 block is created. Only up-to-date oracle data is used, with older data being discarded.
+Initia uses [Connect](https://github.com/skip-mev/connect) to relay oracle data, which is stored in the 0th transaction of each block. The Executor submits a MsgUpdateOracle with the 0th transaction from an L1 block to L2 whenever a new L1 block is created. Only up-to-date oracle data is used, with older data being discarded.
 
 Make sure the `oracle_enabled` setting is true in the bridge configuration to enable this process.
 
