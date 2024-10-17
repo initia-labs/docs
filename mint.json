@@ -213,6 +213,11 @@
             "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
           ]
+          "pages": [
+            "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
+            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", 
+            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+          ]
         },
         {
           "group": "WasmVM",
@@ -236,6 +241,11 @@
           "group": "VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+        },
+        {
+          "group":"Initia Dex",
+          "icon": "swap",
+          "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
         }
       ]
     },
