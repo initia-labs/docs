@@ -188,9 +188,7 @@
     {
       "group": "Guides",
       "icon": "book",
-      "pages": [
-        "developers/developer-guides/guides/exchange-integration"
-      ]
+      "pages": ["developers/developer-guides/guides/exchange-integration"]
     },
     {
       "group": "VM Specific Tutorials",
@@ -217,12 +215,8 @@
           "group": "MoveVM",
           "icon": "note-sticky",
           "pages": [
-            "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
-          ]
-          "pages": [
             "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
-            "developers/developer-guides/vm-specific-tutorials/movevm/slinky-oracles", 
+            "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
           ]
         },
@@ -250,7 +244,7 @@
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
         },
         {
-          "group":"Initia Dex",
+          "group": "Initia Dex",
           "icon": "swap",
           "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
         }
