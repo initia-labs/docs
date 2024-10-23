@@ -2,9 +2,7 @@
 title: Integrating Initia Minitswap
 ---
 
-## Interacting with Minitswap
-
-### Provide
+## Provide
 
 To provide INIT liquidity to Minitswap, you would need to use the `provide` function. 
 
@@ -21,15 +19,15 @@ public entry fun provide(
 ```
 
 - `amount`: The amount of L1 INIT to provide.
-- `min_return_amount`: Ensures the transaction fails if the return amount is less than specified.
+- `min_return_amount`: The minimum acceptable amount of LP tokens to be returned from the provide action. If the actual amount returned is less than this, the transaction will be reverted.
 
 **Example Usage:**
 
 <Tabs>
     <Tab title="CLI">
     ```bash
-    initiad tx move execute 0x1 minitswap provide \ 
-        --args "u64:100 option<u64>:100" \
+    initiad tx move execute 0x1 minitswap provide \
+        --args '["u64:100", "option<u64>:null"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
@@ -58,15 +56,15 @@ public entry fun provide(
 
         const msgs = [
             new MsgExecute(
-            key.accAddress,
-            '0x1',
-            'minitswap',
-            'provide',
-            [],
-            [
-                bcs.u64().serialize(100).toBase64(), // amount to provide
-                bcs.option(bcs.u64()).serialize(100).toBase64(), // min return amount
-            ]
+                key.accAddress,
+                '0x1',
+                'minitswap',
+                'provide',
+                [],
+                [
+                    bcs.u64().serialize(100).toBase64(), // amount to provide
+                    bcs.option(bcs.u64()).serialize(null).toBase64(), // min return amount
+                ]
             ),
         ];
 
@@ -86,32 +84,117 @@ public entry fun provide(
     </Tab>
 </Tabs>
 
-## Withdraw
+## Unbond
 
-When you're ready to take back the liquidity you’ve provided, you can use the `withdraw` function to retrieve your INIT tokens from Minitswap.
+Before withdrawing your liquidity, you must first unbond your LP tokens. This process takes 7 days to complete.
+
+Minitswap depositors take risk of L2 fraud. By having 7-day unbonding period, all depositors will share the responsibility of L2 fraud equally.
+
+**Move Function Interface:**
+
+```move
+public entry fun unbond(
+  account: &signer,
+  amount: u64
+)
+```
+
+- `amount`: The amount of LP tokens to unbond.
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 minitswap unbond \
+        --args '["u64:100"]' \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function main() {
+        const lcd = new LCDClient('[rest-url]', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5',
+        });
+
+        const key = new MnemonicKey({
+            mnemonic: 'beauty sniff protect ...',
+        });
+        const wallet = new Wallet(lcd, key);
+
+        const msgs = [
+            new MsgExecute(
+                key.accAddress,
+                '0x1',
+                'minitswap',
+                'unbond',
+                [],
+                [
+                    bcs.u64().serialize(100).toBase64(), // amount to unbond
+                ]
+            ),
+        ];
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs });
+        // send(broadcast) tx
+        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        // {
+        //   height: 0,
+        //   txhash: 'E8498469AA40E0F22499F412A009F86CE037B02C78C111078C9C4C990C1E0D18',
+        //   raw_log: '[]'
+        // }
+    }
+
+    main();
+    ```
+    </Tab>
+</Tabs>
+
+## Withdraw Unbond
+
+After the 7-day unbonding period, you can withdraw your LP tokens using the `withdraw_unbond` function.
 
 This allows you to freely exit your position whenever you'd like and reclaim your provided liquidity plus any fees you’ve earned along the way.
 
 **Move Function Interface:**
 
 ```move
-public entry fun withdraw(
+public entry fun withdraw_unbond(
   account: &signer,
-  amount: u64,
-  min_return_amount: Option<u64>,
+  release_time: u64
 )
 ```
 
-- `amount`: Specifies the share amount to withdraw.
-- `min_return_amount`: Transaction fails if the return is less than specified.
+- `release_time`: The time when the LP tokens will be released.
+
+To retrieve the release time, you can use the `get_unbond_list` view function.
+
+```move
+public fun get_unbond_list(
+  account: address,
+  start_after: Option<u64>,
+  limit: u64
+)
+```
 
 **Example Usage:**
 
 <Tabs>
     <Tab title="CLI">
     ```bash
-    initiad tx move execute 0x1 minitswap withdraw \ 
-        --args "u64:100 option<u64>:100" \
+    initiad tx move execute 0x1 minitswap withdraw_unbond \
+        --args '["u64:100"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
@@ -140,15 +223,14 @@ public entry fun withdraw(
 
         const msgs = [
             new MsgExecute(
-            key.accAddress,
-            '0x1',
-            'minitswap',
-            'withdraw',
-            [],
-            [
-                bcs.u64().serialize(100).toBase64(), // amount to withdraw
-                bcs.option(bcs.u64()).serialize(100).toBase64(), // min return amount
-            ]
+                key.accAddress,
+                '0x1',
+                'minitswap',
+                'withdraw_unbond',
+                [],
+                [
+                    bcs.u64().serialize(100).toBase64(), // release time
+                ]
             ),
         ];
 
@@ -168,7 +250,7 @@ public entry fun withdraw(
     </Tab>
 </Tabs>
 
-### Swap
+## Swap
 
 The `swap` function allows you to exchange L2 INIT for L1 INIT or vice versa.
 
@@ -187,7 +269,7 @@ public entry fun swap(
 - `offer_asset_metadata`: Metadata for the provided coin.
 - `return_asset_metadata`: Metadata for the coin to be returned.
 - `amount`: Coin amount provided.
-- `min_return_amount`: Ensures the swap fails if the return is less than specified.
+- `min_return_amount`: The minimum amount of coin to be returned. If the actual amount returned is less than this, the transaction will be reverted.
 
 For more information on metadata, please refer to [obtaining metadata](/developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin#obtaining-metadata).
 
@@ -196,8 +278,8 @@ For more information on metadata, please refer to [obtaining metadata](/develope
 <Tabs>
     <Tab title="CLI">
     ```bash
-    initiad tx move execute 0x1 minitswap swap \ 
-        --args "object:0x12.. object: 0x12.. u64:100 option<u64>:100" \
+    initiad tx move execute 0x1 minitswap swap \
+        --args '["object:0x12..", "object: 0x12..", "u64:100", "option<u64>:100"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
@@ -268,7 +350,7 @@ public fun swap_simulation(
 ```
 - `offer_asset_metadata`: Metadata of the provided coin.
 - `return_asset_metadata`: Metadata of the coin that will be returned.
-- `amount`: Amount of coin provided. 
+- `amount`: Coin amount provided.
 
 **Example Usage:**
 
@@ -290,7 +372,7 @@ public fun swap_simulation(
     <Tab title="CLI">
     ```bash
     initiad query move view 0x1 minitswap swap_simulation \
-        --args "object:0x... object:0x... u64:123" \
+        --args '["object:0x...", "object:0x...", "u64:123"]' \
         --node [rpc-url]:[rpc-port]
         
     # data: '["123", "123"]'
@@ -312,9 +394,9 @@ public fun swap_simulation(
             'swap_simulation',
             [],
             [
-            bcs.object().serialize('0x...').toBase64(),
-            bcs.object().serialize('0x...').toBase64(),
-            bcs.u64().serialize(100).toBase64(),
+                bcs.object().serialize('0x...').toBase64(),
+                bcs.object().serialize('0x...').toBase64(),
+                bcs.u64().serialize(100).toBase64(),
             ]
         )
         .then(console.log);
@@ -325,7 +407,7 @@ public fun swap_simulation(
 </Tabs>
 
 
-### Arbitrage
+## Arbitrage
 
 Arbitrage on Minitswap helps balance L1 INIT and L2 INIT prices. 
 
@@ -352,21 +434,24 @@ public entry fun finalize_arb(
 )
 ```
 
-- `arb_index`: Arbitrage index.
-- `output_index`: Output index.
-- `withdrawal_proofs`: Withdrawal proofs.
-- `sender`: Sender of the withdrawal.
-- `version`: Version of the output root.
-- `state_root`: L2 state root
-- `storage_root`: Withdrawal storage root
-- `latest_block_hash`: L2 latest block hash
+- `arb_index`: Unique identifier for the arbitrage operation. It is used to track the specific arbitrage transaction being finalized.
+- `output_index`: Index of the output related to the arbitrage.
+- `withdrawal_proofs`: A set of proofs required to validate the withdrawal action. These proofs ensure the legitimacy of the funds being withdrawn.
+- `sender`: Address of the account that initiated the withdrawal process.
+- `sequence`: Sequence number to ensure the correct order of transactions.
+- `version`: Version identifier for the output root being used. Currently, the version is set to `0`.
+- `state_root`: The state root of the L2 blockchain at the time of the withdrawal.
+- `storage_root`: Root hash representing the storage related to the withdrawal.
+- `latest_block_hash`: The hash of the latest L2 block to ensure consistency.
+
+To obtain the required arguments, you should 
 
 **Example Usage:**
 
 <Tabs>
     <Tab title="CLI">
     ```bash
-    initiad tx move execute 0x1 minitswap finalize_arb \ 
+    initiad tx move execute 0x1 minitswap finalize_arb \
         --args "" \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
@@ -465,35 +550,34 @@ public entry fun finalize_arb(
         const msgs: Msg[] = [];
         let arbCount = 0;
         for (const pool of pools) {
-
-        if (pool.virtual_pool) {
-            const channel = pool.ibc_channel;
-            const bridgeId = pool.op_bridge_id;
-            const ibcOpInitDenom = ibcDenom(
-            channel,
-            opdenom(BigInt(bridgeId), 'uinit')
-            );
-            const ibcOpInitMetadata = '0x' + coinMetadata('0x1', ibcOpInitDenom);
-            const infos = await lcd.move.viewFunction<ArbInfo[]>(
-            moduleAddr,
-            'minitswap',
-            'get_arb_infos',
-            [],
-            [
-                bcs.object().serialize(ibcOpInitMetadata).toBase64(),
-                bcs.option(bcs.u64()).serialize(null).toBase64(),
-                bcs.u64().serialize(100).toBase64(),
-            ]
-            );
-    
-            for (const info of infos) {
-            arbCount++;
-            const msg = await checkCanFinalize(chains, info, pool);
-            if (msg !== false) {
-                msgs.push(msg);
+            if (pool.virtual_pool) {
+                const channel = pool.ibc_channel;
+                const bridgeId = pool.op_bridge_id;
+                const ibcOpInitDenom = ibcDenom(
+                    channel,
+                    opdenom(BigInt(bridgeId), 'uinit')
+                );
+                const ibcOpInitMetadata = '0x' + coinMetadata('0x1', ibcOpInitDenom);
+                const infos = await lcd.move.viewFunction<ArbInfo[]>(
+                    moduleAddr,
+                    'minitswap',
+                    'get_arb_infos',
+                    [],
+                    [
+                        bcs.object().serialize(ibcOpInitMetadata).toBase64(),
+                        bcs.option(bcs.u64()).serialize(null).toBase64(),
+                        bcs.u64().serialize(100).toBase64(),
+                    ]
+                );
+        
+                for (const info of infos) {
+                    arbCount++;
+                    const msg = await checkCanFinalize(chains, info, pool);
+                    if (msg !== false) {
+                        msgs.push(msg);
+                    }
+                }
             }
-            }
-        }
         }
         console.log(`${msgs.length} / ${arbCount}`);
     
@@ -504,8 +588,8 @@ public entry fun finalize_arb(
     
     async function getPools(): Promise<Pools[]> {
         const moduleStore = await lcd.move.resource<ModuleStore>(
-        moduleAddr,
-        `${moduleAddr}::minitswap::ModuleStore`
+            moduleAddr,
+            `${moduleAddr}::minitswap::ModuleStore`
         );
 
         const poolsTableHandle = moduleStore.data.pools.handle;
@@ -693,111 +777,3 @@ public entry fun finalize_arb(
     ```
     </Tab>
 </Tabs>
-
-## Swap via IBC hook
-
-Generally, users will utilize minitswap in order to swap L2 INIT to L1 INIT. However, using minitswap requires two steps: 
-
-1. L2 INIT should be sent to L1 through IBC
-2. swap the transferred L2 INIT to L1 INIT. In this case, the users are burdened from having to send two transactions from both L2 and L1. 
-
-To resolve such burden, one can use the `swap_transfer` module and IBC hook so that the steps above can be done in one transaction.
-
-### Swap transfer
-
-[swap-transfer.move](https://github.com/initia-labs/move-modules/blob/main/swap-transfer/sources/swap-transfer.move) is a module built for seamless interchain swap and transfer. The published address is as follows:
-
-- initiation-2: `0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a`
-
-### Minitswap to
-
-`minit_swap_to` is a function for using minitswap through IBC hook. The Move function interface is as follows:
-
-```move
-public entry fun minit_swap_to(
-    account: &signer,
-    offer_asset_metadata: Object<Metadata>,
-    return_asset_metadata: Object<Metadata>,
-    amount: u64,
-    min_return_amount: Option<u64>,
-    to: address,
-)
-```
-
-- `offer_asset_metadata`: Metadata for the coin to provide 
-- `return_asset_metadata`: Metadata for the coin to be returned.
-- `amount`: Amount of coin to provide.
-- `min_return_amount`: Minimum value for the swap. If the return amount is smaller than min_return_amount, the tx will fail.
-- `to`: Address to receive the returned coin.
-
-**Example Usage:**
-
-```ts
-import {
-  bcs,
-  Coin,
-  Height,
-  LCDClient,
-  MnemonicKey,
-  MsgExecute,
-  MsgTransfer,
-  Wallet,
-} from '@initia/initia.js';
-
-async function main() {
-  const lcd = new LCDClient('[rest-url]', {
-    gasPrices: '0.15uinit',
-    gasAdjustment: '1.5',
-  });
-
-  const key = new MnemonicKey({
-    mnemonic: 'beauty sniff protect ...',
-  });
-  const wallet = new Wallet(lcd, key);
-
-  const moduleAddresss = '0x...';
-  const offerAmount = 1000;
-  const hookMsg = {
-    move: {
-      message: {
-        module_address: moduleAddresss,
-        module_name: 'swap_trasnfer',
-        function_name: 'minit_swap_to',
-        type_args: [],
-        args: [
-          bcs.object().serialize('0x...').toBase64(), // metadata to offer
-          bcs.object().serialize('0x...').toBase64(), // metadata to return
-          bcs.u64().serialize(100).toBase64(), // offer amount
-          bcs.option(bcs.u64()).serialize(offerAmount).toBase64(), // min return amount
-          bcs.address().serialize('init1...').toBase64(), // to
-        ],
-      },
-    },
-  };
-
-  const msgs = [
-    new MsgTransfer(
-      'transfer',
-      'channel-..',
-      new Coin('l2/...', offerAmount),
-      key.accAddress,
-      `${moduleAddresss}::${hookMsg.move.message.module_name}::${hookMsg.move.message.function_name}`,
-      new Height(0, 0),
-      ((new Date().valueOf() + 1000 * 60) * 1000000).toString(), // timeout
-      JSON.stringify(hookMsg)
-    ),
-  ];
-
-  // sign tx
-  const signedTx = await wallet.createAndSignTx({ msgs });
-  // send(broadcast) tx
-  lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
-  // {
-  //   height: 0,
-  //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
-  //   raw_log: '[]'
-  // }
-}
-
-main();
-```
