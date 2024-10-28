@@ -13,14 +13,14 @@ The OPinit Bridge is an implementation of the optimistic rollup bridge, implemen
 
 The OPhost Module is embedded into the Initia L1 chain. This module is responsible for:
 
--  **Bridge Management:** Creating, updating, and managing bridges between Initia L1 and Minitias.
+-  **Bridge Management:** Creating, updating, and managing bridges between Initia L1 and rollups.
 -  **Output Proposal Handling:** Managing and finalizing L2 output proposals.
 
 ## OPchild Module
 
-The OPchild Module acts as a counter-party to the OPhost Module and is integrated into all Minitia implementations. This module is responsible for:
+The OPchild Module acts as a counter-party to the OPhost Module and is integrated into all rollup implementations. This module is responsible for:
 
--  **Operator Management:** Adding, removing, and managing operators for a given Minitia.
+-  **Operator Management:** Adding, removing, and managing operators for a given rollup.
 -  **Bridge Message Execution:** Processing messages received from the Initia L1.
 -  **Oracle Updates:** Managing oracle price feed updates relayed by the OPinit Executor.
 

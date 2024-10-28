@@ -279,7 +279,7 @@ function ibcDenom(channelId: string, denom: string) {
 } 
 
 async function main() {
-    const l1lcd = new LCDClient('https://lcd.initiation-2.initia.xyz', {
+    const l1lcd = new LCDClient('https://lcd.testnet.initia.xyz', {
         gasAdjustment: '1.75',
         gasPrices: '0.15uinit' // set l1 gas price
     })

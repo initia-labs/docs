@@ -6,7 +6,7 @@ At network genesis, a portion of the total INIT token supply will be set aside a
 
 The total rewards are first distributed to each minitia, then subsequently to the minitia's users and operators.
 
-## Minitia Eligibility
+## Rollup Eligibility
 
 Before a minitia can be eligible for VIP rewards, it must first be whitelisted by the Initia L1 governance through an on-chain proposal.
 
@@ -14,13 +14,13 @@ Before a minitia can be eligible for VIP rewards, it must first be whitelisted b
 
 At each rewards distribution stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each minitia ecosystem. The distribution is split into multiple steps:
 
-1. Splitting the total rewards allocated for that stage, $R_t$, between all whitelisted minitias.
-2. Distributing the rewards to each minitia's users.
-3. Distributing the rewards to each minitia's operators.
+1. Splitting the total rewards allocated for that stage, $R_t$, between all whitelisted rollups.
+2. Distributing the rewards to each rollup's users.
+3. Distributing the rewards to each rollup's operators.
 
-### Rewards Split Between Minitias
+### Rewards Split Between Rollups
 
-At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each minitia ecosystem. The total rewards are then split into two pools: the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
+At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each rollup ecosystem. The total rewards are then split into two pools: the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
 
 <Frame caption="VIP Rewards Distribution">
 ![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.svg)
@@ -32,7 +32,7 @@ $$
 R_t = R_B + R_W
 $$
 
-The rewards for each minitia $m$ are then calculated as follows:
+The rewards for each rollup $m$ are then calculated as follows:
 
 $$
 R_{m,t} = R_{B,m,t} + R_{W,m,t}
@@ -40,8 +40,8 @@ $$
 
 Where:
 
-- $R_{B,m,t}$ represents the portion of rewards from the Balance Pool $R_B$ allocated to minitia $m$ at stage $t$.
-- $R_{W,m,t}$ represents the portion of rewards from the Weight Pool $R_W$ allocated to minitia $m$ at stage $t$.
+- $R_{B,m,t}$ represents the portion of rewards from the Balance Pool $R_B$ allocated to rollup $m$ at stage $t$.
+- $R_{W,m,t}$ represents the portion of rewards from the Weight Pool $R_W$ allocated to rollup $m$ at stage $t$.
 
 #### Balance Pool
 
@@ -54,8 +54,8 @@ $$
 Where:
 
 - $R_{B,t}$ is the total rewards from the Balance Pool for the stage.
-- $I_{m,t}$ is the amount of INIT tokens locked by minitia $m$ during the stage.
-- $N_{t}$ is the total number of minitias in the stage.
+- $I_{m,t}$ is the amount of INIT tokens locked by rollup $m$ during the stage.
+- $N_{t}$ is the total number of rollups in the stage.
 
 #### Weight Pool
 
@@ -71,22 +71,22 @@ Where:
 - $W_{m,t}$ is the weight of minitia $m$ during the stage.
 - $N_{t}$ is the total number of minitias in the stage.
 
-### Distribution to Minitia Users
+### Distribution to Rollup Users
 
-Once we know how much rewards each minitia receives for a given stage, we then further distribute these rewards to the users of the minitia. The amount of VIP rewards to each user is defined by a scoring methodology decided by the minitia team. The scoring method could be based on factors such as:
+Once we know how much rewards each rollup receives for a given stage, we then further distribute these rewards to the users of the rollup. The amount of VIP rewards to each user is defined by a scoring methodology decided by the rollup team. The scoring method could be based on factors such as:
 
 - Number of transactions a user makes on the minitia.
 - Value of assets a user borrows.
 - Trading volume or liquidity provided by the user.
 
 
-<Frame caption="VIP Rewards Distribution to Minitia Users">
+<Frame caption="VIP Rewards Distribution to Rollup Users">
 ![VIP User Rewards Distribution](/images/vip/vip_distribution_to_minitia_users.svg)
 </Frame>
 
 At the end of each stage, the rewards for each user are calculated and stored. Once the rewards for each minitia are known, the rewards are then directly distributed to the users of the minitia.
 
-If a user $u$ on minitia $m$ has a score of $S_{u,m,t}$, their rewards are:
+If a user $u$ on rollup $m$ has a score of $S_{u,m,t}$, their rewards are:
 
 $$
 R_{u,m,t} = R_{m,t} \frac{S_{u,m,t}}{\sum_{i=1}^{N_{u,m,t}} S_{i,m,t}}
@@ -98,9 +98,9 @@ Where:
 - $S_{u,m,t}$ is the score of the user on minitia $m$ during stage $t$.
 - $N_{u,m,t}$ is the total number of users on minitia $m$ during stage $t$.
 
-### Distribution to Minitia Operators
+### Distribution to Rollup Operators
 
-To ensure that minitia operators are also incentivized to keep their minitias active and useful, they can set an `operatorCommissionRate`, $c$. This rate allows them to take a portion of the rewards for their minitia.
+To ensure that rollup operators are also incentivized to keep their rollups active and useful, they can set an `operatorCommissionRate`, $c$. This rate allows them to take a portion of the rewards for their rollup.
 
 <Frame caption="VIP Operator Rewards Distribution">
 ![VIP Operator Rewards Distribution](/images/vip/vip_distribution_to_minitia_operators.svg)
@@ -131,7 +131,7 @@ These tokens are initially non-transferable and can be vested in two ways:
 1. **Maintain a VIP Score:** Keep a certain score over a number of `vestingPeriod`, with each period lasting `stageDuration`.
 2. **Convert into LP Lock-Staked Position:** Convert the escrowed tokens into a whitelisted INIT:TOKEN staking position.
 
-<Frame caption="VIP Minitia User Vesting">
+<Frame caption="VIP Rollup User Vesting">
 ![VIP User Vesting](/images/vip/vip_rewards_vesting_users.svg)
 </Frame>
 
@@ -223,7 +223,7 @@ When creating a lock-staked position, the users can choose how long to lock thei
 
 ### Operator Vesting
 
-<Frame caption="VIP Minitia Operator Vesting">
+<Frame caption="VIP Rollup Operator Vesting">
 ![VIP Operator Vesting](/images/vip/vip_rewards_vesting_operators.svg)
 </Frame>
 

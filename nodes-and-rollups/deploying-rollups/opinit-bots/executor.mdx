@@ -1,0 +1,186 @@
+---
+title: Executor
+---
+
+<Tip>
+  To learn more about what the Executor does, check out the [Executor](/home/primitives/interwoven-stack/opinit-framework/components/executor) page.
+</Tip>
+
+## Running the Executor
+
+<Steps>
+  <Step title="Initialize Executor Bot">
+    To initialize the Executor bot, use the following command:
+    ```bash
+    opinitd init executor
+    ```
+  </Step>
+  <Step title="Set Up Keys">
+    For the Executor bot, we will be needing 2 keys:
+    - `output_submitter`
+    - `bridge_executor`
+
+    ```bash
+    ## needs to be the same account as in system_keys when spinning up the minitias
+    opinitd keys add <initia_chain_id> bridge_executor --recover
+    opinitd keys add <celestia_chain_id> output_submitter --recover --bech32=celestia
+    ```
+  </Step>
+  <Step title= "Configuration">
+    To configure the Executor, fill in the values in the `~/.opinit/executor.json file`.
+    ```json executor.json
+    {
+      "version": 1,
+      "listen_address": "localhost:3000",
+      "l1_node": {
+        "chain_id": "testnet-l1-1",
+        "bech32_prefix": "init",
+        "rpc_address": "tcp://localhost:26657",
+        "gas_price": "0.15uinit",
+        "gas_adjustment": 1.5,
+        "tx_timeout": 60
+      },
+      "l2_node": {
+        "chain_id": "testnet-l2-1",
+        "bech32_prefix": "init",
+        "rpc_address": "tcp://localhost:27657",
+        "gas_price": "",
+        "gas_adjustment": 1.5,
+        "tx_timeout": 60
+      },
+      "da_node": {
+        "chain_id": "testnet-l1-1",
+        "bech32_prefix": "init",
+        "rpc_address": "tcp://localhost:26657",
+        "gas_price": "0.15uinit",
+        "gas_adjustment": 1.5,
+        "tx_timeout": 60
+      },
+      "bridge_executor": "",
+      "output_submitter": "",
+      "max_chunks": 5000,
+      "max_chunk_size": 300000,
+      "max_submission_time": 3600,
+      "l2_start_height": 0,
+      "batch_start_height": 0
+    }
+    ```
+    where each field is as follows:
+    | Field | Description |
+    |-------|-------------|
+    | `version` | Indicates the version of the OPinit spec (basically 1). |
+    | `listen_address` | The address where the Challenger bot listens for incoming requests. |
+    | `l1_node` | Information about the L1 node, including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) page for more information. |
+    | `l2_node` | Information about the L2 node, including chain ID and RPC address. These configs are what you set when deploying the Minitia |
+    | `da_node` | Information about the DA node (mainly L1 or Celestia), including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) for more information. |
+    | `bridge_executor` | The key name in the keyring for the bridge executor. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `output_submitter` | The key name in the keyring for the output submitter. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `max_chunks` | The maximum number of chunks in a batch. |
+    | `max_chunk_size` | The maximum size of a chunk in a batch. |
+    | `max_submission_time` | The maximum time to submit a batch. |
+    | `l2_start_height` | Executor automatically sets the starting height for output proposal based on this value. If the value is already stored in the db, this config is ignored. |
+    | `batch_start_height` | Executor automatically sets the starting height for batch submitting based on this value. If the value is already stored in the db, this config is ignored. |
+  </Step>
+  <Step title="Start Bot">
+    To start the bot, use the following command:
+    ```bash
+    opinitd start executor
+    ```
+
+    The following options can be set:
+
+    | Option | Description | Default Value |
+    |--------|-------------|---------------|
+    | `--log-level` | Sets the log level | `info` |
+    | `--polling-interval` | Sets the polling interval | `100ms` |
+    | `--config` | Sets the config file name | `[bot-name].json` |
+    | `--home` | Sets the home directory | `~/.opinit` |
+  </Step>
+</Steps>
+
+## Queries
+
+You can query the Executor bot to get its status or view the withdrawal information:
+
+### Status
+
+You can query the Executor bot to get its status:
+
+```bash
+curl localhost:3000/status
+```
+
+```json
+{
+  "bridge_id": 1,
+  "host": {
+    "node": {
+      "last_block_height": 0,
+      "broadcaster": {
+        "pending_txs": 0,
+        "sequence": 0
+      }
+    },
+    "last_proposed_output_index": 0,
+    "last_proposed_output_l2_block_number": 0
+  },
+  "child": {
+    "node": {
+      "last_block_height": 0,
+      "broadcaster": {
+        "pending_txs": 0,
+        "sequence": 0
+      }
+    },
+    "last_updated_oracle_height": 0,
+    "last_finalized_deposit_l1_block_height": 0,
+    "last_finalized_deposit_l1_sequence": 0,
+    "last_withdrawal_l2_sequence": 0,
+    "working_tree_index": 0,
+    "finalizing_block_height": 0,
+    "last_output_submission_time": "",
+    "next_output_submission_time": ""
+  },
+  "batch": {
+    "node": {
+      "last_block_height": 0,
+    },
+    "batch_info": {
+      "submitter": "",
+      "chain_type": ""
+    },
+    "current_batch_file_size": 0,
+    "batch_start_block_number": 0,
+    "batch_end_block_number": 0,
+    "last_batch_submission_time": ""
+  },
+  "da": {
+    "broadcaster": {
+      "pending_txs": 0,
+      "sequence": 0
+    }
+  }
+}
+```
+
+### Withdrawals 
+
+To finalize a token withdrawal, the withdrawal information is required.
+
+Executor bot can provide withdrawal information for a given sequence:
+
+```bash
+curl localhost:3000/withdrawal/{sequence} | jq . > ./withdrawal-info.json
+initiad tx ophost finalize-token-withdrawal ./withdrawal-info.json --gas= --gas-prices= --chain-id= --from=
+```
+
+
+## Resetting The Bot Database
+
+If the database becomes corrupted or is moved to a new one, you need to initialize or reset it.
+
+To reset the bot database, use the following command:
+
+```bash
+opinitd reset-db executor
+```

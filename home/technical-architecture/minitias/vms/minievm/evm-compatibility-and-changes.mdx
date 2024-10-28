@@ -22,7 +22,7 @@ By default, any new Cosmos coins created on the chain, whether they are fee deno
 
 #### Fee Tokens
 
-While the Cosmos SDK and Minitia design supports multiple fee denominations on a single network, the MiniEVM's EVM module uses a single fee token denomination for all transactions. This denomination must be one of those set on the Cosmos side.
+While the Cosmos SDK and rollup design supports multiple fee denominations on a single network, the MiniEVM's EVM module uses a single fee token denomination for all transactions. This denomination must be one of those set on the Cosmos side.
 
 Once set, the EVM fee denomination effectively becomes the equivalent of native tokens (e.g. ETH) on other EVM networks. This denomination will then be used for transaction fees sent via the EVM's JSON-RPC, as well as for any funds attached to EVM transactions via `msg.value`.
 

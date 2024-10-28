@@ -6,53 +6,55 @@ import { INIT, IbcOpINIT, FullyRecoveredRatio, MaxRatio, Flexibility } from '/sn
 
 ## Goal 
 
-- **Manipulation Resistance**: The architecture of the Minitia and related systems themselves already has safeguards in place to prevent various forms of manipulation from malicious actors. The Minitswap DEX is further designed to ensure that, in unforeseen events, any subsequent damages are minimized.
-- **Capital Efficiency**: As the number of Minitias continue to increase, naively, the same number of DEX pairs must also exists. This results in liquidity fragmentation, high slippage and volatility, and subpar user experience.
+- **Manipulation Resistance**: The architecture of the rollup and related systems themselves already has safeguards in place to prevent various forms of manipulation from malicious actors. The Minitswap DEX is further designed to ensure that, in unforeseen events, any subsequent damages are minimized.
+- **Capital Efficiency**: As the number of rollups continue to increase, naively, the same number of DEX pairs must also exists. This results in liquidity fragmentation, high slippage and volatility, and subpar user experience.
 
 ## Design
 
-Minitswap itself is designed as a virtual pool DEX between <Tooltip tip={INIT}>INIT</Tooltip> and the various <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the Minitias. The exchange rates on each swap are determined by the [StableSwap](https://docs.curve.fi/references/whitepapers/stableswap/#how-it-works) formula.
+Minitswap itself is designed as a virtual pool DEX between <Tooltip tip={INIT}>INIT</Tooltip> and the various <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the rollups. The exchange rates on each swap are determined by the [StableSwap](https://docs.curve.fi/references/whitepapers/stableswap/#how-it-works) formula.
 
 To achieve the above goals, two main improvements are made to the base StableSwap pool design:
 
-- **Rate Limiting**: To protect against manipulation, the net amount of IbcOpINIT tokens that can be swapped back into INIT tokens is limited. This means that even if a malicious actor manages to acquire or create a large amount of IbcOpINIT tokens on their minitia, the number of tokens that can be swapped back into regular INIT tokens remains restricted.
-- **Single INIT Token Pool**: To minimize liquidity fragmentation, there is a single INIT token pool that can be paired with multiple IbcOpINIT token pools, instead of having separate INIT token pools for each Minitia.
+- **Rate Limiting**: To protect against manipulation, the net amount of IbcOpINIT tokens that can be swapped back into INIT tokens is limited. This means that even if a malicious actor manages to acquire or create a large amount of IbcOpINIT tokens on their rollup, the number of tokens that can be swapped back into regular INIT tokens remains restricted.
+- **Single INIT Token Pool**: To minimize liquidity fragmentation, there is a single INIT token pool that can be paired with multiple IbcOpINIT token pools, instead of having separate INIT token pools for each rollups.
 
 
 ## Swap Mechanisms
 
-### Initia L1 to Minitia
+### Initia L1 to Rollups
 
-<Frame caption="Initia L1 to Minitia Minitswap Flow">
-![Initia L1 to Minitia Minitswap Flow](/images/minitswap/minitswap_l1_l2.svg)
+<Frame caption="Initia L1 to Rollups Minitswap Flow">
+![Initia L1 to Rollups Minitswap Flow](/images/minitswap/minitswap_l1_l2.svg)
 </Frame>
 
-In this scenario, a user wants to efficiently bridge their $INIT$ tokens on the Initia L1 to a Minitia $m$ and ends up with the $OpINIT_m$ token for that Minitia.
+In this scenario, a user wants to efficiently bridge their $INIT$ tokens on the Initia L1 to a rollup $m$ and ends up with the $OpINIT_m$ token for that rollup.
 
-And while bridging from Initia L1 to a Minitia is instantaneous, users may occasionally be able to obtain a more favorable rate by utilizing Minitswap as part of the bridging process as shown below.
+And while bridging from Initia L1 to a rollup is instantaneous, users may occasionally be able to obtain a more favorable rate by utilizing Minitswap as part of the bridging process as shown below.
 
 1.	**Initiate Swap on Minitswap DEX**: The user sends a transaction to the Minitswap DEX to swap their $INIT$ tokens into $IbcOpINIT_m$ tokens.
 2.	**Simulate Swap**: The DEX simulates swapping the user’s $INIT$ tokens into $IbcOpINIT_m$ tokens.
 3.	**Compare Swap and Direct Bridging**: The DEX compares the simulated amount of $IbcOpINIT_m$ tokens with the amount the user would receive if they bridged directly through the OP Bridge.
 4.	**Perform Optimal Action**
 	-	If the amount of $IbcOpINIT_m$ tokens from the swap is greater, the DEX performs the swap. The output $IbcOpINIT_m$ tokens are then bridged to the destination L2 through IBC.
-	-	If the direct bridging through the OP bridge provides a better amount, the DEX initiates a direct transfer to the destination Minitia $m$ for the user using the OP bridge.
+	-	If the direct bridging through the OP bridge provides a better amount, the DEX initiates a direct transfer to the destination rollup $m$ for the user using the OP bridge.
 5.  **Minitswap Swap Process**
 	- **Calculate $IbcOpINIT_m$ Received**: Minitswap calculates how much $IbcOpINIT_m$ the user will receive based on the current Virtual Pool state, updating the state in the process.
 	- **Fee Deduction**: Minitswap deducts a fee based on a predefined value and an additional fee from any extra $IbcOpINIT_m$ that the user receives.
 	- **Peg Keeper Swap Check**: Once the user’s swap action and fee calculation are complete, Minitswap checks if a [Peg Keeper Swap](#peg-keeper-swaps) should be performed based on the latest Virtual Pool state.
 	- **Internal Rebalancing Check**: After completing the Peg Keeper Swap, Minitswap checks if [Internal Rebalancing](#internal-rebalancing) is possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is initiated.
-6.	**Final Outcome**: In both cases, once the OP Bridge or IBC transfer is complete, the user receives the most amount of $OpINIT_m$ tokens in their wallet on the destination Minitia possible.
+6.	**Final Outcome**: In both cases, once the OP Bridge or IBC transfer is complete, the user receives the most amount of $OpINIT_m$ tokens in their wallet on the destination rollup possible.
 
-### Minitia to Initia L1
+### Rollup to Initia L1
 
-![Minitia to Initia L1 Minitswap Flow](/images/minitswap/minitswap_l2_l1.svg)
+<Frame caption="Rollup to Initia L1 Minitswap Flow">	
+![Rollup to Initia L1 Minitswap Flow](/images/minitswap/minitswap_l2_l1.svg)
+</Frame>
 
-When bridging from a Minitia to Initia L1, the user is currently holding $OpINIT_m$ tokens on a Minitia L2 $m$ and would like to bridge it back to  $INIT$ tokens on the Initia L1.
+When bridging from a rollup to Initia L1, the user is currently holding $OpINIT_m$ tokens on a rollup $m$ and would like to bridge it back to  $INIT$ tokens on the Initia L1.
 
 In this scenario, utilizing Minitswap will enable them to bridging their INIT back to the Initia L1 instantaneously without waiting for the challenge period to expire.
 
-1.	**Transfer to Initia L1 via IBC**: The user begins by transferring their $OpINIT_m$ tokens on the Minitia L2 back to Initia L1 using IBC. As a result, they receive $IbcOpINIT_m$ tokens on the Initia L1.
+1.	**Transfer to Initia L1 via IBC**: The user begins by transferring their $OpINIT_m$ tokens on the rollup $m$ back to Initia L1 using IBC. As a result, they receive $IbcOpINIT_m$ tokens on the Initia L1.
 2.	**Swap on Minitswap DEX**: Once the IBC transfer is complete and the user has $IbcOpINIT_m$ tokens on Initia L1, they initiate a swap transaction on the Minitswap DEX to convert their $IbcOpINIT_m$ tokens into $INIT$ tokens.
 3. **Minitswap Swap Process**
 	- **Peg Keeper Swap Check**: Minitswap first checks if a Peg Keeper Swap can be performed. If this is possible, the swap is executed directly through the Peg Keeper.
@@ -89,7 +91,7 @@ $$
 
 The Peg Keeper Swap is a mechanism designed to keep the exchange rate between $INIT$ and $IbcOpINIT$ close to 1:1. This ensures that users always receive the best swap rates.
 
-When users move their INIT tokens from a minitia back to Initia L1 using Minitswap, they are essentially selling their $IbcOpINIT$ tokens for $INIT$ tokens. As more users do this, the supply of $IbcOpINIT$ increases relative to $INIT$, which raises the price of future Minitia -> Initia L1 swaps.
+When users move their INIT tokens from a rollup back to Initia L1 using Minitswap, they are essentially selling their $IbcOpINIT$ tokens for $INIT$ tokens. As more users do this, the supply of $IbcOpINIT$ increases relative to $INIT$, which raises the price of future rollup -> Initia L1 swaps.
 
 To address this, the Peg Keeper Swap executes a ($INIT$ -> $IbcOpINIT$) swap to balance the effect. When a user makes a swap, Minitswap checks the Fully Recovered Ratio against the current pool ratio. If the current ratio exceeds the Fully Recovered Ratio, a Peg Keeper Swap is triggered to restore balance.
 
@@ -117,7 +119,7 @@ As more Peg Keeper Swaps are performed, the $INIT$ balance of the Peg Keeper gra
 
 The rebalancing process follows these steps:
 
-1.	Bridge the Peg Keeper's $IbcOpINIT_m$ back to the Minitia $m$ using IBC, converting it into $OpINIT_m$.
+1.	Bridge the Peg Keeper's $IbcOpINIT_m$ back to the rollup $m$ using IBC, converting it into $OpINIT_m$.
 2.	Use the OP Bridge to convert $OpINIT_m$ back into $INIT$.
 
 This process, combined with the [Direct Swap](#direct-swap), ensures that the Peg Keeper's $INIT$ balance is replenished, allowing it to continue performing Peg Keeper Swaps.

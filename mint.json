@@ -33,8 +33,8 @@
   },
   "tabs": [
     {
-      "name": "Initia and Minitias",
-      "url": "initia-and-minitias"
+      "name": "Nodes and Rollups",
+      "url": "nodes-and-rollups"
     },
     {
       "name": "Developers",
@@ -186,7 +186,7 @@
       "pages": ["developers/introduction"]
     },
     {
-      "group": "Guides",
+      "group": "Quick Guides",
       "icon": "book",
       "pages": ["developers/developer-guides/guides/exchange-integration"]
     },
@@ -296,7 +296,7 @@
               "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
             },
             {
-              "group": "Minitia CLI",
+              "group": "Rollup CLI",
               "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
             }
           ]
@@ -306,7 +306,7 @@
           "icon": "database",
           "pages": [
             {
-              "group": "Minitia Indexers",
+              "group": "Rollup Indexers",
               "pages": [
                 "developers/developer-guides/tools/indexers/indexer-introduction",
                 "developers/developer-guides/tools/indexers/transactions-by-account",
@@ -393,38 +393,38 @@
       ]
     },
     {
-      "group": "Deploying Minitias",
+      "group": "Deploying Rollups",
       "pages": [
-        "initia-and-minitias/deploying-minitias/setting-up",
+        "nodes-and-rollups/deploying-minitias/setting-up",
 
         {
-          "group": "Deploying Minitias",
+          "group": "Deploying Rollups",
           "icon": "cloud-arrow-up",
           "pages": [
-            "initia-and-minitias/deploying-minitias/minitia-deployment/introduction",
-            "initia-and-minitias/deploying-minitias/minitia-deployment/deploying-standalone-minitia",
-            "initia-and-minitias/deploying-minitias/minitia-deployment/running-the-minitia"
+            "nodes-and-rollups/deploying-minitias/minitia-deployment/introduction",
+            "nodes-and-rollups/deploying-minitias/minitia-deployment/deploying-standalone-minitia",
+            "nodes-and-rollups/deploying-minitias/minitia-deployment/running-the-minitia"
           ]
         },
         {
           "group": "Running OPinit Bots",
           "icon": "circle-nodes",
           "pages": [
-            "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
-            "initia-and-minitias/deploying-minitias/opinit-bots/setting-up-dependencies",
-            "initia-and-minitias/deploying-minitias/opinit-bots/executor",
-            "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
+            "nodes-and-rollups/deploying-minitias/opinit-bots/introduction",
+            "nodes-and-rollups/deploying-minitias/opinit-bots/setting-up-dependencies",
+            "nodes-and-rollups/deploying-minitias/opinit-bots/executor",
+            "nodes-and-rollups/deploying-minitias/opinit-bots/challenger"
           ]
         },
-        "initia-and-minitias/deploying-minitias/ibc-relayers",
+        "nodes-and-rollups/deploying-minitias/ibc-relayers",
         {
           "group": "Preparing for Launch",
           "icon": "rocket-launch",
           "pages": [
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/initia-registry",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/initiadex",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/vip",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/minitswap"
+            "nodes-and-rollups/deploying-minitias/preparing-for-launch/initia-registry",
+            "nodes-and-rollups/deploying-minitias/preparing-for-launch/initiadex",
+            "nodes-and-rollups/deploying-minitias/preparing-for-launch/vip",
+            "nodes-and-rollups/deploying-minitias/preparing-for-launch/minitswap"
           ]
         }
       ]
@@ -432,23 +432,23 @@
     {
       "group": "Running an Initia Node",
       "pages": [
-        "initia-and-minitias/running-a-node/introduction",
+        "nodes-and-rollups/running-a-node/introduction",
         {
           "group": "Manual Setup",
           "icon": "wrench",
           "pages": [
-            "initia-and-minitias/running-a-node/manual-setup/node-setup",
-            "initia-and-minitias/running-a-node/manual-setup/node-configuration",
-            "initia-and-minitias/running-a-node/manual-setup/starting-the-node",
-            "initia-and-minitias/running-a-node/manual-setup/cosmovisor"
+            "nodes-and-rollups/running-a-node/manual-setup/node-setup",
+            "nodes-and-rollups/running-a-node/manual-setup/node-configuration",
+            "nodes-and-rollups/running-a-node/manual-setup/starting-the-node",
+            "nodes-and-rollups/running-a-node/manual-setup/cosmovisor"
           ]
         },
         {
           "group": "Running a Validator",
           "icon": "shield-check",
           "pages": [
-            "initia-and-minitias/running-a-node/running-a-validator/becoming-a-validator",
-            "initia-and-minitias/running-a-node/running-a-validator/oracle-sidecar"
+            "nodes-and-rollups/running-a-node/running-a-validator/becoming-a-validator",
+            "nodes-and-rollups/running-a-node/running-a-validator/oracle-sidecar"
           ]
         }
       ]
@@ -460,7 +460,7 @@
     "github": "https://github.com/initia-labs"
   },
   "api": {
-    "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
+    "baseUrl": ["https://lcd.testnet.initia.xyz"]
   },
   "background": {
     "style": "grid"
