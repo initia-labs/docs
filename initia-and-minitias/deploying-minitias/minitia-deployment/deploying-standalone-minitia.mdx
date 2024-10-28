@@ -6,19 +6,23 @@ Minitias can be run as a standalone rollup chain. While we strongly recommend th
 
 ## Setting up the Minitia
 
-Before we configure the minitia, choose and enter the chain ID that you'd like to use for your minitia. 
+Before we configure the minitia, choose and enter the chain ID, moniker and denom that you'd like to use for your minitia. 
 
-This is a unique identifier for your blockchain that is used to identify the network, prevent cross-chain transaction replay attacks, identify genesis files, amongst other things.
+- `CHAIN_ID`: a unique identifier for your blockchain that is used to identify the network, prevent cross-chain transaction replay attacks, identify genesis files, amongst other things.
+- `MONIKER`: a human-readable name for your node.
+- `DENOM`: the default token denomination for your chain.
 
 ```sh
-export $CHAIN_ID=minitia
+export CHAIN_ID=minitia
+export MONIKER=operator
+export DENOM=umin
 ```
 
 Then, run the following command to initialize the Minitia. This includes the operator/sequencer, Minitia genesis, and configuration files.
 
 <CodeGroup>
 ```sh CLI
-minitiad init operator --chain-id testnet
+minitiad init $MONIKER --chain-id $CHAIN_ID --denom $DENOM
 ```
 ```sh Docker
 Coming Soon
@@ -29,7 +33,9 @@ Next, we need to create a key that'll be used as the minitia's operator (aka. se
 
 <CodeGroup>
 ```sh CLI
-minitiad keys add operator
+export KEY_NAME=operator
+
+minitiad keys add $KEY_NAME
 ```
 ```sh Docker
 Coming Soon
@@ -46,13 +52,13 @@ Once the key is ready, we proceed to modify the minitia's genesis file in 2 ways
 First, we give the `operator` account an initial gas balance to be able to send transactions.
 
 ```sh
-minitiad genesis add-genesis-account operator 10000000000umin
+minitiad genesis add-genesis-account $KEY_NAME 10000000000$DENOM
 ```
 
 Repeat the command for any additional accounts that you'd like to fund. We then need to set the `operator` account as the minitia's sequencer.
 
 ```sh
-minitiad genesis add-genesis-validator operator
+minitiad genesis add-genesis-validator $KEY_NAME
 ```
 
 Finally, we run and start the minitia:
