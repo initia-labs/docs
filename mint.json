@@ -247,6 +247,11 @@
           "group": "Initia Dex",
           "icon": "swap",
           "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+        },
+        {
+          "group":"Minitswap",
+          "icon": "swap",
+          "pages": ["developers/developer-guides/integrating-initia-apps/minitswap"]
         }
       ]
     },
