@@ -1,476 +1,444 @@
 {
-  "$schema": "https://mintlify.com/schema.json",
-  "name": "Initia Docs",
-  "logo": {
-    "dark": "/logo/logo_dark.svg",
-    "light": "/logo/logo_light.svg"
-  },
-  "favicon": "/favicon.svg",
-  "colors": {
-    "primary": "#2AB9FC",
-    "light": "#5FC1EE",
-    "dark": "#5FC1EE",
-    "anchors": {
-      "from": "#000000",
-      "to": "#5FC1EE"
-    }
-  },
-  "modeToggle": {
-    "default": "dark"
-  },
-  "topbarLinks": [
-    {
-      "name": "Support",
-      "url": "https://discord.gg/initia"
-    }
-  ],
-  "topbarCtaButton": {
-    "name": "Dashboard",
-    "url": "https://dashboard.mintlify.com"
-  },
-  "primaryTab": {
-    "name": "Home"
-  },
-  "tabs": [
-    {
-      "name": "Initia and Minitias",
-      "url": "initia-and-minitias"
+    "$schema": "https://mintlify.com/schema.json",
+    "name": "Initia Docs",
+    "logo": {
+        "dark": "/logo/logo_dark.svg",
+        "light": "/logo/logo_light.svg"
     },
-    {
-      "name": "Developers",
-      "url": "developers"
-    },
-    {
-      "name": "Resources",
-      "url": "resources"
-    }
-  ],
-  "anchors": [
-    {
-      "name": "Twitter",
-      "icon": "twitter",
-      "url": "https://twitter.com/initiafdn"
-    },
-    {
-      "name": "Discord",
-      "icon": "discord",
-      "url": "https://discord.gg/initia"
-    },
-    {
-      "name": "GitHub",
-      "icon": "github",
-      "url": "https://github.com/initia-labs"
-    }
-  ],
-  "navigation": [
-    {
-      "group": "Welcome",
-      "pages": ["home/general/welcome", "home/general/introduction"]
-    },
-    {
-      "group": "Core Concepts",
-      "pages": [
-        {
-          "group": "Initia & Minitias",
-          "icon": "sitemap",
-          "pages": [
-            "home/core-concepts/initia-and-minitias/high-level-overview",
-            "home/core-concepts/initia-and-minitias/initia-layer-1",
-            "home/core-concepts/initia-and-minitias/minitia-layer-2"
-          ]
-        },
-        {
-          "group": "Interwoven Stack",
-          "icon": "waves-sine",
-          "pages": [
-            "home/core-concepts/interwoven-stack/introduction",
-            "home/core-concepts/interwoven-stack/opinit-framework/introduction"
-          ]
-        },
-        "home/core-concepts/initiadex",
-        {
-          "group": "Enshrined Liquidity",
-          "icon": "hand-holding-droplet",
-          "pages": [
-            "home/core-concepts/enshrined-liquidity/introduction",
-            "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
-          ]
-        },
-        {
-          "group": "Minitswap",
-          "icon": "rotate",
-          "pages": [
-            "home/core-concepts/minitswap/introduction",
-            "home/core-concepts/minitswap/architecture",
-            "home/core-concepts/minitswap/terminology"
-          ]
-        },
-        {
-          "group": "Vested Interest Program",
-          "icon": "award",
-          "pages": [
-            "home/core-concepts/vested-interest-program/introduction",
-            "home/core-concepts/vested-interest-program/architecture",
-            "home/core-concepts/vested-interest-program/gauges",
-            "home/core-concepts/vested-interest-program/timelines",
-            "home/core-concepts/vested-interest-program/scoring"
-          ]
+    "favicon": "/favicon.svg",
+    "colors": {
+        "primary": "#2AB9FC",
+        "light": "#5FC1EE",
+        "dark": "#5FC1EE",
+        "anchors": {
+            "from": "#000000",
+            "to": "#5FC1EE"
         }
-      ]
     },
-    {
-      "group": "Technical Architecture",
-      "pages": [
-        "home/technical-architecture/introduction",
-        {
-          "group": "Initia L1",
-          "icon": "globe",
-          "pages": ["home/technical-architecture/initia-l1/introduction"]
+    "modeToggle": {
+        "default": "dark"
+    },
+    "topbarLinks": [{
+        "name": "Support",
+        "url": "https://discord.gg/initia"
+    }],
+    "topbarCtaButton": {
+        "name": "Dashboard",
+        "url": "https://dashboard.mintlify.com"
+    },
+    "primaryTab": {
+        "name": "Home"
+    },
+    "tabs": [{
+            "name": "Initia and Minitias",
+            "url": "initia-and-minitias"
         },
         {
-          "group": "Minitias",
-          "icon": "link",
-          "pages": [
-            "home/technical-architecture/minitias/introduction",
-            {
-              "group": "VMs",
-              "pages": [
-                {
-                  "group": "MiniEVM",
-                  "pages": [
-                    "home/technical-architecture/minitias/vms/minievm/introduction",
-                    "home/technical-architecture/minitias/vms/minievm/evm-compatibility-and-changes"
-                  ]
+            "name": "Developers",
+            "url": "developers"
+        },
+        {
+            "name": "Resources",
+            "url": "resources"
+        }
+    ],
+    "anchors": [{
+            "name": "Twitter",
+            "icon": "twitter",
+            "url": "https://twitter.com/initiafdn"
+        },
+        {
+            "name": "Discord",
+            "icon": "discord",
+            "url": "https://discord.gg/initia"
+        },
+        {
+            "name": "GitHub",
+            "icon": "github",
+            "url": "https://github.com/initia-labs"
+        }
+    ],
+    "navigation": [{
+            "group": "Welcome",
+            "pages": ["home/general/welcome", "home/general/introduction"]
+        },
+        {
+            "group": "Core Concepts",
+            "pages": [{
+                    "group": "Initia & Minitias",
+                    "icon": "sitemap",
+                    "pages": [
+                        "home/core-concepts/initia-and-minitias/high-level-overview",
+                        "home/core-concepts/initia-and-minitias/initia-layer-1",
+                        "home/core-concepts/initia-and-minitias/minitia-layer-2"
+                    ]
                 },
                 {
-                  "group": "MiniMove",
-                  "pages": ["home/technical-architecture/minitias/vms/minimove/introduction"]
+                    "group": "Interwoven Stack",
+                    "icon": "waves-sine",
+                    "pages": [
+                        "home/core-concepts/interwoven-stack/introduction",
+                        "home/core-concepts/interwoven-stack/opinit-framework/introduction"
+                    ]
+                },
+                "home/core-concepts/initiadex",
+                {
+                    "group": "Enshrined Liquidity",
+                    "icon": "hand-holding-droplet",
+                    "pages": [
+                        "home/core-concepts/enshrined-liquidity/introduction",
+                        "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
+                    ]
                 },
                 {
-                  "group": "MiniWasm",
-                  "pages": ["home/technical-architecture/minitias/vms/miniwasm/introduction"]
+                    "group": "Minitswap",
+                    "icon": "rotate",
+                    "pages": [
+                        "home/core-concepts/minitswap/introduction",
+                        "home/core-concepts/minitswap/architecture",
+                        "home/core-concepts/minitswap/terminology"
+                    ]
+                },
+                {
+                    "group": "Vested Interest Program",
+                    "icon": "award",
+                    "pages": [
+                        "home/core-concepts/vested-interest-program/introduction",
+                        "home/core-concepts/vested-interest-program/architecture",
+                        "home/core-concepts/vested-interest-program/gauges",
+                        "home/core-concepts/vested-interest-program/timelines",
+                        "home/core-concepts/vested-interest-program/scoring"
+                    ]
                 }
-              ]
-            }
-          ]
+            ]
         },
         {
-          "group": "OPinit Framework",
-          "icon": "gavel",
-          "pages": [
-            "home/technical-architecture/opinit-framework/introduction",
-            {
-              "group": "Components",
-              "pages": [
-                "home/technical-architecture/opinit-framework/components/introduction",
-                "home/technical-architecture/opinit-framework/components/opinit-bridge",
-                "home/technical-architecture/opinit-framework/components/executor",
-                "home/technical-architecture/opinit-framework/components/challenger"
-              ]
-            },
-            {
-              "group": "Action Flows",
-              "pages": [
-                "home/technical-architecture/opinit-framework/action-flows/token-transfers",
-                "home/technical-architecture/opinit-framework/action-flows/output-submission",
-                "home/technical-architecture/opinit-framework/action-flows/oracle-data-relay",
-                "home/technical-architecture/opinit-framework/action-flows/submitting-to-da-layer"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Developers",
-      "pages": ["developers/introduction"]
-    },
-    {
-      "group": "Guides",
-      "icon": "book",
-      "pages": ["developers/developer-guides/guides/exchange-integration"]
-    },
-    {
-      "group": "VM Specific Tutorials",
-      "icon": "book",
-      "pages": [
-        {
-          "group": "EVM",
-          "icon": "ethereum",
-          "pages": [
-            "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
-            "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
-            {
-              "group": "Creating ERC20s",
-              "pages": [
-                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
-                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
-              ]
-            },
-            "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
-          ]
-        },
-        {
-          "group": "MoveVM",
-          "icon": "note-sticky",
-          "pages": [
-            "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
-            "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
-          ]
-        },
-        {
-          "group": "WasmVM",
-          "icon": "rust",
-          "pages": [
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Integrating with Initia Apps",
-      "pages": [
-        {
-          "group": "Initia Usernames",
-          "icon": "user",
-          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
-        },
-        {
-          "group": "VIP",
-          "icon": "award",
-          "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
-        },
-        {
-          "group": "Initia Dex",
-          "icon": "swap",
-          "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
-        },
-        {
-          "group":"Minitswap",
-          "icon": "swap",
-          "pages": ["developers/developer-guides/integrating-initia-apps/minitswap"]
-        }
-      ]
-    },
-    {
-      "group": "Tools",
-      "icon": "screwdriver-wrench",
-      "pages": [
-        {
-          "group": "Frontend",
-          "icon": "desktop",
-          "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
-        },
-        {
-          "group": "SDKs",
-          "icon": "toolbox",
-          "pages": [
-            {
-              "group": "InitiaJS",
-              "pages": [
-                "developers/developer-guides/tools/sdks/initia-js/introduction",
-                "developers/developer-guides/tools/sdks/initia-js/quickstart",
-                "developers/developer-guides/tools/sdks/initia-js/querying-data",
-                "developers/developer-guides/tools/sdks/initia-js/accounts",
+            "group": "Technical Architecture",
+            "pages": [
+                "home/technical-architecture/introduction",
                 {
-                  "group": "Transactions",
-                  "pages": [
-                    "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
-                    "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
-                    "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "group": "CLIs",
-          "icon": "terminal",
-          "pages": [
-            {
-              "group": "Initia CLI",
-              "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
-            },
-            {
-              "group": "Minitia CLI",
-              "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
-            }
-          ]
-        },
-        {
-          "group": "Indexers",
-          "icon": "database",
-          "pages": [
-            {
-              "group": "Minitia Indexers",
-              "pages": [
-                "developers/developer-guides/tools/indexers/indexer-introduction",
-                "developers/developer-guides/tools/indexers/transactions-by-account",
-                "developers/developer-guides/tools/indexers/transactions-by-height",
-                "developers/developer-guides/tools/indexers/transactions-by-hash",
-                "developers/developer-guides/tools/indexers/nft-collections-by-account",
-                "developers/developer-guides/tools/indexers/nft-collection-details",
-                "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
-                "developers/developer-guides/tools/indexers/nft-tokens-by-account"
-              ]
-            }
-          ]
-        },
-        {
-          "group": "Oracles",
-          "icon": "list-ol",
-          "pages": [
-            {
-              "group": "Connect",
-              "pages": [
-                "developers/developer-guides/tools/oracles/connect/introduction",
-                {
-                  "group": "Fetching Prices from API",
-                  "pages": [
-                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
-                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
-                  ]
+                    "group": "Initia L1",
+                    "icon": "globe",
+                    "pages": ["home/technical-architecture/initia-l1/introduction"]
                 },
-                "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Developer Resources",
-      "pages": [
-        {
-          "group": "Networks",
-          "icon": "globe",
-          "pages": [
-            "resources/developer/networks/initia-l1",
-            "resources/developer/networks/minimove",
-            "resources/developer/networks/miniwasm",
-            "resources/developer/networks/minievm"
-          ]
+                {
+                    "group": "Minitias",
+                    "icon": "link",
+                    "pages": [
+                        "home/technical-architecture/minitias/introduction",
+                        {
+                            "group": "VMs",
+                            "pages": [{
+                                    "group": "MiniEVM",
+                                    "pages": [
+                                        "home/technical-architecture/minitias/vms/minievm/introduction",
+                                        "home/technical-architecture/minitias/vms/minievm/evm-compatibility-and-changes"
+                                    ]
+                                },
+                                {
+                                    "group": "MiniMove",
+                                    "pages": ["home/technical-architecture/minitias/vms/minimove/introduction"]
+                                },
+                                {
+                                    "group": "MiniWasm",
+                                    "pages": ["home/technical-architecture/minitias/vms/miniwasm/introduction"]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "group": "OPinit Framework",
+                    "icon": "gavel",
+                    "pages": [
+                        "home/technical-architecture/opinit-framework/introduction",
+                        {
+                            "group": "Components",
+                            "pages": [
+                                "home/technical-architecture/opinit-framework/components/introduction",
+                                "home/technical-architecture/opinit-framework/components/opinit-bridge",
+                                "home/technical-architecture/opinit-framework/components/executor",
+                                "home/technical-architecture/opinit-framework/components/challenger"
+                            ]
+                        },
+                        {
+                            "group": "Action Flows",
+                            "pages": [
+                                "home/technical-architecture/opinit-framework/action-flows/token-transfers",
+                                "home/technical-architecture/opinit-framework/action-flows/output-submission",
+                                "home/technical-architecture/opinit-framework/action-flows/oracle-data-relay",
+                                "home/technical-architecture/opinit-framework/action-flows/submitting-to-da-layer"
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
-          "group": "Deployed Contracts",
-          "icon": "file-code",
-          "pages": ["resources/developer/deployed-contracts/minievm"]
+            "group": "Developers",
+            "pages": ["developers/introduction"]
         },
         {
-          "group": "Contracts References",
-          "icon": "asterisk",
-          "pages": [
-            {
-              "group": "EVM",
-              "pages": [
-                "resources/developer/contract-references/evm/connect",
-                "resources/developer/contract-references/evm/cosmos",
-                "resources/developer/contract-references/evm/erc20-acl",
-                "resources/developer/contract-references/evm/erc20-registry",
-                "resources/developer/contract-references/evm/initia-erc20",
-                "resources/developer/contract-references/evm/erc20-factory",
-                "resources/developer/contract-references/evm/initia-custom-erc20"
-              ]
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "group": "Core Applications",
-      "pages": [
-        "home/core-applications/introduction",
-        "home/core-applications/initia-wallet",
-        "home/core-applications/initia-app",
-        "home/core-applications/initia-bridge",
-        "home/core-applications/initia-scan",
-        "home/core-applications/initia-usernames",
-        "home/core-applications/initia-faucet"
-      ]
-    },
-    {
-      "group": "Deploying Minitias",
-      "pages": [
-        "initia-and-minitias/deploying-minitias/setting-up",
+            "group": "Guides",
+            "icon": "book",
+            "pages": ["developers/developer-guides/guides/exchange-integration"]
+        },
+        {
+            "group": "VM Specific Tutorials",
+            "icon": "book",
+            "pages": [{
+                    "group": "EVM",
+                    "icon": "ethereum",
+                    "pages": [
+                        "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
+                        "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
+                        {
+                            "group": "Creating ERC20s",
+                            "pages": [
+                                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
+                                "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
+                            ]
+                        },
+                        "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
+                        "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
+                    ]
+                },
+                {
+                    "group": "MoveVM",
+                    "icon": "note-sticky",
+                    "pages": [
+                        "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
+                        "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
+                        "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+                    ]
+                },
+                {
+                    "group": "WasmVM",
+                    "icon": "rust",
+                    "pages": [
+                        "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
+                        "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+                    ]
+                }
+            ]
+        },
+        {
+            "group": "Integrating with Initia Apps",
+            "pages": [{
+                    "group": "Initia Usernames",
+                    "icon": "user",
+                    "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+                },
+                {
+                    "group": "VIP",
+                    "icon": "award",
+                    "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+                },
+                {
+                    "group": "Initia Dex",
+                    "icon": "swap",
+                    "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+                },
+                {
+                    "group": "Minitswap",
+                    "icon": "swap",
+                    "pages": ["developers/developer-guides/integrating-initia-apps/minitswap"]
+                }
+            ]
+        },
+        {
+            "group": "Tools",
+            "icon": "screwdriver-wrench",
+            "pages": [{
+                    "group": "Frontend",
+                    "icon": "desktop",
+                    "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
+                },
+                {
+                    "group": "SDKs",
+                    "icon": "toolbox",
+                    "pages": [{
+                        "group": "InitiaJS",
+                        "pages": [
+                            "developers/developer-guides/tools/sdks/initia-js/introduction",
+                            "developers/developer-guides/tools/sdks/initia-js/quickstart",
+                            "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                            "developers/developer-guides/tools/sdks/initia-js/accounts",
+                            {
+                                "group": "Transactions",
+                                "pages": [
+                                    "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
+                                    "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
+                                    "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
+                                ]
+                            }
+                        ]
+                    }]
+                },
+                {
+                    "group": "CLIs",
+                    "icon": "terminal",
+                    "pages": [{
+                            "group": "Initia CLI",
+                            "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
+                        },
+                        {
+                            "group": "Minitia CLI",
+                            "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+                        }
+                    ]
+                },
+                {
+                    "group": "Indexers",
+                    "icon": "database",
+                    "pages": [{
+                        "group": "Minitia Indexers",
+                        "pages": [
+                            "developers/developer-guides/tools/indexers/indexer-introduction",
+                            "developers/developer-guides/tools/indexers/transactions-by-account",
+                            "developers/developer-guides/tools/indexers/transactions-by-height",
+                            "developers/developer-guides/tools/indexers/transactions-by-hash",
+                            "developers/developer-guides/tools/indexers/nft-collections-by-account",
+                            "developers/developer-guides/tools/indexers/nft-collection-details",
+                            "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
+                            "developers/developer-guides/tools/indexers/nft-tokens-by-account"
+                        ]
+                    }]
+                },
+                {
+                    "group": "Oracles",
+                    "icon": "list-ol",
+                    "pages": [{
+                        "group": "Connect",
+                        "pages": [
+                            "developers/developer-guides/tools/oracles/connect/introduction",
+                            {
+                                "group": "Fetching Prices from API",
+                                "pages": [
+                                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
+                                    "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
+                                ]
+                            },
+                            "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
+                        ]
+                    }]
+                }
+            ]
+        },
+        {
+            "group": "Developer Resources",
+            "pages": [{
+                    "group": "Networks",
+                    "icon": "globe",
+                    "pages": [
+                        "resources/developer/networks/initia-l1",
+                        "resources/developer/networks/minimove",
+                        "resources/developer/networks/miniwasm",
+                        "resources/developer/networks/minievm"
+                    ]
+                },
+                {
+                    "group": "Deployed Contracts",
+                    "icon": "file-code",
+                    "pages": ["resources/developer/deployed-contracts/minievm"]
+                },
+                {
+                    "group": "Contracts References",
+                    "icon": "asterisk",
+                    "pages": [{
+                        "group": "EVM",
+                        "pages": [
+                            "resources/developer/contract-references/evm/connect",
+                            "resources/developer/contract-references/evm/cosmos",
+                            "resources/developer/contract-references/evm/erc20-acl",
+                            "resources/developer/contract-references/evm/erc20-registry",
+                            "resources/developer/contract-references/evm/initia-erc20",
+                            "resources/developer/contract-references/evm/erc20-factory",
+                            "resources/developer/contract-references/evm/initia-custom-erc20"
+                        ]
+                    }]
+                }
+            ]
+        },
+        {
+            "group": "Deploying Minitias",
+            "pages": [
+                "initia-and-minitias/deploying-minitias/setting-up",
 
-        {
-          "group": "Deploying Minitias",
-          "icon": "cloud-arrow-up",
-          "pages": [
-            "initia-and-minitias/deploying-minitias/minitia-deployment/introduction",
-            "initia-and-minitias/deploying-minitias/minitia-deployment/deploying-standalone-minitia",
-            "initia-and-minitias/deploying-minitias/minitia-deployment/running-the-minitia"
-          ]
+                {
+                    "group": "Deploying Minitias",
+                    "icon": "cloud-arrow-up",
+                    "pages": [
+                        "initia-and-minitias/deploying-minitias/minitia-deployment/introduction",
+                        "initia-and-minitias/deploying-minitias/minitia-deployment/deploying-standalone-minitia",
+                        "initia-and-minitias/deploying-minitias/minitia-deployment/running-the-minitia"
+                    ]
+                },
+                {
+                    "group": "Running OPinit Bots",
+                    "icon": "circle-nodes",
+                    "pages": [
+                        "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
+                        "initia-and-minitias/deploying-minitias/opinit-bots/setting-up-dependencies",
+                        "initia-and-minitias/deploying-minitias/opinit-bots/executor",
+                        "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
+                    ]
+                },
+                "initia-and-minitias/deploying-minitias/ibc-relayers",
+                {
+                    "group": "Preparing for Launch",
+                    "icon": "rocket-launch",
+                    "pages": [
+                        "initia-and-minitias/deploying-minitias/preparing-for-launch/initia-registry",
+                        "initia-and-minitias/deploying-minitias/preparing-for-launch/initiadex",
+                        "initia-and-minitias/deploying-minitias/preparing-for-launch/vip",
+                        "initia-and-minitias/deploying-minitias/preparing-for-launch/minitswap"
+                    ]
+                }
+            ]
         },
         {
-          "group": "Running OPinit Bots",
-          "icon": "circle-nodes",
-          "pages": [
-            "initia-and-minitias/deploying-minitias/opinit-bots/introduction",
-            "initia-and-minitias/deploying-minitias/opinit-bots/setting-up-dependencies",
-            "initia-and-minitias/deploying-minitias/opinit-bots/executor",
-            "initia-and-minitias/deploying-minitias/opinit-bots/challenger"
-          ]
-        },
-        "initia-and-minitias/deploying-minitias/ibc-relayers",
-        {
-          "group": "Preparing for Launch",
-          "icon": "rocket-launch",
-          "pages": [
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/initia-registry",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/initiadex",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/vip",
-            "initia-and-minitias/deploying-minitias/preparing-for-launch/minitswap"
-          ]
+            "group": "Running an Initia Node",
+            "pages": [
+                "initia-and-minitias/running-a-node/introduction",
+                {
+                    "group": "Manual Setup",
+                    "icon": "wrench",
+                    "pages": [
+                        "initia-and-minitias/running-a-node/manual-setup/node-setup",
+                        "initia-and-minitias/running-a-node/manual-setup/node-configuration",
+                        "initia-and-minitias/running-a-node/manual-setup/starting-the-node",
+                        "initia-and-minitias/running-a-node/manual-setup/cosmovisor"
+                    ]
+                },
+                {
+                    "group": "Running a Validator",
+                    "icon": "shield-check",
+                    "pages": [
+                        "initia-and-minitias/running-a-node/running-a-validator/becoming-a-validator",
+                        "initia-and-minitias/running-a-node/running-a-validator/oracle-sidecar"
+                    ]
+                }
+            ]
         }
-      ]
+    ],
+    "footerSocials": {
+        "twitter": "https://x.com/initiafdn",
+        "discord": "https://discord.gg/initia",
+        "github": "https://github.com/initia-labs"
     },
-    {
-      "group": "Running an Initia Node",
-      "pages": [
-        "initia-and-minitias/running-a-node/introduction",
-        {
-          "group": "Manual Setup",
-          "icon": "wrench",
-          "pages": [
-            "initia-and-minitias/running-a-node/manual-setup/node-setup",
-            "initia-and-minitias/running-a-node/manual-setup/node-configuration",
-            "initia-and-minitias/running-a-node/manual-setup/starting-the-node",
-            "initia-and-minitias/running-a-node/manual-setup/cosmovisor"
-          ]
-        },
-        {
-          "group": "Running a Validator",
-          "icon": "shield-check",
-          "pages": [
-            "initia-and-minitias/running-a-node/running-a-validator/becoming-a-validator",
-            "initia-and-minitias/running-a-node/running-a-validator/oracle-sidecar"
-          ]
-        }
-      ]
+    "api": {
+        "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
+    },
+    "background": {
+        "style": "grid"
+    },
+    "sidebar": {
+        "items": "card"
+    },
+    "feedback": {
+        "raiseIssue": true,
+        "suggestEdit": true,
+        "thumbsRating": true
     }
-  ],
-  "footerSocials": {
-    "twitter": "https://x.com/initiafdn",
-    "discord": "https://discord.gg/initia",
-    "github": "https://github.com/initia-labs"
-  },
-  "api": {
-    "baseUrl": ["https://lcd.initiation-2.initia.xyz"]
-  },
-  "background": {
-    "style": "grid"
-  },
-  "sidebar": {
-    "items": "card"
-  },
-  "feedback": {
-    "raiseIssue": true,
-    "suggestEdit": true,
-    "thumbsRating": true
-  }
 }
