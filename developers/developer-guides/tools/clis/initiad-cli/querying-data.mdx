@@ -1,0 +1,115 @@
+---
+title: Querying Data
+---
+
+The initiad CLI offers a range of commands for querying data from Initia L1.
+
+This guide walks you through using these commands to retrieve blockchain data.
+
+`initiad query` command enables you to query data from the blockchain. Each module provides a client-facing query interface. 
+
+The general syntax for querying data is:
+
+```bash
+initiad query [module-name] [query-name] [args] [flags]
+```
+
+## Querying Account Balance
+
+After receiving tokens to your address, you can view your account's balance like:
+
+```bash
+export ADDRESS=init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
+export NODE_URL=https://rpc.testnet.initia.xyz
+
+initiad query bank balances $ADDRESS --node $NODE_URL
+
+# - amount: "100000000"
+#   denom: uinit
+```
+
+## Querying Blocks
+
+You can query a single block by its height or hash using the following command:
+
+```bash
+export BLOCK_HEIGHT=1000
+export BLOCK_HASH=04B7658B40508B290B04C61A0021EB5E9354F1E8C70DF5D6AE2A9B1F0B8D32A3
+
+initiad query block --type=height $BLOCK_HEIGHT --node $NODE_URL
+initiad query block --type=hash $BLOCK_HASH --node $NODE_URL
+```
+
+## Querying Transactions
+
+You can query a single transaction by its hash using the following command:
+
+```bash
+export TX_HASH=6DFEE8E4BFC38341E8AADBD74A23588D8DE94FA38052CB5721DDA780A24F8B1D
+
+initiad query tx $TX_HASH --node $NODE_URL
+
+# code: 0
+# codespace: ""
+# data: 12240A222F696E697469612E6D6F76652E76312E4D736745786563757465526573706F6E7365
+# events:
+# - attributes:
+#   - index: true
+#     key: sender
+#     value: 0x1,0x512536dfca0b50144483dab26790912ad85b17fe
+#     ...
+```
+
+## Querying Params
+
+You can query the module parameters using the following command:
+
+```bash
+initiad query mstaking params --node $NODE_URL
+
+# bond_denoms:
+# - uinit
+# - move/dbf06c48af3984ec6d9ae8a9aa7dbb0bb1e784aa9b8c4a5681af660cf8558d7d
+# - move/a2b0d3c8e53e379ede31f3a361ff02716d50ec53c6b65b8c48a81d5b06548200
+# - move/b134ae6786f10ef74294e627d2519b63b7c742a6735f98682929fea9a84744d2
+# historical_entries: 10000
+# max_entries: 7
+# max_validators: 100
+# min_commission_rate: "0.000000000000000000"
+# min_voting_power: "1000000"
+# unbonding_time: 1814400s
+
+initiad query move params --node $NODE_URL
+
+# allowed_publishers: []
+# base_denom: uinit
+# base_min_gas_price: "0.015000000000000000"
+# contract_shared_revenue_ratio: "0.000000000000000000"
+# script_enabled: true
+```
+
+## Querying Oracle
+
+If node has oracle module enabled, you can query the currency pairs and price using the following commands:
+
+```bash
+initiad query oracle currency-pairs --node $NODE_URL
+
+# currency_pairs:
+# - Base: AAVE
+#   Quote: USD
+# - Base: ADA
+#   Quote: USD
+# - Base: AEVO
+#   Quote: USD
+
+initiad query oracle price AAVE USD --node $NODE_URL
+
+# decimals: "8"
+# id: "19"
+# nonce: "1233969"
+# price:
+#   block_height: "1237222"
+#   block_timestamp: "2024-10-30T05:36:59.810774835Z"
+#   price: "15143771245"
+```

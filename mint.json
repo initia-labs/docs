@@ -293,7 +293,12 @@
           "pages": [
             {
               "group": "Initia CLI",
-              "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
+              "pages": [
+                "developers/developer-guides/tools/clis/initiad-cli/introduction",
+                "developers/developer-guides/tools/clis/initiad-cli/accounts",
+                "developers/developer-guides/tools/clis/initiad-cli/transactions",
+                "developers/developer-guides/tools/clis/initiad-cli/querying-data"
+              ]
             },
             {
               "group": "Minitia CLI",
