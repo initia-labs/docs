@@ -7,35 +7,79 @@ title: Account
 Before you can start building and transacting, you'll need to create an account. 
 
 ```bash
-> initiad keys add [key-name]
+export ACCOUNT_NAME=test-account
+initiad keys add $ACCOUNT_NAME
 
-- address: init17exjfvgtpn5ne4pgmuatjg52mvvtj08773tgfx
-name: test-account
-pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ap+WnRzOsJGgfgsrgc4APi/EiTzl3t52ruiKGev7X9LW"}'
-type: local
+# - address: init17exjfvgtpn5ne4pgmuatjg52mvvtj08773tgfx
+# name: test-account
+# pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ap+WnRzOsJGgfgsrgc4APi/EiTzl3t52ruiKGev7X9LW"}'
+# type: local
 
+# **Important** write this mnemonic phrase in a safe place.
+# It is the only way to recover your account if you ever forget your password.
 
-**Important** write this mnemonic phrase in a safe place.
-It is the only way to recover your account if you ever forget your password.
-
-glass easy miracle sign tent anchor position cluster shift calm march elite menu must nose inform antique reason meadow relief layer term crush gesture
+# glass easy miracle sign tent anchor position cluster shift calm march elite menu must nose inform antique reason meadow relief layer term crush gesture
 ```
 
 <Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
 
-## Importing an Account
-
-You can also import an account by providing a mnemonic phrase.
+If you want to create an EVM account, you can use the following command:
 
 ```bash
-❯ initiad keys add [key-name] --recover
+export ETH_KEY_TYPE=eth_secp256k1
+export ETH_COIN_TYPE=60
+
+initiad keys add $ACCOUNT_NAME --key-type $ETH_KEY_TYPE --coin-type $ETH_COIN_TYPE
+```
+
+<NOTE>
+Even with the same mnemonic phrase, the derived addresses differ because the method of generating the public key varies, leading to each account being treated separately.
+</NOTE>
+
+## Importing an Account
+
+You can import an account by providing a mnemonic phrase.
+
+```bash
+initiad keys add $ACCOUNT_NAME --recover
 > Enter your bip39 mnemonic
 glass easy miracle sign tent anchor position cluster shift calm march elite menu must nose inform antique reason meadow relief layer term crush gesture
 
-- address: init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
-  name: test-account
-  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Am9tmvRft+pcol+h/unlMB9gRbKAZF/7Y8K3iWOtr9Dw"}'
-  type: local
+# - address: init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
+#   name: test-account
+#   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Am9tmvRft+pcol+h/unlMB9gRbKAZF/7Y8K3iWOtr9Dw"}'
+#   type: local
+```
+
+To export the account's private key, run:
+
+```bash
+initiad keys export $ACCOUNT_NAME > key.json
+
+>Enter passphrase to encrypt the exported key:
+
+# key.json
+# -----BEGIN TENDERMINT PRIVATE KEY-----
+# kdf: argon2
+# salt: BE84B59652876BFBEEB0E01CA2AA753C
+# type: secp256k1
+
+# edch8EcPYgSQrWHdJlmRMZGmh7gqOLYvAHsynbovXonq2reSeP+eEgtvwNYEnrQu
+# 2MZwMIs=
+# =ObmR
+# -----END TENDERMINT PRIVATE KEY-----
+```
+
+<Note>
+The exported private key is encrypted with a passphrase. So, you can only import it using `initiad` CLI. It is not possible to import it directly on Wallet Apps.
+</Note>
+
+To import the account using the exported private key, run:
+
+```bash
+export NEW_ACCOUNT_NAME=test-account2
+
+initiad keys import $NEW_ACCOUNT_NAME key.json
 ```
 
 ## Retrieving Account Data
@@ -45,28 +89,10 @@ You can retrieve account data stored in the keyring.
 ```bash
 initiad keys list
 
-- address: init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
-  name: test-account
-  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Am9tmvRft+pcol+h/unlMB9gRbKAZF/7Y8K3iWOtr9Dw"}'
-  type: local
-```
-
-To export the account's private key, run:
-
-```bash
-initiad keys export [key-name]
-
->Enter passphrase to encrypt the exported key:
-
------BEGIN TENDERMINT PRIVATE KEY-----
-kdf: argon2
-salt: BE84B59652876BFBEEB0E01CA2AA753C
-type: secp256k1
-
-edch8EcPYgSQrWHdJlmRMZGmh7gqOLYvAHsynbovXonq2reSeP+eEgtvwNYEnrQu
-2MZwMIs=
-=ObmR
------END TENDERMINT PRIVATE KEY-----
+# - address: init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
+#   name: test-account
+#   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Am9tmvRft+pcol+h/unlMB9gRbKAZF/7Y8K3iWOtr9Dw"}'
+#   type: local
 ```
 
 ## Validator Address
@@ -75,10 +101,14 @@ If you run a validator node, you can get the validator address by running:
 
 ```bash
 initiad comet show-address
+
+# initvalcons1kknrtmntc39v3z4hgv84hddeclyfsxdgzdtn3q
 ```
 
 To get validator consensus public key, run:
 
 ```bash
-{"@type":"/cosmos.crypto.ed25519.PubKey","key":"lusuUL6CKywnZDPul5COzCFKLPLDGEMbLEIZIZlDp44="}
+initiad comet show-validator
+
+# {"@type":"/cosmos.crypto.ed25519.PubKey","key":"lusuUL6CKywnZDPul5COzCFKLPLDGEMbLEIZIZlDp44="}
 ```

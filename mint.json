@@ -273,8 +273,8 @@
               "pages": [
                 "developers/developer-guides/tools/sdks/initia-js/introduction",
                 "developers/developer-guides/tools/sdks/initia-js/quickstart",
-                "developers/developer-guides/tools/sdks/initia-js/querying-data",
                 "developers/developer-guides/tools/sdks/initia-js/accounts",
+                "developers/developer-guides/tools/sdks/initia-js/querying-data",
                 {
                   "group": "Transactions",
                   "pages": [

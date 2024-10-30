@@ -12,7 +12,6 @@ import { MnemonicKey } from '@initia/initia.js'
 const key = new MnemonicKey()
 ```
 
-
 <Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
 
 ## Importing an Account
@@ -23,7 +22,7 @@ You can also import an account by providing a mnemonic phrase or a raw key.
 import { MnemonicKey } from '@initia/initia.js'
 
 const keyByMnemonic = new MnemonicKey({
-    mnemonic: 'across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model'
+    mnemonic: 'bird upset ... evil cigar'
 })
 const keyByRawKey = new RawKey(keyByMnemonic.privateKey)
 
@@ -36,6 +35,12 @@ Output:
 ```bash
 keyByMnemonic: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
 keyByRawKey: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
+```
+
+If you want to create an EVM account, you can use the following code:
+
+```ts InitiaJS
+// comming soon!
 ```
 
 ## Retrieving Account Data
