@@ -216,6 +216,7 @@
           "icon": "note-sticky",
           "pages": [
             "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
+            "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-nft",
             "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
           ]

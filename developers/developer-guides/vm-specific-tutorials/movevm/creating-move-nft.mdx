@@ -1,0 +1,277 @@
+---
+title: Creating Move NFT
+---
+
+This tutorial guides you through the process of creating and minting your own NFT using the `0x1::simple_nft` module on the Initia blockchain.
+
+## Step 1. Create Collection
+
+To mint NFTs, you first need to create a collection. 
+
+You'll use the `0x1::simple_nft::create_collection` function for this purpose. 
+
+This function requires numerous parameters, including descriptions, maximum supply, collection name, and various flags to allow mutability in your collection's properties.
+
+```move
+public entry fun create_collection(
+    creator: &signer,
+    description: String,
+    max_supply: Option<u64>,
+    name: String,x
+    uri: String,
+    mutable_description: bool,
+    mutable_royalty: bool,
+    mutable_uri: bool,
+    mutable_nft_description: bool,
+    mutable_nft_properties: bool,
+    mutable_nft_uri: bool,
+    royalty: BigDecimal
+)
+```
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    export DESCRIPTION="My first NFT collection"
+    export MAX_SUPPLY=100
+    export COLLECTION_NAME="my_collection"
+    export URI="example.com"
+    export MUTABLE_DESCRIPTION=true     # Determines if the creator can mutate the collection's description
+    export MUTABLE_ROYALTY=true         # Determines if the creator can mutate the collection's royalty
+    export MUTABLE_URI=true             # Determines if the creator can mutate the collection's URI
+    export MUTABLE_NFT_DESCRIPTION=true # Determines if the creator can mutate the NFT's description
+    export MUTABLE_NFT_PROPERTIES=true  # Determines if the creator can mutate the NFT's properties
+    export MUTABLE_NFT_URI=true         # Determines if the creator can mutate the NFT's URI
+    export ROYALTY=0.05
+
+    export KEY_NAME=test-account
+    export NODE_URL=https://rpc.testnet.initia.xyz
+    export CHAIN_ID=initiation-2
+
+    initiad tx move execute 0x1 simple_nft create_collection \
+        --args "[\"string:$DESCRIPTION\", \"option<u64>:$MAX_SUPPLY\", \"string:$COLLECTION_NAME\", \"string:$URI\", \"bool:$MUTABLE_DESCRIPTION\", \"bool:$MUTABLE_ROYALTY\", \"bool:$MUTABLE_URI\", \"bool:$MUTABLE_NFT_DESCRIPTION\", \"bool:$MUTABLE_NFT_PROPERTIES\", \"bool:$MUTABLE_NFT_URI\", \"bigdecimal:$ROYALTY\"]" \
+        --from $KEY_NAME \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node $NODE_URL --chain-id $CHAIN_ID
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts InitiaJS
+    import { bcs, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+    async function createCollection() {
+        const client = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5'
+        })
+
+        const key = new MnemonicKey({
+            mnemonic:
+            'across ... model'
+        })
+        const wallet = new Wallet(client, key)
+
+        const msgs = [
+            new MsgExecute(
+            key.accAddress,
+            '0x1',
+            'simple_nft',
+            'create_collection',
+            [],
+            [
+                bcs.string().serialize('description').toBase64(), // collection description
+                bcs.option(bcs.u64()).serialize(100).toBase64(), // max supply
+                bcs.string().serialize('my_collection').toBase64(), // collection name
+                bcs.string().serialize('').toBase64(), // collection uri
+                bcs.bool().serialize(true).toBase64(), // mutable collection description
+                bcs.bool().serialize(true).toBase64(), // mutable collection royalty
+                bcs.bool().serialize(true).toBase64(), // mutable collection uri
+                bcs.bool().serialize(true).toBase64(), // mutable nft description
+                bcs.bool().serialize(true).toBase64(), // mutable nft properties
+                bcs.bool().serialize(true).toBase64(), // mutable nft uri
+                bcs.bigdecimal().serialize('0.05').toBase64() // royalty
+            ]
+            )
+        ]
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs })
+        // send(broadcast) tx
+        client.tx.broadcast(signedTx).then((res) => console.log(res))
+        // {
+        //   height: 0,
+        //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+        //   raw_log: '[]'
+        // }
+    }
+
+    createCollection()
+    ```
+    </Tab>
+</Tabs>
+
+## Step 2. Mint NFT
+
+After creating a collection, you can mint NFTs within this collection using the `0x1::simple_nft::mint` function.
+
+This function also requires various parameters, including the collection name, a description of the NFT, the token ID, and an optional recipient address.
+
+```move
+public entry fun mint(
+    creator: &signer,
+    collection: String,
+    description: String,
+    token_id: String,
+    uri: String,
+    property_keys: vector<String>,
+    property_types: vector<String>,
+    property_values: vector<vector<u8>>,
+    to: Option<address>
+)
+```
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    export TOKEN_ID="nft_1"
+    export PROPERTY_KEYS=""
+    export PROPERTY_TYPES=""
+    export PROPERTY_VALUES=""
+    export TO_ADDRESS="init17qsunverzf94wz5axv945vmnvfph5nvdn0stqh"
+
+    initiad tx move execute 0x1 simple_nft mint \
+        --args "[\"string:$COLLECTION_NAME\", \"string:$DESCRIPTION\", \"string:$TOKEN_ID\", \"string:$URI\", \"vector<string>:$PROPERTY_KEYS\", \"vector<string>:$PROPERTY_TYPES\", \"vector<vector<u8>>:$PROPERTY_VALUES\", \"option<address>:$TO_ADDRESS\"]" \
+        --from $KEY_NAME \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node $NODE_URL --chain-id $CHAIN_ID
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts InitiaJS
+    import { bcs, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+    async function mint() {
+        const client = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5'
+        })
+
+        const key = new MnemonicKey({
+            mnemonic:
+            'across ... model'
+        })
+        const wallet = new Wallet(client, key)
+
+        const msgs = [
+            new MsgExecute(
+                key.accAddress,
+                '0x1',
+                'simple_nft',
+                'mint',
+                [],
+                [
+                    bcs.string().serialize('my_collection').toBase64(), // collection name
+                    bcs.string().serialize('nft_description').toBase64(), // nft description
+                    bcs.string().serialize('nft_1').toBase64(), // nft token id
+                    bcs.string().serialize('').toBase64(), // nft uri
+                    bcs.vector(bcs.string()).serialize([]).toBase64(), // property keys
+                    bcs.vector(bcs.string()).serialize([]).toBase64(), // property types
+                    bcs.vector(bcs.vector(bcs.u8())).serialize([]).toBase64(), // property values
+                    bcs.option(bcs.address()).serialize(key.accAddress).toBase64() // to, if null mint to creator
+                ]
+            )
+        ]
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs })
+        // send(broadcast) tx
+        client.tx.broadcast(signedTx).then((res) => console.log(res))
+    }
+
+    mint()
+    ```
+    </Tab>
+</Tabs>
+
+## Step 3: Verify Your Minted NFTs
+
+You can verify the NFTs you've minted by accessing the provided APIs.
+
+To check the collections and tokens owned by a specific address, use the following endpoints, replacing `owner_address` and `collection_address` with the appropriate values:
+
+- NFTs owned by a specific address: https://api.initiation-2.initia.xyz/indexer/nft/v1/tokens/by_account/[owner_address]
+- Collections owned by a specific address: https://api.initiation-2.initia.xyz/indexer/nft/v1/collections/by_account/[collection_address]
+
+## Step 4: Transfer NFT
+
+To transfer an NFT, use the `0x1::object::transfer_call` function. This function allows transferring a single NFT from one account to another.
+
+```bash
+public entry fun transfer_call(
+    owner: &signer,
+    object: address,
+    to: address,
+)
+```
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    export NFT_ADDR=0x7ade7154865bda229e40eccbd546f32a0ee1d93bd20dfdd91269294e98523f1
+    export RECEIVER_ADDR=init10v3kg8hfvsj6tklfj5aam9ya5lmvtl9snqsawg
+
+    initiad tx move execute 0x1 object transfer_call \
+        --args "[\"address:$NFT_ADDR\", \"address:$RECEIVER_ADDR\"]" \
+        --from $KEY_NAME \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node $NODE_URL --chain-id $CHAIN_ID
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts InitiaJS
+    import { bcs, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+    async function mint() {
+        const client = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5'
+        })
+
+        const key = new MnemonicKey({
+            mnemonic:
+            'across ... model'
+        })
+        const wallet = new Wallet(client, key)
+
+        const msgs = [
+            new MsgExecute(
+                key.accAddress,
+                '0x1',
+                'object',
+                'transfer_call',
+                [],
+                [
+                    bcs
+                        .address()
+                        .serialize(
+                            '0x7ade7154865bda229e40eccbd546f32a0ee1d93bd20dfdd91269294e98523f1'
+                        )
+                        .toBase64(), // nft address
+                    bcs
+                        .address()
+                        .serialize('init10v3kg8hfvsj6tklfj5aam9ya5lmvtl9snqsawg')
+                        .toBase64(), // receiver address
+                ]
+            ),
+        ];
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs })
+        // send(broadcast) tx
+        client.tx.broadcast(signedTx).then((res) => console.log(res))
+    }
+
+    mint()
+    ```
+    </Tab>
+</Tabs>
