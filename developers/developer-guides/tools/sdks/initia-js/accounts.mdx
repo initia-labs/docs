@@ -40,7 +40,24 @@ keyByRawKey: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb
 If you want to create an EVM account, you can use the following code:
 
 ```ts InitiaJS
-// comming soon!
+const cosmosKeyByMnemonic = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar',
+})
+const evmKeyByMnemonic = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar',
+    coinType: 60,
+    eth: true
+})
+
+console.log('cosmosKeyByMnemonic:', cosmosKeyByMnemonic.accAddress)
+console.log('evmKeyByMnemonic:', evmKeyByMnemonic.accAddress)
+```
+
+Output:
+
+```bash
+cosmosKeyByMnemonic: init1d7s3q7nmlzqz9v4tk6ntrvfmavu2vk656gr29j
+evmKeyByMnemonic: init1f7t8tqnltm2n0ghs3g9uyplkj3rf2mh9tcf4r9
 ```
 
 ## Retrieving Account Data
