@@ -29,23 +29,10 @@
     "primaryTab": {
         "name": "Home"
     },
-    "tabs": [{
-            "name": "Initia and Minitias",
-            "url": "initia-and-minitias"
-        },
-        {
-            "name": "Developers",
-            "url": "developers"
-        },
-        {
-            "name": "Resources",
-            "url": "resources"
-        }
-    ],
     "anchors": [{
             "name": "Twitter",
             "icon": "twitter",
-            "url": "https://twitter.com/initiafdn"
+            "url": "https://x.com/initia"
         },
         {
             "name": "Discord",
@@ -60,7 +47,7 @@
     ],
     "navigation": [{
             "group": "Welcome",
-            "pages": ["home/general/welcome", "home/general/introduction"]
+            "pages": ["home/general/welcome"]
         },
         {
             "group": "Core Concepts",
@@ -423,7 +410,7 @@
         }
     ],
     "footerSocials": {
-        "twitter": "https://x.com/initiafdn",
+        "twitter": "https://x.com/initia",
         "discord": "https://discord.gg/initia",
         "github": "https://github.com/initia-labs"
     },
