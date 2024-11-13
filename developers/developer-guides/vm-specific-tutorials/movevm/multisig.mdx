@@ -32,20 +32,18 @@ public entry fun create_non_weighted_multisig_account(
 
 ```ts InitiaJS
 const msgCreateNonWeightedMultisigAccount = new MsgExecute(
-    multisigCreator.key.accAddress,
-    "0x1",
-    "multisig_v2",
-    "create_non_weighted_multisig_account",
-    [],
-    [   
-        bcs.string().serialize("multisig_v2"),  // name
-        bcs.vector(bcs.address()).serialize([   // members
-            multisigCreator.key.accAddress,
-            multisigMember1.key.accAddress,
-            multisigMember2.key.accAddress
-        ]),
-        bcs.u64().serialize(2)                  // threshold
-    ].map((v) => v.toBase64())
+  multisigCreator.key.accAddress,
+  '0x1',
+  'multisig_v2',
+  'create_non_weighted_multisig_account',
+  [],
+  [
+    bcs.string().serialize(multisigName), // name
+    bcs
+      .vector(bcs.address())
+      .serialize([multisigCreator.key.accAddress, multisigMember1.key.accAddress, multisigMember2.key.accAddress]), // members
+    bcs.u64().serialize(2) // threshold
+  ].map((v) => v.toBase64())
 )
 ```
 
@@ -76,62 +74,52 @@ public entry fun create_proposal(
 - `args_list`: Arguments for the functions.
 - `expiry_duration`: Optional expiration duration for the proposal.
 
+In this example, we will create two proposals. 
+
+The first proposal sends tokens using the `0x1::cosmos::stargate` function, and the second proposal sends tokens using the `0x1::coin::transfer` function.
+
 ```ts InitiaJS
-const msgMiultiSigProposal = new MsgExecute(
-    multisigAddress,
-    "0x1",
-    "multisig_v2",
-    "update_config",
-    [],
-    [
-      bcs
-        .vector(bcs.address())
-        .serialize([
-          multisigMember3.key.accAddress,
-        ]), // new members
-      bcs
-        .option(bcs.vector(bcs.string()))
-        .serialize(null), // new_tiers
-      bcs
-        .option(bcs.vector(bcs.u64()))
-        .serialize(null), // new_tier_weights
-      bcs
-        .option(bcs.vector(bcs.string()))
-        .serialize(null), // new_member_tiers
-      bcs.u64().serialize(1) // new_threshold
-    ].map((v) => v.toBase64())
-  )
+// Proposal 1. send token with `0x1::cosmos::stargate` function
+const recipient = 'init1nu7ujl76zac4pkdck8r2zve5zkjaus2xuz8thx'
+const msgMiultiSigProposal1 = new MsgSend(
+  AccAddress.fromHex(multisigAddress),
+  recipient,
+  new Coins({ uinit: 1_000_000 })
+)
+
+// Proposal 2. send token with `0x1::coin::transfer` function
+const msgMiultiSigProposal2Args = [
+  bcs.address().serialize(recipient), // recipient
+  bcs.object().serialize('0x8e4733bdabcf7d4afc3d14f0dd46c9bf52fb0fce9e4b996c939e195b8bc891d9'), // coin metadata
+  bcs.u64().serialize(1_000_000) // amount
+]
 
 const msgCreateProposal = new MsgExecute(
-    multisigCreator.key.accAddress,
-    "0x1",
-    "multisig_v2",
-    "create_proposal",
-    [],
-    [
-      bcs.address().serialize(multisigAddress), // multisig address
-      bcs.vector(bcs.address()).serialize(["0x1"]), // module addresses
-      bcs.vector(bcs.string()).serialize(["cosmos"]), // module names
-      bcs.vector(bcs.string()).serialize(["stargate"]), // function names
-      bcs.vector(bcs.vector(bcs.string())).serialize([[]]), // function type args
-      bcs.vector(bcs.vector(bcs.vector(bcs.u8()))).serialize([ 
+  multisigCreator.key.accAddress,
+  '0x1',
+  'multisig_v2',
+  'create_proposal',
+  [],
+  [
+    bcs.address().serialize(multisigAddress), // multisig address
+    bcs.vector(bcs.address()).serialize(['0x1', '0x1']), // module addresses
+    bcs.vector(bcs.string()).serialize(['cosmos', 'coin']), // module names
+    bcs.vector(bcs.string()).serialize(['stargate', 'transfer']), // function names
+    bcs.vector(bcs.vector(bcs.string())).serialize([[], []]), // function type args
+    bcs.vector(bcs.vector(bcs.vector(bcs.u8()))).serialize([
+      [
         [
-          [
-            ...bcs
-              .vector(bcs.u8())
-              .serialize(
-                Buffer.from(
-                  JSON.stringify(
-                    msgMiultiSigProposal.toData()
-                  )
-                )
-              )
-              .toBytes(),
-          ],
-        ],
-      ]), // function args
-      bcs.option(bcs.u64()).serialize(null), // expiry duration
-    ].map((v) => v.toBase64())
+          ...bcs
+            .vector(bcs.u8())
+            .serialize(Buffer.from(JSON.stringify(msgMiultiSigProposal1.toData())))
+            .toBytes()
+        ]
+      ],
+      msgMiultiSigProposal2Args.map((v) => v.toBytes())
+    ]), // function args
+    bcs.option(bcs.u64()).serialize(null) // expiry duration
+  ].map((v) => v.toBase64())
+)
 ```
 
 ## Vote Proposal
@@ -198,198 +186,204 @@ Below is a summarized example of how to create a multisig account, create a prop
 ```ts Initia.Js
 // this is an example of how to create a multisig account, create a proposal, vote on the
 // proposal and execute the proposal using the initia.js library
-// update the keys array with the mnemonics of the accounts you want to use
 // step by step instructions are provided in the comments
 // there are 4 steps in this example
 // step 1: create multisig account
 // step 2: create proposal
 // step 3: vote proposal
 // step 4: execute proposal
-// uncomment the code for each step to run it
 
-import { AccAddress, bcs, MnemonicKey, MsgExecute, RESTClient, Wallet } from "@initia/initia.js";
+import {
+  AccAddress,
+  bcs,
+  Coins,
+  MnemonicKey,
+  MsgExecute,
+  MsgSend,
+  RESTClient,
+  Tx,
+  WaitTxBroadcastResult,
+  Wallet
+} from '@initia/initia.js'
+import { sha3_256 } from '@noble/hashes/sha3'
 
-const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
-    gasPrices: '0.15uinit',
-    gasAdjustment: '1.5'
+export function getMultisigAddress(creator: string, name: string) {
+  const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
+  const addrBytes = Buffer.from(bcs.address().serialize(creator).toBytes()).toJSON().data
+  const seed = Buffer.from(`0x1::multisig_v2::MultisigWallet${name}`, 'ascii').toJSON().data
+  const bytes = addrBytes.concat(seed)
+  bytes.push(OBJECT_FROM_SEED_ADDRESS_SCHEME)
+  const sum = sha3_256.create().update(Buffer.from(bytes)).digest()
+  return Buffer.from(sum).toString('hex')
+}
+
+const restClient = new RESTClient('https://b545809c-5562-4e60-b5a1-22e83df57748.initiation-2.mesa-rest.newmetric.xyz', {
+  gasPrices: '0.15uinit',
+  gasAdjustment: '1.5'
 })
 
 const keys = [
-    'lawn gentle alpha display brave luxury aunt spot resource problem attend finish clown tilt outer security strike blush inspire gallery mesh law discover mad', // multisig creator
-    'leisure minimum grow fringe hamster divide leaf evidence bread lift maple rather matrix budget loop envelope warrior hill exotic raven access prevent pottery this', // multisig member 1
-    'game gown scorpion discover erase various crash nut ill leisure candy resemble tissue roast close dizzy dune speak rug exhaust body boss trip cherry', // multisig member 2
-    'enauto fork citizen crush action goddess peasant rotate arch where night attitude truth thrive organ situate deal chaos mountain oak salmon say cruel modify', // multisig member 3
+  'lawn gentle alpha display brave luxury aunt spot resource problem attend finish clown tilt outer security strike blush inspire gallery mesh law discover mad', // multisig creator
+  'leisure minimum grow fringe hamster divide leaf evidence bread lift maple rather matrix budget loop envelope warrior hill exotic raven access prevent pottery this', // multisig member 1
+  'game gown scorpion discover erase various crash nut ill leisure candy resemble tissue roast close dizzy dune speak rug exhaust body boss trip cherry' // multisig member 2
 ]
 
-const accounts = keys.map((mnemonic) => 
-    new Wallet(restClient, new MnemonicKey({mnemonic}))
-)
+const accounts = keys.map((mnemonic) => new Wallet(restClient, new MnemonicKey({ mnemonic })))
 
 async function main() {
-    const multisigCreator = accounts[0]
-    const [multisigMember1, multisigMember2, multisigMember3]  = accounts.slice(1)
-    
-    // step 1. create multisig account
-    const msgCreateNonWeightedMultisigAccount = new MsgExecute(
-        multisigCreator.key.accAddress,
-        "0x1",
-        "multisig_v2",
-        "create_non_weighted_multisig_account",
-        [],
-        [   
-            bcs.string().serialize("multisig_v2"),  // name
-            bcs.vector(bcs.address()).serialize([   // members
-                multisigCreator.key.accAddress,
-                multisigMember1.key.accAddress,
-                multisigMember2.key.accAddress
-            ]),
-            bcs.u64().serialize(2)                  // threshold
-        ].map((v) => v.toBase64())
+  let signedTx: Tx
+  let res: WaitTxBroadcastResult
+
+  const [multisigCreator, multisigMember1, multisigMember2] = accounts
+  
+  // step 1. create multisig account
+  const multisigName = 'multisig_name'
+  const msgCreateNonWeightedMultisigAccount = new MsgExecute(
+    multisigCreator.key.accAddress,
+    '0x1',
+    'multisig_v2',
+    'create_non_weighted_multisig_account',
+    [],
+    [
+      bcs.string().serialize(multisigName), // name
+      bcs
+        .vector(bcs.address())
+        .serialize([multisigCreator.key.accAddress, multisigMember1.key.accAddress, multisigMember2.key.accAddress]), // members
+      bcs.u64().serialize(2) // threshold
+    ].map((v) => v.toBase64())
+  )
+  signedTx = await multisigCreator.createAndSignTx({
+    msgs: [msgCreateNonWeightedMultisigAccount]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('multisig account created: ', res.txhash)
+
+  // you can get the multisig address after creating the multisig account (check `CreateMultisigAccountEvent`)
+  // change the multisig address below to the address you got from the event
+  const multisigAddress = getMultisigAddress(AccAddress.toHex(multisigCreator.key.accAddress), multisigName)
+
+  //
+  // step 2. create proposal
+  //
+
+  const msgFundtoMultisig = new MsgSend(
+    multisigCreator.key.accAddress,
+    AccAddress.fromHex(multisigAddress),
+    new Coins({ uinit: 5_000_000 })
+  )
+
+  signedTx = await multisigCreator.createAndSignTx({
+    msgs: [msgFundtoMultisig]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('funded to multisig: ', res.txhash)
+
+  // Proposal 1. send token with `0x1::cosmos::stargate` function
+  const recipient = 'init1nu7ujl76zac4pkdck8r2zve5zkjaus2xuz8thx'
+  const msgMiultiSigProposal1 = new MsgSend(
+    AccAddress.fromHex(multisigAddress),
+    recipient,
+    new Coins({ uinit: 1_000_000 })
+  )
+
+  // Proposal 2. send token with `0x1::coin::transfer` function
+  const msgMiultiSigProposal2Args = [
+    bcs.address().serialize(recipient), // recipient
+    bcs.object().serialize('0x8e4733bdabcf7d4afc3d14f0dd46c9bf52fb0fce9e4b996c939e195b8bc891d9'), // coin metadata
+    bcs.u64().serialize(1_000_000) // amount
+  ]
+
+  const msgCreateProposal = new MsgExecute(
+    multisigCreator.key.accAddress,
+    '0x1',
+    'multisig_v2',
+    'create_proposal',
+    [],
+    [
+      bcs.address().serialize(multisigAddress), // multisig address
+      bcs.vector(bcs.address()).serialize(['0x1', '0x1']), // module addresses
+      bcs.vector(bcs.string()).serialize(['cosmos', 'coin']), // module names
+      bcs.vector(bcs.string()).serialize(['stargate', 'transfer']), // function names
+      bcs.vector(bcs.vector(bcs.string())).serialize([[], []]), // function type args
+      bcs.vector(bcs.vector(bcs.vector(bcs.u8()))).serialize([
+        [
+          [
+            ...bcs
+              .vector(bcs.u8())
+              .serialize(Buffer.from(JSON.stringify(msgMiultiSigProposal1.toData())))
+              .toBytes()
+          ]
+        ],
+        msgMiultiSigProposal2Args.map((v) => v.toBytes())
+      ]), // function args
+      bcs.option(bcs.u64()).serialize(null) // expiry duration
+    ].map((v) => v.toBase64())
+  )
+
+  signedTx = await multisigCreator.createAndSignTx({
+    msgs: [msgCreateProposal]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('proposal created: ', res.txhash)
+
+  //
+  // step 3. vote proposal
+  //
+
+  // you can get the proposal id after creating the proposal
+  const proposalId = 1
+  const msgVoteProposal1 = new MsgExecute(
+    multisigMember1.key.accAddress,
+    '0x1',
+    'multisig_v2',
+    'vote_proposal',
+    [],
+    [bcs.address().serialize(multisigAddress), bcs.u64().serialize(proposalId), bcs.bool().serialize(true)].map((v) =>
+      v.toBase64()
     )
-    const signedTx = await multisigCreator.createAndSignTx({
-      msgs: [
-          msgCreateNonWeightedMultisigAccount,
-      ],
-    })
-    const res = await restClient.tx.broadcast(signedTx)
-    console.log(res)
+  )
+  signedTx = await multisigMember1.createAndSignTx({
+    msgs: [msgVoteProposal1]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('proposal voted by member 1: ', res.txhash)
 
-    //
-    // step 2. create proposal
-    //
+  const msgVoteProposal2 = new MsgExecute(
+    multisigMember2.key.accAddress,
+    '0x1',
+    'multisig_v2',
+    'vote_proposal',
+    [],
+    [bcs.address().serialize(multisigAddress), bcs.u64().serialize(proposalId), bcs.bool().serialize(true)].map((v) =>
+      v.toBase64()
+    )
+  )
+  signedTx = await multisigMember2.createAndSignTx({
+    msgs: [msgVoteProposal2]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('proposal voted by member 2: ', res.txhash)
 
-    // assume that creating a proposal to update the multisig account configuration
-    // you can get the multisig address after creating the multisig account
-    // const multisigAddress = AccAddress.fromHex('0xf034dabea8b603160db1456f8b6174145d72b92daab6f752a9eff9223940aae6')
-    // const msgMiultiSigProposal = new MsgExecute(
-    //     multisigAddress,
-    //     "0x1",
-    //     "multisig_v2",
-    //     "update_config",
-    //     [],
-    //     [
-    //       bcs
-    //         .vector(bcs.address())
-    //         .serialize([
-    //           multisigMember3.key.accAddress,
-    //         ]), // new members
-    //       bcs
-    //         .option(bcs.vector(bcs.string()))
-    //         .serialize(null), // new_tiers
-    //       bcs
-    //         .option(bcs.vector(bcs.u64()))
-    //         .serialize(null), // new_tier_weights
-    //       bcs
-    //         .option(bcs.vector(bcs.string()))
-    //         .serialize(null), // new_member_tiers
-    //       bcs.u64().serialize(1) // new_threshold
-    //     ].map((v) => v.toBase64())
-    //   )
+  //
+  // step 4. execute proposal
+  //
 
-    // const msgCreateProposal = new MsgExecute(
-    //     multisigCreator.key.accAddress,
-    //     "0x1",
-    //     "multisig_v2",
-    //     "create_proposal",
-    //     [],
-    //     [
-    //       bcs.address().serialize(multisigAddress), // multisig address
-    //       bcs.vector(bcs.address()).serialize(["0x1"]), // module addresses
-    //       bcs.vector(bcs.string()).serialize(["cosmos"]), // module names
-    //       bcs.vector(bcs.string()).serialize(["stargate"]), // function names
-    //       bcs.vector(bcs.vector(bcs.string())).serialize([[]]), // function type args
-    //       bcs.vector(bcs.vector(bcs.vector(bcs.u8()))).serialize([ 
-    //         [
-    //           [
-    //             ...bcs
-    //               .vector(bcs.u8())
-    //               .serialize(
-    //                 Buffer.from(
-    //                   JSON.stringify(
-    //                     msgMiultiSigProposal.toData()
-    //                   )
-    //                 )
-    //               )
-    //               .toBytes(),
-    //           ],
-    //         ],
-    //       ]), // function args
-    //       bcs.option(bcs.u64()).serialize(null), // expiry duration
-    //     ].map((v) => v.toBase64())
-    // );
+  const msgExecuteProposal = new MsgExecute(
+    multisigCreator.key.accAddress,
+    '0x1',
+    'multisig_v2',
+    'execute_proposal',
+    [],
+    [bcs.address().serialize(multisigAddress), bcs.u64().serialize(proposalId)].map((v) => v.toBase64())
+  )
 
-    // const signedTx = await multisigCreator.createAndSignTx({
-    //   msgs: [
-    //       msgCreateProposal
-    //   ],
-    // })
-    // const res = await restClient.tx.broadcast(signedTx)
-    // console.log(res)
-
-    //
-    // step 3. vote proposal
-    // 
-
-    // const msgVoteProposal1 = new MsgExecute(
-    //   multisigMember1.key.accAddress,
-    //   "0x1",
-    //   "multisig_v2",
-    //   "vote_proposal",
-    //   [],
-    //   [
-    //     bcs.address().serialize(multisigAddress),
-    //     bcs.u64().serialize(1),
-    //     bcs.bool().serialize(true),
-    //   ].map((v) => v.toBase64())
-    // )
-    // const signedTx1 = await multisigMember1.createAndSignTx({
-    //     msgs: [msgVoteProposal1],
-    // })
-    // await restClient.tx.broadcast(signedTx1)
-
-    // const msgVoteProposal2 = new MsgExecute(
-    //   multisigMember2.key.accAddress,
-    //   "0x1",
-    //   "multisig_v2",
-    //   "vote_proposal",
-    //   [],
-    //   [
-    //     bcs.address().serialize(multisigAddress),
-    //     bcs.u64().serialize(1),
-    //     bcs.bool().serialize(true),
-    //   ].map((v) => v.toBase64())
-    // )
-    // const signedTx2 = await multisigMember2.createAndSignTx({
-    //     msgs: [msgVoteProposal2],
-    // })
-    // await restClient.tx.broadcast(signedTx2)
-    
-    //
-    // step 4. execute proposal
-    //
-
-    // // you can get the proposal id after creating the proposal
-    // const proposalId = 1  
-    // const msgExecuteProposal = new MsgExecute(
-    //     multisigCreator.key.accAddress,
-    //     "0x1",
-    //     "multisig_v2",
-    //     "execute_proposal",
-    //     [],
-    //     [
-    //       bcs.address().serialize(AccAddress.toHex(multisigAddress)),
-    //       bcs.u64().serialize(proposalId),
-    //     ].map((v) => v.toBase64())
-    // )
-
-    // const signedTx = await multisigCreator.createAndSignTx({
-    //     msgs: [
-    //         msgExecuteProposal
-    //     ],
-    // })
-    // const res = await restClient.tx.broadcast(signedTx)
-    // console.log(res)
+  signedTx = await multisigCreator.createAndSignTx({
+    msgs: [msgExecuteProposal]
+  })
+  res = await restClient.tx.broadcast(signedTx)
+  console.log('proposal executed: ', res.txhash)
 }
 
 main()
+
 ```
