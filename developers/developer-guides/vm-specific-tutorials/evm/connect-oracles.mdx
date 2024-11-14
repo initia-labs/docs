@@ -1,0 +1,238 @@
+---
+title: Using Connect
+---
+
+[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/connect-oracle)
+
+<Warning>
+Compiling contracts that uses ConnectOracle.sol requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
+</Warning>
+
+### Foundry
+
+For this tutorial, we will be using [Foundry](https://github.com/foundry-rs/foundry) toolkit to develop, compile, and deploy our contracts. If you do not have Foundry installed, follow the [Foundry installation instructions](https://getfoundry.sh/).
+
+## Setup
+
+First, we need to create a new directory for our project.
+
+```sh
+mkdir connect-oracle
+cd connect-oracle
+```
+
+Next, we will initialize a new Foundry project side that directory.
+
+```sh
+forge init
+```
+
+Once the project is initialized, we can proceed to installing the required dependencies needed for this tutorial. In this case, we only need Initia's [EVM contracts](https://github.com/initia-labs/initia-evm-contracts).
+
+```sh
+forge install initia-labs/initia-evm-contracts
+```
+
+## Implementing the Contract
+
+Before writing our contract, we first need to rename the template contract to `NewInitiaERC20.sol`
+
+```sh
+mv src/Counter.sol src/Oracle.sol
+```
+
+We then update the contract from the template to be our oracle contract. Start by importing the `IConnectOracle` interface from the `@initia/initia-evm-contracts` package.
+
+```solidity src/Oracle.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
+```
+
+Next, we declare the variables that we will use in the contract's operations.
+
+- `connect`: The interface of the ConnectOracle contract
+- `currencyPair`: The variable that stores the currency pair response from ConnectOracle
+- `price` The variable that stores the single pair price response from ConnectOracle
+- `prices` The variable that stores the multiple pair prices response from ConnectOracle
+
+```solidity src/Oracle.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
+
+contract Oracle {
+
+    IConnectOracle immutable public connect;
+
+    string public currencyPairs;
+    IConnectOracle.Price public price;
+    IConnectOracle.Price[] public prices;
+```
+
+We then need to define the constructor for our contract. This will be used to initialize the contract with the ConnectOracle contract address.
+
+```solidity src/Oracle.sol
+    constructor(address connect_) {
+        connect = IConnectOracle(connect_);
+    }
+```
+
+Once the constructor is implement, we move on to defining the different functions that our contract will have
+
+- `oracle_get_all_currency_pairs`: This function will return all of the asset pairs currently supported by Connect
+- `oracle_get_price`: This function will return the price of a single asset pair
+- `oracle_get_prices`: This function will return the price of multiple asset pairs
+
+```solidity src/Oracle.sol
+    function oracle_get_all_currency_pairs() external {
+        currencyPairs = connect.get_all_currency_pairs();
+    }
+
+    function oracle_get_price() external {
+        string memory base = "BTC";
+        string memory quote = "USD";
+        price = connect.get_price(base, quote);
+    }
+
+    function oracle_get_prices() external {
+        string[] memory pair_ids = new string[](2);
+        pair_ids[0]= "BTC/USD";
+        pair_ids[1]= "ETH/USD";
+        
+        IConnectOracle.Price[] memory memoryPrices = connect.get_prices(pair_ids);
+
+        // Clear the existing storage array
+        delete prices;
+
+        // Copy each element from memory to storage
+        for (uint256 i = 0; i < memoryPrices.length; i++) {
+            prices.push(memoryPrices[i]);
+        }
+    }
+```
+
+Our complete contract will then look like this:
+
+```solidity src/Oracle.sol
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+import "initia-evm-contracts/src/interfaces/IConnectOracle.sol";
+
+contract Oracle {
+
+    IConnectOracle immutable public connect;
+
+    string public currencyPairs;
+    IConnectOracle.Price public price;
+    IConnectOracle.Price[] public prices;
+
+    constructor (address _connect) {
+        connect = IConnectOracle(_connect);
+    }
+
+    function oracle_get_all_currency_pairs() external {
+        currencyPairs = connect.get_all_currency_pairs();
+    }
+
+    function oracle_get_price() external {
+        string memory base = "BTC";
+        string memory quote = "USD";
+        price = connect.get_price(base, quote);
+    }
+
+    function oracle_get_prices() external {
+        string[] memory pair_ids = new string[](2);
+        pair_ids[0]= "BTC/USD";
+        pair_ids[1]= "ETH/USD";
+        
+        IConnectOracle.Price[] memory memoryPrices = connect.get_prices(pair_ids);
+
+        // Clear the existing storage array
+        delete prices;
+
+        // Copy each element from memory to storage
+        for (uint256 i = 0; i < memoryPrices.length; i++) {
+            prices.push(memoryPrices[i]);
+        }
+    }
+}
+```
+
+Our contract implementation is now ready. However, if we try to compile the contract using `forge compile`, we will get an error.
+
+This is because the default `Oracle.t.sol` expects the original `Oracle.sol` contract to be available. To fix this, we will rename `Oracle.t.sol` to `OracleTest.t.sol`.
+
+```sh
+mv test/Counter.t.sol test/Oracle.t.sol
+```
+
+We will also replace the file contents with placeholder content.
+
+```solidity test/OracleTest.t.sol
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.13;
+
+import {Test, console} from "forge-std/Test.sol";
+
+contract OracleTest is Test {
+
+}
+```
+
+Now running `forge compile` should work without any errors.
+
+```sh
+forge compile;
+
+# [Expected Output]:
+# [⠢] Compiling...
+# [⠰] Compiling 27 files with 0.8.21
+# [⠃] Solc 0.8.21 finished in 6.25s
+# Compiler run successful!
+```
+
+## Deploying the Contract
+
+Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge create` command
+
+```sh
+export PRIVATE_KEY=0x...
+export RPC_URL=http://...
+forge create src/Oracle.sol:Oracle --private-key $PRIVATE_KEY --rpc-url $RPC_URL --constructor-args 0xc47ef2D751f64bC3FADc7dE3027fE02C94122056 --legacy
+
+# [Expected Output]:
+# No files changed, compilation skipped
+# Deployer: 0xc5D26D0281e28599c7790aacc810226BBDf0E431
+# Deployed to: 0xdDa3cB3675238f3264F417DF48bf559bE8704a47
+# Transaction hash: 0xa3fbbbe112b2341fcbfecde5f7b5908b59b63361019370ac531ab31a043df501
+```
+
+To confirm that the contract was deployed successfully, we can try calling the `oracle_get_all_currency_pairs` function using Foundry's `cast send` command.
+
+```sh
+cast send 0xdDa3cB3675238f3264F417DF48bf559bE8704a47 \
+"oracle_get_all_currency_pairs()" \
+--private-key $PRIVATE_KEY \
+--rpc-url $RPC_URL \
+
+# [Expected Output]:
+# blockHash               0x312c712feae5d2bb0bc69e5463767465e1270c3a48863a9e08eea94986c9da1a
+# blockNumber             89847
+# contractAddress         
+# cumulativeGasUsed       2353429
+# ...
+```
+
+If you then try querying the `currencyPairs` variable using Foundry's `cast call` command, you should see the response from Connect.
+
+```sh
+cast call 0xdDa3cB3675238f3264F417DF48bf559bE8704a47 \
+"currencyPairs()" \
+--rpc-url $RPC_URL
+
+# [Expected Output]:
+# {\"currency_pairs\":[{\"Base\":\"AAVE\",\"Quote\":\"USD\"},{\"Base\":\"ADA\",\"Quote\":\"USD\"},{\"Base\":\"AEVO\",\"Quote\":\"USD\"},{\"Base\":\"AGIX\",\"Quote\":\"USD\"},{\"Base\":\"ALGO\",\"Quote\":\"USD\"},{\"Base\":\"APE\",\"Quote\":\"USD\"},{\"Base\":\"APT\",\"Quote\":\"USD\"},{\"Base\":\"ARB\",\"Quote\":\"USD\"},{\"Base\":\"ARKM\",\"Quote\":\"USD\"}...
