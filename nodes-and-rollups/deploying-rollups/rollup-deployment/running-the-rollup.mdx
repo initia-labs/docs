@@ -2,17 +2,17 @@
 title: Running the Rollups
 ---
 
-After the `minitiad` daemon is installed, either through compiling the source code or using the provided Docker container from the previous step, we can proceed to launch the minitia.
+After the `minitiad` daemon is installed, either through compiling the source code or using the provided Docker container from the previous step, we can proceed to launch the rollup.
 
-The minitaid CLI provides a utility launch command to simplify the initial setup sequences of minitia. It is designed to automate the process of setting up and configuring your minitia environment.
+The minitaid CLI provides a utility launch command to simplify the initial setup sequences of rollup. It is designed to automate the process of setting up and configuring your rollup environment.
 
 ## Preparing the Configuration File
 
-The launch command allows customization of the minitia and related configurations and parameters through a `config.json` file.
+The launch command allows customization of the rollup and related configurations and parameters through a `config.json` file.
 
 <Tabs>
 <Tab title="l1_config">
-This specifies the configuration of the Initial L1 that the minitia will be connecting to.
+This specifies the configuration of the Initial L1 that the rollup will be connecting to.
 
 | Field       | Description                                                | Example                                                        |
 |-------------|------------------------------------------------------------|----------------------------------------------------------------|
@@ -31,12 +31,12 @@ Example:
 ```
 </Tab>
 <Tab title="l2_config">
-This defines the configurations for the minitia being deployed.
+This defines the configurations for the rollup being deployed.
 
 | Field      | Description                                      | Example     |
 |------------|--------------------------------------------------|-------------|
-| `chain_id` | the chain ID of the minitia being deployed.      | minitia-1   |
-| `denom`    | the base token denom to use for the minitia      | umin        |
+| `chain_id` | the chain ID of the rollup being deployed.      | rollup-1   |
+| `denom`    | the base token denom to use for the rollup      | umin        |
 | `moniker`  | the identifier to use for the sequencer/operator account | operator |
 
 Example:
@@ -139,7 +139,7 @@ Examples of the minimal and full `config.json` file content can be found [here](
 **Funding System Keys**: Before launching, we must fund the Bridge Executor, Output Submitter, and Batch Submitter accounts with gas tokens on Initia L1 to enable them to send transactions.
 </Warning>
 
-## Launching the Minitia
+## Launching the Rollup
 
 Once we have a config file ready and the accounts funded, we can proceed to the launch process.
 
@@ -171,16 +171,16 @@ Once the launch steps successfully completes, two artifact files will be generat
 - `artifacts.json`: Stores the output artifact from the launch process
 
 
-## Starting the Minitia
+## Starting the Rollup
 
-Once the bootstrapping launch step is complete, we can now start running our minitia.
+Once the bootstrapping launch step is complete, we can now start running our rollup.
 
 ```
 minitiad start
 ```
 
-This process will begin running the minitia and producing blocks.
+This process will begin running the rollup and producing blocks.
 
 ## Conclusion
 
-With these steps complete, your minitia is now ready for testing and development. To continue setting up the OPinit bridge and bots, enable IBC transfers, and enabling oracles, follow the subsequent instructions in this section.
+With these steps complete, your rollup is now ready for testing and development. To continue setting up the OPinit bridge and bots, enable IBC transfers, and enabling oracles, follow the subsequent instructions in this section.

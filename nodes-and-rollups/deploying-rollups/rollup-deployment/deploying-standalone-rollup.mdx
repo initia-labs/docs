@@ -1,12 +1,12 @@
 ---
-title: Deploying a Standalone Minitia
+title: Deploying a Standalone Rollup
 ---
 
-Minitias can be run as a standalone rollup chain. While we strongly recommend the full setup using OPinit bots and IBC as outlined above, this setup can be useful for developers who want to quickly test the core Minitias functionality and deploy contracts on top of it.
+Rollups can be run as a standalone rollup chain. While we strongly recommend the full setup using OPinit bots and IBC as outlined above, this setup can be useful for developers who want to quickly test the core rollup functionality and deploy contracts on top of it.
 
-## Setting up the Minitia
+## Setting up the Rollup
 
-Before we configure the minitia, choose and enter the chain ID, moniker and denom that you'd like to use for your minitia. 
+Before we configure the rollup, choose and enter the chain ID, moniker and denom that you'd like to use for your rollup. 
 
 - `CHAIN_ID`: a unique identifier for your blockchain that is used to identify the network, prevent cross-chain transaction replay attacks, identify genesis files, amongst other things.
 - `MONIKER`: a human-readable name for your node.
@@ -18,7 +18,7 @@ export MONIKER=operator
 export DENOM=umin
 ```
 
-Then, run the following command to initialize the Minitia. This includes the operator/sequencer, Minitia genesis, and configuration files.
+Then, run the following command to initialize the rollup. This includes the operator/sequencer, rollup genesis, and configuration files.
 
 <CodeGroup>
 ```sh CLI
@@ -61,10 +61,10 @@ Repeat the command for any additional accounts that you'd like to fund. We then 
 minitiad genesis add-genesis-validator $KEY_NAME
 ```
 
-Finally, we run and start the minitia:
+Finally, we run and start the rollup:
 
 ```sh
 minitiad start
 ```
 
-Your minitia should now be producing blocks
+Your rollup should now be producing blocks

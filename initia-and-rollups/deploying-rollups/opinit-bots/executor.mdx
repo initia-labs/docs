@@ -3,7 +3,7 @@ title: Executor
 ---
 
 <Tip>
-  To learn more about what the Executor does, check out the [Executor](/home/technical-architecture/opinit-framework/components/executor) page.
+  To learn more about what the Executor does, check out the [Executor](/home/core-concepts/interwoven-stack/opinit-framework/components/executor) page.
 </Tip>
 
 ## Running the Executor
@@ -71,10 +71,10 @@ title: Executor
     | `version` | Indicates the version of the OPinit spec (basically 1). |
     | `listen_address` | The address where the Challenger bot listens for incoming requests. |
     | `l1_node` | Information about the L1 node, including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) page for more information. |
-    | `l2_node` | Information about the L2 node, including chain ID and RPC address. These configs are what you set when deploying the Minitia |
+    | `l2_node` | Information about the L2 node, including chain ID and RPC address. These configs are what you set when deploying the rollup |
     | `da_node` | Information about the DA node (mainly L1 or Celestia), including chain ID and RPC address. See the [L1 Networks](/resources/developer/networks/initia-l1) for more information. |
-    | `bridge_executor` | The key name in the keyring for the bridge executor. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
-    | `output_submitter` | The key name in the keyring for the output submitter. This is the same key as input when spinning up the Minitias, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `bridge_executor` | The key name in the keyring for the bridge executor. This is the same key as input when spinning up the rollup, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
+    | `output_submitter` | The key name in the keyring for the output submitter. This is the same key as input when spinning up the rollup, and needed to be added via `opinitd keys add [chain-id] [key-name]`. |
     | `max_chunks` | The maximum number of chunks in a batch. |
     | `max_chunk_size` | The maximum size of a chunk in a batch. |
     | `max_submission_time` | The maximum time to submit a batch. |

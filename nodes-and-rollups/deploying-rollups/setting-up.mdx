@@ -7,7 +7,7 @@ icon: wrench
 
 <AccordionGroup>
 <Accordion title="Install Go (v1.22)" icon="golang">
-The minitia daemon is built using [Go](https://golang.org/), a performant, easy-to-learn, and expressive programming language that is widely used in distributed systems.
+The rollup daemon is built using [Go](https://golang.org/), a performant, easy-to-learn, and expressive programming language that is widely used in distributed systems.
 
 To install Go, follow the instructions on the [Go website](https://golang.org/doc/install).
 
@@ -17,7 +17,7 @@ go version
 ```
 </Accordion>
 <Accordion title="Install Docker" icon="docker">
-All components of the minitia stack offers 2 deployment methods; building and running from source and through the provided [Docker](https://docker.com/) image.
+All components of the rollup stack offers 2 deployment methods; building and running from source and through the provided [Docker](https://docker.com/) image.
 
 For those looking to use Docker, following the instructions to install from the [Docker website](https://docs.docker.com/get-docker/).
 
@@ -29,26 +29,26 @@ docker version
 </Accordion>
 </AccordionGroup>
 
-## Download Minitia Binary
+## Download Rollup Binary
 
-Once we have successfully installed the core dependencies, we can download the minitia binary.
+Once we have successfully installed the core dependencies, we can download the rollup binary.
 
 <Tabs>
   <Tab title="Shell">
-First, specify the Minitia VM and minitia version you want to use:
+First, specify the rollup VM and version you want to use:
 
 ```sh
 export VM=[vm-type] # one of "move", "wasm", or "evm"
 export MINITIA_VERSION="0.2.16" # replace with other version as necessary
 ```
 
-Next, clone the corresponding Minitia Git repository:
+Next, clone the corresponding rollup Git repository:
 
 ```sh
 git clone https://github.com/initia-labs/mini$VM.git
 ```
 
-Once the clone is complete, navigate to the appropriate directory (minimove, miniwasm, or minievm) and check out the Minitia version specified above. Finally, build the Minitia CLI.
+Once the clone is complete, navigate to the appropriate directory (minimove, miniwasm, or minievm) and check out the rollup version specified above. Finally, build the rollup CLI.
 
 ```sh
 cd mini$VM
@@ -56,27 +56,27 @@ git checkout v$MINITIA_VERSION
 make install
 ```
 
-Verify the installation of the Minitia image. If the process was completed successfully, the version number should match `$MINITIA_VERSION`:
+Verify the installation of the rollup image. If the process was completed successfully, the version number should match `$MINITIA_VERSION`:
 
 ```sh
 minitiad version
 ```
   </Tab>
   <Tab title="Docker">
-First, specify the Minitia VM and minitia version you want to use:
+First, specify the rollup VM and version you want to use:
 
 ```sh
 export VM=[vm-type] # one of "move", "wasm", or "evm"
 export MINITIA_VERSION="0.2.16" # replace with other version as necessary
 ```
 
-Pull the Minitia container version
+Pull the rollup container version
 
 ```sh
 docker pull ghcr.io/initia-labs/miniwasm:v$MINITIA_VERSION
 ```
 
-Verify the installation of the Minitia container. If the process was completed successfully, the version number should match $MINITIA_VERSION:
+Verify the installation of the rollup container. If the process was completed successfully, the version number should match $MINITIA_VERSION:
 
 ```sh
 docker run ghcr.io/initia-labs/miniwasm:v$MINITIA_VERSION minitiad version
@@ -84,11 +84,11 @@ docker run ghcr.io/initia-labs/miniwasm:v$MINITIA_VERSION minitiad version
   </Tab>
 </Tabs>
 
-## Starting the Minitia
+## Starting the Rollup
 
-Once the `minitiad` CLI is functional, the following steps depends on how you want to run or test your minitia
+Once the `minitiad` CLI is functional, the following steps depends on how you want to run or test your rollup
 
-1. **Standalone Minitia (Testnet/Local Only):** A minimal, streamlined setup ideal for testing Minitia functionality and deploying or integrating with it. It does not include IBC or OPinit bridges. See [Deploying a Standalone Minitia](/nodes-and-rollups/deploying-rollups/rollup-deployment/deploying-standalone-minitia)
+1. **Standalone rollup (Testnet/Local Only):** A minimal, streamlined setup ideal for testing rollup functionality and deploying or integrating with it. It does not include IBC or OPinit bridges. See [Deploying a Standalone Rollup](/nodes-and-rollups/deploying-rollups/rollup-deployment/deploying-standalone-rollup)
 
-2. **Run with IBC and OPinit Bots:** The full minitia setup with all of the components when you want to connect to other minitias or Initia L1. See [Minitia Full Deployment](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction)
+2. **Run with IBC and OPinit Bots:** The full rollup setup with all of the components when you want to connect to other rollups or Initia L1. See [Rollup Full Deployment](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction)
 

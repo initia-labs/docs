@@ -2,10 +2,6 @@
 title: Initia (Layer 1)
 ---
 
-<Tip>
-For a more technical overview of Minitias and its architecture, please refer to the [Technical Architecture](/home/technical-architecture/initia-l1/introduction) section.
-</Tip>
-
 ## Overview
 
 <Frame type="glass" caption="Initia Tech Stack">
@@ -16,23 +12,23 @@ The Initia ecosystem is built on a sophisticated multi-layered architecture, des
 
 ### The Initia Orchestration Layer (Initia L1)
 
-At the heart of the Initia ecosystem lies the Initia L1, a custom-built Layer 1 blockchain developed on the [Cosmos SDK](https://docs.cosmos.network). This layer serves as the coordination hub for all Minitias, offering crucial services:
+At the heart of the Initia ecosystem lies the Initia L1, a custom-built Layer 1 blockchain developed on the [Cosmos SDK](https://docs.cosmos.network). This layer serves as the coordination hub for all rollups, offering crucial services:
 
-1. **Security**: Minitia rollups leverage Initia L1 and its validator network for:
-    - Secure token bridging (INIT tokens locked in L1 module when bridged to Minitias)
+1. **Security**: Rollups leverage Initia L1 and its validator network for:
+    - Secure token bridging (INIT tokens locked in L1 module when bridged to rollups)
     - Settlement layer for state transitions
 
 2. **Liquidity**: The [InitiaDEX](/home/core-concepts/initiadex) on L1 acts as:
-    - Central liquidity hub for Minitias
+    - Central liquidity hub for rollups
     - Platform for building and incentivizing token liquidity
-    - Facilitator for cross-Minitia bridging and swaps
+    - Facilitator for cross-rollup bridging and swaps
 
 3. **Interoperability**: L1 functions as:
-    - Central hub and router for Minitias
-    - Single connection point enabling communication with L1, other Minitias, and external blockchain ecosystems
+    - Central hub and router for rollups
+    - Single connection point enabling communication with L1, other rollups, and external blockchain ecosystems
 
 4. **Incentives**: L1 powers various incentive schemes:
-    - Vested Interest Program (VIP): Encourages user actions beneficial to Minitia applications
+    - Vested Interest Program (VIP): Encourages user actions beneficial to rollup applications
     - Enshrined Liquidity program: Incentivizes liquidity provision to InitiaDEX
 
 ## Key Features
@@ -53,8 +49,8 @@ The InitiaDEX, integrated into Initia L1, serves as the ecosystem's central liqu
     - Incentivized liquidity and higher capital efficiency
     - Improved user experience across the ecosystem
 
-3. **Inter-Minitia Router**:
-    - Seamless token movement and swaps between Minitias
+3. **Inter-Rollup Router**:
+    - Seamless token movement and swaps between rollups
     - Utilizes the extensive liquidity pool for smooth transactions
 
 4. **Just-in-Time Gas**:
@@ -70,12 +66,12 @@ The InitiaDEX, integrated into Initia L1, serves as the ecosystem's central liqu
 Initia's Shared Security framework leverages Initia L1's security to protect the entire ecosystem:
 
 1. **Fraud Proofs and Challenges**:
-    - Minitias utilize Initia L1's validator set and governance
+    - Rollups utilize Initia L1's validator set and governance
     - Efficient adjudication of challenges in case of malicious activity
     - Reduces individual rollup security bootstrapping needs
 
 2. **Rollbacks**:
     - Seamless state rollback mechanism for confirmed fraudulent activities
-    - Ensures integrity of Minitia states
+    - Ensures integrity of rollup states
 
 Through these innovative features, Initia L1 provides a secure, scalable, and interoperable foundation for the entire ecosystem, fostering innovation and robust decentralized applications.

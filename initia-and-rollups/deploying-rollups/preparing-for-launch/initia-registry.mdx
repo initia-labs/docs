@@ -2,22 +2,22 @@
 title: Initia Registry
 ---
 
-For a minitia to be supported by the the core Initia apps such as Initia Wallet, Initia Scan, and Initia App, it must be registered on the [Initia Registry](https://github.com/initia-labs/initia-registry). This is a public GitHub repository that contains the metadata for all minitias that are currently live on the various Initia networks.
+For a rollup to be supported by the the core Initia apps such as Initia Wallet, Initia Scan, and Initia App, it must be registered on the [Initia Registry](https://github.com/initia-labs/initia-registry). This is a public GitHub repository that contains the metadata for all rollups that are currently live on the various Initia networks.
 
-## Adding a Minitia to the Registry
+## Adding a Rollup to the Registry
 
-To add a minitia to the registry, follow these steps:
+To add a rollup to the registry, follow these steps:
 
 ### Fork the Initia Registry Repository
 
 To make changes to the registry, you will need to fork the [Initia Registry](https://github.com/initia-labs/initia-registry) repository. This will create a copy of the repository in your own GitHub account.
 
-### Add the Minitia to the Registry
+### Add the Rollup to the Registry
 
-Once you have forked the repository, you can add the minitia to the registry by following these steps:
+Once you have forked the repository, you can add the rollup to the registry by following these steps:
 
-1. Add a new folder with your minitia's name in the `testnets` or `mainnets` folder, depending on whether your minitia is currently live on the testnet or mainnet.
-2. Add a `chain.json` file to the folder. This file will contain the metadata for your minitia to be used by the apps.
+1. Add a new folder with your rollup's name in the `testnets` or `mainnets` folder, depending on whether your rollup is currently live on the testnet or mainnet.
+2. Add a `chain.json` file to the folder. This file will contain the metadata for your rollup to be used by the apps.
 
 <Accordion title="Example Chain Schema and Description" icon="link">
 ```json
@@ -140,33 +140,33 @@ Once you have forked the repository, you can add the minitia to the registry by 
 | Field           | Description                                                                                                   | Optional |
 | --------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
 | `$schema`       | The schema definition file. (should always be `../../chain.schema.json`)                                      | No       |
-| `chain_name`    | The name of the Minitia.                                                                                      | No       |
-| `chain_id`      | The chain ID of the Minitia.                                                                                  | No       |
-| `website`       | The website of the Minitia.                                                                                   | No       |
-| `pretty_name`   | A human-readable name for your Minitia.                                                                       | No       |
-| `status`        | The current status of the Minitia (e.g., live).                                                               | No       |
+| `chain_name`    | The name of the rollup.                                                                                      | No       |
+| `chain_id`      | The chain ID of the rollup.                                                                                  | No       |
+| `website`       | The website of the rollup.                                                                                   | No       |
+| `pretty_name`   | A human-readable name for your rollup.                                                                       | No       |
+| `status`        | The current status of the rollup (e.g., live).                                                               | No       |
 | `network_type`  | The type of network (one of `mainnet`, `testnet`, `devnet`).                                                  | No       |
 | `bech32_prefix` | The Bech32 prefix used for addresses on the blockchain.                                                       | No       |
 | `daemon_name`   | The name of the daemon process for the blockchain (e.g., minitiad).                                           | No       |
 | `node_home`     | The default home directory for the blockchain node.                                                           | No       |
 | `key_algos`     | The cryptographic algorithms supported for keys.                                                              | No       |
 | `slip44`        | The [SLIP-0044](https://github.com/satoshilabs/slips/blob/master/slip-0044.md) identifier for the blockchain. | No       |
-| `description`   | A brief description of the Minitia.                                                                           | No       |
+| `description`   | A brief description of the rollup.                                                                           | No       |
 
 **Fees**
 
 | Field        | Description                                                         | Optional |
 | ------------ | ------------------------------------------------------------------- | -------- |
-| `fees`       | Details about the fee and fee tokens on the Minitia.                | No       |
+| `fees`       | Details about the fee and fee tokens on the rollups.                | No       |
 | `fee_tokens` | Tokens used for fees, including their denominations and gas prices. | No       |
 
 **Staking**
 
-These fields should be empty for all Minitias.
+These fields should be empty for all rollups.
 
 | Field            | Description                               | Optional |
 | ---------------- | ----------------------------------------- | -------- |
-| `staking`        | Information about staking on the Minitia. | No       |
+| `staking`        | Information about staking on the rollup. | No       |
 | `staking_tokens` | Tokens used for staking.                  | No       |
 
 **Codebase**
@@ -174,27 +174,27 @@ These fields should be empty for all Minitias.
 | Field                 | Description                                                                                                       | Optional |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------- | -------- |
 | `codebase`            | Information about the blockchain's codebase.                                                                      | No       |
-| `git_repo`            | The URL of the Git repository for the Minitia.                                                                    | No       |
-| `recommended_version` | The recommended version of the Minitia software. This should in most cases be the latest version of the software. | No       |
-| `compatible_versions` | Versions of the Minitia software that are compatible.                                                             | No       |
+| `git_repo`            | The URL of the Git repository for the rollup.                                                                    | No       |
+| `recommended_version` | The recommended version of the rollup software. This should in most cases be the latest version of the software. | No       |
+| `compatible_versions` | Versions of the rollup software that are compatible.                                                             | No       |
 | `binaries`            | URLs for downloading binary files for different platforms.                                                        | No       |
-| `genesis`             | Information about the genesis block of the Minitia.                                                               | No       |
-| `genesis_url`         | The URL to download the Minitia genesis file.                                                                     | No       |
-| `versions`            | List of versions of the Minitia software.                                                                         | No       |
+| `genesis`             | Information about the genesis block of the rollup.                                                               | No       |
+| `genesis_url`         | The URL to download the rollup genesis file.                                                                     | No       |
+| `versions`            | List of versions of the rollup software.                                                                         | No       |
 
 **Peers**
 
 | Field              | Description                                   | Optional |
 | ------------------ | --------------------------------------------- | -------- |
 | `peers`            | Information about network peers.              | No       |
-| `seeds`            | The list of seed nodes for the Minitia.       | No       |
-| `persistent_peers` | The list of persistent peers for the Minitia. | No       |
+| `seeds`            | The list of seed nodes for the rollup.       | No       |
+| `persistent_peers` | The list of persistent peers for the rollup. | No       |
 
 **APIs**
 
 | Field  | Description                                                | Optional |
 | ------ | ---------------------------------------------------------- | -------- |
-| `apis` | Information about the different endpoints for the Minitia. | No       |
+| `apis` | Information about the different endpoints for the rollup. | No       |
 | `rpc`  | RPC endpoints and their providers.                         | No       |
 | `rest` | REST endpoints and their providers.                        | No       |
 | `grpc` | gRPC endpoints and their providers.                        | No       |
@@ -232,13 +232,13 @@ These fields should be empty for all Minitias.
 | `channel_id`   | The channel ID for the IBC channel.                              | No       |
 | `version`      | The version of the IBC protocol used.                            | No       |
 | `assetlist`    | URL for the asset list JSON file.                                | Yes      |
-| `minitia`      | Specific metadata for the Minitia.                               | No       |
+| `minitia`      | Specific metadata for the rollup.                               | No       |
 | `type`         | The type of chain (one of `minimove`, `minievm`, or `miniwasm`). | No       |
-| `version`      | The version of the Minitia.                                      | No       |
+| `version`      | The version of the rollup.                                      | No       |
 
 </Accordion>
 
-3. Create an `assetlist.json` file in the folder. This file will contain the metadata for the assets on your minitia to be used by the apps.
+3. Create an `assetlist.json` file in the folder. This file will contain the metadata for the assets on your rollup to be used by the apps.
 
 <Accordion title="Example Assetlist Schema and Description" icon="coin-front">
 ```json
@@ -346,8 +346,8 @@ These fields should be empty for all Minitias.
 | logo_URIs.svg | The SVG logo URI for the token            | No       |
 </Accordion>
 
-4. (Optional) create an `images` folder to store the images for your minitia logo and token logos to link to in the two JSON files above.
+4. (Optional) create an `images` folder to store the images for your rollup logo and token logos to link to in the two JSON files above.
 
 ### Submit a Pull Request
 
-Once you have completed the above steps, you can submit a pull request to the [Registry repository](https://github.com/initia-labs/initia-registry) to add your minitia to the registry. Once your pull request is reviewed & merged by a member of the Initia team, your your minitia will be supported by the core Initia apps shortly after.
+Once you have completed the above steps, you can submit a pull request to the [Registry repository](https://github.com/initia-labs/initia-registry) to add your rollup to the registry. Once your pull request is reviewed & merged by a member of the Initia team, your rollup will be supported by the core Initia apps shortly after.
