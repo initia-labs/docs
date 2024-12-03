@@ -224,7 +224,9 @@
         {
           "group": "Initia Usernames",
           "icon": "user",
-          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+          "pages": [
+            "developers/developer-guides/integrating-initia-apps/usernames"
+          ]
         },
         {
           "group": "VIP",
@@ -234,7 +236,9 @@
         {
           "group": "Initia Dex",
           "icon": "swap",
-          "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+          "pages": [
+            "developers/developer-guides/integrating-initia-apps/initiadex"
+          ]
         }
       ]
     },
@@ -275,12 +279,25 @@
           "icon": "terminal",
           "pages": [
             {
+              "group": "Weave CLI",
+              "pages": [
+                "developers/developer-guides/tools/clis/weave-cli/introduction",
+                "developers/developer-guides/tools/clis/weave-cli/installation",
+                "developers/developer-guides/tools/clis/weave-cli/gas-station",
+                "developers/developer-guides/tools/clis/weave-cli/initia-node"
+              ]
+            },
+            {
               "group": "Initia CLI",
-              "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
+              "pages": [
+                "developers/developer-guides/tools/clis/initiad-cli/introduction"
+              ]
             },
             {
               "group": "Rollup CLI",
-              "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+              "pages": [
+                "developers/developer-guides/tools/clis/minitiad-cli/introduction"
+              ]
             }
           ]
         },

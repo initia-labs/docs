@@ -1,0 +1,40 @@
+---
+title: Gas Station
+---
+
+The Gas Station is a dedicated account used by `Weave` to fund critical infrastructure components of the Interwoven stack. 
+It distributes funds to essential services like OPinit bots (including bridge executor, output submitter, and batch submitter) and the IBC relayer to ensure smooth operation of the network.
+
+<Info>
+Setting up a Gas Station is recommended and essential for seamless operation with `Weave`, as it eliminates manual fund distribution overhead.
+</Info>
+
+<Warning>
+For security best practices, creating a dedicated account for Gas Station use rather than using an existing account is recommended. 
+
+While `Weave` requires permission for all fund transfers, a separate account provides better security and operational control.
+</Warning>
+
+## Setting up the Gas Station
+```bash
+weave gas-station setup
+```
+You will be prompted to enter the mnemonic of the account that will be used as the Gas Station account.
+Again, **we recommend creating a dedicated account for this purpose**.
+
+After finishing the setup, fund the Gas Station account with some `INIT` tokens to ensure it has sufficient balance to fund the necessary components.
+
+If you plan to use `Celestia` as your Data Availability Layer, you will need to fund the Gas Station account with `TIA` tokens as well.
+<Info>
+The Gas Station address for `Celestia` will be different from the one for Initia ecosystem but they are both derived from the same mnemonic.
+</Info>
+
+<Info>
+For testnet, you can get testnet `INIT` tokens [here](https://faucet.testnet.initia.xyz/) and testnet `TIA` tokens [here](https://docs.celestia.org/how-to-guides/mocha-testnet#mocha-testnet-faucet).
+</Info>
+
+## Show Gas Station addresses and balances
+```bash
+weave gas-station show
+```
+This will display the addresses and balances of the Gas Station account both in `init` and `celestia` bech32 format.

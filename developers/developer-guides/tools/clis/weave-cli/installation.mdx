@@ -1,0 +1,52 @@
+---
+title: Installation & Setup
+---
+
+## Prerequisites
+- Go v1.22.6 or higher
+- Operating System: Linux, MacOS
+
+## Installation
+
+### Build from source
+```bash
+git clone https://github.com/initia-labs/weave.git
+cd weave
+make install
+```
+
+### Download pre-built binaries
+Go to the [Releases](https://github.com/initia-labs/weave-binaries/releases) page and download the binary for your operating system.
+
+<Warning>
+Make sure to add the binary to your PATH environment variable so that you can run `weave` from anywhere.
+</Warning>
+
+### Verify Installation
+```bash
+weave --version
+```
+
+## Quick Start
+Run
+```bash
+weave init
+```
+to initialize your configuration. It will ask you to setup the `Gas Station account` and ask which infrastructure you want to setup.
+After that, Weave will guide you through the setup process step-by-step. 
+
+To learn more about all the commands available, run
+```bash
+weave --help
+```
+or check out the pages below.
+
+[Gas Station](/developers/developer-guides/tools/clis/weave-cli/gas-station)
+
+[Bootstrapping Initia node](/developers/developer-guides/tools/clis/weave-cli/initia-node)
+
+[Launching Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup)
+
+
+
+
