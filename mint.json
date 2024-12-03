@@ -196,7 +196,8 @@
               ]
             },
             "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
+            "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks",
+            "developers/developer-guides/vm-specific-tutorials/evm/vip-scoring-tutorial"
           ]
         },
         {
@@ -205,7 +206,8 @@
           "pages": [
             "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
             "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+            "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks",
+            "developers/developer-guides/vm-specific-tutorials/movevm/vip-scoring-tutorial"
           ]
         },
         {
@@ -213,7 +215,8 @@
           "icon": "rust",
           "pages": [
             "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
-            "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks",
+            "developers/developer-guides/vm-specific-tutorials/wasmvm/vip-scoring-tutorial"
           ]
         }
       ]
