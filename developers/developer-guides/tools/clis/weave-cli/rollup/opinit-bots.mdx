@@ -1,0 +1,59 @@
+---
+title: Running OPinit Bots
+---
+
+`Weave` provides a streamlined way to configure and run OPinit Bots (executor and challenger) for your Rollup.
+For detailed information about OPinit Bots, please refer to the [OPinit Bots](/nodes-and-rollups/deploying-rollups/opinit-bots/introduction) documentation.
+
+## Setting up OPinit Bot
+```bash
+weave opinit-bots init
+```
+This command will guide you through selecting the bot type (executor or challenger), configuring bot keys if needed, and setting up the bot's configuration.
+
+You can also specify the bot type directly:
+```bash
+weave opinit-bots init <executor|challenger>
+```
+
+<Note>
+For advanced configuration options, you can refer to the [Configuration Guide](/nodes-and-rollups/deploying-rollups/opinit-bots/executor) and modify the bot's configuration file (located at `~/.opinit/<executor|challenger>.toml` by default).
+</Note>
+
+<Info>
+By default, all data and configurations are stored in `~/.opinit`. You can specify a different location using the `--opinit-dir` flag followed by your preferred path.
+</Info>
+
+## Managing Bot Keys
+To modify bot keys, use the following command to either generate new keys or restore existing ones:
+```bash
+weave opinit-bots setup-keys
+```
+This command allows you to select multiple keys for generation or restoration.
+
+## Managing OPinit Bots
+
+Start a bot:
+```bash
+weave opinit-bots start <executor|challenger>
+```
+
+Stop a bot:
+```bash
+weave opinit-bots stop <executor|challenger>
+```
+
+Restart a bot:
+```bash
+weave opinit-bots restart <executor|challenger>
+```
+
+View bot logs:
+```bash
+weave opinit-bots logs <executor|challenger>
+```
+
+To see all the available commands: 
+```bash
+weave opinit-bots --help
+```

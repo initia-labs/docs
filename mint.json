@@ -284,7 +284,16 @@
                 "developers/developer-guides/tools/clis/weave-cli/introduction",
                 "developers/developer-guides/tools/clis/weave-cli/installation",
                 "developers/developer-guides/tools/clis/weave-cli/gas-station",
-                "developers/developer-guides/tools/clis/weave-cli/initia-node"
+                "developers/developer-guides/tools/clis/weave-cli/initia-node",
+                {
+                  "group": "Rollup Management",
+                  "pages": [
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/introduction",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/launch",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/relayer"
+                  ]
+                }
               ]
             },
             {

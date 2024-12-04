@@ -7,18 +7,34 @@ Weave is a specialized CLI tool designed to simplify the workflow of working
  developers can use a single command-line interface for the entire development and deployment workflow.
  
 Its primary purpose is to solve several key challenges:
-1. Developer Experience: Developers and operators always stuck with bad UX of existing CLI tools. Weave changes that completely. 
-Not only it consolidates multiple complex operations into a single CLI tool, but it also changes how you interact with the tool to setup your configuration.
-2. Infrastructure Management: It handles all critical infrastructure components within the Interwoven Rollup ecosystem:
+1. **Developer Experience:** Most CLIs in the market are not designed with the developer experience in mind. They are either too complex or too simple that it cannot handle the technical nuances. 
+
+    Weave changes that completely. Not only it consolidates multiple complex operations into a single CLI tool, but it also changes how you interact with the tool to setup your configuration.
+2. **Infrastructure Management:** `Weave` can handles all critical infrastructure components within the Interwoven Rollup ecosystem:
     - Initia node setup and management (not just simple configuration setup, but also state-syncing and upgrade management)
     - Rollup deployment and configuration
     - OPinit bots setup for the Optimistic bridge
     - IBC Relayer setup between Initia L1 and your Rollup
-    - and more to come!
-3. Built for both local development and production deployments: 
+    - and many more to come
+3. **Built for both local development and production deployments:**
     - Weave provides an interactive guided setup experience to walk you through infrastructure configuration step-by-step
-    - For automated deployments, it can parse a configuration file to provision your entire infrastructure with a single command
+    - For automated deployments, a configuration file can be parsed to provision your entire infrastructure without interaction
 
+## How experience with Weave is different
+Weave changes the game in terms of developer experience. Here are some of the key features that make it stand out:
+1. **Ability to go back to the previous step:** 
+    `Weave` allows you to go back to the previous step in the setup process by pressing `Ctrl + Z`. This is particularly useful when you make a mistake in the setup process and need to correct it.
+2. **Tooltip support in each step:**
+    Users can toggle Tooltip on and off in each step by pressing `Ctrl + T` to get more information about the current step they are on.
+    
+    We give you the right amount of information at the right time. Less time spent on googling and finding the information you need. 
+3. **Simple service management:**
+    `Weave` provides a simple command to start, stop, restart a service just like how you would do it with `systemctl` or `launchctl`. It also provides a `log` command to view the logs of the service.
 
-Get started with Weave CLI by following the [installation guide](/developers/developer-guides/tools/clis/weave-cli/installation).
+    In essence, every infra-service you setup can be managed with the following commands:
+    ```bash
+    weave <service-name> start, stop, restart, log
+    ```
+
+Get started with `Weave` by following the [installation guide](/developers/developer-guides/tools/clis/weave-cli/installation).
 

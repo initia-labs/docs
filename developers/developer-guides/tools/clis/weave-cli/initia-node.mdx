@@ -1,3 +1,57 @@
 ---
 title: Bootstrapping Initia Node
 ---
+
+Setting up a Cosmos-SDK based node has traditionally been a complex process requiring multiple steps:
+- Locating the correct repository and version of the node binary compatible with your target network
+- Either cloning and building the source code or downloading a pre-built binary from the release page
+- Configuring the node with appropriate `config.toml` and `app.toml` files, which involves:
+    - Setting correct values for `min_gas_price`, `seeds`, and `persistent_peers`
+    - Navigating through numerous other parameters that rarely need modification
+- Finding and implementing the correct genesis file to sync with the network
+- Setting up cosmovisor for automatic updates or manually maintaining the node binary
+
+`Weave` streamlines this entire process into a simple command.
+
+## Initialize your node
+
+```bash
+weave initia init
+```
+This command guides you through the node setup process, taking you from an empty directory to a fully synced node ready for operation.
+Once complete, you can run the node using `weave initia start`.
+
+<Note>
+For advanced configuration options, refer to the [Configuration Guide](/nodes-and-rollups/running-a-node/manual-setup/node-configuration) and modify the node's configuration files (located by default at `~/.initia/<app.toml|config.toml>`).
+</Note>
+
+<Info>
+By default, all data and configuration files are stored in `~/.initia`. You can specify a different location using the `--initia-dir` flag followed by your preferred path.
+</Info>
+
+## Managing your node
+
+Start Initia node:
+```bash
+weave initia start
+```
+
+Stop Initia node:
+```bash
+weave initia stop
+```
+
+Restart Initia node:
+```bash
+weave initia restart
+```
+
+View Initia node logs:
+```bash
+weave initia logs
+```
+
+To see all the available commands: 
+```bash
+weave initia --help
+```

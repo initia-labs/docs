@@ -1,0 +1,53 @@
+---
+title: Launching your Rollup
+---
+
+`Weave` simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction) into a single command.
+
+## Launching your Rollup
+
+```bash
+weave minitia launch
+```
+Once the process completes, your minitia node will be running and ready to process queries and transactions.
+The command also provides an [Initia Scan](https://scan.testnet.initia.xyz/) magic link that automatically adds your local Rollup to the explorer, allowing you to instantly view your Rollup's transactions and state.
+
+<Note>
+This command only sets up the bot addresses but does not start the OPinit Bots (executor and challenger).
+
+To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup-management/opinit-bots) section to configure and run the OPinit Bots.
+</Note>
+
+<Info>
+By default, all data and configuration files are stored in `~/.minitia`. You can specify a different location using the `--minitia-dir` flag followed by your preferred path.
+</Info>
+
+## Managing your Rollup node
+
+Start Rollup node:
+```bash
+weave minitia start
+```
+<Note>
+Note that `launch` command already starts the Rollup node for you. This command is only needed if you have stopped the node and want to start it again.
+</Note>
+
+Stop Rollup node:
+```bash
+weave minitia stop
+```
+
+Restart Rollup node:
+```bash
+weave minitia restart
+```
+
+View Rollup node logs:
+```bash
+weave minitia logs
+```
+
+To see all the available commands: 
+```bash
+weave minitia --help
+```
