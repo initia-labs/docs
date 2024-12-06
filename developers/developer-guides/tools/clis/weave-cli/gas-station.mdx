@@ -3,7 +3,8 @@ title: Gas Station
 ---
 
 The Gas Station is a dedicated account used by `Weave` to fund critical infrastructure components of the Interwoven stack. 
-It distributes funds to essential services like OPinit bots (including bridge executor, output submitter, and batch submitter) and the IBC relayer to ensure smooth operation of the network.
+It distributes funds to essential services like [OPinit Bots](/nodes-and-rollups/deploying-rollups/opinit-bots/introduction) (including bridge executor, output submitter, and batch submitter) 
+and the [IBC relayer](https://tutorials.cosmos.network/academy/2-cosmos-concepts/13-relayer-intro.html) to ensure smooth operation of the network.
 
 <Note>
 Setting up a Gas Station is essential for seamless operation with `Weave` as it eliminates the need for manual fund distribution.
@@ -22,12 +23,12 @@ weave gas-station setup
 During setup, you'll be prompted to enter the mnemonic phrase for the Gas Station account.
 As mentioned above, **we strongly recommend creating a dedicated account for this purpose**.
 
-Once setup is complete, fund the Gas Station account with sufficient `INIT` tokens to support the necessary components.
-
-If you're using `Celestia` as your Data Availability Layer, you'll also need to fund the Gas Station account with `TIA` tokens.
+Once setup is complete, you'll see two addresses in `init` and `celestia` format.
 <Note>
 While the Gas Station addresses for `Celestia` and the `Initia` ecosystem will be different, both are derived from the same mnemonic phrase.
 </Note>
+
+Then fund the account with sufficient `INIT` tokens to support the necessary components. If you're planning to use `Celestia` as your Data Availability Layer, you'll also need to fund the account with `TIA` tokens.
 
 <Info>
 For testnet operations:

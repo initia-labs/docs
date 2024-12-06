@@ -29,7 +29,13 @@ To modify bot keys, use the following command to either generate new keys or res
 ```bash
 weave opinit-bots setup-keys
 ```
-This command allows you to select multiple keys for generation or restoration.
+<Warning>
+For `executor` bot to work, `Bridge Executor`, `Output Submitter`, and `Batch Submitter` keys must be set up.
+
+For `challenger` bot to work, `Challenger` key must be set up.
+
+For Rollup with Enshired Oracle enabled, `Oracle Executor` key must be set up.
+</Warning>
 
 ## Managing OPinit Bots
 
