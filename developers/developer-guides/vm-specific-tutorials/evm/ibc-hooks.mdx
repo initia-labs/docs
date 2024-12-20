@@ -190,10 +190,15 @@ So, we need to set the ACL for the contract to prevent unauthorized access.
 To update MiniEVM ACL, you need to use `MsgExecuteMessages` in OPchild module.
 
 ```typescript
+const config = {
+  authority: 'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',
+  contractAddress: 'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8'
+}
+
 const aclMsg = new MsgUpdateACL(
-  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',                     // autority
-  'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8', // contract address
-  true                                                               // allow
+  config.authority,
+  config.contractAddress,
+  true
 )
 
 const msgs = [
@@ -203,8 +208,13 @@ const msgs = [
   )
 ]
 const signedTx = await proposer.createAndSignTx({ msgs })
-await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
-```
+try {
+  const result = await proposer.lcd.tx.broadcast(signedTx)
+  console.log('Transaction successful:', result)
+} catch (error) {
+  console.error('Transaction failed:', error)
+  throw error
+}
 
 ```bash
 curl -X GET "https://lcd.minievm-2.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
