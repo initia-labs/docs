@@ -157,7 +157,7 @@
           ]
         },
         {
-          "group": "Vested Interest Program",
+          "group": "VIP Program",
           "icon": "award",
           "pages": [
             "home/core-concepts/vested-interest-program/introduction",
@@ -222,19 +222,19 @@
       "group": "Integrating with Initia Apps",
       "pages": [
         {
-          "group": "Initia Usernames",
-          "icon": "user",
-          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
-        },
-        {
           "group": "VIP",
           "icon": "award",
           "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
         },
         {
-          "group": "Initia Dex",
+          "group": "DEX",
           "icon": "swap",
           "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+        },
+        {
+          "group": "Usernames",
+          "icon": "user",
+          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
         }
       ]
     },
