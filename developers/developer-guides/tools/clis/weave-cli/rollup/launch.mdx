@@ -2,15 +2,14 @@
 title: Launching your Rollup
 ---
 
-`Weave` simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction) into a single command.
-
-## Launching your Rollup
+Weave simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction) into a single command.
 
 ```bash
-weave minitia launch
+weave rollup launch
 ```
-Once the process completes, your minitia node will be running and ready to process queries and transactions.
-The command also provides an [Initia Scan](https://scan.testnet.initia.xyz/) magic link that automatically adds your local Rollup to the explorer, allowing you to instantly view your Rollup's transactions and state.
+
+Once the process completes, your rollup node will be running and ready to process queries and transactions.
+The command also provides an [Initia Scan](https://scan.testnet.initia.xyz/) magic link that automatically adds your local rollup to the explorer, allowing you to instantly view your rollup's transactions and state.
 
 <Note>
 This command only sets up the bot addresses but does not start the OPinit Bots (executor and challenger).
@@ -18,36 +17,53 @@ This command only sets up the bot addresses but does not start the OPinit Bots (
 To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup-management/opinit-bots) section to configure and run the OPinit Bots.
 </Note>
 
-<Info>
-By default, all data and configuration files are stored in `~/.minitia`. You can specify a different location using the `--minitia-dir` flag followed by your preferred path.
-</Info>
+**Available Flags**
 
-## Managing your Rollup node
+<ParamField path="--minitia-dir" type="string" default="~/.minitia">
+  The directory to store the rollup node data and configuration files.
+</ParamField>
+<ParamField path="--with-config" type="string">
+  Launch using an existing rollup [config
+  file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file).
+  The argument should be the path to the config file. **This is useful when you
+  don't want to go through the interactive setup process.**
+</ParamField>
+<ParamField path="--vm" type="string">
+  The VM to use for the rollup node. The available options are `move`, `wasm`,
+  and `evm`. **This is only required when `--with-config` flag is provided.**
+</ParamField>
+<ParamField path="--force,-f" type="boolean" default="false">
+  Force the launch of the rollup node even if the config file already exists.
+  **This only works when `--with-config` flag is provided.**
+</ParamField>
 
-Start Rollup node:
+## Running your Rollup node
+
+<Tabs>
+  <Tab title="Start">
+    ```bash weave rollup start ```
+    <Note>
+      Note that `launch` command already starts the rollup node for you. This
+      command is only needed if you have stopped the node and want to start it
+      again.
+    </Note>
+    **Available Flags**
+    <ParamField path="--detach, -d" type="boolean" default="false">
+      Whether to run the rollup node in the background.
+    </ParamField>
+  </Tab>
+  <Tab title="Stop">```bash weave rollup stop ```</Tab>
+  <Tab title="Restart">```bash weave rollup restart ```</Tab>
+  <Tab title="View logs">
+    ```bash weave rollup log ``` **Available Flags**
+    <ParamField path="-n" type="number" default="100">
+      The number of lines to display from the end of the logs.
+    </ParamField>
+  </Tab>
+</Tabs>
+
+To see all the available commands:
+
 ```bash
-weave minitia start
-```
-<Note>
-Note that `launch` command already starts the Rollup node for you. This command is only needed if you have stopped the node and want to start it again.
-</Note>
-
-Stop Rollup node:
-```bash
-weave minitia stop
-```
-
-Restart Rollup node:
-```bash
-weave minitia restart
-```
-
-View Rollup node logs:
-```bash
-weave minitia logs
-```
-
-To see all the available commands: 
-```bash
-weave minitia --help
+weave rollup --help
 ```

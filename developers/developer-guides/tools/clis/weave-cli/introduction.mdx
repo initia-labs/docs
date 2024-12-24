@@ -2,39 +2,39 @@
 title: Introduction
 ---
 
-Weave is a specialized CLI tool designed to simplify the workflow of working
- with Initia and its Interwoven Rollups. Instead of dealing with multiple tools and extensive documentation,
- developers can use a single command-line interface for the entire development and deployment workflow.
- 
-Its primary purpose is to solve several key challenges:
-1. **Developer Experience:** Most CLIs in the market are not designed with the developer experience in mind. They are either too complex or too simple that it cannot handle the technical nuances. 
+Weave is a CLI tool designed to make working with Initia and its Interwoven Rollups easier. Instead of dealing with multiple tools and extensive documentation,
+developers can use a single command-line interface for the entire development and deployment workflow.
 
-    Weave changes that completely. Not only it consolidates multiple complex operations into a single CLI tool, but it also changes how you interact with the tool to setup your configuration.
-2. **Infrastructure Management:** `Weave` can handles all critical infrastructure components within the Interwoven Rollup ecosystem:
-    - Initia node setup and management (not just simple configuration setup, but also state-syncing and upgrade management)
-    - Rollup deployment and configuration
-    - OPinit bots setup for the Optimistic bridge
-    - IBC Relayer setup between Initia L1 and your Rollup
-    - and many more to come
-3. **Built for both local development and production deployments:**
-    - Weave provides an interactive guided setup experience to walk you through infrastructure configuration step-by-step
-    - For automated deployments, a configuration file can be parsed to provision your entire infrastructure without interaction
+Its primary purpose is to solve several key challenges:
+
+1. **Infrastructure Management:** Weave can handles all critical infrastructure components within the Interwoven Rollup ecosystem:
+   - Initia node setup and management (including state sync and chain upgrade management)
+   - Rollup deployment and configuration
+   - OPinit bots setup for the Optimistic bridge
+   - IBC Relayer setup between Initia L1 and your Rollup
+2. **Built for both local development and production deployments:** Weave provides
+   - Interactive guided setup for step-by-step configuration and
+   - Configuration file support for automated deployments
+3. **Developer Experience:** Not only it consolidates multiple complex operations into a single CLI tool, but it also changes how you interact with the tool to setup your configuration.
 
 ## How experience with Weave is different
-Weave changes the game in terms of developer experience. Here are some of the key features that make it stand out:
-1. **Ability to go back to the previous step:** 
-    `Weave` allows you to go back to the previous step in the setup process by pressing `Ctrl + Z`. This is particularly useful when you make a mistake in the setup process and need to correct it.
+
+Here are some of the key features that make it stand out:
+
+1. **Ability to go back to the previous step:**
+   Weave allows you to go back to the previous step in the setup process by pressing `Ctrl + Z`. This is particularly useful when you make a mistake in the setup process and need to correct it.
 2. **Tooltip support in each step:**
-    Users can toggle Tooltip on and off in each step by pressing `Ctrl + T` to get more information about the current step they are on.
-    
-    We give you the right amount of information at the right time. Less time spent on googling and finding the information you need. 
+   Users can toggle Tooltip on and off in each step by pressing `Ctrl + T` to get more information about the current step they are on.
+
+   We give you the right amount of information at the right time. Less time spent on googling and finding the information you need.
+
 3. **Simple service management:**
-    `Weave` provides a simple command to start, stop, restart a service just like how you would do it with `systemctl` or `launchctl`. It also provides a `log` command to view the logs of the service.
+   Weave provides a simple command to start, stop, restart a service just like how you would do it with `systemctl` or `launchctl`. It also provides a `log` command to view the logs of the service.
 
-    In essence, every infra-service you setup can be managed with the following commands:
-    ```bash
-    weave <service-name> start, stop, restart, log
-    ```
+   In essence, every infra-service you setup can be managed with the following commands:
 
-Get started with `Weave` now by following this [installation guide](/developers/developer-guides/tools/clis/weave-cli/installation).
+   ```bash
+   weave <service-name> start, stop, restart, log
+   ```
 
+Get started with Weave now by following this [installation guide](/developers/developer-guides/tools/clis/weave-cli/installation).
