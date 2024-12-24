@@ -18,6 +18,9 @@ Next, we need to set up our environment variables. We will need the following:
 - `AMOUNT`: The amount of tokens to send.
 
 ```ts
+if (!process.env.MNEMONIC) {
+  throw new Error('MNEMONIC environment variable is required');
+}
 const mnemonic = process.env.MNEMONIC;
 const lcdUrl = process.env.LCD_URL || "https://lcd.testnet.initia.xyz";
 const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff"; // Will be INIT for mainnet
@@ -25,7 +28,6 @@ const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f
 const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
 const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
 const amount = process.env.AMOUNT || '1000uinit';
-```
 
 We can then use the use these variables to ultimately create the `wallet` client, as well as the `sendMsg` object. Since for this example we're making a token transfer, we'll use the `MsgSend` object. But the SDK provides many other message types for different actions related to staking, governance, and more.
 
