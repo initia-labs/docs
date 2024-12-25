@@ -41,7 +41,9 @@ To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-
 
 <Tabs>
   <Tab title="Start">
-    ```bash weave rollup start ```
+    ```bash
+    weave rollup start
+    ```
     <Note>
       Note that `launch` command already starts the rollup node for you. This
       command is only needed if you have stopped the node and want to start it
@@ -52,10 +54,21 @@ To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-
       Whether to run the rollup node in the background.
     </ParamField>
   </Tab>
-  <Tab title="Stop">```bash weave rollup stop ```</Tab>
-  <Tab title="Restart">```bash weave rollup restart ```</Tab>
+  <Tab title="Stop">
+    ```bash
+    weave rollup stop
+    ```
+  </Tab>
+  <Tab title="Restart">
+    ```bash
+    weave rollup restart
+    ```
+  </Tab>
   <Tab title="View logs">
-    ```bash weave rollup log ``` **Available Flags**
+    ```bash
+    weave rollup log
+    ```
+    **Available Flags**
     <ParamField path="-n" type="number" default="100">
       The number of lines to display from the end of the logs.
     </ParamField>
