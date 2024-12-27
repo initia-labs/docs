@@ -27,6 +27,10 @@ When initializing, Weave will present you with three options:
 2. Configure manually
 3. Configure using artifacts from `weave rollup launch` (recommended for users who have just launched their rollup)
 
+<Warning>
+  Please ensure that your Gas Station account has sufficient funds to cover the relayer's account funding requirements for both Initia L1 and your rollup.
+</Warning>
+
 <Note>
 For advanced configuration options, you can refer to the [Hermes Configuration Guide](https://hermes.informal.systems/documentation/configuration/configure-hermes.html) and customize the relayer's configuration file located at `~/.hermes/config.toml`.
 </Note>
@@ -41,6 +45,11 @@ For advanced configuration options, you can refer to the [Hermes Configuration G
     **Available Flags**
     <ParamField path="--detach, -d" type="boolean" default="false">
       Whether to run the node in the background.
+    </ParamField>
+    <ParamField path="--update-client" type="string" default="true">
+      Whether to update the IBC clients on the rollup before starting the relayer.
+      
+      Valid values are `true` and `false`.
     </ParamField>
   </Tab>
   <Tab title="Stop">
