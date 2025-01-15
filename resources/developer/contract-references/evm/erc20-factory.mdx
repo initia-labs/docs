@@ -8,26 +8,6 @@ GitHub: [ERC20Factory](https://github.com/initia-labs/initia-evm-contracts/blob/
 
 The `ERC20Factory` contract is designed to create new InitiaERC20 tokens and register them with the MiniEVM's ERC20Registry
 
-## Predeployed contract
-
-`ERC20Factory` is deployed on the chain at a fixed address as part of its bootstrapping process. 
-
-You can retrieve the contract address via a GET request to an example endpoint like 
-`https://lcd.minievm-2.initia.xyz` (replace it with your own REST endpoint if needed):
-
-```bash
-curl -X GET "https://lcd.minievm-2.initia.xyz/minievm/evm/v1/contracts/erc20_factory" -H "accept: application/json"
-```
-
-The response will be similar to:
-
-```json
-{
-  "address": "0xf36924c9C2aD25d73c43F6aC59BB6D06BC944D93"
-}
-```
-
-
 ## Imports
 
 -  [InitiaERC20.sol](/resources/developer/contract-references/evm/initia-erc20): Contains the implementation of the ERC20 token.

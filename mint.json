@@ -195,6 +195,7 @@
                 "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
               ]
             },
+            "developers/developer-guides/vm-specific-tutorials/evm/update-fee-token",
             "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
             "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
           ]
