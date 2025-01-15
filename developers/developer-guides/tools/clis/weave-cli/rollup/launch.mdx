@@ -21,20 +21,22 @@ This command only sets up the bot addresses but does not start the OPinit Bots (
 To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup-management/opinit-bots) section to configure and run the OPinit Bots.
 </Note>
 
+To launch from the [config file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file) without going through the interactive setup process, use the `--with-config` and `--vm` flags.
+```bash
+weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
+```
+
 **Available Flags**
 
 <ParamField path="--minitia-dir" type="string" default="~/.minitia">
   The directory to store the rollup node data and configuration files.
 </ParamField>
 <ParamField path="--with-config" type="string">
-  Launch using an existing rollup [config
-  file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file).
-  The argument should be the path to the config file. **This is useful when you
-  don't want to go through the interactive setup process.**
+  Path to the rollup [config file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file). Use this flag to launch from a config file without going through the interactive setup process.
 </ParamField>
 <ParamField path="--vm" type="string">
   The VM to use for the rollup node. The available options are `move`, `wasm`,
-  and `evm`. **This is only required when `--with-config` flag is provided.**
+  and `evm`. **This is required when `--with-config` flag is provided.**
 </ParamField>
 <ParamField path="--force,-f" type="boolean" default="false">
   Force the launch of the rollup node even if the config file already exists.
@@ -78,6 +80,8 @@ To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-
     </ParamField>
   </Tab>
 </Tabs>
+
+## Help
 
 To see all the available commands:
 

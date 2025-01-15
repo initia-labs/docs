@@ -7,10 +7,8 @@ The Gas Station is a dedicated account used by Weave to fund critical infrastruc
 This is essential for seamless operation with Weave as it eliminates the need for manual fund distribution.
 
 <Warning>
-For optimal security, we strongly recommend creating a new dedicated account for Gas Station use rather than using an existing account.
-
-While Weave requires your consent for all fund transfers, using a separate account prevents any potential misuse of an existing account.
-
+  While Weave requires your consent for all fund transfers, using a separate account prevents any potential misuse of an existing account.
+  We strongly recommend creating a new dedicated account for Gas Station use rather than using an existing account
 </Warning>
 
 ## Setting up the Gas Station
@@ -19,8 +17,7 @@ While Weave requires your consent for all fund transfers, using a separate accou
 weave gas-station setup
 ```
 
-During setup, you'll be prompted to enter the mnemonic phrase for the Gas Station account. As mentioned above, **we strongly recommend creating a dedicated account for this purpose**.
-
+You can either import an existing mnemonic or have Weave generate a new one.
 Once setup is complete, you'll see two addresses in `init` and `celestia` format.
 
 <Note>
@@ -28,7 +25,7 @@ Once setup is complete, you'll see two addresses in `init` and `celestia` format
   different, both are derived from the same mnemonic that you entered.
 </Note>
 
-Then fund the account with at least 100 INIT tokens to support the necessary components. If you're planning to use Celestia as your Data Availability Layer, you'll also need to fund the account with `TIA` tokens.
+Then fund the account with at least 10 INIT tokens to support the necessary components. If you're planning to use Celestia as your Data Availability Layer, you'll also need to fund the account with `TIA` tokens.
 
 <Info>
   For testnet operations: - Get testnet `INIT` tokens from the [Initia
