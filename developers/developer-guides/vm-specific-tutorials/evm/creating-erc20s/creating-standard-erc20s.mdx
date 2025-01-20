@@ -38,6 +38,28 @@ mkdir abis
 
 Once the two directories are created, we then add the ABI for the ERC20Factory and ERC20 contracts to the `abis` directory.
 
+## Predeployed contract
+
+The `ERC20Factory` contract is automatically deployed on all MiniEVM rollup as part of the chain's bootstrapping process
+
+To obtain the address of the factory contract, query `{ROLLUP_REST_URL}/minievm/evm/v1/contracts/erc20_factory`. 
+
+`{ROLLUP_REST_URL}` refers to the REST endpoint URL of the rollup from which you want to retrieve the address. 
+
+For example, you can use the following curl command:
+
+```bash
+curl -X GET "https://lcd.minievm-2.initia.xyz/minievm/evm/v1/contracts/erc20_factory" -H "accept: application/json"
+```
+
+The address field in the response body will contain the contract address:
+
+```json
+{
+  "address": "0xf36924c9C2aD25d73c43F6aC59BB6D06BC944D93"
+}
+```
+
 ## Development
 
 ### Creating the Chain Configuration File
