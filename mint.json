@@ -230,12 +230,16 @@
         {
           "group": "DEX",
           "icon": "swap",
-          "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+          "pages": [
+            "developers/developer-guides/integrating-initia-apps/initiadex"
+          ]
         },
         {
           "group": "Usernames",
           "icon": "user",
-          "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+          "pages": [
+            "developers/developer-guides/integrating-initia-apps/usernames"
+          ]
         }
       ]
     },
@@ -276,12 +280,34 @@
           "icon": "terminal",
           "pages": [
             {
+              "group": "Weave CLI",
+              "pages": [
+                "developers/developer-guides/tools/clis/weave-cli/introduction",
+                "developers/developer-guides/tools/clis/weave-cli/installation",
+                "developers/developer-guides/tools/clis/weave-cli/gas-station",
+                "developers/developer-guides/tools/clis/weave-cli/initia-node",
+                {
+                  "group": "Rollup Management",
+                  "pages": [
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/introduction",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/launch",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/relayer",
+                    "developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots"
+                  ]
+                }
+              ]
+            },
+            {
               "group": "Initia CLI",
-              "pages": ["developers/developer-guides/tools/clis/initiad-cli/introduction"]
+              "pages": [
+                "developers/developer-guides/tools/clis/initiad-cli/introduction"
+              ]
             },
             {
               "group": "Rollup CLI",
-              "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+              "pages": [
+                "developers/developer-guides/tools/clis/minitiad-cli/introduction"
+              ]
             }
           ]
         },
