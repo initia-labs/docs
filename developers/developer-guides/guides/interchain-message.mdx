@@ -1,0 +1,347 @@
+---
+title: Interchain Message Guide
+---
+
+Interchain communication facilitates the transfer of assets and information between distinct blockchain networks. 
+
+This tutorial focuses on asset transfers, including tokens and NFTs, between Initia (Layer 1) and Minitia (Layer 2), using the OP bridge for token transfers and IBC (Inter-Blockchain Communication) for token and NFT transfers. 
+
+We'll cover initiating token deposits, withdrawing tokens, finalizing token withdrawals, and transferring tokens and NFTs via IBC.
+
+## OP Bridge Token Transfer
+
+### Initiating a Token Deposit from Initia to Minitia
+ 
+To transfer tokens from Initia to Minitia using the OP bridge, you must initiate a token deposit on the Initia blockchain. The process involves creating a transaction that locks the tokens on Initia, making them available on Minitia.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > initiad keys add [key-name]
+
+        - address: init17exjfvgtpn5ne4pgmuatjg52mvvtj08773tgfx
+        name: test-account
+        pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ap+WnRzOsJGgfgsrgc4APi/EiTzl3t52ruiKGev7X9LW"}'
+        type: local
+
+
+        **Important** write this mnemonic phrase in a safe place.
+        It is the only way to recover your account if you ever forget your password.
+
+        angry opera upper ...
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import {
+            Coin,
+            LCDClient,
+            MnemonicKey,
+            MsgInitiateTokenDeposit,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function initiateTokenDeposit() {
+            const lcd = new LCDClient('[rest-url]', {
+                gasPrices: '0.15uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic:
+                'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(lcd, key);
+
+            const msgs = [
+                new MsgInitiateTokenDeposit(
+                key.accAddress, // sender
+                3, // bridge id
+                'init1gegp28h8n7lv85ydltycenmw8dndn9umnn697q', // reciever
+                new Coin('uinit', 1) // coin
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            await lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '162AA29DE237BD060EFEFFA862DBD07ECD1C562EBFDD965AD6C34DF856B53DC2',
+            //   raw_log: '[]'
+            // }
+        }
+
+        initiateTokenDeposit();
+        ```
+    </Tab>
+</Tabs>
+
+### Withdrawing Tokens from Minitia to Initia
+
+There is a finalization period that must be passed after the `withdraw` transaction has been executed before you can execute `finalize-token-withdrawal`.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > minitiad tx opchild withdraw [addr] [amount]\
+            --from [key-name] \
+            --gas auto --gas-adjustment 1.5 --gas-prices [l2_gas_price] \
+            --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import {
+            Coin,
+            LCDClient,
+            MnemonicKey,
+            MsgInitiateTokenWithdrawal,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function initiateTokenWithdraw() {
+            const lcd = new LCDClient('[rest-url]', {
+                gasPrices: '0.15l2/...',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic:
+                'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(lcd, key);
+
+            const msgs = [
+                new MsgInitiateTokenWithdrawal(
+                key.accAddress, // sender
+                'init1gegp28h8n7lv85ydltycenmw8dndn9umnn697q', // reciever
+                new Coin('l2/...', 1) // coin
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            await lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '162AA29DE237BD060EFEFFA862DBD07ECD1C562EBFDD965AD6C34DF856B53DC2',
+            //   raw_log: '[]'
+            // }
+        }
+
+        initiateTokenWithdraw();
+        ```
+    </Tab>
+</Tabs>
+
+### Finalizing Token Withdrawal on Initia
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > initiad tx ophost finalize-token-withdrawal [path/to/withdrawal-info.json] \
+            --from [key-name] \
+            --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+            --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import {
+            Coin,
+            LCDClient,
+            MnemonicKey,
+            MsgFinalizeTokenWithdrawal,
+            Wallet,
+        } from '@initia/initia.js';
+        import * as crypto from 'crypto';
+
+        async function finalizeTokenWithdrawal() {
+            const lcd = new LCDClient('[rest-url]', {
+                gasPrices: '0.15uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic:
+                'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(lcd, key);
+
+            const msgs = [
+                new MsgFinalizeTokenWithdrawal(
+                3, // bridge id
+                492, // output index
+                [], // merkle proof
+                key.accAddress, // sender
+                'init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx', // receiver
+                1, // sequence
+                new Coin('uinit', 100000), // amount
+                sha3_256(492), // version
+                'YNWpXXUHHtPVmDVHTCEb6WzJFNGGc7FnqeIskFS+lsU=', // state root
+                'Tegv5DHAE6gZJJy9Yn4wY1mV3sqOzh7da8BC4mf/vE4=', // storage root
+                'oY7lpEEBdRmaV3lXkNlwTK2S9W4xPX7jHm93Ao4zfa0=' // latest block hash
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            await lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '162AA29DE237BD060EFEFFA862DBD07ECD1C562EBFDD965AD6C34DF856B53DC2',
+            //   raw_log: '[]'
+            // }
+        }
+
+        finalizeTokenWithdrawal();
+
+        function sha3_256(version: number) {
+            const hash = crypto.createHash('SHA3-256');
+            let hex = version.toString(16);
+            if (hex.length % 2 === 1) {
+                hex = '0' + hex;
+            }
+            const val = Buffer.from(hex, 'hex');
+            return hash.update(val).digest().toString('base64');
+        }
+        ```
+    </Tab>
+</Tabs>
+
+## IBC Bridge Token Tranfer
+
+IBC allows the transfer of tokens and NFTs between different blockchains that support the IBC protocol.
+
+### Transferring Tokens via IBC
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > initiad tx ibc-transfer transfer \
+            transfer [src-channel] [addr] 1000000uinit \
+            --from [key-name] \
+            --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+            --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import {
+            Coin,
+            Height,
+            LCDClient,
+            MnemonicKey,
+            MsgTransfer,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function ibcTokenTransfer() {
+            const lcd = new LCDClient('[rest-url]', {
+                gasPrices: '0.15uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic:
+                'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(lcd, key);
+
+            const msgs = [
+                new MsgTransfer(
+                'transfer', // port
+                'channel-1', // src channel
+                new Coin('uinit', 1234), // amount
+                key.accAddress, // sender
+                key.accAddress, // receiver
+                // you have to provide one of timeout
+                new Height(0, 0), // timeout height
+                ((new Date().valueOf() + 100000) * 1000000).toString() // timeout timestamp
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            await lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '162AA29DE237BD060EFEFFA862DBD07ECD1C562EBFDD965AD6C34DF856B53DC2',
+            //   raw_log: '[]'
+            // }
+        }
+
+        ibcTokenTransfer();
+        ```
+    </Tab>
+</Tabs>
+
+### Transferring NFTs via IBC
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        > initiad tx ibc-nft-transfer nft-transfer \
+            nft-transfer [src-channel] [receiver] [class-id] [token-id],...[token-id] \
+            --from [key-name] \
+            --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+            --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts InitiaJS
+        import {
+            Coin,
+            Height,
+            LCDClient,
+            MnemonicKey,
+            MsgNftTransfer,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function ibcNftTrnasfer() {
+            const lcd = new LCDClient('[rest-url]', {
+                gasPrices: '0.15uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic:
+                'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(lcd, key);
+
+            const msgs = [
+                new MsgNftTransfer(
+                'nft-transfer', // port
+                'channel-3', // channel id
+                'move/bfe696257ce629b8cfc03c44c4b732973705cf00fa87279e9440547215850a71', // class id
+                [tokenid], // token ids
+                key.accAddress, // sender
+                key.accAddress, // receiver
+                // you have to provide one of timeout
+                new Height(0, 0), // timeout height
+                ((new Date().valueOf() + 100000) * 1000000).toString() // timeout timestamp
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            await lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '162AA29DE237BD060EFEFFA862DBD07ECD1C562EBFDD965AD6C34DF856B53DC2',
+            //   raw_log: '[]'
+            // }
+        }
+
+        ibcNftTrnasfer();
+        ```
+    </Tab>
+</Tabs>

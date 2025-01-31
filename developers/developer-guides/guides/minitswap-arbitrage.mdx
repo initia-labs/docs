@@ -1,0 +1,85 @@
+---
+title: Minitswap Arbitrage Guide
+---
+
+
+## Arbitrage Opportunity: IBC opINIT Price Lower than INIT Price in Minitswap
+
+In the Minitswap Virtual Pool, if the amount of IBC opINIT exceeds INIT, the price of IBC opINIT will be lower than INIT. 
+
+In this case, users can exchange IBC opINIT for INIT by undergoing a 7-day challenge period on their behalf.
+
+To do this, the following steps can be taken:
+
+<Steps>
+    <Step title="Swap INIT to IBC opINIT in Minitswap">
+    When an arbitrage opportunity arises in a specific L2's Virtual Pool within Minitswap, where the price of INIT is higher than that of IBC opINIT, users may swap INIT for IBC opINIT. 
+    
+    During this process, it is essential to take into account both swap fees and slippage.
+    
+    See [Minitswap swap](/developers/developer-guides/integrating-initia-apps/minitswap#swap).
+    </Step>
+    <Step title="Transfer IBC opINIT to L2 by IBC Bridge">
+    Transfer the swapped IBC opINIT to the appropriate L2 through the IBC Bridge.
+    
+    Note that if Milkyway's IBC opINIT was swapped, the assets must be transferred to the Milkyway L2. 
+    
+    Upon reaching L2, IBC opINIT will be converted to opINIT. 
+
+    See [IBC bridge token transfer](/developers/developer-guides/guides/interchain-message#transferring-tokens-via-ibc).
+    </Step>
+    <Step title="Withdraw opINIT">
+    To transfer opINIT to L1 using the OP Bridge, initiate a withdrawal by executing `MsgInitiateTokenWithdrawal`.
+
+    See [OP bridge withdrawal](/developers/developer-guides/guides/interchain-message#withdrawing-tokens-from-minitia-to-initia)
+    </Step>
+    <Step title="Finalize opINIT">
+    After the 7-day Challenge Period, finalize the withdrawal process to exchange IBC opINIT for INIT by executing `MsgFinalizeWithdraw`.
+
+    See [OP bridge finalization](/developers/developer-guides/guides/interchain-message#finalizing-token-withdrawal-on-initia)
+    </Step>
+</Steps>
+
+## Arbitrage Opportunity: INIT Price Lower than IBC opINIT Price  in Minitswap
+
+In the Minitswap Virtual Pool, if the amount of INIT exceeds IBC opINIT, the price of INIT will be lower than IBC opINIT.
+
+Users can exchange INIT for IBC opINIT through several bridge transfers.
+
+To do this, the following steps can be taken:
+
+<Note>
+Generally, INIT can always be converted 1:1 to IBC opINIT, which means that in the Minitswap pool, the price of IBC opINIT is usually lower than that of INIT.
+</Note>
+
+<Steps>
+    <Step title="Swap IBC opINIT to INIT in Minitswap">
+    When an arbitrage opportunity aries in a specific L2's Virtual Pool within Minitswap, where the price of INIT is lower than that of IBC opINIT, users may swap IBC opINIT for INIT.
+    
+    During this process, it is essential to take into account both swap fees and slippage.
+    
+    See [Minitswap swap](/developers/developer-guides/integrating-initia-apps/minitswap#swap).
+    </Step>
+    <Step title="Transfer INIT to L2 by OP bridge">
+    Transfer the swapped INIT to the appropriate L2 through the OP Bridge.
+    
+    Note that if Milkyway's INIT was swapped, the assets must be transferred to the Milkyway L2.
+    
+    Upon reaching L2, INIT will be converted to opINIT.
+    
+    See [OP bridge token transfer](/developers/developer-guides/guides/interchain-message#initiating-a-token-deposit-from-initia-to-minitia).
+    </Step>
+    <Step title="Transfer opINIT to L1 by IBC">
+    opINIT transferred to L2 is moved to L1 through the IBC bridge. 
+    
+    The opINIT moved to L1 will be converted to IBC opINIT.
+    
+    See [IBC bridge token transfer](/developers/developer-guides/guides/interchain-message#transferring-tokens-via-ibc).
+    </Step>
+    <Step title="Swap IBC opINIT to INIT in Minitswap">
+    IBC opINIT received in L1 is exchanged for INIT in the Minitswap pool.
+    
+    See [Minitswap swap](/developers/developer-guides/integrating-initia-apps/minitswap#swap).
+    </Step>
+</Steps>
+
