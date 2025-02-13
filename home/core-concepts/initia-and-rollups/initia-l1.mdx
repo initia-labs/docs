@@ -1,77 +1,12 @@
 ---
-title: Initia (Layer 1)
+title: Initia L1
 ---
 
 ## Overview
 
-<Frame type="glass" caption="Initia Tech Stack">
-    ![initia l1 architecture](/images/initia-stack.png)
-</Frame>
+The Initia L1 is a custom-built Layer 1 blockchain that serves as the central coordination layer for all Interwoven Rollups. The L1 is built on the [Cosmos SDK](https://docs.cosmos.network) and is responsible for:
 
-The Initia ecosystem is built on a sophisticated multi-layered architecture, designed to provide a robust, scalable, and secure environment for decentralized applications and services.
-
-### The Initia Orchestration Layer (Initia L1)
-
-At the heart of the Initia ecosystem lies the Initia L1, a custom-built Layer 1 blockchain developed on the [Cosmos SDK](https://docs.cosmos.network). This layer serves as the coordination hub for all rollups, offering crucial services:
-
-1. **Security**: Rollups leverage Initia L1 and its validator network for:
-    - Secure token bridging (INIT tokens locked in L1 module when bridged to rollups)
-    - Settlement layer for state transitions
-
-2. **Liquidity**: The [InitiaDEX](/home/core-concepts/initiadex) on L1 acts as:
-    - Central liquidity hub for rollups
-    - Platform for building and incentivizing token liquidity
-    - Facilitator for cross-rollup bridging and swaps
-
-3. **Interoperability**: L1 functions as:
-    - Central hub and router for rollups
-    - Single connection point enabling communication with L1, other rollups, and external blockchain ecosystems
-
-4. **Incentives**: L1 powers various incentive schemes:
-    - Vested Interest Program (VIP): Encourages user actions beneficial to rollup applications
-    - Enshrined Liquidity program: Incentivizes liquidity provision to InitiaDEX
-
-## Key Features
-
-### Omnitia Liquidity Hub and Enshrined Liquidity
-
-<Frame type="glass" caption="Omnitia Liquidity Hub and Enshrined Liquidity">
-    ![omnitia liquidity hub](/images/omnitia-liquidity-hub.avif)
-</Frame>
-
-The InitiaDEX, integrated into Initia L1, serves as the ecosystem's central liquidity hub, offering:
-
-1. **Enhanced Staking Yield and Capital Efficiency**:
-    - Whitelisted liquidity providers can lock liquidity in staking pools
-    - Dual rewards: DEX trading fees and Enshrined Liquidity benefits
-
-2. **Liquidity Moat**:
-    - Incentivized liquidity and higher capital efficiency
-    - Improved user experience across the ecosystem
-
-3. **Inter-Rollup Router**:
-    - Seamless token movement and swaps between rollups
-    - Utilizes the extensive liquidity pool for smooth transactions
-
-4. **Just-in-Time Gas**:
-    - Single-transaction asset conversion to L2 gas
-    - Simplifies user experience for L2 interactions
-
-### Omnitia Shared Security (OSS)
-
-<Frame type="glass" caption="Omnitia Shared Security">
-    ![omnitia shared security](/images/omnitia-shared-security.avif)
-</Frame>
-
-Initia's Shared Security framework leverages Initia L1's security to protect the entire ecosystem:
-
-1. **Fraud Proofs and Challenges**:
-    - Rollups utilize Initia L1's validator set and governance
-    - Efficient adjudication of challenges in case of malicious activity
-    - Reduces individual rollup security bootstrapping needs
-
-2. **Rollbacks**:
-    - Seamless state rollback mechanism for confirmed fraudulent activities
-    - Ensures integrity of rollup states
-
-Through these innovative features, Initia L1 provides a secure, scalable, and interoperable foundation for the entire ecosystem, fostering innovation and robust decentralized applications.
+1. **Security**: Rollups leverage Initia L1's security for various purposes including token bridging, state commitments, and fraud proofs
+2. **Liquidity**: The [InitiaDEX](/home/core-concepts/initiadex) on L1 acts as a central liquidity hub for the ecosystem, providing a seamless experience for token liquidity and cross-rollup bridging and swaps
+3. **Interoperability**: L1 functions as a central hub and router for rollups, enabling seamless communication and state transitions both between rollups and with the broader blockchain ecosystem
+4. **Incentives**: L1 powers various incentive schemes including the [Vested Interest Program (VIP)](/home/core-concepts/vested-interest-program/introduction) and the [Enshrined Liquidity](/home/core-concepts/enshrined-liquidity/introduction)
