@@ -1,0 +1,77 @@
+---
+title: Node Configuration
+---
+
+Once you have `initiad` installed and created the `initiad.service` file, you can now proceed to starting your node.
+
+## Configuring Node Network Settings
+
+### Initialization
+
+Before you can start your node, you need to initialize it. This will create a default `genesis.json` and other important files.
+
+To do so, run the following command:
+
+```sh
+initiad init [moniker] --chain-id [chain-id]
+```
+
+where:
+
+- **`moniker`** is the human readable name of your node
+- **`chain-id`** is the id of the chain you are joining. This can be found in the [Networks](/resources/developer/networks) section of the docs
+
+<Note>
+Note that the `moniker` field here is the name of the node itself and does not apply to the validator name/moniker. The validator name/moniker is set when you create your validator and is used to identify your validator on the network.
+</Note>
+
+When the `init` command is run, a `~/.initia/config/priv_validator_key.json` file will be created. This file contains the private key to your validator and is necessary to be able to recover the node in case of hardware or other failure. It is important to keep this file secure and never share it with anyone. Back up this file somewhere safe and secure.
+
+### Replacing Genesis File
+
+Once the node is initialized, we then need to replace the generated `genesis.json` file with the one for the network you are joining.
+
+To do this, we need to download the `genesis.json` file for the network you are joining and replace the one in the `~/.initia/config/` directory.
+
+<CodeGroup>
+```sh initiation-2
+curl -Ls https://storage.googleapis.com/init-common-genesis/initiation-2/genesis.json > \
+         $HOME/.initia/config/genesis.json
+```
+</CodeGroup>
+
+Refer to the [Networks](/resources/developer/networks) section of the docs to find the `genesis-url` for the network you are joining.
+
+### Configuring Peers and Gas Prices
+
+To connect to the network, we need to define a set of seed and/or peer nodes for our node to sync block and transaction data. Additionally, we must define the correct prices for the network to enable our node to validate transactions correctly.
+
+<CodeGroup>
+```sh initiation-2
+# Refer to the Network's section of the docs for the chain-specific information.
+export SEEDS="3715cdb41efb45714eb534c3943c5947f4894787@34.143.179.242:26656"
+export PERSISTENT_PEERS="3715cdb41efb45714eb534c3943c5947f4894787@34.143.179.242:26656"
+
+# Add seeds and persistent peers to config.toml
+sed -E -i \
+  "s/seeds = \".*\"/seeds = \"${SEEDS}\"/" \
+  $HOME/.initia/config/config.toml
+
+sed -E -i \
+  "s/persistent_peers = \".*\"/persistent_peers = \"${PERSISTENT_PEERS}\"/" \
+  $HOME/.initia/config/config.toml
+```
+</CodeGroup>
+
+## Updating Address Book
+
+We need to update the address book for the network we are joining.
+
+To do this, run the following command:
+
+<CodeGroup>
+```sh initiation-2
+curl -Ls https://storage.googleapis.com/init-common-genesis/initiation-2/addrbook.json > \
+    $HOME/.initia/config/addrbook.json
+```
+</CodeGroup>

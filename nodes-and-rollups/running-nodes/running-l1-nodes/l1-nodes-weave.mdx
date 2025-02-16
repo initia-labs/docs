@@ -1,0 +1,90 @@
+---
+title: Running L1 Nodes with Weave
+---
+
+<Steps>
+<Step title="Install Weave">
+
+First, you need to install the [Weave CLI](https://github.com/initia-labs/weave)
+
+<CodeGroup>
+    ```sh macOS
+    brew install initia-labs/tap/weave
+    ```
+    ```sh Linux
+    curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | \
+    grep "browser_download_url.*darwin-arm64.tar.gz" | \
+    sed -E 's/.*"([^"]+)".*/\1/' | \
+    xargs curl -L | tar xz
+    ```
+</CodeGroup>
+</Step>
+<Step title="Initialize the L1 Node">
+
+Once Weave is installed, you can initialize the L1 node. To do so, you need to run the following command:
+
+```sh
+weave initia init
+```
+
+This will guide you through the process of initializing the L1 node. You will need to provide the following information:
+
+- The Initia L1 network your node will connect to
+- Enabling gRPC and REST endpoints
+- Pruning strategy
+- Enabling automatic chain upgrade handling via Cosmovisor
+- Node syncing method (Snapshot, State Sync)
+
+and more.
+
+```sh
+✓ Which network will your node participate in? > Testnet (initiation-2)
+✓ Existing /Users/tansawit/.initia/config/app.toml and /Users/tansawit/.initia/config/config.toml detected. Would you like to use the current files or replace them > Replace
+✓ Specify node's moniker ... node
+✓ Would you like to enable the following options? (Press space to select/unselect) > REST, gRPC
+✓ Specify seeds ... 3715cdb41efb45714eb534c3943c5947f4894787@34.143.179.242:26656
+✓ Specify persistent peers ... 89ff3df47beacbdc06585392cdbeaabe92cba960@47.236.109.113:26656,4e347f918e42fe8883b2c62bc695ae172d8fa8d2@207.180.207.61:26656,
+4881cf2252da11c64f8dd6b7a492ebe3f61f1acb@152.53.134.160:26656,c258517ce775e9eefc0731632764c07c7be73b8f@146.190.108.47:26656,13a78fa3ed19a85a258cc8cca2505004d661d309@84.32.71.25:26656
+✓ Select pruning strategy > Default (recommended)
+✓ Would you like to enable automatic upgrades via Cosmovisor? > Yes
+✓ Initialization successful.
+✓ Select a sync option > Snapshot
+✓ Existing /Users/tansawit/.initia/data detected. By syncing, the existing data will be replaced. Would you want to proceed ? > Yes
+✓ Specify the snapshot endpoint to download ... https://snapshots.polkachu.com/testnet-snapshots/initia/initia_5311531.tar.lz4
+✓ Snapshot download completed.
+✓ Snapshot extracted to /Users/tansawit/.initia/data successfully.
+✓ Initia node setup successfully. Config files are saved at /Users/tansawit/.initia/config/config.toml and /Users/tansawit/.initia/config/app.toml. Feel free to modify them as needed.
+✓ You can start the node by running `weave initia start`
+```
+</Step>
+
+<Step title="Start the L1 Node">
+
+Once the L1 node is initialized, you can start it by running the following command:
+
+```sh
+weave initia start
+```
+
+If everything is successful, you should see an output similar to the following:
+
+```sh
+Streaming logs from launchd com.cosmovisor.daemon
+6:07PM INF running app args=["start"] module=cosmovisor path=/Users/tansawit/.initia/cosmovisor/genesis/bin/initiad
+6:07PM INF starting the batch watcher loop module=cosmovisor
+6:07PM INF mempool max txs max_txs=2000 module=server
+6:07PM INF query gas limit gas_limit=3000000 module=server
+6:07PM INF starting node with ABCI CometBFT in-process module=server
+6:07PM INF service start impl=multiAppConn module=proxy msg="Starting multiAppConn service"
+6:07PM INF service start connection=query impl=localClient module=abci-client msg="Starting localClient service"
+6:07PM INF service start connection=snapshot impl=localClient module=abci-client msg="Starting localClient service"
+6:07PM INF service start connection=mempool impl=localClient module=abci-client msg="Starting localClient service"
+6:07PM INF service start connection=consensus impl=localClient module=abci-client msg="Starting localClient service"
+6:07PM INF service start impl=EventBus module=events msg="Starting EventBus service"
+6:07PM INF service start impl=PubSub module=pubsub msg="Starting PubSub service"
+6:07PM INF service start impl=IndexerService module=txindex msg="Starting IndexerService service"
+6:07PM INF ABCI Handshake App Info hash=38D7B1C2574882732E7D65520AF9C56336280E72861DD09A7B25F40C56339DFF height=5311532 module=consensus protocol-version=0 software-version=v0.7.0
+```
+</Step>
+</Steps>
+

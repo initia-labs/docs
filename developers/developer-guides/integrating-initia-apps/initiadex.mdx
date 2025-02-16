@@ -2,15 +2,9 @@
 title: Interacting with InitiaDEX
 ---
 
-InitiaDEX stands as a pivotal component of the Initia blockchain, functioning as a native decentralized exchange (DEX) constructed on Layer 1 using the Move programming language. 
+## Creating New Pools
 
-As an essential part of the Omnitia ecosystem, InitiaDEX not only facilitates trading but also significantly enhances liquidity and interoperability between Layer 1 and various Layer 2 networks. 
-
-## How to Create New Pools
-
-### Create a New Pair
-
-InitiaDEX allows anyone to create a custom trading pair. The Move Function Interface is as follows:
+InitiaDEX allows anyone to create a liquidity pool.
 
 ```move
 public entry fun create_pair_script(
@@ -27,12 +21,14 @@ public entry fun create_pair_script(
 )
 ```
 
-- `name`: Name of the trading pair and the corresponding LP Token.
-- `symbol`: Symbol for the LP Token.
-- `swap_fee_rate`: Fee rate applied to swaps.
-- `coin_a_weight` and `coin_b_weight`: Balancer weights for the respective coins.
-- `coin_a_metadata` and `coin_b_metadata`: Metadata for each coin in the pair.
-- `coin_a_amount` and `coin_b_amount`: Initial amounts for each coin.
+| Parameter | Description |
+| --- | --- |
+| `name` | Name of the trading pair and the corresponding LP Token |
+| `symbol` | Symbol for the LP Token |
+| `swap_fee_rate` | Fee rate applied to swaps |
+| `coin_a_weight` and `coin_b_weight` | Balancer weights for the respective coins |
+| `coin_a_metadata` and `coin_b_metadata` | Metadata for each coin in the pair |
+| `coin_a_amount` and `coin_b_amount` | Initial amounts for each coin |
 
 *For more information on metadata, please refer to [obtaining metadata](/developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin#obtaining-metadata).*
 

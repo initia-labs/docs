@@ -1,0 +1,78 @@
+---
+title: Becoming a Validator
+---
+
+<Note>
+Before proceeding to create the a validator, first make sure that your Initia node is fully synced to the latest height. This can be done by running comparing the latest block height of your node with those of the network.
+</Note>
+
+<Steps>
+<Step title="Create the Validator Account">
+
+First, you need to create an acount for your validator. This account will be used to run the validator node. To do so, you can run the following command:
+
+```sh
+initiad keys add validator
+```
+
+You then need to fund that account with the network's gas token.
+
+</Step>
+<Step title="Register the Validator">
+
+Once you have funded the validator account, you can send a `CreateValidator` transaction to the network to register as a validator.
+
+```sh
+initiad tx mstaking create-validator \\
+    --amount="<bond_amount>" \\
+    --pubkey=$(initiad tendermint show-validator) \\
+    --moniker="<your_moniker>" \\
+    --identity="<keybase_identity>" \\
+    --chain-id="<chain_id>" \\
+    --from="<key_name>" \\
+    --commission-rate="0.10" \\
+    --commission-max-rate="0.20" \\
+    --commission-max-change-rate="0.01"
+```
+
+| Flag                         | Description                                                                                                                                                                                                                                                |
+|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `bond_amount`                | This is the amount of tokens you wish to self-bond. It can be in uinit or other tokens that are whitelisted as liquidity provider (LP) tokens.                                                                                                              |
+| `pubkey`                     | The public key necessary for validator consensus. Typically, this is obtained from the output of the `initiadd tendermint show-validator` command.                                                                                                          |
+| `your_moniker`               | A human-readable name for your validator. This should match either the moniker you used in the `initiadd init` command or a moniker registered in the `~/.inita/config/config.toml` file.                                                                   |
+| `chain_id`                   | The ID of the chain you wish to join as a validator. It must correspond with the ID specified in the `genesis.json` file.                                                                                                                                   |
+| `key_name`                   | The account address or name used to submit the transaction. The output of `initiadd keys show <key name>` should correctly display your account details. If not, verify the accuracy of your `key_name` or keyring settings. A fee is required to submit the transaction, paid in the blockchain's native tokens. |
+| `identity`                   | An optional field for adding your Keybase identity information, which allows displaying an icon for your validator. This requires a 16-digit string associated with your Keybase account. Without this, no icon will be displayed in user interfaces.      |
+| `commission-rate`            | The commission rate you charge delegators, expressed as a fraction. It must be set above the `min_commission_rate` parameter specified by the mStaking protocol.                                                                                                |
+| `commission-max-rate`        | The maximum commission rate you can charge as a validator.                                                                                                                                                                                                 |
+| `commission-max-change-rate` | The maximum daily change in commission rate that is permissible for the validator.                                                                                                                                                                        |
+
+Once the message is submitted and successfully confirmed, your validator will be active and participating in the network.
+
+</Step>
+<Step title="Checking Validator Activeness">
+
+Finally, to check whether your validator is active, you can run the following command:
+
+```sh
+initiad query tendermint-validator-set | grep "$(initiad tendermint show-validator)"
+```
+
+If the command returns something, your validator is in the active and is actively proposing and signing blocks.
+
+<Note>
+Only the top 100 validators in voting power are included in the active validator set. This means that even if you `CreateValidator` transaction passes, your validator might not be active until it has sufficient token delegations.
+</Note>
+</Step>
+<Step title="Running the Connect Oracle Sidecar">
+Initia validators are also required to run the Connect Oracle Sidecar. For more information on how to run the sidecar, please refer to the [Skip Connect documentation](https://docs.skip.build/connect/validators/quickstart).
+
+</Step>
+</Steps>
+
+## Secure Your Validator Keys
+
+Protecting and having a contingency backup plan for your keys will help mitigate catastrophic hardware or software failures of the node. It is a good practice to test your backup plan on a testnet node in case of node failure.
+
+Also, always backup your validator node's mnemonic and `priv_validator_key.json` somewhere safe and secure in case you ever need to recover your validator node on a new machine.
+
