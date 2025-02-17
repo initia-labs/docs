@@ -1,16 +1,12 @@
 ---
-title: Why the Same Mnemonic Yields Different Addresses
+title: Address Derivation on Initia
 ---
 
 ## Overview
 
-This chapter explains why importing the same mnemonic into a Cosmos-based wallet (e.g., Keplr, Leap Wallet) and an Ethereum-based wallet (e.g., MetaMask, Rabby) results in different addresses.
+On Initia, importing the same mnemonic into a Cosmos-based wallet (e.g., Keplr, Leap Wallet) and an Ethereum-based wallet (e.g., MetaMask, Rabby) results in different addresses.
 
-Although both wallet types follow HD Wallet standards like BIP32 and BIP44, they use different derivation paths, specifically different coin_type values. 
-
-This difference causes the wallets to derive different private keys and, consequently, different addresses, even when using the same mnemonic.
-
-This concept applies universally to all chains, including Initia, whenever different `coin_type` values and address derivation methods are involved.
+Although both wallet types follow HD Wallet standards like BIP32 and BIP44, they use different derivation paths, specifically different coin_type values. This difference leads the wallets to derive distinct private keys and, consequently, different addresses, even when using the same mnemonic.
 
 ## Example Case
 

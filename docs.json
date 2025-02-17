@@ -326,6 +326,11 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "FAQs",
+            "icon": "question-circle",
+            "pages": ["developers/faqs/address-derivation"]
           }
         ]
       },
