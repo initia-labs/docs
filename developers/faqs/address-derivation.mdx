@@ -1,0 +1,135 @@
+---
+title: Address Derivation on Initia
+---
+
+## Overview
+
+On Initia, importing the same mnemonic into a Cosmos-based wallet (e.g., Keplr, Leap Wallet) and an Ethereum-based wallet (e.g., MetaMask, Rabby) results in different addresses.
+
+Although both wallet types follow HD Wallet standards like BIP32 and BIP44, they use different derivation paths, specifically different coin_type values. This difference leads the wallets to derive distinct private keys and, consequently, different addresses, even when using the same mnemonic.
+
+## Example Case
+
+Let's consider an example where the same mnemonic is imported into MetaMask and Keplr.
+
+Mnemonic:
+
+```plaintext
+borrow debate guard coconut chat polar loan stable render hazard true margin crash soon also leopard vehicle impose emotion sea amazing equal parade soldier
+```
+
+Import into MetaMask result in: 
+    - Private Key: `a18d5fc426d6f4b72e44c8c0e3e1147508b4a193f901c5dc351c6ca1a5ab52ad`
+    - Hex Address: `0xb658395C73c592695d8de3DF320a15CE1C8d8252`
+    - Bech32(init) Address: `init1kevrjhrnckfxjhvdu00nyzs4ecwgmqjjufa7z5`
+
+Import into Keplr result in:
+    - Private Key: `f3decd45241fc1a2d4b80f1449140b6cf67faf302b6c0f67f021337470a9c193`
+    - Hex Address: `0x8d9f8c5d0f68ebd45b2d7cf732e56073a4e009ca`
+    - Bech32(init) Address: `init13k0cchg0dr4agked0nmn9etqwwjwqzw28u97dr`
+
+As you can see, the addresses differ and the chain will recognize them as a completely different addresses.
+
+## Key Reason: Derivation Paths
+
+Derivation paths are the core reason why the same mnemonic yields different addresses in different wallets.
+
+BIP44 defines a path structure like this:
+
+```plaintext
+m / 44' / coin_type' / account' / change / address_index
+```
+
+- `44'` is the BIP44 purpose field.
+- `coin_type'` is a hardened index that identifies the blockchain.
+- `account'`, `change`, `address_index` specify account details, internal/external chains, and the specific address index.
+
+Different wallets use different `coin_type` values to derive addresses for different blockchains.
+
+For example, Ethereum-based wallets use `60` as the `coin_type` value, while Cosmos-based wallets use `118`.
+
+## How to Derive Addresses
+
+EVM Wallet:
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad keys import-hex [key-name] [private-key] --key-type eth_secp256k1
+    
+    # initiad keys import-hex alice a18d5fc426d6f4b72e44c8c0e3e1147508b4a193f901c5dc351c6ca1a5ab52ad --key-type eth_secp256k1
+    ```
+    </Tab>
+    <Tab title="Typescript">
+    ```typescript
+    import { mnemonicToSeedSync } from 'bip39'
+    import * as bip32 from 'bip32'
+
+    // Replace with your 12 or 24 word mnemonic:
+    const mnemonic = "borrow debate guard coconut chat polar loan stable render hazard true margin crash soon also leopard vehicle impose emotion sea amazing equal parade soldier"
+
+    // Common parameters
+    const account = 0
+    const index = 0
+
+    // ----- Deriving an Ethereum (MetaMask-like) private key -----
+    const coinTypeEthereum = 60  // EVM-based chains (Ethereum, etc.)
+    const seedEthereum: Buffer = mnemonicToSeedSync(mnemonic)
+    const masterKeyEthereum = bip32.fromSeed(seedEthereum)
+    const hdPathEthereum = `m/44'/${coinTypeEthereum}'/${account}'/0/${index}`
+    const ethereumHD = masterKeyEthereum.derivePath(hdPathEthereum)
+    const ethereumPrivateKey = ethereumHD.privateKey
+    const ethereumPublicKey = ethereumHD.publicKey
+
+    console.log("Ethereum (MetaMask) Private Key:", ethereumPrivateKey.toString('hex'))
+    console.log("Ethereum (MetaMask) Public Key:", ethereumPublicKey.toString('hex'))
+    ```
+    </Tab>
+</Tabs>
+
+Cosmos Wallet:
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad keys add [key-name] --recover
+
+    # initiad keys add alice --recover
+    # > Enter your bip39 mnemonic
+    # borrow debate guard coconut chat polar loan stable render hazard true margin crash soon also leopard vehicle impose emotion sea amazing equal parade soldier
+    ```
+    or if you have a private key:
+
+    ```bash
+    initiad keys import-hex [key-name] [private-key] --key-type secp256k1
+
+    # initiad keys import-hex bob f3decd45241fc1a2d4b80f1449140b6cf67faf302b6c0f67f021337470a9c193 --key-type secp256k1
+    ```
+    </Tab>
+    <Tab title="Typescript">
+    ```typescript
+    import { mnemonicToSeedSync } from 'bip39'
+    import * as bip32 from 'bip32'
+
+    // Replace with your 12 or 24 word mnemonic:
+    const mnemonic = "borrow debate guard coconut chat polar loan stable render hazard true margin crash soon also leopard vehicle impose emotion sea amazing equal parade soldier"
+
+    // Common parameters
+    const account = 0
+    const index = 0
+
+    // ----- Deriving a Cosmos (Keplr-like) private key -----
+    const coinTypeCosmos = 118  // Cosmos-based chains
+    const seedCosmos: Buffer = mnemonicToSeedSync(mnemonic)
+    const masterKeyCosmos = bip32.fromSeed(seedCosmos)
+    const hdPathCosmos = `m/44'/${coinTypeCosmos}'/${account}'/0/${index}`
+    const cosmosHD = masterKeyCosmos.derivePath(hdPathCosmos)
+    const cosmosPrivateKey = cosmosHD.privateKey
+    const cosmosPublicKey = cosmosHD.publicKey
+
+    console.log("Cosmos (Keplr) Private Key:", cosmosPrivateKey.toString('hex'))
+    console.log("Cosmos (Keplr) Public Key:", cosmosPublicKey.toString('hex'))
+    ```
+    </Tab>
+</Tabs>
+
