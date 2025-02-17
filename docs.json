@@ -159,7 +159,10 @@
           {
             "group": "Quick Guides",
             "icon": "book",
-            "pages": ["developers/developer-guides/guides/exchange-integration"]
+            "pages": [
+              "developers/developer-guides/guides/exchange-integration",
+              "developers/developer-guides/guides/why-different-address"
+            ]
           },
           {
             "group": "VM Specific Tutorials",
