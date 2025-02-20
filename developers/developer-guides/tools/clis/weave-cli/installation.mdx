@@ -11,22 +11,29 @@ title: Installation & Setup
 
 <Steps>
     <Step title="Get Weave Binary">
-        <Tabs>
-            <Tab title="Build from source">
-                ```bash
-                git clone https://github.com/initia-labs/weave.git
-                cd weave
-                git checkout tags/v0.0.2
-                make install
-                ```
-            </Tab>
-            {            /* <Tab title="Download pre-built binaries">
-                            Go to the [Releases](https://github.com/initia-labs/weave/releases) page and download the binary for your operating system.
-                            <Warning>
-                                Make sure to add the binary to your PATH environment variable so that you can run `weave` from anywhere.
-                            </Warning>
-                        </Tab> */}
-        </Tabs>
+<CodeGroup>
+```bash macOS
+brew install initia-labs/tap/weave
+```
+```bash Linux (AMD64)
+VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-amd64.tar.gz
+tar -xvf weave-$VERSION-linux-amd64.tar.gz
+```
+```bash Linux (ARM64)
+VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-arm64.tar.gz
+tar -xvf weave-$VERSION-linux-arm64.tar.gz
+```
+```bash From Source
+git clone https://github.com/initia-labs/weave.git
+cd weave
+git checkout tags/v0.0.2
+VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+git checkout tags/v$VERSION
+make install
+```
+</CodeGroup>
     </Step>
     <Step title="Verify Installation">
         ```bash
