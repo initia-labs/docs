@@ -130,10 +130,7 @@
           },
           {
             "group": "Rollups",
-            "pages": [
-              "nodes-and-rollups/deploying-rollups/initia-registry",
-              "nodes-and-rollups/deploying-rollups/deploy-with-weave"
-            ]
+            "pages": ["nodes-and-rollups/deploying-rollups/deploy-with-weave"]
           },
           {
             "group": "Nodes",
