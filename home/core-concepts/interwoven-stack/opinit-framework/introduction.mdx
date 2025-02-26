@@ -1,38 +1,42 @@
 ---
-title: OPinit Framework
+title: Introduction
 ---
 
-The OPinit Framework is the Interwoven Stack's solution for building rollups with ease. Implemented as a set of Cosmos SDK modules and services, it enables Minitias to connect seamlessly with the Initia L1 network using an [optimistic rollup](https://ethereum.org/en/developers/docs/scaling/optimistic-rollups/) model.
+As both the Initia L1 and rollups are Cosmos SDK chains, they come with IBC support by default. While it is straightforward for the Initia L1 and rollups to communicate and facilitate token transfers through IBC, there are some issues and limitations when using IBC with rollups. To address these challenges, we designed the **OPinit Framework**.
 
-## OPinit vs IBC
+## What is the OPinit Framework?
 
-While both Initia L1 and Minitias are Cosmos SDK chains with native IBC support, the OPinit Framework offers several advantages over using IBC alone for rollup communication:
+The OPinit Framework is a comprehensive solution consisting of Cosmos SDK modules and bots that enable rollups to connect with the Initia L1 network using an optimistic rollup model. This framework provides essential features for the rollup:
 
-### Withdrawal Period
+- Optimistic token bridge with a challenge period
+- L1 state finalization through output submission
+- Transaction batch submission to Celestia's Data Availability layer
 
-Initia's Minitia rollups typically operate with a single sequencer, which, while efficient, can pose security risks. Malicious or compromised Minitias can manipulate the rollup state and token balances, in turn allowing them to steal or bridge out fake or stolen assets and transfer them to other chains before detection  . Once the funds are bridged out, reversing the action becomes extremely difficult.
+## Key Benefits of the OPinit Framework
 
-The OPinit Bridge mitigates these risks by implementing:
+### Enhanced Security through Enforced Withdrawal Period
+
+Rollups, typically operated by a single sequencer, lack the native security of traditional Layer 1 blockchains. This model, while offering benefits, introduces significant risks if not properly managed. The OPinit Bridge addresses this vulnerability by implementing:
 
 - A 7-day finalization period for withdrawals
 - A challenge feature to detect and prevent malicious activities
+- Time buffer for detecting compromises and rolling back the L2 chain if necessary
 
-This approach provides a crucial safeguard against potential exploits, allowing time for:
-- Detection of malicious activity
-- Rolling back the L2 chain if necessary
-- Cancellation of suspicious withdrawal requests
+This approach significantly reduces the risk of quick exploitation and asset theft, providing a crucial security layer for the Initia ecosystem.
 
-### Maintenance and Upkeep
+### Reduced Maintenance and Upkeep
 
-The OPinit Bridge offers streamlined maintenance compared to IBC:
+Compared to IBC, the OPinit Bridge offers:
 
-- Focused feature set tailored to the Initia ecosystem
-- Fewer security patches and updates required
-- Simplified verification and security measures
+- Lower maintenance requirements
+- Fewer security patches
+- Tailored functionality specific to the Initia ecosystem
 
-### Combining OPinit and IBC
+By focusing on essential features, we can ensure a more streamlined and efficient bridging solution.
 
-While the OPinit Bridge serves as the primary communication channel between Minitias and Initia L1, it doesn't replace IBC entirely:
+### Flexibility: Combining IBC and OPinit Bridge
 
-- Minitias can still use IBC for connections to other Cosmos SDK chains
-- [Minitswap](/home/core-concepts/minitswap/introduction.mdx) leverages IBC to enhance user experience, particularly in mitigating issues related to optimistic bridge withdrawal periods
+While the OPinit Bridge serves as the primary communication channel between rollups and Initia L1, the framework maintains compatibility with IBC:
+
+- Rollups can still utilize IBC for connecting to other Cosmos SDK chains
+- [Minitswap](/home/core-concepts/minitswap/introduction.mdx) leverages IBC to enhance user experience, mitigating issues related to optimistic bridge withdrawal periods

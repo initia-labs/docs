@@ -1,0 +1,31 @@
+---
+title: VIP Scoring
+---
+
+## Introduction
+
+The VIP Program employs a comprehensive scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team.
+
+## Whitelisting
+
+For a rollup and its users to be eligible for VIP rewards, they first need to be whitelisted. This is done through a governance proposal on the Initia L1
+
+## Scoring Epochs
+
+VIP scoring and reward distribution then happens on a regular epoch basis. Each epoch follows the steps below:
+
+### Scoring
+
+First, during each epoch, rollup teams score their users based on their activity through a `vip_score` contract. 
+
+To score users, the rollup operator must first register the `deployer` account on the `vip_score` contract using their operator key. Once registered, the deployer can add and remove user scores based on the determined criteria. See [this page](/developers/developer-guides/integrating-initia-apps/vip) for more information on how scoring works. All future scoring actions can only be performed by the deployer until they are changed or removed.
+
+Once the scoring for an epoch is complete, the scores must be finalized by calling a function on the `vip_score` contract.
+
+### Snapshotting
+
+Once finalized, the VIP Agent snapshots and submits the scores from all miniatures, storing them in the Initia L1 VIP module. The Agent is an actor selected through Initia L1 governance. After all snapshots have been taken and stored, the esINIT rewards are distributed to the users.
+
+### Claiming
+
+Finally, the user can finally claim the distributed rewards

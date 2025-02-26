@@ -251,7 +251,7 @@ await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
 You can check the ACL list using the following command.
 
 ```bash
-curl -X GET "https://lcd.initiation-2.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+curl -X GET "https://lcd.testnet.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
 ```
 
 Response:
@@ -285,7 +285,7 @@ function createHook(params: object) {
 }
 
 async function main() {
-  const l1lcd = new LCDClient('https://lcd.initiation-2.initia.xyz', {
+  const l1lcd = new LCDClient('https://lcd.testnet.initia.xyz', {
       gasAdjustment: '1.75',
       gasPrices: '0.15uinit'
   })

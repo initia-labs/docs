@@ -1,0 +1,53 @@
+---
+title: Compiling Modules
+---
+
+Once you have created your module, you need to compile it before it can be deployed.
+
+<Steps>
+<Step title="Update Move.toml">
+Before compiling your module, you need to update the `Move.toml` file to specify the address for your `hello` module. Specifically, this will be the address that you'll use to deploy your module, as well as the address that the module will live under.
+
+To add the `hello` address to your `Move.toml`, modify the `[addresses]` section to include the `hello` address. Your `Move.toml` should look like this:
+
+```toml Move.toml
+[package]
+name = "hello_world"
+version = "0.0.0"
+
+[dependencies]
+InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
+
+[addresses]
+std =  "0x1"
+hello = "0x2" # Replace with the deployer address
+```
+
+</Step>
+  <Step title="Compile Your Module">
+  To compile your module, run the following command:
+
+<CodeGroup>
+```bash Initia L1
+initiad move build
+```
+```bash Rollups
+minitiad move build
+```
+</CodeGroup>
+
+If successful, you should see the following output:
+
+```bash
+Compiling, may take a little while to download git dependencies...
+UPDATING GIT DEPENDENCY https://github.com/initia-labs/movevm.git
+INCLUDING DEPENDENCY InitiaStdlib
+INCLUDING DEPENDENCY MoveNursery
+INCLUDING DEPENDENCY MoveStdlib
+BUILDING hello_world
+```
+  </Step>
+  <Step title="Verify the Output">
+  After compilation, you should see a new folder called `build` in your project directory. This folder will contain the compiled bytecode for your module, along with other generated files.
+  </Step>
+</Steps>
