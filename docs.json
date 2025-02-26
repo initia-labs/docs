@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Initia Docs",
   "colors": {
-    "primary": "#000000",
-    "light": "#dddddd",
-    "dark": "#333333"
+    "primary": "#aaaaaa",
+    "light": "#ffffff",
+    "dark": "#555555"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -91,7 +91,7 @@
               "home/core-concepts/initiadex",
               {
                 "group": "Enshrined Liquidity",
-                "icon": "hand-holding-droplet",
+                "icon": "droplet",
                 "pages": [
                   "home/core-concepts/enshrined-liquidity/introduction",
                   "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
@@ -110,11 +110,11 @@
                 "group": "VIP Program",
                 "icon": "award",
                 "pages": [
-                  "home/core-concepts/vested-interest-program/introduction",
-                  "home/core-concepts/vested-interest-program/architecture",
-                  "home/core-concepts/vested-interest-program/gauges",
-                  "home/core-concepts/vested-interest-program/timelines",
-                  "home/core-concepts/vested-interest-program/scoring"
+                  "home/core-concepts/vip/introduction",
+                  "home/core-concepts/vip/architecture",
+                  "home/core-concepts/vip/gauges",
+                  "home/core-concepts/vip/timelines",
+                  "home/core-concepts/vip/scoring"
                 ]
               }
             ]
@@ -327,6 +327,11 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "FAQs",
+            "icon": "question-circle",
+            "pages": ["developers/faqs/address-derivation"]
           }
         ]
       },
@@ -409,7 +414,7 @@
   "background": {
     "decoration": "grid",
     "color": {
-      "dark": "#101010"
+      "dark": "#060606"
     }
   },
   "navbar": {
