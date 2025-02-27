@@ -2,7 +2,7 @@
 title: Launching your Rollup
 ---
 
-Weave simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups/rollup-deployment/introduction) into a single command.
+Weave simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups) into a single command.
 
 <Note>
   Weave will send some funds from Gas Station to the OPinit Bot accounts during this process. Please make sure that your Gas Station account has enough funds to cover the total amount of funds to be sent (this amount will be shown to you before sending the funds).
@@ -21,10 +21,10 @@ The command also provides an [Initia Scan](https://scan.testnet.initia.xyz/) mag
 <Note>
 This command only sets up the bot addresses but does not start the OPinit Bots (executor and challenger).
 
-To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup-management/opinit-bots) section to configure and run the OPinit Bots.
+To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots) section to configure and run the OPinit Bots.
 </Note>
 
-To launch from the [config file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file) without going through the interactive setup process, use the `--with-config` and `--vm` flags.
+To launch from the config file without going through the interactive setup process, use the `--with-config` and `--vm` flags.
 ```bash
 weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
 ```
@@ -35,7 +35,7 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
   The directory to store the rollup node data and configuration files.
 </ParamField>
 <ParamField path="--with-config" type="string">
-  Path to the rollup [config file](/nodes-and-rollups/deploying-rollups/rollup-deployment/running-the-rollup#preparing-the-configuration-file). Use this flag to launch from a config file without going through the interactive setup process.
+  Path to the rollup config file. Use this flag to launch from a config file without going through the interactive setup process.
 </ParamField>
 <ParamField path="--vm" type="string">
   The VM to use for the rollup node. The available options are `move`, `wasm`,

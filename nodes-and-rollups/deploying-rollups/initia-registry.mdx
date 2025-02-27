@@ -346,6 +346,200 @@ These fields should be empty for all rollups.
 | logo_URIs.svg | The SVG logo URI for the token            | No       |
 </Accordion>
 
+<Accordion title="How to Derive a Bridged Token Denom" icon="coin-front">
+
+For tokens bridged from L1, the denom can vary depending on the type of bridge used. In order for token bridging to work correctly, you must add the appropriate denom to your assetlist.
+
+We have two scenarios for calculating the denom:
+
+- OP Denom: The denom used in the OP Bridge
+- IBC Denom: The denom used in the IBC Bridge
+
+**OP Denom**
+
+```typescript denom.ts
+import { RESTClient } from '@initia/initia.js'
+
+/**
+ *
+ * Queries the Initia REST API to find the L2 (Layer 2) denomination
+ * corresponding to a given L1 (Layer 1) denomination, for a specific bridge ID.
+ *
+ * @param {string} uri - The REST endpoint for the Initia network (e.g., "https://rest.testnet.initia.xyz").
+ * @param {number} bridge_id - The bridge ID (e.g., 1).
+ * @param {string} l1_denom - The L1 denomination (e.g., "uinit").
+ * @returns {Promise<string>} - The corresponding L2 denomination (e.g., "l2/...").
+ */
+export async function opDenomByL1Denom(
+  uri: string,
+  bridge_id: number,
+  l1_denom: string
+): Promise<string> {
+  const client = new RESTClient(uri)
+  const tokenPair = await client.ophost.tokenPairByL1Denom(bridge_id, l1_denom)
+  return tokenPair.l2_denom
+}
+
+/**
+ *
+ * Queries the Initia REST API to find the L1 (Layer 1) denomination
+ * corresponding to a given L2 (Layer 2) denomination, for a specific bridge ID.
+ *
+ * @param {string} uri - The REST endpoint for the Initia network (e.g., "https://rest.testnet.initia.xyz").
+ * @param {number} bridge_id - The bridge ID (e.g., 1).
+ * @param {string} l2_denom - The L2 denomination (e.g., "l2/xyz...").
+ * @returns {Promise<string>} - The corresponding L1 denomination (e.g., "uinit").
+ */
+export async function opDenomByL2Denom(
+  uri: string,
+  bridge_id: number,
+  l2_denom: string
+): Promise<string> {
+  const client = new RESTClient(uri)
+  const tokenPair = await client.ophost.tokenPairByL2Denom(bridge_id, l2_denom)
+  return tokenPair.l1_denom
+}
+
+async function main() {
+  // Example usage of opDenomByL1Denom and opDenomByL2Denom
+  const uri = 'https://rest.testnet.initia.xyz'
+  const bridge_id = 1
+
+  const l1_denom = 'uinit'
+  const l2_denom = 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd'
+
+  const l2_denom_for_l1_denom = await opDenomByL1Denom(uri, bridge_id, l1_denom)
+  console.log(`L2 denom for L1 denom "${l1_denom}":`, l2_denom_for_l1_denom)
+
+  const l1_denom_for_l2_denom = await opDenomByL2Denom(uri, bridge_id, l2_denom)
+  console.log(`L1 denom for L2 denom "${l2_denom}":`, l1_denom_for_l2_denom)
+}
+
+main().catch((error) => {
+  console.error('Error in main:', error)
+})
+```
+
+**IBC Denom**
+
+```typescript denom.ts
+import { RESTClient, sha256 } from '@initia/initia.js'
+
+interface DenomTrace {
+  denom_trace: {
+    path: string
+    base_denom: string
+  }
+}
+
+/**
+ *
+ * Takes a full trace string (e.g., "transfer/channel-0/uinit"), computes its SHA-256 hash,
+ * and returns it in uppercase as "ibc/<HASH>".
+ *
+ * @param {string} fullTrace - For example, "transfer/channel-0/uinit".
+ * @returns {string} - For example, "ibc/2A3B4C...".
+ */
+function makeIBCHash(fullTrace: string): string {
+  const shaSum = sha256(Buffer.from(fullTrace))
+  const hash = Buffer.from(shaSum).toString('hex').toUpperCase()
+  return `ibc/${hash}`
+}
+
+/**
+ *
+ * Retrieves the original "transfer/..." full trace (e.g., "transfer/channel-0/uinit")
+ * from an IBC denom that starts with "ibc/...". It queries the IBC module's
+ * `denom_traces` endpoint to get the path and base denom.
+ *
+ * @param {RESTClient} chain - The RESTClient instance for the chain.
+ * @param {string} denom - The IBC denom (must start with "ibc/").
+ * @returns {Promise<string>} - The combined path and base denom (e.g., "transfer/channel-0/uinit").
+ */
+async function getFullTrace(chain: RESTClient, denom: string): Promise<string> {
+  if (!denom.startsWith('ibc/')) {
+    throw Error('Not an IBC denom')
+  }
+
+  const trace = await chain.apiRequester.get<DenomTrace>(
+    `/ibc/apps/transfer/v1/denom_traces/${denom}`
+  )
+  return `${trace.denom_trace.path}/${trace.denom_trace.base_denom}`
+}
+
+/**
+ *
+ * Takes a denom from chain A (e.g., "uinit" or "ibc/...") and determines how it is
+ * represented on chain B. This may result in a hashed IBC denom ("ibc/...") or
+ * a "transfer/..." full trace string.
+ *
+ * 1. If the input denom starts with "ibc/", retrieve the original full trace using `getFullTrace`.
+ * 2. If the resulting full trace starts with "transfer/{chainAChannel}/...", it indicates
+ *    the token originally came from chain B (unwind logic).
+ * 3. Otherwise, prepend "transfer/{chainBChannel}/..." (wind logic).
+ * 4. Finally, if the resulting string begins with "transfer/", convert it to an IBC hash
+ *    using `makeIBCHash`. Otherwise, return it as is.
+ *
+ * @param {RESTClient} chainA - The RESTClient for chain A.
+ * @param {string} denom - The denom used on chain A (e.g., "uinit" or "ibc/...").
+ * @param {string} chainAChannel - The channel ID on chain A (e.g., "channel-1").
+ * @param {string} chainBChannel - The channel ID on chain B (e.g., "channel-2").
+ * @returns {Promise<string>} - The resulting IBC denom (e.g., "ibc/...") or a "transfer/..." full trace.
+ */
+export async function ibcDenom(
+  chainA: RESTClient,
+  denom: string,
+  chainAChannel: string,
+  chainBChannel: string
+): Promise<string> {
+  let wind = true
+  let fullTrace = denom
+
+  // If denom starts with "ibc/", retrieve the original trace
+  if (denom.startsWith('ibc/')) {
+    fullTrace = await getFullTrace(chainA, denom)
+
+    // If the token's trace starts with "transfer/chainAChannel/", token originated from chain B
+    if (fullTrace.startsWith(`transfer/${chainAChannel}/`)) {
+      wind = false
+    }
+  }
+
+  // Depending on wind/unwind, construct the trace for chain B
+  let fullTraceOnChainB: string
+  if (wind) {
+    // Wind: prepend "transfer/{chainBChannel}/"
+    fullTraceOnChainB = `transfer/${chainBChannel}/${fullTrace}`
+  } else {
+    // Unwind: remove "transfer/{chainAChannel}/"
+    fullTraceOnChainB = fullTrace.slice(`transfer/${chainAChannel}/`.length)
+  }
+
+  // If it starts with "transfer/", convert to an IBC hash; otherwise, return as is
+  const denomInChainB = fullTraceOnChainB.startsWith('transfer/')
+    ? makeIBCHash(fullTraceOnChainB)
+    : fullTraceOnChainB
+
+  return denomInChainB
+}
+
+async function main() {
+  // Example usage of ibcDenom
+  const denom = 'uinit' // or "ibc/..."
+  const chainAclient = new RESTClient('https://rest.testnet.initia.xyz')
+  const channelA = 'channel-132' // Example channel ID for chain A
+  const channelB = 'channel-0'   // Example channel ID for chain B
+
+  const ibcDenomStr = await ibcDenom(chainAclient, denom, channelA, channelB)
+  console.log('Calculated IBC Denom:', ibcDenomStr)
+}
+
+main().catch((error) => {
+  console.error('Error in main:', error)
+})
+```
+</Accordion>
+
 4. (Optional) create an `images` folder to store the images for your rollup logo and token logos to link to in the two JSON files above.
 
 ### Submit a Pull Request

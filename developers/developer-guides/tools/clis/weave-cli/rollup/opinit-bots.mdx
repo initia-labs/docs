@@ -2,7 +2,7 @@
 title: Running OPinit Bots
 ---
 
-Weave provides a streamlined way to configure and run [OPinit Bots](/nodes-and-rollups/deploying-rollups/opinit-bots/introduction) (executor and challenger) for your rollup.
+Weave provides a streamlined way to configure and run [OPinit Bots](/home/core-concepts/interwoven-stack/opinit-framework/introduction) (executor and challenger) for your rollup.
 
 ## Setting up
 
@@ -50,10 +50,6 @@ You can also specify the bot type directly:
     <ParamField path="--key-file" type="string">
       Path to the Executor's keys file. Can only be used when `--with-config` flag is provided. Conflicts with `--generate-key-file` flag.
     </ParamField>
-
-    <Note>
-      For advanced configuration options, you can refer to the [Configuration Guide](/nodes-and-rollups/deploying-rollups/opinit-bots/executor) and modify the bot's configuration file (located at `<opinit-dir>/executor.json` by default).
-    </Note>
   </Tab>
   <Tab title="Challenger">
     ```bash
@@ -90,10 +86,6 @@ You can also specify the bot type directly:
     <ParamField path="--key-file" type="string">
       Path to the Challenger's keys file. Can only be used when `--with-config` flag is provided. Conflicts with `--generate-key-file` flag.
     </ParamField>
-
-    <Note>
-      For advanced configuration options, you can refer to the [Configuration Guide](/nodes-and-rollups/deploying-rollups/opinit-bots/challenger) and modify the bot's configuration file (located at `<opinit-dir>/challenger.json` by default).
-    </Note>
   </Tab>
 </Tabs>
 

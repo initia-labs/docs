@@ -1,55 +1,89 @@
 ---
-title: Creating Accounts
+title: Account
 ---
-
-## Introduction 
-
-Before you can start building and transacting, you'll need to create an account. 
-
-This tutorial will guide you through the process of account creation using the command-line interface (CLI) and Initia's JavaScript library, initia.js.
-
-InitiaJS provides a `Wallet` class that can be used to create and manage accounts.
 
 ## Creating an Account
 
-<Tabs>
-    <Tab title="CLI">
-        ```bash
-        > initiad keys add [key-name]
+Before you can start building and transacting, you'll need to create an account. 
 
-        - address: init17exjfvgtpn5ne4pgmuatjg52mvvtj08773tgfx
-        name: test-account
-        pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"Ap+WnRzOsJGgfgsrgc4APi/EiTzl3t52ruiKGev7X9LW"}'
-        type: local
+```ts InitiaJS
+import { MnemonicKey } from '@initia/initia.js'
 
-
-        **Important** write this mnemonic phrase in a safe place.
-        It is the only way to recover your account if you ever forget your password.
-
-        angry opera upper ...
-        ```
-    </Tab>
-    <Tab title="InitiaJS">
-        ```ts InitiaJS
-        import { MnemonicKey } from '@initia/initia.js'
-
-        const key = new MnemonicKey({
-            mnemonic: 'bird upset ... evil cigar', // (optional) if undefined, generate a new Mnemonic key
-            account: 0,    // (optional) BIP44 account number. default = 0, Account number for HD derivation (less than equal 2147483647)
-            index: 0,      // (optional) BIP44 index number. defualt = 0, Address index number for HD derivation (less than equal 2147483647)
-            coinType: 118, // (optional) BIP44 coinType. default = 118, coin type number for HD derivation
-        })
-
-        console.log('mnemonic:', key.mnemonic);
-        // mnemonic: bird upset ... evil cigar
-        console.log('account address:', key.accAddress);
-        // account address: init10m5nnevplkzvv5svqf0xjx6dc4705u5dxfn2st
-        ```
-    </Tab>
-</Tabs>
+const key = new MnemonicKey()
+```
 
 <Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
 
 ## Importing an Account
 
+You can also import an account by providing a mnemonic phrase or a raw key.
+
+```ts InitiaJS
+import { MnemonicKey } from '@initia/initia.js'
+
+const keyByMnemonic = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar'
+})
+const keyByRawKey = new RawKey(keyByMnemonic.privateKey)
+
+console.log('keyByMnemonic:', keyByMnemonic.privateKey)
+console.log('keyByRawKey:', keyByRawKey.privateKey)
+```
+
+Output:
+
+```bash
+keyByMnemonic: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
+keyByRawKey: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
+```
+
+If you want to create an EVM account, you can use the following code:
+
+```ts InitiaJS
+const cosmosKeyByMnemonic = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar',
+})
+const evmKeyByMnemonic = new MnemonicKey({
+    mnemonic: 'bird upset ... evil cigar',
+    coinType: 60,
+    eth: true
+})
+
+console.log('cosmosKeyByMnemonic:', cosmosKeyByMnemonic.accAddress)
+console.log('evmKeyByMnemonic:', evmKeyByMnemonic.accAddress)
+```
+
+Output:
+
+```bash
+cosmosKeyByMnemonic: init1d7s3q7nmlzqz9v4tk6ntrvfmavu2vk656gr29j
+evmKeyByMnemonic: init1f7t8tqnltm2n0ghs3g9uyplkj3rf2mh9tcf4r9
+```
+
 ## Retrieving Account Data
+
+You can retrieve account data from the key object.
+
+```ts InitiaJS
+import { MnemonicKey } from '@initia/initia.js'
+
+const key = new MnemonicKey({
+    mnemonic: 'across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model',
+})
+
+console.log('mnemonic:', key.mnemonic)
+console.log('private key:', key.privateKey)
+console.log('public key:', key.publicKey)
+console.log('account address:', key.accAddress)
+console.log('account validator address:', key.valAddress)
+```
+
+Output:
+
+```bash
+mnemonic: across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model
+private key: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
+public key: Z { key: 'AmXrEF5FHNkRMehfDmBM3AwqZ4Y21r2H+hUMjS6++CSP' }
+account address: init17mq4sqemx2djc59tda76y20nwp4pfn4943x9ze
+account validator address: initvaloper17mq4sqemx2djc59tda76y20nwp4pfn49p5luvf
+```

@@ -4,9 +4,10 @@ title: VIP Scoring
 
 ## Introduction
 
-Initia's Vested Interest Program (VIP) utilizes a scoring system to distribute `esINIT` rewards to users based on their activities on a given rollup. Each rollup will have its own self-determined scoring system.
+The VIP Program employs a comprehensive scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team.
 
 ## Whitelisting
+
 For a rollup and its users to be eligible for VIP rewards, they first need to be whitelisted. This is done through a governance proposal on the Initia L1
 
 ## Scoring Epochs
@@ -15,7 +16,7 @@ VIP scoring and reward distribution then happens on a regular epoch basis. Each 
 
 ### Scoring
 
-First, during each epoch, rollup teams score their users based on their activity and usage on the chain. The scoring policy is determined entirely by the individual rollups This is done using a `vip_score` contract or module (depending on the rollup's VM) that is provided by the Initia team.
+First, during each epoch, rollup teams score their users based on their activity through a `vip_score` contract. 
 
 To score users, the rollup operator must first register the `deployer` account on the `vip_score` contract using their operator key. Once registered, the deployer can add and remove user scores based on the determined criteria. See [this page](/developers/developer-guides/integrating-initia-apps/vip) for more information on how scoring works. All future scoring actions can only be performed by the deployer until they are changed or removed.
 

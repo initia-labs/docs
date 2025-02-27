@@ -4,22 +4,15 @@ title: VIP Gauge Voting
 
 ![VIP Gauge Voting](/images/vip/vip_gauge_weight_voting.svg)
 
-To decide how much of the total [Weight Pool](/home/core-concepts/vested-interest-program/architecture#weight-pool) rewards are distributed to each rollup in a given stage, a gauge weight voting process is used. This gauge voting is similar to the one pioneered by Curve Finance for use with their liquidity pools.
+To decide how much of the total [Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards are distributed to each rollup in a given stage, a gauge weight voting process is used. This gauge voting is similar to the one pioneered by Curve Finance for use with their liquidity pools.
 
-The gauge voting flow then consists of two steps:
+### Voting Power
 
-1. [Voting Power Snapshot Submission](#voting-power-snapshot-submission)
-2. [Gauge Voting](#gauge-voting)
-
-### Voting Power Snapshot Submission
-
-Before the gauges can be voted on for a given cycle, a governance-assigned party known as the Snapshot Submitter first snapshots and submits the voting power of all of the individual stakers on the Initia L1 at a certain block height.
+For VIP Gauge Votes, a user's voting power depends on their staking position. For INIT staking, their VIP voting power matches their voting power in the Initia L1 governance. However, for Enshrined Liquidity or LP token staking positions, an adjustment factor is applied to their voting power. This adjustment factor varies for each staked LP token pair.
 
 ### Gauge Voting
 
-Once the voting power snapshot is taken, the gauge voting process begins. Each VIP-whitelisted rollup has a "gauge" that determines the ratio of the total Weight Pool rewards they are eligible to receive. Stakers with staking tokens on Initia L1 use their voting power to increase the weight of the gauges for the rollups they prefer. Stakers can allocate their entire voting power to a single rollup's gauge or spread it across multiple gauges.
-
-All gauge voting is conducted on Initia L1.
+When voting begins each cycle, every VIP-whitelisted rollup has a "gauge" that determines the ratio of total Weight Pool rewards it can receive. Stakers with tokens on Initia L1 use their voting power to increase the weight of the gauges for their preferred rollups. They can allocate their entire voting power to a single rollup's gauge or distribute it across multiple gauges. All gauge voting occurs on Initia L1.
 
 #### Example Scenario
 

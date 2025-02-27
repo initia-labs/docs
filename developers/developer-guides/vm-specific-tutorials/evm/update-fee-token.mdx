@@ -30,7 +30,7 @@ import {
 
 /**
  * main() demonstrates how to update EVM-related chain parameters (such as fee denom, allowed publishers, etc.).
- * Note: This requires the mnemonic for the chain’s operator(a.k.a bridge executor), which you must obtain from the chain administrator.
+ * Note: This requires the mnemonic for the chain’s operator(a.k.a validator), which you must obtain from the chain administrator.
  */
 async function main() {
   /**
@@ -60,7 +60,7 @@ async function main() {
    * 2) Create a Wallet instance using the client and a MnemonicKey.
    *    - The MnemonicKey is derived from the chain operator's mnemonic (private key).
    *    - This wallet has permission to execute the EVM parameter update because it’s
-   *      presumably the authorized executor or has the necessary roles on the chain.
+   *      presumably the authorized validator or has the necessary roles on the chain.
    */
   const wallet = new Wallet(
     client,
@@ -70,7 +70,7 @@ async function main() {
        * the authority to update EVM params. 
        * Make sure you keep this mnemonic secret.
        */
-      mnemonic: "" // enter executor mnemonic
+      mnemonic: "" // enter validator mnemonic
     })
   );
 
@@ -132,7 +132,7 @@ async function main() {
   /**
    * 4) Create a MsgExecuteMessages message to execute the EVM parameter update.
    *    - This message will include the MsgUpdateEvmParams message(s) we created above.
-   *    - The first argument is the wallet’s (executor’s) account address.
+   *    - The first argument is the wallet’s (validator’s) account address.
    *    - The second argument is an array of messages to execute.
    */
   const executeMsg = new MsgExecuteMessages(
@@ -143,7 +143,7 @@ async function main() {
   /**
    * 5) Create and sign the transaction with the Wallet.
    *    - This will create a transaction that includes the EVM param update message
-   *      and then sign it using the wallet’s (executor’s) private key.
+   *      and then sign it using the wallet’s (validator’s) private key.
    */
   const signedTx = await wallet.createAndSignTx({
     msgs: [executeMsg],

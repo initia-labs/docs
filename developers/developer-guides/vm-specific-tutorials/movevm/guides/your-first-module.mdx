@@ -116,7 +116,7 @@ To test that our module is working correctly, we can try interacting with it. Fi
 ```bash Initia L1
 export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
 initiad tx move execute $MODULE_ADDRESS hello_world save_message \
-  --args "string:data"  \
+  --args '["string:data"]'  \
   --node $RPC_URL \
   --from docs \
   --gas-prices $GAS_PRICES \
@@ -125,7 +125,7 @@ initiad tx move execute $MODULE_ADDRESS hello_world save_message \
 ```bash Rollups
 export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
 minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
-  --args "string:data"  \
+  --args '["string:data"]'  \
   --node $RPC_URL \
   --from docs \
   --gas-prices $GAS_PRICES \
@@ -138,12 +138,12 @@ Once the transaction is successful, we can retrieve the message we just saved.
 <CodeGroup>
 ```bash Initia L1
 initiad query move view $MODULE_ADDRESS hello_world view_message \
-    --args 'address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
     --node $RPC_URL
 ```
 ```bash Rollups
 minitiad query move view $MODULE_ADDRESS hello_world view_message \
-    --args 'address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
     --node $RPC_URL
 ```
 </CodeGroup>
