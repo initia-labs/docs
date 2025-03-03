@@ -1,0 +1,109 @@
+---
+title: Installation & Setup
+---
+
+## Prerequisites
+
+- Operating System: **Linux, MacOS**
+- Go **v1.23** or higher
+
+## Installation
+
+<Steps>
+    <Step title="Get Weave Binary">
+        <Tabs>
+            <Tab title="Homebrew (macOS)">
+                ```bash
+                brew install initia-labs/tap/weave
+                ```
+            </Tab>
+            <Tab title="wget (linux)">
+                **AMD64**
+                ```bash
+                VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+                wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-amd64.tar.gz
+                tar -xvf weave-$VERSION-linux-amd64.tar.gz
+                ```
+                **ARM64**
+                ```bash
+                VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+                wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-arm64.tar.gz
+                tar -xvf weave-$VERSION-linux-arm64.tar.gz
+                ```
+            </Tab>
+            <Tab title="Build from source">
+                ```bash
+                git clone https://github.com/initia-labs/weave.git
+                cd weave
+                VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+                git checkout tags/v$VERSION
+                make install
+                ```
+            </Tab>
+        </Tabs>
+    </Step>
+    <Step title="Verify Installation">
+        ```bash
+        weave version
+        ```
+        This should return the version of the Weave binary you have installed.
+    </Step>
+    <Step title="Quick Start">
+        To get started with Weave, run
+        ```bash
+        weave init
+        ```
+        It will ask you to setup the [Gas Station](/developers/developer-guides/tools/clis/weave-cli/gas-station) account and ask which infrastructure you want to setup.
+        After that, Weave will guide you through the setup process step-by-step.
+
+        <Note>
+        We recommend reading the [Gas Station](/developers/developer-guides/tools/clis/weave-cli/gas-station) section to understand the purpose and usage of the Gas Station before proceeding.
+        </Note>
+    </Step>
+</Steps>
+<Warning>
+By default, Weave collects non-identifiable usage data to help improve the product. If you prefer not to share this data, you can opt out by running the following command:
+```bash
+weave analytics disable
+```
+</Warning>
+
+### Next Steps
+
+<CardGroup cols={2}>
+  <Card
+    title="Bootstrapping Initia Node"
+    icon="microchip"
+    href="/developers/developer-guides/tools/clis/weave-cli/initia-node"
+  >
+    Setup your Initia node and start syncing with the chain.
+  </Card>
+  <Card
+    title="Launching Rollup"
+    icon="rocket-launch"
+    href="/developers/developer-guides/tools/clis/weave-cli/rollup/launch"
+  >
+    Configure and launch your own rollup.
+  </Card>
+  <Card
+    title="Running IBC Relayer"
+    icon="arrow-right-arrow-left"
+    href="/developers/developer-guides/tools/clis/weave-cli/rollup/relayer"
+  >
+    Setup and run the IBC relayer. This is necessary for built-in oracle to
+    work.
+  </Card>
+  <Card
+    title="Running OPinit Bots"
+    icon="circle-nodes"
+    href="/developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots"
+  >
+    Setup the OPinit bots to complete the optimistic rollup setup.
+  </Card>
+</CardGroup>
+
+or run
+```bash
+weave --help
+```
+to learn more about all the commands available.

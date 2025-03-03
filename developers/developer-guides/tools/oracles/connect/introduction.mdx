@@ -1,0 +1,13 @@
+---
+title: Introduction to Connect
+---
+
+Connect is an enshrined oracle service built by [Skip](https://skip.money), designed to deliver fast and up-to-date asset price data to the blockchain.
+
+The system achieves this by leveraging two new features introduced in Cosmos SDK version 0.50: [ABCI++](https://members.delphidigital.io/learn/abci) and [Vote Extensions](https://docs.cosmos.network/main/build/abci/vote-extensions). These features enable the chain's validators to submit arbitrary data, such as asset price information, into the block proposal process, which is then stored on-chain. This eliminates the possibility of price updates being censored or delayed due to chain congestion or other censorship attempts, ensuring the chain and its applications always have access to fresh and up-to-date price data.
+
+Once on-chain, application developers can then query and make use of the data in various ways, such as querying the chain directly through the command line or a frontend, or through the smart contract level.
+
+In Initia's case, Connect prices can also be relayed from the Initia L1 to any rollup through the rollup's [OPinit Bot](/home/core-concepts/interwoven-stack/opinit-framework/components/introduction). This eliminates the need for rollup teams to spend resources and time finding and integrating their own oracle provider.
+
+For more information on Connect, please see their [documentation](https://docs.skip.build/connect/introduction).

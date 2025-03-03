@@ -1,0 +1,871 @@
+---
+title: Interacting with InitiaDEX
+---
+
+## Creating New Pools
+
+InitiaDEX allows anyone to create a liquidity pool.
+
+```move
+public entry fun create_pair_script(
+    creator: &signer,
+    name: String,
+    symbol: String,
+    swap_fee_rate: Decimal128,
+    coin_a_weight: Decimal128,
+    coin_b_weight: Decimal128,
+    coin_a_metadata: Object<Metadata>,
+    coin_b_metadata: Object<Metadata>,
+    coin_a_amount: u64,
+    coin_b_amount: u64,
+)
+```
+
+| Parameter | Description |
+| --- | --- |
+| `name` | Name of the trading pair and the corresponding LP Token |
+| `symbol` | Symbol for the LP Token |
+| `swap_fee_rate` | Fee rate applied to swaps |
+| `coin_a_weight` and `coin_b_weight` | Balancer weights for the respective coins |
+| `coin_a_metadata` and `coin_b_metadata` | Metadata for each coin in the pair |
+| `coin_a_amount` and `coin_b_amount` | Initial amounts for each coin |
+
+*For more information on metadata, please refer to [obtaining metadata](/developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin#obtaining-metadata).*
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        initiad tx move execute 0x1 dex create_pair_script \
+            --args '["string:name", "string:symbol", "bigdecimal:0.001", "bigdecimal:0.8", "bigdecimal:0.2", "object:0x...", "object:0x...", "u64:100", "u64:100"]' \
+            --from [key-name] \
+            --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+            --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts
+        import {
+            bcs,
+            LCDClient,
+            MnemonicKey,
+            MsgExecute,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function main() {
+          const lcd = new LCDClient('[rest-url]', {
+              gasPrices: '0.15uinit',
+              gasAdjustment: '1.5',
+          });
+
+          const key = new MnemonicKey({
+              mnemonic: 'beauty sniff protect ...',
+          });
+          const wallet = new Wallet(lcd, key);
+
+          const msgs = [
+              new MsgExecute(
+              key.accAddress,
+              '0x1',
+              'dex',
+              'create_pair_script',
+              [],
+              [
+                  bcs.string().serialize('name'), // name
+                  bcs.string().serialize('symbol'), // symbol
+                  bcs.bigdecimal().serialize('0.003'), // swap fee
+                  bcs.bigdecimal().serialize('0.2'), // coin a weight
+                  bcs.bigdecimal().serialize('0.8'), // coin b weight
+                  bcs.object().serialize('0x...'), // coin a
+                  bcs.object().serialize('0x...'), // coin b
+                  bcs.u64().serialize(7500000000000), // coin a amount
+                  bcs.u64().serialize(3000000000000), // coin b amount
+              ].map(v => v.toBase64())
+              ),
+          ];
+
+          // sign tx
+          const signedTx = await wallet.createAndSignTx({ msgs });
+          // send(broadcast) tx
+          lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+          // {
+          //   height: 0,
+          //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+          //   raw_log: '[]'
+          // }
+        }
+
+        main();
+        ```
+    </Tab>
+</Tabs>
+
+## How to Provide Liquidity
+
+### Provide Liquidity
+
+`provide_liquidity` enables the users to provide liquidity of both `coin_a` and `coin_b` in the specific pair. In order to maximize liquidity, the user should provide in resonation with the current ratio. The Move module interface is as follows:
+
+```bash
+public entry fun provide_liquidity_script(
+    account: &signer,
+    pair: Object<Config>,
+    coin_a_amount_in: u64,
+    coin_b_amount_in: u64,
+    min_liquidity: Option<u64>
+)
+```
+- `pair`: The metadata or object address of pair.
+- `coin_a_amount_in` and `coin_b_amount_in`: Amount of token provided for `coin_a` and `coin_b`.
+- `min_liquidity`: Minimum amout of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
+
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 dex provide_liquidity_script \
+        --args '["object:0x...", "u64:100", "u64:100", "option<u64>:100"]' \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function main() {
+      const lcd = new LCDClient('[rest-url]', {
+          gasPrices: '0.15uinit',
+          gasAdjustment: '1.5',
+      });
+
+      const key = new MnemonicKey({
+          mnemonic: 'beauty sniff protect ...',
+      });
+      const wallet = new Wallet(lcd, key);
+
+      const msgs = [
+          new MsgExecute(
+          key.accAddress,
+          '0x1',
+          'dex',
+          'provide_liquidity_script',
+          [],
+          [
+              bcs.object().serialize('0x...'), // pair object
+              bcs.u64().serialize(7500000000000), // coin a amount
+              bcs.u64().serialize(3000000000000), // coin b amount
+              bcs.option(bcs.u64()).serialize(100000000), // min liquidity amount
+          ].map(v => v.toBase64())
+          ),
+      ];
+
+      // sign tx
+      const signedTx = await wallet.createAndSignTx({ msgs });
+      // send(broadcast) tx
+      lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+      // {
+      //   height: 0,
+      //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+      //   raw_log: '[]'
+      // }
+    }
+
+    main();
+    ```
+    </Tab>
+</Tabs>
+
+
+### Single Asset Provide Liquidity
+
+Instead of creating a pair, the user can provide a pool of only one token. Internally, the token will be swapped to another token and provide liquidity, so there can be fee and slippage in occurance. The Move function interface is as follows:
+
+```move
+public entry fun single_asset_provide_liquidity_script(
+    account: &signer,
+    pair: Object<Config>,
+    provide_coin: Object<Metadata>,
+    amount_in: u64,
+    min_liquidity: Option<u64>
+)
+```
+
+- `pair`: The metadata or object address of pair.
+- `provide_coin`: The metadata of the provided coin.
+- `amount_in`: The amount of provided coin.
+- `min_liquidity`: Minimum amout of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 dex single_asset_provide_liquidity_script \
+        --args '["object:0x...", "object:0x..", "u64:100", "option<u64>:100"]' \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function main() {
+      const lcd = new LCDClient('[rest-url]', {
+          gasPrices: '0.15uinit',
+          gasAdjustment: '1.5',
+      });
+
+      const key = new MnemonicKey({
+          mnemonic: 'beauty sniff protect ...',
+      });
+      const wallet = new Wallet(lcd, key);
+
+      const msgs = [
+          new MsgExecute(
+          key.accAddress,
+          '0x1',
+          'dex',
+          'single_asset_provide_liquidity_script',
+          [],
+          [
+              bcs.object().serialize('0x...'), // pair object
+              bcs.object().serialize('0x...'), // provide asset metadata
+              bcs.u64().serialize(3000000000000), // provide amount
+              bcs.option(bcs.u64()).serialize(100000000), // min liquidity amount
+          ].map(v => v.toBase64())
+          ),
+      ];
+
+      // sign tx
+      const signedTx = await wallet.createAndSignTx({ msgs });
+      // send(broadcast) tx
+      lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+      // {
+      //   height: 0,
+      //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+      //   raw_log: '[]'
+      // }
+    }
+
+    main();
+    ```
+    </Tab>
+</Tabs>
+
+## How to Withdraw Liquidity
+
+### Withdraw Liquidity
+
+`withdraw_liquidity` allows users to provide liquidity tokens and receive `coin_a` and `coin_b`. The Move module interface is as follows:
+
+```bash
+public entry fun withdraw_liquidity_script(
+    account: &signer,
+    pair: Object<Config>,
+    liquidity: u64,
+    min_coin_a_amount: Option<u64>,
+    min_coin_b_amount: Option<u64>,
+)
+```
+
+- `pair`: The metadata or object address of pair.
+- `liquidity`: Amount of liquidity token. 
+- `min_coin_a_amount` and `min_coin_b_amount` : Minimum amout of `coin_a` or `coin_b` to receive. In case that the actual value is smaller than `min_coin_a_amount` or `min_coin_b_amount`, the transaction will fail.
+
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 dex withdraw_liquidity_script \
+        --args '["object:0x...", "u64:100", "option<u64>:100", "option<u64>:100"]' \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function main() {
+    const lcd = new LCDClient('[rest-url]', {
+        gasPrices: '0.15uinit',
+        gasAdjustment: '1.5',
+    });
+
+    const key = new MnemonicKey({
+        mnemonic: 'beauty sniff protect ...',
+    });
+    const wallet = new Wallet(lcd, key);
+
+    const msgs = [
+        new MsgExecute(
+          key.accAddress,
+          '0x1',
+          'dex',
+          'withdraw_liquidity_script',
+          [],
+          [
+              bcs.object().serialize('0x...'), // pair object
+              bcs.u64().serialize(100000000), // liquidity
+              bcs.option(bcs.u64()).serialize(100000000), // min coin a amount
+              bcs.option(bcs.u64()).serialize(100000000), // min coin b amount
+          ].map(v => v.toBase64())
+        ),
+    ];
+
+    // sign tx
+    const signedTx = await wallet.createAndSignTx({ msgs });
+    // send(broadcast) tx
+    lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+    // {
+    //   height: 0,
+    //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+    //   raw_log: '[]'
+    // }
+    }
+
+    main();
+    ```
+    </Tab>
+</Tabs>
+
+## How to Swap Pair
+
+### Swap Simulation
+
+`swap_simulation` is a view function to estimate the return value of said swap. 
+
+```move
+#[view]
+/// Return swap simulation result
+public fun get_swap_simulation(
+    pair: Object<Config>,
+    offer_metadata: Object<Metadata>,
+    offer_amount: u64,
+): u64 // return amount
+```
+
+- `pair`: The metadata or object address of pair.
+- `offer_metadata`: Metadata of offered coin. 
+- `offer_amount`: Amount of offered coin.
+
+<Tabs>
+    <Tab title="curl">
+    ```bash
+    curl -X POST "[LCD_URI]/initia/move/v1/accounts/0x1/modules/dex/view_functions/get_swap_simulation" \
+        -H "accept: application/json" \
+        -H "Content-Type: application/json" \
+        -d "{ \"args\": [ \"[BCS_ENCODED_OBJECT, BCS_ENCODED_OBJECT, BCS_ENCODED_OFFER_AMOUNT]\" ]}"
+
+    #{
+    #  "data": "\"100\"",
+    #  "events": [],
+    #  "gas_used": "5699"
+    #}
+    ```
+    </Tab>
+    <Tab title="CLI">
+    ```bash
+    initiad query move view 0x1 dex get_swap_simulation \
+        --args '["object:0x...", "object:0x...", "u64:123"]' \
+        --node [rpc-url]:[rpc-port]
+    
+    # data: '"123"'
+    # events: []
+    # gas_used: "5699"
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import { LCDClient, bcs } from '@initia/initia.js';
+
+    const lcdUri = 'https://....';
+    const lcd = new LCDClient(lcdUri);
+
+    lcd.move
+    .view(
+        '0x1',
+        'dex',
+        'get_swap_simulation',
+        [],
+        [
+        bcs.object().serialize('0x...').toBase64(),
+        bcs.object().serialize('0x...').toBase64(),
+        bcs.u64().serialize(100).toBase64(),
+        ]
+    )
+    .then(console.log);
+
+    // { data: '"100"', events: [], gas_used: '21371' }
+    ```
+    </Tab>
+</Tabs>
+
+
+### Swap
+
+The Move module interface for swap function is as follows:
+
+```move
+public entry fun swap_script(
+    account: &signer,
+    pair: Object<Config>,
+    offer_coin: Object<Metadata>,
+    offer_coin_amount: u64,
+    min_return: Option<u64>,
+)
+```
+
+- `pair`: The metadata or object address of pair.
+- `offer_coin`: Metadata of offered coin. 
+- `offer_coin_amount`: Amount of offered coin.
+- `min_return`: Minimum return amount of coin. In case that the actual value is smaller than `min_return`, the transaction will fail.
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    initiad tx move execute 0x1 dex swap_script \
+        --args '["object:0x...", "object:0x...", "u64:100", "option<u64>:100"]' \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    import {
+        bcs,
+        LCDClient,
+        MnemonicKey,
+        MsgExecute,
+        Wallet,
+    } from '@initia/initia.js';
+
+    async function main() {
+        const lcd = new LCDClient('[rest-url]', {
+            gasPrices: '0.15uinit',
+            gasAdjustment: '1.5',
+        });
+
+        const key = new MnemonicKey({
+            mnemonic: 'beauty sniff protect ...',
+        });
+        const wallet = new Wallet(lcd, key);
+
+        const msgs = [
+            new MsgExecute(
+              key.accAddress,
+              '0x1',
+              'dex',
+              'swap_script',
+              [],
+              [
+                  bcs.object().serialize('0x...'), // pair object
+                  bcs.object().serialize('0x...'), // offer asset metadata
+                  bcs.u64().serialize(100000000), // offer amount
+                  bcs.option(bcs.u64()).serialize(100000000), // min return amount
+              ].map(v => v.toBase64())
+            ),
+        ];
+
+        // sign tx
+        const signedTx = await wallet.createAndSignTx({ msgs });
+        // send(broadcast) tx
+        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        // {
+        //   height: 0,
+        //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+        //   raw_log: '[]'
+        // }
+    }
+
+    main();
+    ```
+    </Tab>
+</Tabs>
+
+## How to Delegate LP Tokens
+
+### Whitelist a Pair
+
+To delegate your LP tokens to a validator, you need to whitelist the LP token first. We can use [MsgWhitelist](https://github.com/initia-labs/initia/blob/30d4e297f127c450626ebc06e99be0f263463cc8/proto/initia/move/v1/tx.proto#L299-L313) to whitelist the LP token. 
+
+<Tabs>
+    <Tab title="CLI">
+    ```json proposal.json
+    {
+      "messages": [
+        {
+          "@type": "/initia.move.v1.MsgWhitelist",
+          "authority": "init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3",
+          "metadata_lp": "init1law8gy5hj9mvtelssjnvg0amudfyn0y42kv4v04q4yl30pevmm2qhvvk8v",
+          "reward_weight": "1000000000000000000"
+        }
+      ],
+      "deposit": "100000000uinit",
+      "metadata": "uinit",
+      "summary": "it is awesome",
+      "title": "awesome proposal"
+    }
+    ```
+    ```bash
+    initiad tx gov submit-proposal proposal.json \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    async function getLastProposalId(lcd: LCDClient): Promise<number> {
+        const [proposals, pagination] = await lcd.gov.proposals()
+        if (proposals.length === 0) return 0
+        return proposals[proposals.length - 1].id
+    }
+
+    async function whitelistLP(lpMetadata: string) {
+        const msgWhiteList = new MsgWhitelist(
+            'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+            AccAddress.fromHex(lpMetadata),                // metadata
+            '1000000000000000000'                          // weight for reward (10^18)
+        )
+
+        const proposal = new MsgSubmitProposal(
+            [msgWhiteList],
+            '100000000uinit',           // deposit
+            user.key.accAddress,        // proposer
+            'uinit',                    // metadata
+            'awesome proposal',         // title
+            'it is awesome',            // summary
+            false                       // expedited
+        )
+
+        const proposalId = (await getLastProposalId(user.lcd)) + 1
+        
+        // if there's only one validator, it will exceed the quorum (cause we set as user = validator)
+        const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
+        const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
+        
+        await user.lcd.tx.broadcast(signedTx).catch(console.log)
+    }
+    ```
+    </Tab>
+</Tabs>
+
+
+### Delegate LP Tokens
+
+After whitelisting the LP token, you can delegate your LP tokens to a validator. We can use `MsgDelegate` to delegate LP tokens.
+
+<Tabs>
+    <Tab title="CLI">
+    ```bash
+    # initiad tx mstaking delegate [validator-addr] [amount]
+    initiad tx mstaking delegate initvaloper1.... 100move/ff5c7412979 \
+        --from [key-name] \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --node [rpc-url]:[rpc-port] --chain-id [chain-id]
+    ```
+    </Tab>
+    <Tab title="InitiaJS">
+    ```ts
+    async function delegateLP(
+        lpMetadata: string,
+        amount: number
+    ) {
+        // we can get lp denom from lp metadata by adding 'move/' prefix
+        // if lp metadata is ff5c7412979...
+        // then lp denom is move/ff5c7412979...
+        const msg = new MsgDelegate(
+            user.key.accAddress,                   // delegator
+            validator.key.valAddress,              // validator
+            `${amount}move/${lpMetadata}`          // lp token
+        )
+
+        const signedTx = await user.createAndSignTx({ msgs: [msg] })
+        await user.lcd.tx.broadcast(signedTx).catch(console.log)
+    }
+    ```
+    </Tab>
+</Tabs>
+
+## Example Code
+
+The following example demonstrates the above functions in a single script using InitiaJS.
+
+The script includes the following steps:
+1. Create a pair
+2. Provide liquidity
+3. Whitelist LP
+4. Delegate LP tokens to the validator
+5. Withdraw rewards from the validator
+
+To run the script, you need to install the following packages:
+
+```bash
+npm install @initia/initia.js @initia/initia.proto @noble/hashes @cosmjs/encoding bluebird
+```
+
+Also, we assume:
+- Local Initia node is running on `http://localhost:1317`.
+- The user and validator share the same mnemonic for simplicity.
+
+<CodeGroup>
+```ts create-and-provide-liquidity.ts
+// NOTE: In this example, we use the same mnemonic for both user and validator.
+//       The reason is that we want to simplify the example. 
+//       This will make it easier to whitelist during the proposal.
+//       It takes a bit of time to whitelist, so you can skip this step 3 and do it manually.
+
+// Some possible errors:
+// location=0000000000000000000000000000000000000000000000000000000000000001::object, code=524289 -> The object (pair) is already created, skip step 1
+// location=0000000000000000000000000000000000000000000000000000000000000001::object, code=393218 -> The object (pair) is not created yet, retry step 1
+
+import { AccAddress, bcs, LCDClient, MnemonicKey, MsgDelegate, MsgExecute, MsgSubmitProposal, MsgVote, MsgWhitelist, MsgWithdrawDelegatorReward, Wallet } from "@initia/initia.js"
+import { ProposalStatus, VoteOption } from "@initia/initia.proto/cosmos/gov/v1/gov"
+import { delay } from "bluebird"
+import { sha3_256 } from "@noble/hashes/sha3";
+import { concatBytes, toBytes } from "@noble/hashes/utils";
+import { toHex } from "@cosmjs/encoding"
+import { MsgUndelegate } from "vm/move/msgs/staking";
+
+const user = new Wallet(
+  new LCDClient('http://localhost:1317', {
+    gasPrices: '0.15uinit',
+    gasAdjustment: '1.75'
+  }),
+  new MnemonicKey({
+    // TODO: put your mnemonic here
+    mnemonic: 'mimic exist actress ...'
+  })
+)
+
+const validator = new Wallet(
+  new LCDClient('http://localhost:1317', {
+    gasPrices: '0.15uinit',
+    gasAdjustment: '1.75'
+  }),
+  new MnemonicKey({
+    // TODO: put your mnemonic here
+    mnemonic: 'mimic exist actress ...'
+  })
+)
+
+function coinMetadata(creator: string, symbol: string) {
+  const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
+  const addrBytes = bcs.address().serialize(creator).toBytes()
+  const seed = toBytes(symbol)
+  const bytes = new Uint8Array([...concatBytes(addrBytes, seed), OBJECT_FROM_SEED_ADDRESS_SCHEME])
+  const sum = sha3_256.create().update(bytes).digest()
+  return toHex(sum)
+}
+
+async function getLastProposalId(lcd: LCDClient): Promise<number> {
+  const [proposals, pagination] = await lcd.gov.proposals()
+  if (proposals.length === 0) return 0
+  return proposals[proposals.length - 1].id
+}
+
+async function getProposalStatus(lcd: LCDClient, proposalId: number): Promise<ProposalStatus | null> {
+  const proposal = await lcd.gov.proposal(proposalId)
+  return proposal ? proposal.status : null
+}
+
+async function checkProposalPassed(lcd: LCDClient, proposalId: number): Promise<void> {
+  for (;;) {
+    console.log(`checking proposal ${proposalId} status... in ${lcd.URL}/cosmos/gov/v1/proposals/${proposalId}`)
+    const status = await getProposalStatus(lcd, proposalId)
+    
+    if (status === ProposalStatus.PROPOSAL_STATUS_PASSED) return
+    if (status === ProposalStatus.PROPOSAL_STATUS_REJECTED) throw new Error(`proposal ${proposalId} rejected`)
+    if (status === ProposalStatus.PROPOSAL_STATUS_FAILED) throw new Error(`proposal ${proposalId} failed`)
+    await delay(5_000)
+  }
+}
+
+async function provideLiquidity(
+  lp_metadata: string,
+  coin_a_amount: number,
+  coin_b_amount: number,
+  min_liquidity: number | null
+) {
+  const msg = new MsgExecute(
+    user.key.accAddress,
+    '0x1',
+    'dex',
+    'provide_liquidity_script',
+    [],
+    [
+      bcs.string().serialize(lp_metadata).toBase64(),
+      bcs.u64().serialize(coin_a_amount).toBase64(),
+      bcs.u64().serialize(coin_b_amount).toBase64(),
+      bcs.option(bcs.u64()).serialize(min_liquidity).toBase64()
+    ]
+  )
+
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.lcd.tx.broadcast(signedTx).catch(console.log)
+}
+
+async function createPairScript(
+  sender: Wallet,
+  name: string,
+  symbol: string,
+  swap_fee_rate: number,
+  coin_a_weight: number,
+  coin_b_weight: number,
+  coin_a_metadata: string,
+  coin_b_metadata: string,
+  coin_a_amount: number,
+  coin_b_amount: number
+) {
+  const msg = new MsgExecute(
+    sender.key.accAddress,
+    '0x1',
+    'dex',
+    'create_pair_script',
+    [],
+    [
+      bcs.string().serialize(name).toBase64(),
+      bcs.string().serialize(symbol).toBase64(),
+      bcs.bigdecimal().serialize(swap_fee_rate).toBase64(),
+      bcs.bigdecimal().serialize(coin_a_weight).toBase64(),
+      bcs.bigdecimal().serialize(coin_b_weight).toBase64(),
+      bcs.object().serialize(coin_a_metadata).toBase64(),
+      bcs.object().serialize(coin_b_metadata).toBase64(),
+      bcs.u64().serialize(coin_a_amount).toBase64(),
+      bcs.u64().serialize(coin_b_amount).toBase64()
+    ]
+  )
+
+  const signedTx = await sender.createAndSignTx({ msgs: [msg] })
+  await sender.lcd.tx.broadcast(signedTx).catch(console.log)
+}
+
+async function whitelistLP(lpMetadata: string) {
+  const msgWhiteList = new MsgWhitelist(
+    'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+    AccAddress.fromHex(lpMetadata),                // metadata
+    '1000000000000000000'                          // weight for reward (10^18)
+  )
+
+  const proposal = new MsgSubmitProposal(
+    [msgWhiteList],
+    '100000000uinit',           // deposit
+    user.key.accAddress,        // proposer
+    'uinit',                    // metadata
+    'awesome proposal',         // title
+    'it is awesome',            // summary
+    false                       // expedited
+  )
+
+  const proposalId = (await getLastProposalId(user.lcd)) + 1
+  
+  // if there's only one validator, it will exceed the quorum (cause we set as user = validator)
+  const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
+  const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
+  
+  await user.lcd.tx.broadcast(signedTx).catch(console.log)
+  await checkProposalPassed(user.lcd, proposalId)
+}
+
+async function delegateLP(
+  lpMetadata: string,
+  amount: number
+) {
+  // we can get lp denom from lp metadata by adding 'move/' prefix
+  // if lp metadata is ff5c7412979...
+  // then lp denom is move/ff5c7412979...
+  const msg = new MsgDelegate(
+    user.key.accAddress,                   // delegator
+    validator.key.valAddress,              // validator
+    `${amount}move/${lpMetadata}` // lp token
+  )
+
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.lcd.tx.broadcast(signedTx).catch(console.log)
+}
+
+async function withdrawRewards() {
+  const msg = new MsgWithdrawDelegatorReward(
+    user.key.accAddress,
+    validator.key.valAddress
+  )
+
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.lcd.tx.broadcast(signedTx).catch(console.log
+}
+
+// NOTE: if you uncomment step 2, there will be an error
+//       because it takes a bit of time to create a pair
+async function main() {
+  console.log('user:', user.key.accAddress)
+  console.log('validator:', validator.key.valAddress)
+
+  // step 1: create pair script
+  await createPairScript(
+    user,
+    'init-usdc',
+    'init-usdc',
+    0.003,
+    0.5,
+    0.5,
+    coinMetadata('0x1', 'uinit'),
+    coinMetadata('0x1', 'uusdc'),
+    100_000_000,
+    100_000_000
+  )
+
+  const lpMetadata = coinMetadata(user.key.accAddress, 'init-usdc') // ff5c7412979176c5e7f084a6...
+  console.log('step 1 done, lp metadata:', lpMetadata)
+
+  // step 2 (optional): provide liquidity 
+  // you will get LP tokens when you create a pair, so you can skip this step
+  // await provideLiquidity(
+  //   lpMetadata,
+  //   100_000_000,
+  //   100_000_000,
+  //   100_000
+  // )
+  // console.log('step 2 provide liquidity done')
+
+  // step 3: whitelist LP
+  // this step could take a while (check your 'expedited_voting_period' time in genesis.json)
+  await whitelistLP(lpMetadata)
+  console.log('step 3 whitelist done')
+
+  // step 4: delegate LP tokens to the validator
+  await delegateLP(lpMetadata, 100_000)
+  console.log('step 4 delegate done')
+
+  // step 5: withdraw rewards
+  // await withdrawRewards()
+  // console.log('step 5 withdraw done')
+}
+
+if (require.main === module) {
+  main()
+}
+```
+</CodeGroup>

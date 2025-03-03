@@ -1,0 +1,10 @@
+---
+title: Transactions by Account
+api: GET https://lcd.minievm-2.initia.xyz/indexer/tx/v1/txs/by_account/{account}
+---
+
+This endpoint queries all transactions of a given account.
+
+<ParamField path="account" type="string" required="true">
+  The account address to retrieve transactions for
+</ParamField>

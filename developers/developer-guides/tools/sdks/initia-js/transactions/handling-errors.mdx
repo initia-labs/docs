@@ -1,0 +1,11 @@
+---
+title: Handling Errors
+---
+
+This page catalogs common errors encountered in the Initia network and how to handle them.
+
+| Error Code | Description | Solution |
+|------------|-------------|----------|
+| account 'init1...' not found | The account does not exist on the network. | Ensure the account exists on the network. |
+| failed to execute message; message index: 0: VM aborted: location=0000000000000000000000000000000000000000000000000000000000000001::fungible_asset, code=65540 | The transaction failed to execute due to insufficient funds. | Ensure the account has enough funds to execute the transaction. |
+| message": "VM error: status LINKER_ERROR of type Verification with message Cannot find | This may be due to the function has not been published on chain or by trying to call an invalid function as the result of either an incorrect account address, module name, or function name. This might not happen locally if the sources are available locally but have yet to be published on-chain. | There are many reasons, but you should check your account addresses, module names, and function names to determine that they’re correct and published. |

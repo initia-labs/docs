@@ -1,0 +1,195 @@
+---
+title: Using Connect Oracle
+---
+
+To query prices from Connect oracle on WasmVM, you need to utilize the queries provided by the [wasm-connect-query](https://github.com/initia-labs/wasm-connect-query) contract. Specifically, the contract provides 3 queries:
+
+1. `GetAllCurrencyPairs`: Returns all of the currently supported asset pairs
+2. `GetPrice`: Returns the price of a single asset pair
+3. `GetPrices`: Returns the price of multiple asset pairs
+
+## Integrating the Queries into Your Contract
+
+To make the queries from your own contracts, you can copy the `packages` folder found in the wasm-connect-query contract repository into your own project. This folder contains the necessary files and definitions to make the queries from your own contracts.
+
+
+See [here](https://github.com/initia-labs/examples/tree/main/wasmvm/examples) for an example contract that integrated the queries.
+
+The way that you use each query and the response structure returned from each is then outlined below.
+
+### GetAllCurrencyPairs
+
+This query takes no arguments and returns the list of all of the currently supported asset pairs.
+
+**Example Usage (Simplified)**
+
+```rust
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct GetAllCurrencyPairsResponse {
+    pub currency_pairs: Vec<CurrencyPairResponse>,
+}
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+#[allow(non_snake_case)]
+pub struct CurrencyPairResponse {
+    pub Base: String,
+    pub Quote: String,
+}
+
+
+pub fn example_get_all_curreny_pairs(deps: Deps) -> StdResult<GetAllCurrencyPairsResponse> {
+    let state = STATE.load(deps.storage)?;
+    let connect_addr = state.connect;
+    deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetAllCurrencyPairs {})?,
+    }))
+}
+```
+
+The response is of type `GetAllCurrencyPairsResponse` and is in the following form:
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "currency_pairs": [
+      {
+        "Base": "AAVE",
+        "Quote": "USD"
+      },
+      {
+        "Base": "ADA",
+        "Quote": "USD"
+      }
+    ]
+  }
+}
+```
+
+## GetPrice
+
+This query takes two arguments: `base` and `quote`, which represent the base and quote asset symbol strings of the asset pair you want to query. Note that the `base` and `quote` pair must be supported by Connect and be included in the `GetAllCurrencyPairsResponse`. For example, "BTC" and "USD" is a valid pair, but "BTC" and "AAVE" is not.
+
+**Example Usage (Simplified)**
+
+```rust
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct QuotePrice {
+    pub price: Uint256,
+    pub block_timestamp: Timestamp,
+    pub block_height: u64,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct GetPriceResponse {
+    pub price: QuotePrice,
+    pub nonce: u64,
+    pub decimals: u64,
+    pub id: u64,
+}
+
+pub fn example_get_price(deps: Deps) -> StdResult<GetPriceResponse> {
+    let state = STATE.load(deps.storage)?;
+    let connect_addr = state.connect;
+
+    let base_asset = "BTC";
+    let quote_asset = "USD";
+
+    deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetPrice {
+            base: base_asset.to_string(),
+            quote: quote_asset.to_string(),
+        })?,
+    }))
+}
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "price": {
+      "price": "5719601000",
+      "block_timestamp": "1720511108184124288",
+      "block_height": 2924966
+    },
+    "nonce": 1195438,
+    "decimals": 5,
+    "id": 2
+  }
+}
+```
+
+## GetPrices
+
+This query takes a list of asset pair IDs and returns the prices of the asset pairs. Unlike for `GetPrice`, the pair IDs are not an object symbol, but instead a single string in the format `{base}/{quote}`. For example, `BTC/USD` or `ETH/USD`.
+
+**Example Usage (Simplified)**
+
+```rust
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct QuotePrice {
+    pub price: Uint256,
+    pub block_timestamp: Timestamp,
+    pub block_height: u64,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct GetPriceResponse {
+    pub price: QuotePrice,
+    pub nonce: u64,
+    pub decimals: u64,
+    pub id: u64,
+}
+
+#[derive(Clone, Debug, PartialEq, Deserialize, Serialize, JsonSchema)]
+pub struct GetPricesResponse {
+    pub prices: Vec<GetPriceResponse>,
+}
+
+pub fn example_get_prices(deps: Deps) -> StdResult<GetPricesResponse> {
+    let state = STATE.load(deps.storage)?;
+    let connect_addr = state.connect;
+
+    let pair_ids = vec!["BTC/USD".to_string(), "ETH/USD".to_string()];
+
+    deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {
+        contract_addr: connect_addr.to_string(),
+        msg: to_json_binary(&connect_wasm::oracle::QueryMsg::GetPrices { pair_ids })?,
+    }))
+}
+```
+
+**Example Response**
+
+```json
+{
+  "data": {
+    "prices": [
+      {
+        "price": {
+          "price": "5720974000",
+          "block_timestamp": "1720511618058897916",
+          "block_height": 2925527
+        },
+        "nonce": 1195719,
+        "decimals": 5,
+        "id": 2
+      },
+      {
+        "price": {
+          "price": "3065580000",
+          "block_timestamp": "1720511618058897916",
+          "block_height": 2925527
+        },
+        "nonce": 1195719,
+        "decimals": 6,
+        "id": 59
+      }
+    ]
+  }
+}
+```

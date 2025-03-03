@@ -1,8 +1,10 @@
 ---
-title: Converting Coin Denoms Between EVM and Cosmos
+title: Token Denom Conversion
 ---
 
 [Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/cosmos-coin-to-erc20)
+
+This tutorial demonstrates how to convert between an hex-based ERC20 token address and a Cosmos coin denom.
 
 ## Prerequisites
 
@@ -31,7 +33,7 @@ For this tutorial, we will assume that we have an ERC20 token address `0x5E5f1a9
 First, we initialize the variable for the chain's LCD endpoint and the ERC20 token address.
 
 ```js src/index.js
-const lcdUrl = `https://lcd.stoneevm-16.initia.xyz`;
+const lcdUrl = `https://lcd.minievm-2.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 ```
 
@@ -76,7 +78,7 @@ If the denom is a valid Cosmos coin denom, the response just returns the token's
 The full code for the script, including the section to actually call the function is as follows:
 
 ```js src/index.js
-const lcdUrl = `https://lcd.stoneevm-16.initia.xyz`;
+const lcdUrl = `https://lcd.minievm-2.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 
 async function erc20ToCoinDenom(contractAddress) {

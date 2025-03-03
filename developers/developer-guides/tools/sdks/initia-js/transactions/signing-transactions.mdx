@@ -1,0 +1,198 @@
+---
+title: Signing Transactions
+---
+
+Sometimes, you may want to sign a transaction without broadcasting it. This is useful in situations where you want to sign a transaction and then broadcast it later. To showcase this, we will write a script that will sign a transaction, compute the transaction hash from the signed transaction, and compare the transaction hash to what we receive from broadcasting the transaction.
+
+First, we need to import the necessary classes and functions.
+
+- `Coins`: A class that represents a list of [Cosmos SDK coins](https://github.com/cosmos/cosmos-sdk/blob/main/types/coin.go).
+- `Fee`: A class that's used to define the fee for a transaction.
+- `LCDClient`: A class that represents a LCD client.
+- `MnemonicKey`: A class that's used to create a key from a mnemonic.
+- `MsgSend`: A class that represents a message to send.
+- `Wallet`: A class that represents a wallet.
+
+```ts
+import {
+  Coins,
+  Fee,
+  LCDClient,
+  MnemonicKey,
+  MsgSend,
+  Wallet,
+} from '@initia/initia.js';
+import crypto from 'crypto';
+```
+
+Next, we need to set up our environment variables. We will need the following:
+
+- `mnemonic`: The mnemonic of the account that will be signing the transaction.
+- `chainId`: The chain ID of the network you are working on.
+- `lcdUrl`: The URL of the Initia LCD.
+- `gasPrices`: The gas prices for the transaction.
+
+```ts
+const mnemonic = process.env.MNEMONIC;
+const chainId = process.env.CHAIN_ID || "initiation-2";
+const lcdUrl = process.env.LCD_URL || "https://lcd.testnet.initia.xyz";
+const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff"; // Will be INIT for mainnet
+```
+
+We will also need to create a helper function to convert the signed transaction data into a transaction hash hex string.
+
+```ts
+export function getTxHash(tx: Uint8Array): string {
+  const s256Buffer = crypto
+    .createHash(`sha256`)
+    .update(Buffer.from(tx))
+    .digest();
+  const txbytes = new Uint8Array(s256Buffer);
+  return Buffer.from(txbytes.slice(0, 32)).toString(`hex`).toUpperCase();
+}
+```
+
+Finally, we can create the main function to sign the transaction and compare the transaction hash. Let's call this function `offlineSingingTest`.
+
+To start, we will create two `LCDClient` instances. One that is connected to the network, and one that is offline. We will be using the offline LCD client to sign the transaction, and the online LCD client to broadcast the transaction to later compare.
+
+```ts
+const lcdOffline = new LCDClient(``, {
+  chainId: chainId,
+  gasPrices: gasPrices,
+});
+
+// lcd client that is connected
+const lcdOnline = new LCDClient(lcdUrl, {
+  chainId: chainId,
+  gasPrices: gasPrices,
+});
+```
+
+Next, we will generate the wallet client, as well as define the message, gas limit, and fee for the transaction. We need to define the later two because we will be signing the transaction completely offline without interacting with the network or any nodes.
+
+```ts
+// set up key
+const key = new MnemonicKey({
+  mnemonic: mnemonic,
+});
+const account = await lcdOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
+const wallet = new Wallet(lcdOffline, key);
+
+// msg to send
+const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');
+
+// use fixed fee to not estimate gas
+const gasLimit = 500000;
+const feeAmount = new Coins(lcdOffline.config.gasPrices)
+  .toArray()[0]
+  .mul(gasLimit);
+const fee = new Fee(gasLimit, new Coins([feeAmount]));
+```
+
+Once we have all of that, we will create the transaction by calling `wallet.createAndSignTx`. This function takes
+
+- `msgs`: The message to send.
+- `accountNumber`: The account number of the account that will be signing the transaction.
+- `sequence`: The sequence number of the account that will be signing the transaction.
+- `fee`: The fee for the transaction.
+
+and returns a signed transaction object. We will then convert the signed transaction object to a byte array and compute the transaction hash using the helper function we created earlier.
+
+```ts
+const signedTx = await wallet.createAndSignTx({
+  msgs: [msg],
+  accountNumber: account.getAccountNumber(),
+  sequence: account.getSequenceNumber(),
+  fee,
+});
+
+const signedTxBytes = signedTx.toBytes();
+const txHash = getTxHash(signedTxBytes);
+```
+
+Finally, if we want to broadcast the transaction to the network later, we can do so by using the `lcdOnline` client. If we then retrieve the transaction hash from the online LCD client and compare it to the transaction hash we computed earlier, we should see that they match.
+
+```ts
+const broadcastRes = await lcdOnline.tx.broadcastSync(signedTx);
+
+// true
+console.log(txHash === broadcastRes.txhash);
+```
+
+### Full Example
+
+```ts src/signing-transaction.ts
+import {
+  Coins,
+  Fee,
+  LCDClient,
+  MnemonicKey,
+  MsgSend,
+  Wallet,
+} from '@initia/initia.js';
+import crypto from 'crypto';
+
+const mnemonic = process.env.MNEMONIC;
+const chainId = process.env.CHAIN_ID || "initiation-2";
+const lcdUrl = process.env.LCD_URL || "https://lcd.testnet.initia.xyz";
+const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff"; // Will be INIT for mainnet
+
+export function getTxHash(tx: Uint8Array): string {
+  const s256Buffer = crypto
+    .createHash(`sha256`)
+    .update(Buffer.from(tx))
+    .digest();
+  const txbytes = new Uint8Array(s256Buffer);
+  return Buffer.from(txbytes.slice(0, 32)).toString(`hex`).toUpperCase();
+}
+
+async function offlineSingingTest() {
+  // lcd client that is not connected
+  const lcdOffline = new LCDClient(``, {
+    chainId: chainId,
+    gasPrices: gasPrices,
+  });
+
+  // lcd client that is connected
+  const lcdOnline = new LCDClient(lcdUrl, {
+    chainId: chainId,
+    gasPrices: gasPrices,
+  });
+
+  // set up key
+  const key = new MnemonicKey({
+    mnemonic: mnemonic,
+  });
+  const account = await lcdOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
+  const wallet = new Wallet(lcdOffline, key);
+
+  // msg to send
+  const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');
+
+  // use fixed fee to not estimate gas
+  const gasLimit = 500000;
+  const feeAmount = new Coins(lcdOffline.config.gasPrices)
+    .toArray()[0]
+    .mul(gasLimit);
+
+  const fee = new Fee(gasLimit, new Coins([feeAmount]));
+
+  const signedTx = await wallet.createAndSignTx({
+    msgs: [msg],
+    accountNumber: account.getAccountNumber(),
+    sequence: account.getSequenceNumber(),
+    fee,
+  });
+
+  const signedTxBytes = signedTx.toBytes();
+  const txHash = getTxHash(signedTxBytes);
+
+  const broadcastRes = await lcdOnline.tx.broadcastSync(signedTx);
+
+  // true
+  console.log(txHash === broadcastRes.txhash);
+}
+
+offlineSingingTest();
+```

@@ -1,0 +1,117 @@
+---
+title: Transactions
+---
+
+`initiad tx` command enables you to modify the chain state by submitting a transaction.
+
+Each modules provides a client-facing transaction interface.
+
+The general syntax for submitting a transaction is:
+
+```bash
+initiad tx [module-name] [action-name] [args] [flags]
+```
+
+## Send Tokens
+
+To send tokens from one account to another, you can use the following command:
+
+```bash
+export NODE_URL=https://rpc.testnet.initia.xyz
+export ACCOUNT_NAME=test-account
+export RECIPIENT_ADDRESS=init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
+export CHAIND_ID=initiation-2
+
+initiad tx bank send $ACCOUNT_NAME $RECIPIENT_ADDRESS 1000uinit \
+    --node $NODE_URL \
+    --from $ACCOUNT_NAME \
+    --chain-id $CHAIN_ID \
+    --gas auto \
+    --gas-adjustment 1.4
+```
+
+
+## Deploy Move module
+
+First, clone the initia-tutorials repository, which contains the read_write module we'll be using.
+
+```bash
+git clone git@github.com:initia-labs/initia-tutorials.git
+```
+
+Before building the module, you need to update the module owner's address to your own address in the `Move.toml` configuration file located in `./initia-tutorials/move/read_write`.
+
+Use the following command to parse your Initia address into bytes format, which is your HEX address.
+
+```bash
+initiad keys parse init138ntr4czqvrfzz8vvfsmdz0a36u8h6g5ct5cna
+
+# bytes: 89E6B1D70203069108EC6261B689FD8EB87BE914
+# human: init
+```
+
+Now, modify the `Move.toml` file to include your HEX address:
+
+```toml
+[package]
+name = "read_write"
+version = "0.0.0"
+
+[dependencies]
+InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
+
+[addresses]
+std =  "0x1"
+your_address = "0x89E6B1D70203069108EC6261B689FD8EB87BE914"
+```
+
+Build the module using either CLI:
+
+```bash
+initiad move build --path ./initia-tutorials/move/read_write
+```
+
+Then, publish the module to the Initia blockchain:
+
+```bash
+initiad move deploy \
+  --path ./initia-tutorials/move/read_write \
+  --upgrade-policy COMPATIBLE \
+  --from $ACCOUNT_NAME \
+  --gas auto --gas-adjustment 1.5 \
+  --gas-prices 0.15uinit \
+  --node $NODE_URL \
+  --chain-id $CHAIN_ID
+```
+
+**About the upgrade policy:**
+
+| Policy | Description |
+| --- | --- |
+|**COMPATIBLE**| Performs a compatibility check during upgrades, ensuring no public function changes or resource layout modifications. |
+|**IMMUTABLE**| Marks the modules as immutable, preventing any future upgrades. |
+
+To interact with the module, you can use the following command:
+
+```bash
+export MODULE_ADDRESS=0x89E6B1D70203069108EC6261B689FD8EB87BE914
+initiad query move view $MODULE_ADDRESS read_write read \
+  --node $NODE_URL
+
+# data: '"initial content"'
+# events: []
+# gas_used: "1166"
+
+initiad tx move execute $MODULE_ADDRESS read_write write \
+  --args '["string:new_string"]' \
+  --from $ACCOUNT_NAME \
+  --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+  --node $NODE_URL --chain-id $CHAIN_ID
+  
+initiad query move view $MODULE_ADDRESS read_write read \
+  --node $NODE_URL
+
+# data: '"new_string"'
+# events: []
+# gas_used: "1150"
+```

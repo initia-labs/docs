@@ -1,20 +1,18 @@
 ---
-title: Integrating Initia Usernames
+title: Querying Initia Usernames
 ---
-
-[Initia Usernames](/home/core-applications/initia-usernames)
 
 ## Module Addresses
 
 | Network           | Address |
 | ----------------- | ------- |
-| Testnet (initiation-1) | [0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a](https://scan.testnet.initia.xyz/initiation-1/modules/0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a/usernames) |
+| Testnet (initiation-2) | [0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a](https://scan.testnet.initia.xyz/initiation-2/modules/0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a/usernames) |
 
 ## Tutorials
 
 ### Getting Address from Usernames
 
-To retrieve an address from a username, the `get_address_from_name` view function is used. The function interface is as follows:
+To retrieve an address from a username, we use the `get_address_from_name` function. The function interface is as follows:
 
 ```move
 #[view]
@@ -49,7 +47,7 @@ lcd.move
 
 ### Getting Usernames from Address
 
-To retrieve a username from an address, the `get_name_from_address` view function is utilized:
+To retrieve a username from an address, we use the `get_name_from_address` function.
 
 ```move
 #[view]

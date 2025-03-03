@@ -1,0 +1,341 @@
+---
+title: Move IBC Hooks
+---
+
+The Move hook is an IBC middleware which is used to allow ICS-20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of use cases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
+The mechanism enabling this is a `memo` field on every ICS20 and ICS721 transfer packet as of IBC v3.4.0. Move hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a Move contract call. We now detail the memo format for Move contract calls, and the execution guarantees provided.
+
+# Move Contract Execution Format
+
+Before exploring the IBC metadata format, it is crucial to understand the hook data format. The Move `MsgExecute` is defined [here](https://github.com/initia-labs/initia/blob/main/x/move/types/tx.pb.go) and other types are defined [here](https://github.com/initia-labs/initia/blob/main/x/ibc-hooks/move-hooks/message.go) as the following type:
+
+```go
+// HookData defines a wrapper for Move execute message
+// and async callback.
+type HookData struct {
+ // Message is a Move execute message which will be executed
+ // at `OnRecvPacket` of receiver chain.
+ Message movetypes.MsgExecute `json:"message"`
+
+ // AsyncCallback is a callback message which will be executed
+ // at `OnTimeoutPacket` and `OnAcknowledgementPacket` of
+ // sender chain.
+ AsyncCallback *AsyncCallback `json:"async_callback,omitempty"`
+}
+
+// AsyncCallback is data wrapper which is required
+// when we implement async callback.
+type AsyncCallback struct {
+ // callback id should be issued form the executor contract
+ Id            uint64 `json:"id"`
+ ModuleAddress string `json:"module_address"`
+ ModuleName    string `json:"module_name"`
+}
+
+type MsgExecute struct {
+ // Sender is the that actor that signed the messages
+ Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+ // ModuleAddress is the address of the module deployer
+ ModuleAddress string `protobuf:"bytes,2,opt,name=module_address,json=moduleAddress,proto3" json:"module_address,omitempty"`
+ // ModuleName is the name of module to execute
+ ModuleName string `protobuf:"bytes,3,opt,name=module_name,json=moduleName,proto3" json:"module_name,omitempty"`
+ // FunctionName is the name of a function to execute
+ FunctionName string `protobuf:"bytes,4,opt,name=function_name,json=functionName,proto3" json:"function_name,omitempty"`
+ // TypeArgs is the type arguments of a function to execute
+ // ex) "0x1::BasicCoin::Initia", "bool", "u8", "u64"
+ TypeArgs []string `protobuf:"bytes,5,rep,name=type_args,json=typeArgs,proto3" json:"type_args,omitempty"`
+ // Args is the arguments of a function to execute
+ // - number: little endian
+ // - string: base64 bytes
+ Args [][]byte `protobuf:"bytes,6,rep,name=args,proto3" json:"args,omitempty"`
+}
+```
+
+So we detail where we want to get each of these fields from:
+- `Sender`: We cannot trust the sender of an IBC packet, the counter-party chain has full ability to lie about it. We cannot risk this sender being confused for a particular user or module address on Initia. So we replace the sender with an account to represent the sender prefixed by the channel and a Move module prefix. This is done by setting the sender to `Bech32(Hash(Hash("ibc-move-hook-intermediary") + channelID/sender))`, where the channelId is the channel id on the local chain.
+- `ModuleAddress`: This field should be directly obtained from the ICS-20 packet metadata
+- `ModuleName`: This field should be directly obtained from the ICS-20 packet metadata
+- `FunctionName`: This field should be directly obtained from the ICS-20 packet metadata
+- `TypeArgs`: This field should be directly obtained from the ICS-20 packet metadata
+- `Args`: This field should be directly obtained from the ICS-20 packet metadata.
+
+So our constructed move message that we execute will look like:
+
+```go
+msg := MsgExecuteContract{
+ // Sender is the that actor that signed the messages
+ Sender: "init1-hash-of-channel-and-sender",
+ // ModuleAddress is the address of the module deployer
+ ModuleAddress: packet.data.memo["move"]["message"]["module_address"],
+    // ModuleName is the name of module to execute
+ ModuleName: packet.data.memo["move"]["message"]["module_name"],
+    // FunctionName is the name of a function to execute
+ FunctionName: packet.data.memo["move"]["message"]["function_name"],
+ // TypeArgs is the type arguments of a function to execute
+ // ex) "0x1::BasicCoin::Initia", "bool", "u8", "u64"
+ TypeArgs: packet.data.memo["move"]["message"]["type_args"],
+ // Args is the arguments of a function to execute
+ // - number: little endian
+ // - string: base64 bytes
+ Args: packet.data.memo["move"]["message"]["args"]
+}
+```
+
+# ICS20 Packet Structure
+
+So given the details above, we propagate the implied ICS20 packet data structure. ICS20 is JSON native, so we use JSON for the memo format.
+
+```json
+{
+  //... other ibc fields that we don't care about
+  "data": {
+    "denom": "denom on counterparty chain (e.g. uatom)", // will be transformed to the local denom (ibc/...)
+    "amount": "1000",
+    "sender": "addr on counterparty chain", // will be transformed
+    "receiver": "ModuleAddr::ModuleName::FunctionName",
+    "memo": {
+      "move": {
+        // execute message on receive packet
+        "message": {
+            "module_address": "0x1",
+            "module_name": "dex",
+            "function_name": "swap",
+            "type_args": ["0x1::native_uinit::Coin", "0x1::native_uusdc::Coin"],
+            "args": ["base64 encoded bytes array"]
+        },
+        // optional field to get async callback (ack and timeout)
+        "async_callback": {
+            "id": 1,
+            "module_address": "0x1",
+            "module_name": "dex"
+        }
+      }
+    }
+  }
+}
+```
+
+An ICS20 packet is formatted correctly for movehooks if the following all hold:
+
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with value `"move"`
+- [x] `memo["move"]["message"]` has exactly five entries, `"module_address"`, `"module_name"`, `"function_name"`, `"type_args"` and `"args"`
+- [x] `receiver` == "" || `receiver` == `"module_address::module_name::function_name"`
+
+We consider an ICS20 packet as directed towards movehooks if all of the following hold:
+
+- [x] `memo` is not blank
+- [x] `memo` is valid JSON
+- [x] `memo` has at least one key, with name "move"
+
+If an ICS20 packet is not directed towards movehooks, movehooks doesn't do anything. If an ICS20 packet is directed towards movehooks, and is formatted incorrectly, then movehooks returns an error.
+
+# Execution Flow
+
+Pre Move hooks:
+
+- Ensure the incoming IBC packet is cryptographically valid
+- Ensure the incoming IBC packet is not timed out.
+
+In Move hooks, pre packet execution:
+
+- Ensure the packet is correctly formatted (as defined above)
+- Edit the receiver to be the hardcoded IBC module account
+
+In Move hooks, post packet execution:
+
+- Construct move message as defined before
+- Execute move message
+- if move message has error, return ErrAck
+- otherwise continue through middleware
+
+# Async Callback
+
+A contract that sends an IBC transfer, may need to listen for the ACK from that packet. To allow contracts to listen on the ack of specific packets, we provide Ack callbacks. The contract, which wants to receive ack callback, have to implement two functions.
+
+- ibc_ack
+- ibc_timeout
+
+```rust
+public entry fun ibc_ack(
+  account: &signer,
+  callback_id: u64,
+  success:     bool,
+)
+
+public entry fun ibc_timeout(
+  account: &signer,
+  callback_id: u64,
+)
+```
+
+Also when a contract make IBC transfer request, it should provide async callback data through memo field.
+
+- `memo['move']['async_callback']['id']`: the async callback id is assigned from the contract. so later it will be passed as argument of ibc_ack and ibc_timeout.
+- `memo['move']['async_callback']['module_address']`: The address of module which defines the callback function.
+- `memo['move']['async_callback']['module_name']`: The name of module which defines the callback function.
+
+# Tutorials
+
+This tutorial will guide you through the process of deploying a Move contract and calling it from another chain using IBC hooks.
+We will use IBC hook from  chain to call a Move contract on Initia chain in this example (L2 -> L1).
+
+## Step 1. Deploy a Move contract
+
+Write and deploy a simple token transfer contract to Initia.
+
+```move
+module deployer::example {
+  use initia_std::coin;
+  use initia_std::object::Object;
+  use initia_std::fungible_asset::Metadata;
+  public entry fun simple_transfer(
+      account: &signer, 
+      receiver: address,
+      metadata: Object<Metadata>,
+      amount: u64
+  ){
+      let token = coin::withdraw(account, metadata, amount);
+      coin::deposit(receiver, token);
+  }
+}
+```
+
+## Step 2. Update IBC hook ACL for the contract
+
+IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
+So, we need to set the ACL for the contract to prevent unauthorized access.
+
+```typescript
+// for initia L1, you can update ACL by submitting a proposal  
+const aclMsg = new MsgUpdateACL(
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+  'init14qcr2mczuzlav8z2uqm3d0zdw04nuhf2jgndc3', // contract address
+  true                                           // allow
+)
+
+const msgs = [new MsgSubmitProposal(
+  [aclMsg],
+  '100000000uinit',           // deposit
+  proposer.key.accAddress,    // proposer
+  'uinit',                    // metadata
+  'awesome proposal',         // title
+  'it is awesome',            // summary
+  false                       // expedited
+)]
+
+const signedTx = await proposer.createAndSignTx({ msgs })
+await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
+```
+
+If you want to update MiniMove ACL, you need to use `MsgExecuteMessages` in OPchild module.
+
+```typescript
+const aclMsg = new MsgUpdateACL(
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+  'init14qcr2mczuzlav8z2uqm3d0zdw04nuhf2jgndc3', // contract address
+  true                                           // allow
+)
+
+const msgs = [
+  new MsgExecuteMessages(
+    proposer.key.accAddress, 
+    [aclMsg]
+  )
+]
+const signedTx = await proposer.createAndSignTx({ msgs })
+await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
+```
+
+You can check the ACL list using the following command.
+
+```bash
+curl -X GET "https://lcd.testnet.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+```
+
+Response:
+
+```json
+{
+  "acls": [
+    {
+      "address": "init14qcr2mczuzlav8z2uqm3d0zdw04nuhf2jgndc3",
+      "allowed": true
+    }
+  ],
+  "pagination": {
+    "next_key": null,
+    "total": "1"
+  }
+}
+```
+
+## Step 3. Execute IBC Hooks Message
+
+After the contract is deployed and the ACL is set, we can execute the IBC hooks message to call the contract.
+
+```typescript
+import { bcs, Coin, Height, LCDClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
+
+
+function createHook(params: object) {
+  const hook = { move: { message: params } }
+  return JSON.stringify(hook)
+}
+
+async function main() {
+  const l1lcd = new LCDClient('https://lcd.testnet.initia.xyz', {
+      gasAdjustment: '1.75',
+      gasPrices: '0.15uinit'
+  })
+
+  const l2lcd = new LCDClient('https://lcd.minimove-2.initia.xyz', {
+      gasAdjustment: '1.75',
+      gasPrices: '0.15umin' // set l2 gas price
+  })
+
+  const sender = new Wallet(
+      l2lcd,
+      new MnemonicKey({
+          mnemonic: 'power elder gather acoustic ...' 
+      })
+  )
+
+  const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
+  const tokenPair = await l1lcd.ophost.tokenPairByL1Denom(1, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd' }
+
+  const ibcTrace = "transfer/" + "channel-0/" + tokenPair.l2_denom // IBC denom trace = `port_id/channel_id/denom`
+  const ibcDenomHash = await l1lcd.ibcTransfer.denomHash(ibcTrace) // IBC denom = `ibc/${denom_hash}`
+  const tokenMetadata = await l1lcd.move.metadata("ibc/" + ibcDenomHash) // 0x972188e32b2ccec557eed98bbea9d42a1a6dc270da9009926365deb7c49db7dd
+  const amount = 1000
+
+  const msgs = [
+      new MsgTransfer(
+          'transfer',
+          'channel-0',
+          new Coin(tokenPair.l2_denom, 10),
+          sender.key.accAddress,
+          "0xA830356F02E0BFD61C4AE03716BC4D73EB3E5D2A::example::simple_transfer", // IBC hook receiver = `ModuleAddress::ModuleName::FunctionName`
+          new Height(0, 0),
+          ((new Date().valueOf() + 100000) * 1000000).toString(),
+          createHook({
+              module_address: "0xA830356F02E0BFD61C4AE03716BC4D73EB3E5D2A", 
+              module_name: "example",                                       
+              function_name: "simple_transfer",                             
+              type_args: [],
+              args: [
+                  bcs.address().serialize(recipientAddress).toBase64(),
+                  bcs.address().serialize(tokenMetadata).toBase64(),
+                  bcs.u64().serialize(amount).toBase64(),
+              ],
+          })
+      )
+  ] 
+
+  const signedTx = await sender.createAndSignTx({ msgs });
+  await l2lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+}
+
+main()
+```

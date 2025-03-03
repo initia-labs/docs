@@ -1,0 +1,46 @@
+---
+title: Quickstart
+---
+
+For most of the following examples in this section, we will be assuming that the guides on each page are implemented as separate functions and files under a single project directory. To set up your project, follow the steps below.
+
+<Steps>
+  <Step title="Create Directory">
+    First, we need to create a directory to store our project files.
+    ```bash
+    mkdir initia-js-quickstart && cd initia-js-quickstart
+    ```
+  </Step>
+  <Step title="Initialize Project">
+    Next, we need to initialize our project.
+    ```bash
+    npm init && npm add -D typescript @types/node ts-node && npx tsc --init && mkdir src && echo 'async function example() { console.log("Running example!")}; example()' > src/quickstart.ts
+    ```
+  </Step>
+  <Step title="Install InitiaJS">
+    Now we need to install InitiaJS.
+    ```bash
+    npm add @initia/initia.js
+    ```
+  </Step>
+  <Step title="Test Installation">
+  Once we have installed InitiaJS, we can test our installation. First, we will replace the contents of `src/quickstart.ts` with the following code.
+  ```ts
+  import { LCDClient, Coin } from '@initia/initia.js';
+
+const lcdUrl = 'https://lcd.testnet.initia.xyz';
+const lcd: LCDClient = new LCDClient(lcdUrl, {});
+
+(async () => {
+  const chainId = await lcd.tendermint.chainId();
+  console.log(chainId);
+})();
+  ```
+  Next, we will run the script.
+  ```bash
+  npx ts-node src/quickstart.ts
+  ```
+
+  If you get `initiation-2` as the output, then your installation was successful!
+  </Step>
+</Steps>

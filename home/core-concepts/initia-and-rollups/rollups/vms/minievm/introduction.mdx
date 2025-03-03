@@ -1,0 +1,43 @@
+---
+title: MiniEVM Introduction
+---
+
+## Overview
+
+The MiniEVM is a variant of Initia's rollup framework with Ethereum Virtual Machine ([EVM](https://ethereum.org/en/developers/docs/evm/)) integration. With the MiniEVM, developers can deploy and interact with Solidity and other EVM-based smart contracts just as they would on other EVM networks. All of the tools such as wallets, explorers, and developer tools that users are familiar with also work out of the box with the MiniEVM.
+
+In addition to EVM compatibility, the MiniEVM provides a number of unique features, including:
+
+-  **Cosmos Integration**
+-  **Single Token Standard**
+-  **IBC Compatibility**
+
+## Cosmos Integration
+
+The MiniEVM interacts with the Cosmos blockchain through a set of custom precompiles. This integration allows the EVM to:
+
+-  **Read the Underlying Cosmos Chain State**: Access and read the state of the Cosmos blockchain directly from the EVM.
+-  **Send Cosmos Transactions**: Initiate and send transactions on the Cosmos blockchain.
+
+### Notable Features
+
+-  **Query Native Connect Price Data**: Retrieve price data from the native Connect oracle.
+-  **Query All Tokens Held by an Account**: Obtain a comprehensive list of tokens held by a specific account.
+
+## Single Token Standard
+
+The MiniEVM revolves around a single token standard by implementing a custom Bank Interface that provides an ERC20 interface for all tokens on the chain. This includes:
+
+-  **Native Tokens**: Tokens that are native to the Cosmos blockchain.
+-  **Fee Denom Tokens**: Tokens used for transaction fees.
+-  **Tokens Bridged via IBC**: Tokens transferred through the Inter-Blockchain Communication (IBC) protocol.
+-  **ERC20 Tokens Created on the Rollup**: Standard ERC20 tokens created within the rollup framework.
+
+### Benefits
+
+-  **Unified Balance Querying**: Ability to query all tokens held by an account in a single query.
+-  **Simplified Token Handling**: No need to handle different token standards in smart contracts, making development more straightforward.
+
+---
+
+For more detailed information, please refer to the specific sections of this documentation.
