@@ -1,11 +1,12 @@
 ---
-title: Deploying Rollups with Weave
+title: Deploying Rollups
+description: Learn how to deploy your own rollup on Initia
 ---
 
 <Steps>
 <Step title="Install Weave">
 
-First, you need to install the [Weave CLI](https://github.com/initia-labs/weave)
+To get started, you need to first install our [Weave CLI](https://github.com/initia-labs/weave).
 
 <CodeGroup>
 ```bash macOS
@@ -83,6 +84,11 @@ Open this in Chrome is recommended because some browsers may not support localho
 ```
 
 At this point, you can now interact with your rollup, send transactions, and deploy contracts on the rollup. However, for full functionality, you will need to also run the OPinit Executor and Challenger Bots as well as the IBC Relayer.
+
+<Note>
+At this stage, you can interact with your rollup and deploy contracts, as well as send transactions. However, to enable bridging INIT and other tokens from L1, setting up DA, and more, you will also need to run the OPinit Executor, Challenger Bots, and the IBC Relayer. To do this, follow the steps below.
+</Note>
+
 </Step>
 
 <Step title="Start the OPinit Executor">

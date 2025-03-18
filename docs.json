@@ -130,7 +130,7 @@
           },
           {
             "group": "Rollups",
-            "pages": ["nodes-and-rollups/deploying-rollups/deploy-with-weave"]
+            "pages": ["nodes-and-rollups/deploying-rollups/deploy"]
           },
           {
             "group": "Nodes",
@@ -335,11 +335,6 @@
                 ]
               }
             ]
-          },
-          {
-            "group": "FAQs",
-            "icon": "question-circle",
-            "pages": ["developers/faqs/address-derivation"]
           }
         ]
       },
