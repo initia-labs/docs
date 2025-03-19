@@ -137,7 +137,10 @@
             "pages": [
               {
                 "group": "Running Initia L1 Nodes",
-                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave"]
+                "pages": [
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad",
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave"
+                ]
               },
               {
                 "group": "Running a Validator",
