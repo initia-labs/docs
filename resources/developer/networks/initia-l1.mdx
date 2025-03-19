@@ -2,11 +2,23 @@
 title: Initia L1 Networks
 ---
 
-
-<Tabs>
-<Tab title="Testnet (initiation-2)">
 ## Network Details
 
+<Tabs>
+<Tab title="Mainnet (interwoven-1)">
+| Item                     | Value                                                                       |
+|--------------------------|-----------------------------------------------------------------------------|
+| Chain ID                 | `interwoven-1`                                                              |
+| LCD                      | https://lcd.initia.xyz        |
+| RPC                      | https://rpc.initia.xyz        |
+| Genesis Hash (sha256sum) | `f2521b5130e0b26ff47d6155e42e3a0e1e3e1a2676727a317ba34069f3650955`          |
+| Genesis File             | https://storage.googleapis.com/init-common-genesis/interwoven-1/genesis.json |
+| Peers                    | `80e8870743458d1a28ce9f9da939e4ddcb7cedfe@34.142.172.124:26656` |
+| Seeds                    | `80e8870743458d1a28ce9f9da939e4ddcb7cedfe@34.142.172.124:26656` |
+| Address Book             | TBA |
+
+</Tab>
+<Tab title="Testnet (initiation-2)">
 | Item                     | Value                                                                       |
 |--------------------------|-----------------------------------------------------------------------------|
 | Chain ID                 | `initiation-2`                                                              |
@@ -17,35 +29,50 @@ title: Initia L1 Networks
 | Peers                    | `3715cdb41efb45714eb534c3943c5947f4894787@34.143.179.242:26656` |
 | Seeds                    | `3715cdb41efb45714eb534c3943c5947f4894787@34.143.179.242:26656` |
 | Address Book             | https://storage.googleapis.com/init-common-addrbook/initiation-2/addrbook.json |
+</Tab>
+</Tabs>
 
 ## Network Parameters
 
-| Item                     | Value                                                                       |
-|--------------------------|-----------------------------------------------------------------------------|
-| OPinit Finalization Period                 | 1 hour                                                            |
-| Minimum Gas Prices            | 0.015uinit                                                        |
-| Block Gas Limit | 200,000,000 |
-| Governance Voting Period | 2 days |
-| Staking Unbonding Period | 7 days |
-
-## Chain Versions
-
-| Chain Version            | Block Height Range                                                          |
-|--------------------------|-----------------------------------------------------------------------------|
-| [initiad v0.5.3](https://github.com/initia-labs/initia/tree/v0.5.3) | 0 - 523266 |
-| [initiad v0.5.7](https://github.com/initia-labs/initia/tree/v0.5.7) | 523267 -   |
+<Tabs>
+  <Tab title="Mainnet (interwoven-1)">
+    | Item                        | Value         |
+    |----------------------------|---------------|
+    | Minimum Gas Prices         | 0.015uinit    |
+    | Block Gas Limit           | 200,000,000    |
+    | Staking Unbonding Period   | 21 days       |
+    | Governance Voting Period   | 7 days        |
+    | OPinit Finalization Period | 7 days        |
+  </Tab>
+  <Tab title="Testnet (initiation-2)">
+    | Item                        | Value         |
+    |----------------------------|---------------|
+    | Minimum Gas Prices         | 0.015uinit    |
+    | Block Gas Limit           | 200,000,000    |
+    | Staking Unbonding Period   | 7 days        |
+    | Governance Voting Period   | 2 days        |
+    | OPinit Finalization Period | 1 hour        |
+  </Tab>
+</Tabs>
 
 ## Endpoints
 
-You can find a number of RPCs, APIs, and gRPCs for the network in the [Initia Registry](https://github.com/initia-labs/initia-registry) repository. Link for initiation-2 is [here](https://github.com/initia-labs/initia-registry/tree/main/testnets/initia).
+You can find a number of RPCs, APIs, and gRPCs for the network in the [Initia Registry](https://github.com/initia-labs/initia-registry) repository.
+
+- [Mainnet (interwoven-1)](https://github.com/initia-labs/initia-registry/blob/main/mainnets/initia/chain.json)
+- [Testnet (initiation-2)](https://github.com/initia-labs/initia-registry/blob/main/testnets/initia/chain.json)
 
 ## Explorers
 
+<Tabs>
+<Tab title="Mainnet (interwoven-1)">
+
+- [InitiaScan](https://scan.initia.xyz)
+
+</Tab>
+<Tab title="Testnet (initiation-2)">
+
 - [InitiaScan](https://scan.testnet.initia.xyz)
-
-## Tools
-
-- [Faucet](https://faucet.testnet.initia.xyz)
 
 </Tab>
 </Tabs>

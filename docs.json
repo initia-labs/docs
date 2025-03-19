@@ -98,15 +98,6 @@
                 ]
               },
               {
-                "group": "Minitswap",
-                "icon": "rotate",
-                "pages": [
-                  "home/core-concepts/minitswap/introduction",
-                  "home/core-concepts/minitswap/architecture",
-                  "home/core-concepts/minitswap/terminology"
-                ]
-              },
-              {
                 "group": "VIP Program",
                 "icon": "award",
                 "pages": [
@@ -116,8 +107,21 @@
                   "home/core-concepts/vip/timelines",
                   "home/core-concepts/vip/scoring"
                 ]
+              },
+              {
+                "group": "Minitswap",
+                "icon": "rotate",
+                "pages": [
+                  "home/core-concepts/minitswap/introduction",
+                  "home/core-concepts/minitswap/architecture",
+                  "home/core-concepts/minitswap/terminology"
+                ]
               }
             ]
+          },
+          {
+            "group": "Tools",
+            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
           }
         ]
       },
@@ -227,7 +231,7 @@
             ]
           },
           {
-            "group": "Tools",
+            "group": "Developer Tools",
             "icon": "screwdriver-wrench",
             "pages": [
               {
