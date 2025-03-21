@@ -2,19 +2,19 @@
 title: Challenger
 ---
 
-The Challenger is a process distinct from the Executor, responsible for monitoring the Executor's output proposals and challenging any invalid submissions. This ensures the integrity of rollup's state and prevents malicious actions by the Executor. The Challenger plays a key role in validating and processing various operations such as deposits, oracle updates, and outputs between the Initia (L1) and rollup (L2) blockchains.
+The Challenger is a process distinct from the Executor, responsible for monitoring the Executor's output proposals and challenging any invalid submissions. This ensures the integrity of rollup's state and prevents malicious actions by the Executor.
 
 The primary responsibilities of the Challenger include:
 
 1. **Verifying Deposits**:
-- Ensure that the `MsgInitiateTokenDeposit` event is relayed correctly to the `MsgFinalizeTokenDeposit` event.
-- Check if `MsgInitiateTokenDeposit` was relayed within the required time frame.
+	- Ensure that the `MsgInitiateTokenDeposit` event is relayed correctly to the `MsgFinalizeTokenDeposit` event.
+	- Check if `MsgInitiateTokenDeposit` was relayed within the required time frame.
 2. **Verifying Oracle Updates**:
-- Confirm that Oracle data is correctly relayed to `MsgUpdateOracle`.
-- Ensure that Oracle updates are processed on time.
+	- Confirm that Oracle data is correctly relayed to `MsgUpdateOracle`.
+	- Ensure that Oracle updates are processed on time.
 3. **Validating Outputs**:
-- Check that the `OutputRoot` submitted with `MsgProposeOutput` is accurate.
-- Ensure that the next `MsgProposeOutput` is submitted within the expected time frame.
+	- Check that the `OutputRoot` submitted with `MsgProposeOutput` is accurate.
+	- Ensure that the next `MsgProposeOutput` is submitted within the expected time frame.
 
 ## Detailed Architecture
 
@@ -91,10 +91,6 @@ type Oracle struct {
 	Timeout   bool      `json:"timeout"`
 }
 ```
-
-### Batch Challenges
-
-<Warning>Batch data is not verified by the challenger bot.</Warning>
 
 ## Rollback Challenges (TBA)
 

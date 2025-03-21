@@ -3,9 +3,9 @@
   "theme": "mint",
   "name": "Initia Docs",
   "colors": {
-    "primary": "#aaaaaa",
-    "light": "#ffffff",
-    "dark": "#555555"
+    "primary": "#676767",
+    "light": "#898989",
+    "dark": "#4349FF"
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -74,18 +74,20 @@
                           "home/core-concepts/interwoven-stack/opinit-framework/components/executor",
                           "home/core-concepts/interwoven-stack/opinit-framework/components/challenger"
                         ]
-                      },
-                      {
-                        "group": "Action Flows",
-                        "pages": [
-                          "home/core-concepts/interwoven-stack/opinit-framework/action-flows/token-transfers",
-                          "home/core-concepts/interwoven-stack/opinit-framework/action-flows/output-submission",
-                          "home/core-concepts/interwoven-stack/opinit-framework/action-flows/oracle-data-relay",
-                          "home/core-concepts/interwoven-stack/opinit-framework/action-flows/submitting-to-da-layer"
-                        ]
                       }
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Vested Interest Program",
+                "icon": "award",
+                "pages": [
+                  "home/core-concepts/vip/introduction",
+                  "home/core-concepts/vip/architecture",
+                  "home/core-concepts/vip/gauges",
+                  "home/core-concepts/vip/timelines",
+                  "home/core-concepts/vip/scoring"
                 ]
               },
               "home/core-concepts/initiadex",
@@ -105,19 +107,12 @@
                   "home/core-concepts/minitswap/architecture",
                   "home/core-concepts/minitswap/terminology"
                 ]
-              },
-              {
-                "group": "VIP Program",
-                "icon": "award",
-                "pages": [
-                  "home/core-concepts/vip/introduction",
-                  "home/core-concepts/vip/architecture",
-                  "home/core-concepts/vip/gauges",
-                  "home/core-concepts/vip/timelines",
-                  "home/core-concepts/vip/scoring"
-                ]
               }
             ]
+          },
+          {
+            "group": "Tooling",
+            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
           }
         ]
       },
@@ -207,14 +202,14 @@
             "group": "Integrating with Initia Apps",
             "pages": [
               {
-                "group": "VIP",
-                "icon": "award",
-                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
-              },
-              {
                 "group": "DEX",
                 "icon": "swap",
                 "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+              },
+              {
+                "group": "VIP",
+                "icon": "award",
+                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
               },
               {
                 "group": "Usernames",
@@ -341,16 +336,7 @@
           {
             "group": "Developer Resources",
             "pages": [
-              {
-                "group": "Networks",
-                "icon": "globe",
-                "pages": [
-                  "resources/developer/networks/initia-l1",
-                  "resources/developer/networks/minimove",
-                  "resources/developer/networks/miniwasm",
-                  "resources/developer/networks/minievm"
-                ]
-              },
+              "resources/developer/network-information",
               {
                 "group": "Deployed Contracts",
                 "icon": "file-code",
@@ -415,19 +401,6 @@
     "decoration": "grid",
     "color": {
       "dark": "#060606"
-    }
-  },
-  "navbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "https://discord.gg/initia"
-      }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
     }
   },
   "footer": {

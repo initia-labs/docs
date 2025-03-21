@@ -4,24 +4,21 @@ title: OPinit Bridge
 
 ## Overview
 
-The OPinit Bridge is an implementation of the optimistic rollup bridge, implemented as two Cosmos SDK modules:
-
--  **OPchild Module**
--  **OPhost Module**
+The OPinit Bridge is an implementation of the optimistic rollup bridge, implemented as two Cosmos SDK modules; the **OPchild Module** and the **OPhost Module**.
 
 ## OPhost Module
 
-The OPhost Module is embedded into the Initia L1 chain. This module is responsible for:
+The OPhost Module is integrated into the Initia L1 chain. This module is responsible for:
 
 -  **Bridge Management:** Creating, updating, and managing bridges between Initia L1 and rollups.
 -  **Output Proposal Handling:** Managing and finalizing L2 output proposals.
 
 ## OPchild Module
 
-The OPchild Module acts as a counter-party to the OPhost Module and is integrated into all rollup implementations. This module is responsible for:
+The OPchild Module acts as a counter-party to the OPhost Module and is integrated into all Interwoven Rollup implementations. This module is responsible for:
 
 -  **Operator Management:** Adding, removing, and managing operators for a given rollup.
 -  **Bridge Message Execution:** Processing messages received from the Initia L1.
 -  **Oracle Updates:** Managing oracle price feed updates relayed by the OPinit Executor.
 
-Actions related to these two modules are normally handled by the [OPinit Bot Executor](/home/core-concepts/interwoven-stack/opinit-framework/components/executor).
+Actions related to both of these two modules are normally handled by the [OPinit Bot Executor](/home/core-concepts/interwoven-stack/opinit-framework/components/executor).
