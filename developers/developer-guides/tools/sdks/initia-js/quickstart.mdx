@@ -26,13 +26,13 @@ For most of the following examples in this section, we will be assuming that the
   <Step title="Test Installation">
   Once we have installed InitiaJS, we can test our installation. First, we will replace the contents of `src/quickstart.ts` with the following code.
   ```ts
-  import { LCDClient, Coin } from '@initia/initia.js';
+  import { RESTClient, Coin } from '@initia/initia.js';
 
-const lcdUrl = 'https://lcd.testnet.initia.xyz';
-const lcd: LCDClient = new LCDClient(lcdUrl, {});
+const restUrl = 'https://rest.testnet.initia.xyz';
+const rest: RESTClient = new RESTClient(restUrl, {});
 
 (async () => {
-  const chainId = await lcd.tendermint.chainId();
+  const chainId = await rest.tendermint.chainId();
   console.log(chainId);
 })();
   ```

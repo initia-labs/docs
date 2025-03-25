@@ -209,7 +209,7 @@ const msgs = [
 ]
 const signedTx = await proposer.createAndSignTx({ msgs })
 try {
-  const result = await proposer.lcd.tx.broadcast(signedTx)
+  const result = await proposer.rest.tx.broadcast(signedTx)
   console.log('Transaction successful:', result)
 } catch (error) {
   console.error('Transaction failed:', error)
@@ -217,7 +217,7 @@ try {
 }
 
 ```bash
-curl -X GET "https://lcd.minievm-2.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+curl -X GET "https://rest.minievm-2.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
 ```
 
 Response:
@@ -244,7 +244,7 @@ After the contract is deployed and the ACL is set, we can execute the IBC hooks 
 
 
 ```typescript
-import { Coin, Height, LCDClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
+import { Coin, Height, RESTClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
 import { ethers } from "ethers";
 import * as fs from 'fs'
 
@@ -254,13 +254,13 @@ function createHook(params: object) {
 }
 
 async function main() {
-    const l1lcd = new LCDClient('https://lcd.testnet.initia.xyz', {
+    const l1rest = new RESTClient('https://rest.testnet.initia.xyz', {
         gasAdjustment: '1.75',
-        gasPrices: '0.15uinit'
+        gasPrices: '0.015uinit'
     })
 
     const sender = new Wallet(
-        l1lcd,
+        l1rest,
         new MnemonicKey({
             mnemonic: '<your-mnemonic-here>'
         })
@@ -296,7 +296,7 @@ async function main() {
     ]
 
     const signedTx = await sender.createAndSignTx({ msgs });
-    await l1lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+    await l1rest.tx.broadcastSync(signedTx).then(res => console.log(res));
 }
 
 main()

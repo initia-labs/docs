@@ -1,0 +1,273 @@
+---
+title: Token Factory
+---
+
+The TokenFactory module enables any account to create a new token with the following naming convention: `factory/{creator address}/{subdenom}`. 
+
+By namespace-separating tokens with the creator's address, token minting becomes permissionless, eliminating the need to resolve name collisions. 
+
+A single account can create multiple denominations by providing a unique subdenom for each new denomination. 
+
+Upon creation, the original creator is granted "admin" privileges over the asset. This allows them to:
+
+- Minting the token to any account
+
+- Burning the token from any account
+
+- Transferring the token between any two accounts
+
+- Changing the admin (in the future, more admin capabilities may be added)
+
+
+## Tutorial
+
+#### Create Denom
+
+Creates a denom in the format `factory/{creator address}/{subdenom}` with the specified creator address and subdenom. Subdenoms can only contain the characters `[a-zA-Z0-9./]`.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        minitiad tx tokenfactory create-denom [sub-denom] \
+            --from test-account \
+            --gas auto --gas-adjustment 1.5 \
+            --gas-prices [gas-price] \
+            --node [rpc-url]:[rpc-port] \
+            --chain-id [chain-id]
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts
+        import {
+            RESTClient,
+            MnemonicKey,
+            MsgCreateDenom,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function main() {
+            const reset = new RESTClient('[rest-url]', {
+                gasPrices: '0.015uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic: 'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(reset, key);
+
+            const msgs = [new MsgCreateDenom(key.accAddress, 'udenom')];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            reset.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+            //   raw_log: '[]'
+            // }
+        }
+
+        main();
+        ```
+    </Tab>
+</Tabs>
+
+#### Mint
+
+Only the current admin can mint a specific denom. By default, the creator of the denom is its first admin.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        minitiad tx tokenfactory mint [amount] [to-address] \
+            --from test-account \
+            --gas auto --gas-adjustment 1.5 \
+            --gas-prices [gas-price] \
+            --node [rpc-url]:[rpc-port] \
+            --chain-id [chain-id]
+            
+        # amount example
+        # 10000factory/init1.../udenom
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts
+        import {
+        Coin,
+        RESTClient,
+        MnemonicKey,
+        MsgMint,
+        Wallet,
+        } from '@initia/initia.js';
+
+        async function main() {
+            const reset = new RESTClient('[rest-url]', {
+                gasPrices: '0.015uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic: 'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(reset, key);
+
+            const msgs = [
+                new MsgMint(
+                key.accAddress,
+                new Coin(
+                    `factory/${key.accAddress}/udenom`, // factory/creatoraddr/subdenom
+                    1000
+                ),
+                key.accAddress
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            reset.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+            //   raw_log: '[]'
+            // }
+            }
+
+        main();
+        ```
+    </Tab>
+</Tabs>
+
+#### Burn
+
+Only the current admin can burn a specific denom.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        minitiad tx tokenfactory burn [amount] [burn-from-address] \
+            --from test-account \
+            --gas auto --gas-adjustment 1.5 \
+            --gas-prices [gas-price] \
+            --node [rpc-url]:[rpc-port] \
+            --chain-id [chain-id]
+        
+        # amount example
+        # 10000factory/init1.../udenom
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts
+        import {
+            Coin,
+            RESTClient,
+            MnemonicKey,
+            MsgBurn,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function main() {
+            const reset = new RESTClient('[rest-url]', {
+                gasPrices: '0.015uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic: 'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(reset, key);
+
+            const msgs = [
+                new MsgBurn(
+                key.accAddress,
+                new Coin(
+                    `factory/${key.accAddress}/udenom`, // factory/creatoraddr/subdenom
+                    1000
+                ),
+                key.accAddress // burn from
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            reset.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+            //   raw_log: '[]'
+            // }
+        }
+
+        main();
+        ```
+    </Tab>
+</Tabs>
+
+#### Change Admin
+
+Allows the current admin to transfer admin privileges for the denom to another account.
+
+<Tabs>
+    <Tab title="CLI">
+        ```bash
+        minitiad tx tokenfactory change-admin [denom] [new-admin] \
+            --from test-account \
+            --gas auto --gas-adjustment 1.5 \
+            --gas-prices [gas-price] \
+            --node [rpc-url]:[rpc-port] \
+            --chain-id [chain-id]
+        
+        # denom example
+        # factory/init1.../udenom
+        ```
+    </Tab>
+    <Tab title="InitiaJS">
+        ```ts
+        import {
+            Coin,
+            RESTClient,
+            MnemonicKey,
+            MsgBurn,
+            Wallet,
+        } from '@initia/initia.js';
+
+        async function main() {
+            const reset = new RESTClient('[rest-url]', {
+                gasPrices: '0.015uinit',
+                gasAdjustment: '1.5',
+            });
+
+            const key = new MnemonicKey({
+                mnemonic: 'beauty sniff protect ...',
+            });
+            const wallet = new Wallet(reset, key);
+
+            const msgs = [
+                new MsgBurn(
+                key.accAddress,
+                new Coin(
+                    `factory/${key.accAddress}/udenom`, // factory/creatoraddr/subdenom
+                    1000
+                ),
+                key.accAddress // burn from
+                ),
+            ];
+
+            // sign tx
+            const signedTx = await wallet.createAndSignTx({ msgs });
+            // send(broadcast) tx
+            reset.tx.broadcastSync(signedTx).then(res => console.log(res));
+            // {
+            //   height: 0,
+            //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
+            //   raw_log: '[]'
+            // }
+        }
+
+        main();
+        ```
+    </Tab>
+</Tabs>

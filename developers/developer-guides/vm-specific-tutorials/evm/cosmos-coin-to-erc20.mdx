@@ -33,7 +33,7 @@ For this tutorial, we will assume that we have an ERC20 token address `0x5E5f1a9
 First, we initialize the variable for the chain's LCD endpoint and the ERC20 token address.
 
 ```js src/index.js
-const lcdUrl = `https://lcd.minievm-2.initia.xyz`;
+const restUrl = `https://rest.minievm-2.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 ```
 
@@ -44,7 +44,7 @@ To actually do the conversion, we will be using the LCD's `/minievm/evm/v1/denom
 ```js src/index.js
 // previous code
 async function erc20ToCoinDenom(contractAddress) {
-  const response = await fetch(`${lcdUrl}/minievm/evm/v1/denoms/${contractAddress}`);
+  const response = await fetch(`${restUrl}/minievm/evm/v1/denoms/${contractAddress}`);
   const data = await response.json();
   return data;
 }
@@ -63,7 +63,7 @@ To convert a Cosmos coin denom back to an ERC20 token address, we will be using 
 ```js src/index.js
 // previous code
 async function coinDenomToErc20(denom) {
-  const response = await fetch(`${lcdUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
+  const response = await fetch(`${restUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
   const data = await response.json();
   return data;
 }
@@ -78,16 +78,16 @@ If the denom is a valid Cosmos coin denom, the response just returns the token's
 The full code for the script, including the section to actually call the function is as follows:
 
 ```js src/index.js
-const lcdUrl = `https://lcd.minievm-2.initia.xyz`;
+const restUrl = `https://rest.minievm-2.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 
 async function erc20ToCoinDenom(contractAddress) {
-  const response = await fetch(`${lcdUrl}/minievm/evm/v1/denoms/${contractAddress}`);
+  const response = await fetch(`${restUrl}/minievm/evm/v1/denoms/${contractAddress}`);
   const data = await response.json();
   return data;
 }
 async function coinDenomToErc20(denom) {
-  const response = await fetch(`${lcdUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
+  const response = await fetch(`${restUrl}/minievm/evm/v1/contracts/by_denom?denom=${denom}`);
   const data = await response.json();
   return data;
 }
