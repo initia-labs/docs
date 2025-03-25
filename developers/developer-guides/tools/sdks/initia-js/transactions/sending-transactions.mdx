@@ -5,13 +5,13 @@ title: Sending Transactions
 Sending transactions using InitiaJS is straightforward. First, we need to import the necessary classes and functions.
 
 ```ts
-import { Wallet, LCDClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
+import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
 ```
 
 Next, we need to set up our environment variables. We will need the following:
 
 - `MNEMONIC`: The mnemonic of the account that will be sending the transaction.
-- `LCD_URL`: The URL of the Initia LCD.
+- `REST_URL`: The URL of the Initia REST.
 - `GAS_PRICES`: The gas prices for the transaction.
 - `SENDER_ADDRESS`: The address of the account that will be sending the transaction.
 - `RECIPIENT_ADDRESS`: The address of the account that will be receiving the transaction.
@@ -22,8 +22,8 @@ if (!process.env.MNEMONIC) {
   throw new Error('MNEMONIC environment variable is required');
 }
 const mnemonic = process.env.MNEMONIC;
-const lcdUrl = process.env.LCD_URL || "https://lcd.testnet.initia.xyz";
-const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff"; // Will be INIT for mainnet
+const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
+const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 
 const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
 const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
@@ -33,8 +33,8 @@ We can then use the use these variables to ultimately create the `wallet` client
 
 ```ts
 const key: MnemonicKey = new MnemonicKey({ mnemonic }); // Create a key from the mnemonic
-const lcd: LCDClient = new LCDClient(lcdUrl, { gasPrices });
-const wallet: Wallet = new Wallet(lcd, key);
+const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
+const wallet: Wallet = new Wallet(rest, key);
 
 const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);  
 ```
@@ -42,7 +42,7 @@ const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);
 Finally, we can create the function to send the transaction.
 
 - We first create the transaction by calling `wallet.createAndSignTx`. This function takes in the raw message object, signs it using the `wallet`, and returns a signed transaction object.
-- We then broadcast the transaction by calling `lcd.tx.broadcast`. This function takes in the signed transaction object and broadcasts it to the network.
+- We then broadcast the transaction by calling `rest.tx.broadcast`. This function takes in the signed transaction object and broadcasts it to the network.
 
 ```ts
 async function sendTransaction(): Promise<WaitTxBroadcastResult> {
@@ -52,7 +52,7 @@ async function sendTransaction(): Promise<WaitTxBroadcastResult> {
       memo: 'memo',
     });
     
-    const result: WaitTxBroadcastResult = await lcd.tx.broadcast(signedTx);
+    const result: WaitTxBroadcastResult = await rest.tx.broadcast(signedTx);
     console.log('Transaction successful');
     console.log('Transaction hash:', result.txhash);
     return result;
@@ -85,19 +85,19 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
 ### Full Example
 
 ```ts src/sending-transactions.ts
-  import { Wallet, LCDClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
+  import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
 
   const mnemonic = process.env.MNEMONIC;
-  const lcdUrl = process.env.LCD_URL || "https://lcd.testnet.initia.xyz";
-  const gasPrices = process.env.GAS_PRICES || "0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff"; // Will be INIT for mainnet
+  const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
+  const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 
   const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
   const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
   const amount = process.env.AMOUNT || '1000uinit';
 
   const key: MnemonicKey = new MnemonicKey({ mnemonic });
-  const lcd: LCDClient = new LCDClient(lcdUrl, { gasPrices });
-  const wallet: Wallet = new Wallet(lcd, key);
+  const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
+  const wallet: Wallet = new Wallet(rest, key);
   
   const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);
 
@@ -108,7 +108,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
         memo: 'memo',
       });
       
-      const result: WaitTxBroadcastResult = await lcd.tx.broadcast(signedTx);
+      const result: WaitTxBroadcastResult = await rest.tx.broadcast(signedTx);
       console.log('Transaction successful');
       console.log('Transaction hash:', result.txhash);
       return result;

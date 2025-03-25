@@ -226,7 +226,7 @@ const msgs = [new MsgSubmitProposal(
 )]
 
 const signedTx = await proposer.createAndSignTx({ msgs })
-await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
+await proposer.rest.tx.broadcast(signedTx).then(res => console.log(res))
 ```
 
 If you want to update MiniMove ACL, you need to use `MsgExecuteMessages` in OPchild module.
@@ -245,13 +245,13 @@ const msgs = [
   )
 ]
 const signedTx = await proposer.createAndSignTx({ msgs })
-await proposer.lcd.tx.broadcast(signedTx).then(res => console.log(res))
+await proposer.rest.tx.broadcast(signedTx).then(res => console.log(res))
 ```
 
 You can check the ACL list using the following command.
 
 ```bash
-curl -X GET "https://lcd.testnet.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+curl -X GET "https://rest.testnet.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
 ```
 
 Response:
@@ -276,7 +276,7 @@ Response:
 After the contract is deployed and the ACL is set, we can execute the IBC hooks message to call the contract.
 
 ```typescript
-import { bcs, Coin, Height, LCDClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
+import { bcs, Coin, Height, RESTClient, MnemonicKey, MsgTransfer, Wallet } from "@initia/initia.js";
 
 
 function createHook(params: object) {
@@ -285,29 +285,29 @@ function createHook(params: object) {
 }
 
 async function main() {
-  const l1lcd = new LCDClient('https://lcd.testnet.initia.xyz', {
+  const l1rest = new RESTClient('https://rest.testnet.initia.xyz', {
       gasAdjustment: '1.75',
-      gasPrices: '0.15uinit'
+      gasPrices: '0.015uinit'
   })
 
-  const l2lcd = new LCDClient('https://lcd.minimove-2.initia.xyz', {
+  const l2rest = new RESTClient('https://rest.minimove-2.initia.xyz', {
       gasAdjustment: '1.75',
       gasPrices: '0.15umin' // set l2 gas price
   })
 
   const sender = new Wallet(
-      l2lcd,
+      l2rest,
       new MnemonicKey({
           mnemonic: 'power elder gather acoustic ...' 
       })
   )
 
   const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
-  const tokenPair = await l1lcd.ophost.tokenPairByL1Denom(1, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd' }
+  const tokenPair = await l1rest.ophost.tokenPairByL1Denom(1, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd' }
 
   const ibcTrace = "transfer/" + "channel-0/" + tokenPair.l2_denom // IBC denom trace = `port_id/channel_id/denom`
-  const ibcDenomHash = await l1lcd.ibcTransfer.denomHash(ibcTrace) // IBC denom = `ibc/${denom_hash}`
-  const tokenMetadata = await l1lcd.move.metadata("ibc/" + ibcDenomHash) // 0x972188e32b2ccec557eed98bbea9d42a1a6dc270da9009926365deb7c49db7dd
+  const ibcDenomHash = await l1rest.ibcTransfer.denomHash(ibcTrace) // IBC denom = `ibc/${denom_hash}`
+  const tokenMetadata = await l1rest.move.metadata("ibc/" + ibcDenomHash) // 0x972188e32b2ccec557eed98bbea9d42a1a6dc270da9009926365deb7c49db7dd
   const amount = 1000
 
   const msgs = [
@@ -334,7 +334,7 @@ async function main() {
   ] 
 
   const signedTx = await sender.createAndSignTx({ msgs });
-  await l2lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+  await l2rest.tx.broadcastSync(signedTx).then(res => console.log(res));
 }
 
 main()

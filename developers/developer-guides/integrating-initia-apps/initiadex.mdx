@@ -38,7 +38,7 @@ public entry fun create_pair_script(
         initiad tx move execute 0x1 dex create_pair_script \
             --args '["string:name", "string:symbol", "bigdecimal:0.001", "bigdecimal:0.8", "bigdecimal:0.2", "object:0x...", "object:0x...", "u64:100", "u64:100"]' \
             --from [key-name] \
-            --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+            --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
             --node [rpc-url]:[rpc-port] --chain-id [chain-id]
         ```
     </Tab>
@@ -46,22 +46,22 @@ public entry fun create_pair_script(
         ```ts
         import {
             bcs,
-            LCDClient,
+            RESTClient,
             MnemonicKey,
             MsgExecute,
             Wallet,
         } from '@initia/initia.js';
 
         async function main() {
-          const lcd = new LCDClient('[rest-url]', {
-              gasPrices: '0.15uinit',
+          const rest = new RESTClient('[rest-url]', {
+              gasPrices: '0.015uinit',
               gasAdjustment: '1.5',
           });
 
           const key = new MnemonicKey({
               mnemonic: 'beauty sniff protect ...',
           });
-          const wallet = new Wallet(lcd, key);
+          const wallet = new Wallet(rest, key);
 
           const msgs = [
               new MsgExecute(
@@ -87,7 +87,7 @@ public entry fun create_pair_script(
           // sign tx
           const signedTx = await wallet.createAndSignTx({ msgs });
           // send(broadcast) tx
-          lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+          rest.tx.broadcastSync(signedTx).then(res => console.log(res));
           // {
           //   height: 0,
           //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -126,7 +126,7 @@ public entry fun provide_liquidity_script(
     initiad tx move execute 0x1 dex provide_liquidity_script \
         --args '["object:0x...", "u64:100", "u64:100", "option<u64>:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -134,22 +134,22 @@ public entry fun provide_liquidity_script(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-      const lcd = new LCDClient('[rest-url]', {
-          gasPrices: '0.15uinit',
+      const rest = new RESTClient('[rest-url]', {
+          gasPrices: '0.015uinit',
           gasAdjustment: '1.5',
       });
 
       const key = new MnemonicKey({
           mnemonic: 'beauty sniff protect ...',
       });
-      const wallet = new Wallet(lcd, key);
+      const wallet = new Wallet(rest, key);
 
       const msgs = [
           new MsgExecute(
@@ -170,7 +170,7 @@ public entry fun provide_liquidity_script(
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs });
       // send(broadcast) tx
-      lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+      rest.tx.broadcastSync(signedTx).then(res => console.log(res));
       // {
       //   height: 0,
       //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -209,7 +209,7 @@ public entry fun single_asset_provide_liquidity_script(
     initiad tx move execute 0x1 dex single_asset_provide_liquidity_script \
         --args '["object:0x...", "object:0x..", "u64:100", "option<u64>:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -217,22 +217,22 @@ public entry fun single_asset_provide_liquidity_script(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-      const lcd = new LCDClient('[rest-url]', {
-          gasPrices: '0.15uinit',
+      const rest = new RESTClient('[rest-url]', {
+          gasPrices: '0.015uinit',
           gasAdjustment: '1.5',
       });
 
       const key = new MnemonicKey({
           mnemonic: 'beauty sniff protect ...',
       });
-      const wallet = new Wallet(lcd, key);
+      const wallet = new Wallet(rest, key);
 
       const msgs = [
           new MsgExecute(
@@ -253,7 +253,7 @@ public entry fun single_asset_provide_liquidity_script(
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs });
       // send(broadcast) tx
-      lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+      rest.tx.broadcastSync(signedTx).then(res => console.log(res));
       // {
       //   height: 0,
       //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -293,7 +293,7 @@ public entry fun withdraw_liquidity_script(
     initiad tx move execute 0x1 dex withdraw_liquidity_script \
         --args '["object:0x...", "u64:100", "option<u64>:100", "option<u64>:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -301,22 +301,22 @@ public entry fun withdraw_liquidity_script(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-    const lcd = new LCDClient('[rest-url]', {
-        gasPrices: '0.15uinit',
+    const rest = new RESTClient('[rest-url]', {
+        gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
     });
 
     const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
     });
-    const wallet = new Wallet(lcd, key);
+    const wallet = new Wallet(rest, key);
 
     const msgs = [
         new MsgExecute(
@@ -337,7 +337,7 @@ public entry fun withdraw_liquidity_script(
     // sign tx
     const signedTx = await wallet.createAndSignTx({ msgs });
     // send(broadcast) tx
-    lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+    rest.tx.broadcastSync(signedTx).then(res => console.log(res));
     // {
     //   height: 0,
     //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -373,7 +373,7 @@ public fun get_swap_simulation(
 <Tabs>
     <Tab title="curl">
     ```bash
-    curl -X POST "[LCD_URI]/initia/move/v1/accounts/0x1/modules/dex/view_functions/get_swap_simulation" \
+    curl -X POST "[REST_URI]/initia/move/v1/accounts/0x1/modules/dex/view_functions/get_swap_simulation" \
         -H "accept: application/json" \
         -H "Content-Type: application/json" \
         -d "{ \"args\": [ \"[BCS_ENCODED_OBJECT, BCS_ENCODED_OBJECT, BCS_ENCODED_OFFER_AMOUNT]\" ]}"
@@ -398,12 +398,12 @@ public fun get_swap_simulation(
     </Tab>
     <Tab title="InitiaJS">
     ```ts
-    import { LCDClient, bcs } from '@initia/initia.js';
+    import { RESTClient, bcs } from '@initia/initia.js';
 
-    const lcdUri = 'https://....';
-    const lcd = new LCDClient(lcdUri);
+    const restUri = 'https://....';
+    const rest = new RESTClient(restUri);
 
-    lcd.move
+    rest.move
     .view(
         '0x1',
         'dex',
@@ -448,7 +448,7 @@ public entry fun swap_script(
     initiad tx move execute 0x1 dex swap_script \
         --args '["object:0x...", "object:0x...", "u64:100", "option<u64>:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -456,22 +456,22 @@ public entry fun swap_script(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const rest = new RESTClient('[rest-url]', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(rest, key);
 
         const msgs = [
             new MsgExecute(
@@ -492,7 +492,7 @@ public entry fun swap_script(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -532,14 +532,14 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
     ```bash
     initiad tx gov submit-proposal proposal.json \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
     <Tab title="InitiaJS">
     ```ts
-    async function getLastProposalId(lcd: LCDClient): Promise<number> {
-        const [proposals, pagination] = await lcd.gov.proposals()
+    async function getLastProposalId(rest: RESTClient): Promise<number> {
+        const [proposals, pagination] = await rest.gov.proposals()
         if (proposals.length === 0) return 0
         return proposals[proposals.length - 1].id
     }
@@ -561,13 +561,13 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
             false                       // expedited
         )
 
-        const proposalId = (await getLastProposalId(user.lcd)) + 1
+        const proposalId = (await getLastProposalId(user.rest)) + 1
         
         // if there's only one validator, it will exceed the quorum (cause we set as user = validator)
         const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
         const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
         
-        await user.lcd.tx.broadcast(signedTx).catch(console.log)
+        await user.rest.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -584,7 +584,7 @@ After whitelisting the LP token, you can delegate your LP tokens to a validator.
     # initiad tx mstaking delegate [validator-addr] [amount]
     initiad tx mstaking delegate initvaloper1.... 100move/ff5c7412979 \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -604,7 +604,7 @@ After whitelisting the LP token, you can delegate your LP tokens to a validator.
         )
 
         const signedTx = await user.createAndSignTx({ msgs: [msg] })
-        await user.lcd.tx.broadcast(signedTx).catch(console.log)
+        await user.rest.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -642,7 +642,7 @@ Also, we assume:
 // location=0000000000000000000000000000000000000000000000000000000000000001::object, code=524289 -> The object (pair) is already created, skip step 1
 // location=0000000000000000000000000000000000000000000000000000000000000001::object, code=393218 -> The object (pair) is not created yet, retry step 1
 
-import { AccAddress, bcs, LCDClient, MnemonicKey, MsgDelegate, MsgExecute, MsgSubmitProposal, MsgVote, MsgWhitelist, MsgWithdrawDelegatorReward, Wallet } from "@initia/initia.js"
+import { AccAddress, bcs, RESTClient, MnemonicKey, MsgDelegate, MsgExecute, MsgSubmitProposal, MsgVote, MsgWhitelist, MsgWithdrawDelegatorReward, Wallet } from "@initia/initia.js"
 import { ProposalStatus, VoteOption } from "@initia/initia.proto/cosmos/gov/v1/gov"
 import { delay } from "bluebird"
 import { sha3_256 } from "@noble/hashes/sha3";
@@ -651,8 +651,8 @@ import { toHex } from "@cosmjs/encoding"
 import { MsgUndelegate } from "vm/move/msgs/staking";
 
 const user = new Wallet(
-  new LCDClient('http://localhost:1317', {
-    gasPrices: '0.15uinit',
+  new RESTClient('http://localhost:1317', {
+    gasPrices: '0.015uinit',
     gasAdjustment: '1.75'
   }),
   new MnemonicKey({
@@ -662,8 +662,8 @@ const user = new Wallet(
 )
 
 const validator = new Wallet(
-  new LCDClient('http://localhost:1317', {
-    gasPrices: '0.15uinit',
+  new RESTClient('http://localhost:1317', {
+    gasPrices: '0.015uinit',
     gasAdjustment: '1.75'
   }),
   new MnemonicKey({
@@ -681,21 +681,21 @@ function coinMetadata(creator: string, symbol: string) {
   return toHex(sum)
 }
 
-async function getLastProposalId(lcd: LCDClient): Promise<number> {
-  const [proposals, pagination] = await lcd.gov.proposals()
+async function getLastProposalId(rest: RESTClient): Promise<number> {
+  const [proposals, pagination] = await rest.gov.proposals()
   if (proposals.length === 0) return 0
   return proposals[proposals.length - 1].id
 }
 
-async function getProposalStatus(lcd: LCDClient, proposalId: number): Promise<ProposalStatus | null> {
-  const proposal = await lcd.gov.proposal(proposalId)
+async function getProposalStatus(rest: RESTClient, proposalId: number): Promise<ProposalStatus | null> {
+  const proposal = await rest.gov.proposal(proposalId)
   return proposal ? proposal.status : null
 }
 
-async function checkProposalPassed(lcd: LCDClient, proposalId: number): Promise<void> {
+async function checkProposalPassed(rest: RESTClient, proposalId: number): Promise<void> {
   for (;;) {
-    console.log(`checking proposal ${proposalId} status... in ${lcd.URL}/cosmos/gov/v1/proposals/${proposalId}`)
-    const status = await getProposalStatus(lcd, proposalId)
+    console.log(`checking proposal ${proposalId} status... in ${rest.URL}/cosmos/gov/v1/proposals/${proposalId}`)
+    const status = await getProposalStatus(rest, proposalId)
     
     if (status === ProposalStatus.PROPOSAL_STATUS_PASSED) return
     if (status === ProposalStatus.PROPOSAL_STATUS_REJECTED) throw new Error(`proposal ${proposalId} rejected`)
@@ -725,7 +725,7 @@ async function provideLiquidity(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.lcd.tx.broadcast(signedTx).catch(console.log)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function createPairScript(
@@ -760,7 +760,7 @@ async function createPairScript(
   )
 
   const signedTx = await sender.createAndSignTx({ msgs: [msg] })
-  await sender.lcd.tx.broadcast(signedTx).catch(console.log)
+  await sender.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function whitelistLP(lpMetadata: string) {
@@ -780,14 +780,14 @@ async function whitelistLP(lpMetadata: string) {
     false                       // expedited
   )
 
-  const proposalId = (await getLastProposalId(user.lcd)) + 1
+  const proposalId = (await getLastProposalId(user.rest)) + 1
   
   // if there's only one validator, it will exceed the quorum (cause we set as user = validator)
   const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
   const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
   
-  await user.lcd.tx.broadcast(signedTx).catch(console.log)
-  await checkProposalPassed(user.lcd, proposalId)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
+  await checkProposalPassed(user.rest, proposalId)
 }
 
 async function delegateLP(
@@ -804,7 +804,7 @@ async function delegateLP(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.lcd.tx.broadcast(signedTx).catch(console.log)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function withdrawRewards() {
@@ -814,7 +814,7 @@ async function withdrawRewards() {
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.lcd.tx.broadcast(signedTx).catch(console.log
+  await user.rest.tx.broadcast(signedTx).catch(console.log
 }
 
 // NOTE: if you uncomment step 2, there will be an error

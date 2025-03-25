@@ -26,7 +26,7 @@ public entry fun initialize(
     initiad tx move execute 0x1 managed_coin initialize \
         --args '["option<u128>:null", "string:my_coin", "string:MYCOIN", "u8:6", "string:ICON_URI", "string:PROJECT_URI"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -34,22 +34,22 @@ public entry fun initialize(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function createCoin() {
-    const lcd = new LCDClient('[rest-url]', {
-        gasPrices: '0.15uinit',
+    const rest = new RESTClient('[rest-url]', {
+        gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
     });
 
     const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
     });
-    const wallet = new Wallet(lcd, key);
+    const wallet = new Wallet(rest, key);
 
     const msgs = [
         new MsgExecute(
@@ -74,7 +74,7 @@ public entry fun initialize(
     // sign tx
     const signedTx = await wallet.createAndSignTx({ msgs });
     // send(broadcast) tx
-    lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+    rest.tx.broadcastSync(signedTx).then(res => console.log(res));
     // {
     //   height: 0,
     //   txhash: '40E0D5633D37E207B2463D275F5B479FC67D545B666C37DC7B121ED551FA18FC',
@@ -116,12 +116,12 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     </Tab>
     <Tab title="InitiaJS">
     ```ts
-    import { bcs, LCDClient, MnemonicKey } from '@initia/initia.js';
+    import { bcs, RESTClient, MnemonicKey } from '@initia/initia.js';
     import * as crypto from 'crypto';
 
     async function getCoinMetadata() {
-        const lcd = new LCDClient('https://stone-rest.initia.tech', {
-            gasPrices: '0.15uinit',
+        const rest = new RESTClient('https://stone-rest.initia.tech', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
@@ -130,7 +130,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
         });
 
         // Method 1: use view function
-        lcd.move
+        rest.move
             .viewFunction(
             '0x1',
             'coin',
@@ -173,7 +173,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     initiad tx move execute 0x1 managed_coin mint \
         --args '["address:0x...", "object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb", "u64:100000000"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -181,7 +181,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
@@ -189,15 +189,15 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     import * as crypto from 'crypto';
 
     async function mintCoin() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const rest = new RESTClient('[rest-url]', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(rest, key);
 
         const msgs = [
             new MsgExecute(
@@ -220,7 +220,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '593827F58F3E811686EC6FFDAD2E27E91DA707965F0FF33093DC071D47A46786',
