@@ -399,7 +399,7 @@
   },
   "api": {
     "mdx": {
-      "server": ["https://lcd.testnet.initia.xyz"]
+      "server": ["https://rest.testnet.initia.xyz"]
     }
   },
   "appearance": {
