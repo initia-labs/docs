@@ -373,7 +373,7 @@ public fun get_swap_simulation(
 <Tabs>
     <Tab title="curl">
     ```bash
-    curl -X POST "[LCD_URI]/initia/move/v1/accounts/0x1/modules/dex/view_functions/get_swap_simulation" \
+    curl -X POST "[REST_URI]/initia/move/v1/accounts/0x1/modules/dex/view_functions/get_swap_simulation" \
         -H "accept: application/json" \
         -H "Content-Type: application/json" \
         -d "{ \"args\": [ \"[BCS_ENCODED_OBJECT, BCS_ENCODED_OBJECT, BCS_ENCODED_OFFER_AMOUNT]\" ]}"

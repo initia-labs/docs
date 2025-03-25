@@ -8,7 +8,7 @@ First, we need to import the necessary classes and functions.
 
 - `Coins`: A class that represents a list of [Cosmos SDK coins](https://github.com/cosmos/cosmos-sdk/blob/main/types/coin.go).
 - `Fee`: A class that's used to define the fee for a transaction.
-- `RESTClient`: A class that represents a LCD client.
+- `RESTClient`: A class that represents a REST client.
 - `MnemonicKey`: A class that's used to create a key from a mnemonic.
 - `MsgSend`: A class that represents a message to send.
 - `Wallet`: A class that represents a wallet.
@@ -29,13 +29,13 @@ Next, we need to set up our environment variables. We will need the following:
 
 - `mnemonic`: The mnemonic of the account that will be signing the transaction.
 - `chainId`: The chain ID of the network you are working on.
-- `restUrl`: The URL of the Initia LCD.
+- `restUrl`: The URL of the Initia REST.
 - `gasPrices`: The gas prices for the transaction.
 
 ```ts
 const mnemonic = process.env.MNEMONIC;
 const chainId = process.env.CHAIN_ID || "initiation-2";
-const restUrl = process.env.LCD_URL || "https://rest.testnet.initia.xyz";
+const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
 const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 ```
 
@@ -54,7 +54,7 @@ export function getTxHash(tx: Uint8Array): string {
 
 Finally, we can create the main function to sign the transaction and compare the transaction hash. Let's call this function `offlineSingingTest`.
 
-To start, we will create two `RESTClient` instances. One that is connected to the network, and one that is offline. We will be using the offline LCD client to sign the transaction, and the online LCD client to broadcast the transaction to later compare.
+To start, we will create two `RESTClient` instances. One that is connected to the network, and one that is offline. We will be using the offline REST client to sign the transaction, and the online REST client to broadcast the transaction to later compare.
 
 ```ts
 const restOffline = new RESTClient(``, {
@@ -111,7 +111,7 @@ const signedTxBytes = signedTx.toBytes();
 const txHash = getTxHash(signedTxBytes);
 ```
 
-Finally, if we want to broadcast the transaction to the network later, we can do so by using the `restOnline` client. If we then retrieve the transaction hash from the online LCD client and compare it to the transaction hash we computed earlier, we should see that they match.
+Finally, if we want to broadcast the transaction to the network later, we can do so by using the `restOnline` client. If we then retrieve the transaction hash from the online REST client and compare it to the transaction hash we computed earlier, we should see that they match.
 
 ```ts
 const broadcastRes = await restOnline.tx.broadcastSync(signedTx);
@@ -135,7 +135,7 @@ import crypto from 'crypto';
 
 const mnemonic = process.env.MNEMONIC;
 const chainId = process.env.CHAIN_ID || "initiation-2";
-const restUrl = process.env.LCD_URL || "https://rest.testnet.initia.xyz";
+const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
 const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 
 export function getTxHash(tx: Uint8Array): string {

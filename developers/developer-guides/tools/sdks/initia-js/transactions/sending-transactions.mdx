@@ -11,7 +11,7 @@ import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } f
 Next, we need to set up our environment variables. We will need the following:
 
 - `MNEMONIC`: The mnemonic of the account that will be sending the transaction.
-- `LCD_URL`: The URL of the Initia LCD.
+- `REST_URL`: The URL of the Initia REST.
 - `GAS_PRICES`: The gas prices for the transaction.
 - `SENDER_ADDRESS`: The address of the account that will be sending the transaction.
 - `RECIPIENT_ADDRESS`: The address of the account that will be receiving the transaction.
@@ -22,7 +22,7 @@ if (!process.env.MNEMONIC) {
   throw new Error('MNEMONIC environment variable is required');
 }
 const mnemonic = process.env.MNEMONIC;
-const restUrl = process.env.LCD_URL || "https://rest.testnet.initia.xyz";
+const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
 const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 
 const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
@@ -88,7 +88,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
   import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js';
 
   const mnemonic = process.env.MNEMONIC;
-  const restUrl = process.env.LCD_URL || "https://rest.testnet.initia.xyz";
+  const restUrl = process.env.REST_URL || "https://rest.testnet.initia.xyz";
   const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for mainnet
 
   const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
