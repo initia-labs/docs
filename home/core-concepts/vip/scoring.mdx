@@ -4,17 +4,9 @@ title: VIP Scoring
 
 ## Introduction
 
-The VIP Program employs a comprehensive scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team.
+The VIP Program employs a scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team. These 
 
-## Whitelisting
-
-For a rollup and its users to be eligible for VIP rewards, they first need to be whitelisted. This is done through a governance proposal on the Initia L1
-
-## Scoring Epochs
-
-VIP scoring and reward distribution then happens on a regular epoch basis. Each epoch follows the steps below:
-
-### Scoring
+### Scoring Phase
 
 First, during each epoch, rollup teams score their users based on their activity through a `vip_score` contract. 
 
@@ -22,10 +14,17 @@ To score users, the rollup operator must first register the `deployer` account o
 
 Once the scoring for an epoch is complete, the scores must be finalized by calling a function on the `vip_score` contract.
 
-### Snapshotting
+<Warning>
+The VIP scoring system is designed to encourage usage of the rollup, its application, and its economy. Any misuse of the VIP scoring system will result in the rollup being removed from the VIP program. This includes, but is not limited to using VIP scores to:
+- give rewards directly to the rollup operator, team, or their associated accounts
+- incentivize activities like holding, staking, LPing for a project's token or NFT
+- incentivize users to vote for the rollup on VIP Gauges
+</Warning>
+
+### Snapshotting Phase
 
 Once finalized, the VIP Agent snapshots and submits the scores from all miniatures, storing them in the Initia L1 VIP module. The Agent is an actor selected through Initia L1 governance. After all snapshots have been taken and stored, the esINIT rewards are distributed to the users.
 
-### Claiming
+### Claiming Phase
 
-Finally, the user can finally claim the distributed rewards
+Finally, the user can finally claim the distributed rewards.

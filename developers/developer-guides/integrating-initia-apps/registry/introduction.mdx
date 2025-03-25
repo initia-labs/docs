@@ -1,0 +1,26 @@
+---
+title: Introduction
+---
+
+For an asset or rollup to be supported by all of Initia's apps, including App, Bridge, Scan, and Wallet Widget, it must be registered in the [Initia Registry](http://github.com/initia-labs/initia-registry). Currently, registration is done via a GitHub pull request to the registry repository. The file and directory that need to be updated in the PR vary depending on the type of information being added.
+
+## Adding Profiles
+
+For an application's information including logo, name, description, and more to show up on Initia's [ecosystem page](https://initia.xyz/ecosystem), it must be registered in the [Initia Registry](https://github.com/initia-labs/initia-registry). In the registration PR, create a new file in the `profiles` directory with the structure that follows [this schema](https://github.com/initia-labs/initia-registry/blob/main/profile.schema.json). The JSON file name should be the name of the application.
+
+This step can be completed at anytime before your rollup is live and public.
+
+## Adding Rollups
+
+Once your rollup is live, you also then need to register it in the registry for it to supported on the Bridge, Scan, and Wallet Widget pages. For this, navigate to the corresponding network directory in the registry repository and create a new folder. The folder name should be the same as the profile JSON file name you created in the previous step. You then need to create two files in the folder:
+
+1. [chain.json](https://github.com/initia-labs/initia-registry/blob/main/chain.schema.json) - Contains key information about the rollup including the chain ID, name, API endpoints, and more.
+2. [assetlist.json](https://github.com/initia-labs/initia-registry/blob/main/assetlist.schema.json) - A file containing all of the major assets on the rollup such as symbol, logo, and decimal precision.
+
+<Note>
+You can create a PR to add both a profile and rollup at the same time, but the profile file is required for the rollup to be fully supported.
+</Note>
+
+## Adding Assets
+
+When creating a new assets, teams and other developers should also registry the asset information to the registry. This will allow the assets to be displayed in the user's balances, selectable on bridge and swap pages, and more. To do so, modify the corresponding rollup's and Initia L1's `assetlist.json` file in the registry repository with the new asset information.

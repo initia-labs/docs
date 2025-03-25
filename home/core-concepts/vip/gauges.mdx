@@ -2,17 +2,15 @@
 title: VIP Gauge Voting
 ---
 
-![VIP Gauge Voting](/images/vip/vip_gauge_weight_voting.svg)
+To decide how much of the total [Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards are distributed to each rollup in a given stage, a gauge weight voting process is used. This is similar to the one pioneered by Curve Finance for use with their liquidity pools.
 
-To decide how much of the total [Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards are distributed to each rollup in a given stage, a gauge weight voting process is used. This gauge voting is similar to the one pioneered by Curve Finance for use with their liquidity pools.
+### Voting Cycles
 
-### Voting Power
+Voting on VIP gauges occurs at regular intervals called **cycles**. Every VIP-whitelisted rollup has a "gauge" that determines the ratio of total Weight Pool rewards it can receive. INIT and Enshrined Liquidity stakers can then use their voting power to increase the weight of the gauges for their preferred rollups. They can allocate their entire voting power to a single rollup's gauge or distribute it across multiple gauges. All gauge voting occurs on Initia L1.
 
-For VIP Gauge Votes, a user's voting power depends on their staking position. For INIT staking, their VIP voting power matches their voting power in the Initia L1 governance. However, for Enshrined Liquidity or LP token staking positions, an adjustment factor is applied to their voting power. This adjustment factor varies for each staked LP token pair.
+### Gauge Voting Power
 
-### Gauge Voting
-
-When voting begins each cycle, every VIP-whitelisted rollup has a "gauge" that determines the ratio of total Weight Pool rewards it can receive. Stakers with tokens on Initia L1 use their voting power to increase the weight of the gauges for their preferred rollups. They can allocate their entire voting power to a single rollup's gauge or distribute it across multiple gauges. All gauge voting occurs on Initia L1.
+For VIP Gauge Votes, a user's voting power depends on their staking position. For INIT staking, their VIP voting power matches their voting power in the Initia L1 governance. However, for Enshrined Liquidity staking positions, an adjustment factor is applied to their voting power. This adjustment factor varies for each staked LP token pair.
 
 #### Example Scenario
 
@@ -45,9 +43,11 @@ After the voting period ends, the final Weight Pool reward distribution is calcu
 
 In this case, the Weight Pool rewards for the cycle will then be split 55:40:5.
 
+![VIP Gauge Voting](/images/vip/vip_gauge_weight_voting.svg)
+
 ## Challenging Snapshot Submission
 
-In case of incorrect or malicious Snapshot Submissions, anyone can challenge the submission by submitting a new snapshot. To do this, they need to submit a challenge proposal to the gauge contract, while including the following information:
+In case of incorrect or malicious Snapshot Submissions, anyone can challenge the submission by submitting a new snapshot. To do this, they need to submit a challenge proposal to the gauge contract and include the following information:
 
 - Merkle Root: The merkle root of the correct snapshot
 - API URI: An API endpoint that can prove that the new submitted Merkle Root is valid

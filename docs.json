@@ -3,8 +3,8 @@
   "theme": "mint",
   "name": "Initia Docs",
   "colors": {
-    "primary": "#676767",
-    "light": "#898989",
+    "primary": "#324242",
+    "light": "#868686",
     "dark": "#4349FF"
   },
   "favicon": "/favicon.svg",
@@ -87,6 +87,7 @@
                   "home/core-concepts/vip/architecture",
                   "home/core-concepts/vip/gauges",
                   "home/core-concepts/vip/timelines",
+                  "home/core-concepts/vip/eligibility",
                   "home/core-concepts/vip/scoring"
                 ]
               },
@@ -201,6 +202,13 @@
           {
             "group": "Integrating with Initia Apps",
             "pages": [
+              {
+                "group": "Initia Registry",
+                "icon": "file-code",
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/registry/introduction"
+                ]
+              },
               {
                 "group": "DEX",
                 "icon": "swap",
