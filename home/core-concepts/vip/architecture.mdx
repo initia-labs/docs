@@ -23,7 +23,7 @@ At each rewards distribution stage $t$, the total VIP rewards for that stage $R_
 At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each rollup ecosystem. The total rewards are then split into two pools: the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
 
 <Frame caption="VIP Rewards Distribution">
-![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.svg)
+![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.png)
 </Frame>
 
 These two pools aim to incentivize and reward different aspects of rollup operations. The ratio between $R_B$ and $R_W$, called `poolSplitRatio`, is set by the Initia L1 governance and can be changed through on-chain proposals. The sum follows the equation:
@@ -81,7 +81,7 @@ Once we know how much rewards each rollup receives for a given stage, we then fu
 
 
 <Frame caption="VIP Rewards Distribution to Rollup Users">
-![VIP User Rewards Distribution](/images/vip/vip_distribution_to_users.svg)
+![VIP User Rewards Distribution](/images/vip/vip_distribution_users.png)
 </Frame>
 
 At the end of each stage, the rewards for each user are calculated and stored. Once the rewards for each rollup are known, the rewards are then directly distributed to the users of the rollup.
@@ -103,7 +103,7 @@ Where:
 To ensure that rollup operators are also incentivized to keep their rollups active and useful, they can set an `operatorCommissionRate`, $c$. This rate allows them to take a portion of the rewards for their rollup.
 
 <Frame caption="VIP Operator Rewards Distribution">
-![VIP Operator Rewards Distribution](/images/vip/vip_distribution_to_operators.svg)
+![VIP Operator Rewards Distribution](/images/vip/vip_distribution_operators.png)
 </Frame>
 
 The rewards for an operator $o$ of rollup $m$ during a stage are:
@@ -132,7 +132,7 @@ These tokens are initially non-transferable and can be vested in two ways:
 2. **Convert into LP Lock-Staked Position:** Convert the escrowed tokens into a whitelisted INIT:TOKEN staking position.
 
 <Frame caption="VIP Rollup User Vesting">
-![VIP User Vesting](/images/vip/vip_rewards_vesting_users.svg)
+![VIP User Vesting](/images/vip/vip_rewards_vesting_users.png)
 </Frame>
 
 #### Maintaining a VIP Score
@@ -227,7 +227,7 @@ When creating a lock-staked position, users can choose the duration for which to
 ### Operator Vesting
 
 <Frame caption="VIP Rollup Operator Vesting">
-![VIP Operator Vesting](/images/vip/vip_rewards_vesting_operators.svg)
+![VIP Operator Vesting](/images/vip/vip_rewards_vesting_operators.png)
 </Frame>
 
 Similarly, rollup operators' esINIT rewards are also vested, but the process is slightly different. Operator esINIT rewards are released linearly over a number of `operatorVestingStages`. For example, if the operator vesting period consists of 10 stages, the operator will receive $\frac{1}{10}$ of their esINIT at each stage.
