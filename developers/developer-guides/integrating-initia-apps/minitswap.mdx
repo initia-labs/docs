@@ -44,7 +44,7 @@ public entry fun provide(
     } from '@initia/initia.js';
 
     async function main() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -52,7 +52,7 @@ public entry fun provide(
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClientClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -71,7 +71,7 @@ public entry fun provide(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -122,7 +122,7 @@ public entry fun unbond(
     } from '@initia/initia.js';
 
     async function main() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -130,7 +130,7 @@ public entry fun unbond(
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -148,7 +148,7 @@ public entry fun unbond(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: 'E8498469AA40E0F22499F412A009F86CE037B02C78C111078C9C4C990C1E0D18',
@@ -211,7 +211,7 @@ public fun get_unbond_list(
     } from '@initia/initia.js';
 
     async function main() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -219,7 +219,7 @@ public fun get_unbond_list(
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -237,7 +237,7 @@ public fun get_unbond_list(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -296,7 +296,7 @@ For more information on metadata, please refer to [obtaining metadata](/develope
     } from '@initia/initia.js';
 
     async function main() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -304,7 +304,7 @@ For more information on metadata, please refer to [obtaining metadata](/develope
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -325,7 +325,7 @@ For more information on metadata, please refer to [obtaining metadata](/develope
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -384,10 +384,12 @@ public fun swap_simulation(
     ```ts
     import { RESTClient, bcs } from '@initia/initia.js';
 
-    const restUri = 'https://....';
-    const rest = new RESTClient(restUri);
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-    rest.move
+    restClient.move
         .view(
             '0x1',
             'minitswap',
@@ -525,7 +527,7 @@ To obtain the required arguments, you should
     }
 
     const registryClient = new APIRequester('https://registry.testnet.initia.xyz/');
-    const rest = new RESTClient(`https://rest.initiation-2.initia.xyz`, {
+    const restClient = new RESTClient(`https://rest.testnet.initia.xyz`, {
         chainId: 'initiation-2',
         gasPrices: '0.015uinit',
         gasAdjustment: '2.0',
@@ -536,7 +538,7 @@ To obtain the required arguments, you should
         mnemonic: '', // Put your mnemonic here
     });
     
-    const wallet = new Wallet(rest, key);
+    const wallet = new Wallet(restClient, key);
     
     async function main() {
         listUp();
@@ -558,7 +560,7 @@ To obtain the required arguments, you should
                     opdenom(BigInt(bridgeId), 'uinit')
                 );
                 const ibcOpInitMetadata = '0x' + coinMetadata('0x1', ibcOpInitDenom);
-                const infos = await rest.move.viewFunction<ArbInfo[]>(
+                const infos = await restClient.move.viewFunction<ArbInfo[]>(
                     moduleAddr,
                     'minitswap',
                     'get_arb_infos',
@@ -583,17 +585,17 @@ To obtain the required arguments, you should
     
         if (msgs.length === 0) return;
         const signedTx = await wallet.createAndSignTx({ msgs });
-        console.log(await rest.tx.broadcastSync(signedTx));
+        console.log(await restClient..broadcastSync(signedTx));
     }
     
     async function getPools(): Promise<Pools[]> {
-        const moduleStore = await rest.move.resource<ModuleStore>(
+        const moduleStore = await restClient.move.resource<ModuleStore>(
             moduleAddr,
             `${moduleAddr}::minitswap::ModuleStore`
         );
 
         const poolsTableHandle = moduleStore.data.pools.handle;
-        const [poolsTable] = await rest.move.tableEntries(poolsTableHandle);
+        const [poolsTable] = await restClient.move.tableEntries(poolsTableHandle);
         const pools = poolsTable.map(entity => JSON.parse(entity.value) as Pools);
         return pools;
     }
@@ -621,7 +623,7 @@ To obtain the required arguments, you should
     
         if (!withdraw || withdraw.merkleRoot === '') return false;
     
-        const lastFinalizedOutput = await rest.ophost.lastFinalizedOutput(
+        const lastFinalizedOutput = await restClient.ophost.lastFinalizedOutput(
             Number(pools.op_bridge_id)
         );
     

@@ -34,7 +34,7 @@ We can then use the use these variables to ultimately create the `wallet` client
 ```ts
 const key: MnemonicKey = new MnemonicKey({ mnemonic }); // Create a key from the mnemonic
 const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
-const wallet: Wallet = new Wallet(rest, key);
+const wallet: Wallet = new Wallet(restClient, key);
 
 const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);  
 ```
@@ -97,7 +97,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
 
   const key: MnemonicKey = new MnemonicKey({ mnemonic });
   const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
-  const wallet: Wallet = new Wallet(rest, key);
+  const wallet: Wallet = new Wallet(restClient, key);
   
   const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);
 

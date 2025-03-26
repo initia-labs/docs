@@ -77,7 +77,7 @@ const key = new MnemonicKey({
   mnemonic: mnemonic,
 });
 const account = await restOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
-const wallet = new Wallet(restOffline, key);
+const wallet = new Wallet(restClientOffline, key);
 
 // msg to send
 const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');
@@ -165,7 +165,7 @@ async function offlineSingingTest() {
     mnemonic: mnemonic,
   });
   const account = await restOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
-  const wallet = new Wallet(restOffline, key);
+  const wallet = new Wallet(restClientOffline, key);
 
   // msg to send
   const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');

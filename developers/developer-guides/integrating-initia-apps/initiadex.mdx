@@ -53,7 +53,7 @@ public entry fun create_pair_script(
         } from '@initia/initia.js';
 
         async function main() {
-          const rest = new RESTClient('[rest-url]', {
+          const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
               gasPrices: '0.015uinit',
               gasAdjustment: '1.5',
           });
@@ -61,7 +61,7 @@ public entry fun create_pair_script(
           const key = new MnemonicKey({
               mnemonic: 'beauty sniff protect ...',
           });
-          const wallet = new Wallet(rest, key);
+          const wallet = new Wallet(restClient, key);
 
           const msgs = [
               new MsgExecute(
@@ -87,7 +87,7 @@ public entry fun create_pair_script(
           // sign tx
           const signedTx = await wallet.createAndSignTx({ msgs });
           // send(broadcast) tx
-          rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+          restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
           // {
           //   height: 0,
           //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -141,7 +141,7 @@ public entry fun provide_liquidity_script(
     } from '@initia/initia.js';
 
     async function main() {
-      const rest = new RESTClient('[rest-url]', {
+      const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
           gasPrices: '0.015uinit',
           gasAdjustment: '1.5',
       });
@@ -149,7 +149,7 @@ public entry fun provide_liquidity_script(
       const key = new MnemonicKey({
           mnemonic: 'beauty sniff protect ...',
       });
-      const wallet = new Wallet(rest, key);
+      const wallet = new Wallet(restClient, key);
 
       const msgs = [
           new MsgExecute(
@@ -170,7 +170,7 @@ public entry fun provide_liquidity_script(
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs });
       // send(broadcast) tx
-      rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+      restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
       // {
       //   height: 0,
       //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -224,7 +224,7 @@ public entry fun single_asset_provide_liquidity_script(
     } from '@initia/initia.js';
 
     async function main() {
-      const rest = new RESTClient('[rest-url]', {
+      const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
           gasPrices: '0.015uinit',
           gasAdjustment: '1.5',
       });
@@ -232,7 +232,7 @@ public entry fun single_asset_provide_liquidity_script(
       const key = new MnemonicKey({
           mnemonic: 'beauty sniff protect ...',
       });
-      const wallet = new Wallet(rest, key);
+      const wallet = new Wallet(restClient, key);
 
       const msgs = [
           new MsgExecute(
@@ -253,7 +253,7 @@ public entry fun single_asset_provide_liquidity_script(
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs });
       // send(broadcast) tx
-      rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+      restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
       // {
       //   height: 0,
       //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -308,7 +308,7 @@ public entry fun withdraw_liquidity_script(
     } from '@initia/initia.js';
 
     async function main() {
-    const rest = new RESTClient('[rest-url]', {
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
     });
@@ -316,7 +316,7 @@ public entry fun withdraw_liquidity_script(
     const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
     });
-    const wallet = new Wallet(rest, key);
+    const wallet = new Wallet(restClient, key);
 
     const msgs = [
         new MsgExecute(
@@ -337,7 +337,7 @@ public entry fun withdraw_liquidity_script(
     // sign tx
     const signedTx = await wallet.createAndSignTx({ msgs });
     // send(broadcast) tx
-    rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+    restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
     // {
     //   height: 0,
     //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -400,22 +400,24 @@ public fun get_swap_simulation(
     ```ts
     import { RESTClient, bcs } from '@initia/initia.js';
 
-    const restUri = 'https://....';
-    const rest = new RESTClient(restUri);
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-    rest.move
-    .view(
-        '0x1',
-        'dex',
-        'get_swap_simulation',
-        [],
-        [
-        bcs.object().serialize('0x...').toBase64(),
-        bcs.object().serialize('0x...').toBase64(),
-        bcs.u64().serialize(100).toBase64(),
-        ]
-    )
-    .then(console.log);
+    restClient.move
+      .view(
+          '0x1',
+          'dex',
+          'get_swap_simulation',
+          [],
+          [
+          bcs.object().serialize('0x...').toBase64(),
+          bcs.object().serialize('0x...').toBase64(),
+          bcs.u64().serialize(100).toBase64(),
+          ]
+      )
+      .then(console.log);
 
     // { data: '"100"', events: [], gas_used: '21371' }
     ```
@@ -463,7 +465,7 @@ public entry fun swap_script(
     } from '@initia/initia.js';
 
     async function main() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -471,7 +473,7 @@ public entry fun swap_script(
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -492,7 +494,7 @@ public entry fun swap_script(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -539,7 +541,7 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
     <Tab title="InitiaJS">
     ```ts
     async function getLastProposalId(rest: RESTClient): Promise<number> {
-        const [proposals, pagination] = await rest.gov.proposals()
+        const [proposals, pagination] = await restClient.gov.proposals()
         if (proposals.length === 0) return 0
         return proposals[proposals.length - 1].id
     }
@@ -567,7 +569,7 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
         const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
         const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
         
-        await user.rest.tx.broadcast(signedTx).catch(console.log)
+        await user.restClient.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -604,7 +606,7 @@ After whitelisting the LP token, you can delegate your LP tokens to a validator.
         )
 
         const signedTx = await user.createAndSignTx({ msgs: [msg] })
-        await user.rest.tx.broadcast(signedTx).catch(console.log)
+        await user.restClient.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -682,19 +684,19 @@ function coinMetadata(creator: string, symbol: string) {
 }
 
 async function getLastProposalId(rest: RESTClient): Promise<number> {
-  const [proposals, pagination] = await rest.gov.proposals()
+  const [proposals, pagination] = await restClient.gov.proposals()
   if (proposals.length === 0) return 0
   return proposals[proposals.length - 1].id
 }
 
 async function getProposalStatus(rest: RESTClient, proposalId: number): Promise<ProposalStatus | null> {
-  const proposal = await rest.gov.proposal(proposalId)
+  const proposal = await restClient.gov.proposal(proposalId)
   return proposal ? proposal.status : null
 }
 
 async function checkProposalPassed(rest: RESTClient, proposalId: number): Promise<void> {
   for (;;) {
-    console.log(`checking proposal ${proposalId} status... in ${rest.URL}/cosmos/gov/v1/proposals/${proposalId}`)
+    console.log(`checking proposal ${proposalId} status... in ${restClient.URL}/cosmos/gov/v1/proposals/${proposalId}`)
     const status = await getProposalStatus(rest, proposalId)
     
     if (status === ProposalStatus.PROPOSAL_STATUS_PASSED) return
@@ -725,7 +727,7 @@ async function provideLiquidity(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.rest.tx.broadcast(signedTx).catch(console.log)
+  await user.restClient.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function createPairScript(
@@ -760,7 +762,7 @@ async function createPairScript(
   )
 
   const signedTx = await sender.createAndSignTx({ msgs: [msg] })
-  await sender.rest.tx.broadcast(signedTx).catch(console.log)
+  await sender.restClient.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function whitelistLP(lpMetadata: string) {
@@ -786,7 +788,7 @@ async function whitelistLP(lpMetadata: string) {
   const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
   const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
   
-  await user.rest.tx.broadcast(signedTx).catch(console.log)
+  await user.restClient.tx.broadcast(signedTx).catch(console.log)
   await checkProposalPassed(user.rest, proposalId)
 }
 
@@ -804,7 +806,7 @@ async function delegateLP(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.rest.tx.broadcast(signedTx).catch(console.log)
+  await user.restClient.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function withdrawRewards() {
@@ -814,7 +816,7 @@ async function withdrawRewards() {
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.rest.tx.broadcast(signedTx).catch(console.log
+  await user.restClient.tx.broadcast(signedTx).catch(console.log
 }
 
 // NOTE: if you uncomment step 2, there will be an error

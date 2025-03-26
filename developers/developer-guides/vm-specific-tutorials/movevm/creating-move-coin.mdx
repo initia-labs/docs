@@ -41,7 +41,7 @@ public entry fun initialize(
     } from '@initia/initia.js';
 
     async function createCoin() {
-    const rest = new RESTClient('[rest-url]', {
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
     });
@@ -49,7 +49,7 @@ public entry fun initialize(
     const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
     });
-    const wallet = new Wallet(rest, key);
+    const wallet = new Wallet(restClient, key);
 
     const msgs = [
         new MsgExecute(
@@ -74,7 +74,7 @@ public entry fun initialize(
     // sign tx
     const signedTx = await wallet.createAndSignTx({ msgs });
     // send(broadcast) tx
-    rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+    restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
     // {
     //   height: 0,
     //   txhash: '40E0D5633D37E207B2463D275F5B479FC67D545B666C37DC7B121ED551FA18FC',
@@ -120,7 +120,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     import * as crypto from 'crypto';
 
     async function getCoinMetadata() {
-        const rest = new RESTClient('https://stone-rest.initia.tech', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -130,7 +130,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
         });
 
         // Method 1: use view function
-        rest.move
+        restClient.move
             .viewFunction(
             '0x1',
             'coin',
@@ -189,7 +189,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     import * as crypto from 'crypto';
 
     async function mintCoin() {
-        const rest = new RESTClient('[rest-url]', {
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
@@ -197,7 +197,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(rest, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -220,7 +220,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '593827F58F3E811686EC6FFDAD2E27E91DA707965F0FF33093DC071D47A46786',

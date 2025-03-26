@@ -23,11 +23,13 @@ public fun get_address_from_name(name: String): Option<address>
 const { RESTClient, bcs } = require('@initia/initia.js');
 
 const moduleAddress = '0x...';
-const restUri = 'https://...';
 const name = 'initia';
-const rest = new RESTClient(restUri);
+const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-rest.move
+restClient.move
   .view(
     moduleAddress,
     'usernames',
@@ -58,11 +60,13 @@ public fun get_name_from_address(addr: address): Option<String>
 const { RESTClient, bcs } = require('@initia/initia.js');
 
 const moduleAddress = '0x...';
-const restUri = 'https://...';
 const address = "init1...";
-const rest = new RESTClient(restUri);
+const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-rest.move
+restClient.move
   .view(
     moduleAddress
     'usernames',
