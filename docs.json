@@ -377,7 +377,7 @@
       "anchors": [
         {
           "anchor": "Twitter",
-          "href": "https://twitter.com/initiafdn",
+          "href": "https://x.com/initia",
           "icon": "twitter"
         },
         {
@@ -413,7 +413,7 @@
   },
   "footer": {
     "socials": {
-      "twitter": "https://x.com/initiafdn",
+      "twitter": "https://x.com/initia",
       "discord": "https://discord.gg/initia",
       "github": "https://github.com/initia-labs"
     }
