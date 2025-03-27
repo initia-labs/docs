@@ -540,7 +540,7 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
     </Tab>
     <Tab title="InitiaJS">
     ```ts
-    async function getLastProposalId(rest: RESTClient): Promise<number> {
+    async function getLastProposalId(restClient: RESTClient): Promise<number> {
         const [proposals, pagination] = await restClient.gov.proposals()
         if (proposals.length === 0) return 0
         return proposals[proposals.length - 1].id
@@ -683,18 +683,18 @@ function coinMetadata(creator: string, symbol: string) {
   return toHex(sum)
 }
 
-async function getLastProposalId(rest: RESTClient): Promise<number> {
+async function getLastProposalId(restClient: RESTClient): Promise<number> {
   const [proposals, pagination] = await restClient.gov.proposals()
   if (proposals.length === 0) return 0
   return proposals[proposals.length - 1].id
 }
 
-async function getProposalStatus(rest: RESTClient, proposalId: number): Promise<ProposalStatus | null> {
+async function getProposalStatus(restClient: RESTClient, proposalId: number): Promise<ProposalStatus | null> {
   const proposal = await restClient.gov.proposal(proposalId)
   return proposal ? proposal.status : null
 }
 
-async function checkProposalPassed(rest: RESTClient, proposalId: number): Promise<void> {
+async function checkProposalPassed(restClient: RESTClient, proposalId: number): Promise<void> {
   for (;;) {
     console.log(`checking proposal ${proposalId} status... in ${restClient.URL}/cosmos/gov/v1/proposals/${proposalId}`)
     const status = await getProposalStatus(rest, proposalId)

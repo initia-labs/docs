@@ -254,13 +254,13 @@ function createHook(params: object) {
 }
 
 async function main() {
-    const l1rest = new RESTClient('https://rest.testnet.initia.xyz', {
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasAdjustment: '1.75',
         gasPrices: '0.015uinit'
     })
 
     const sender = new Wallet(
-        l1rest,
+        restClient,
         new MnemonicKey({
             mnemonic: '<your-mnemonic-here>'
         })
@@ -296,7 +296,7 @@ async function main() {
     ]
 
     const signedTx = await sender.createAndSignTx({ msgs });
-    await l1rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+    await restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
 }
 
 main()

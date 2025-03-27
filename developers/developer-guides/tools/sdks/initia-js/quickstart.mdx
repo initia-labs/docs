@@ -28,13 +28,12 @@ For most of the following examples in this section, we will be assuming that the
   ```ts
   import { RESTClient, Coin } from '@initia/initia.js';
 
-const restUrl = 'https://rest.testnet.initia.xyz';
-const rest: RESTClient = new RESTClient(restUrl, {});
+  const restClient = new RESTClient('https://rest.testnet.initia.xyz');
 
-(async () => {
-  const chainId = await rest.tendermint.chainId();
-  console.log(chainId);
-})();
+  (async () => {
+    const chainId = await restClient.tendermint.chainId();
+    console.log(chainId);
+  })();
   ```
   Next, we will run the script.
   ```bash

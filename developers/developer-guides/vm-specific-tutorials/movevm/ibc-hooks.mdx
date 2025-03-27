@@ -285,29 +285,29 @@ function createHook(params: object) {
 }
 
 async function main() {
-  const l1rest = new RESTClient('https://rest.testnet.initia.xyz', {
+  const restClientL1 = new RESTClient('https://rest.testnet.initia.xyz', {
       gasAdjustment: '1.75',
       gasPrices: '0.015uinit'
   })
 
-  const l2rest = new RESTClient('https://rest.minimove-2.initia.xyz', {
+  const restClientL2 = new RESTClient('https://rest.minimove-2.initia.xyz', {
       gasAdjustment: '1.75',
       gasPrices: '0.15umin' // set l2 gas price
   })
 
   const sender = new Wallet(
-      l2rest,
+      restClientL2,
       new MnemonicKey({
           mnemonic: 'power elder gather acoustic ...' 
       })
   )
 
   const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
-  const tokenPair = await l1rest.ophost.tokenPairByL1Denom(1, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd' }
+  const tokenPair = await restClientL1.ophost.tokenPairByL1Denom(1, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd' }
 
   const ibcTrace = "transfer/" + "channel-0/" + tokenPair.l2_denom // IBC denom trace = `port_id/channel_id/denom`
-  const ibcDenomHash = await l1rest.ibcTransfer.denomHash(ibcTrace) // IBC denom = `ibc/${denom_hash}`
-  const tokenMetadata = await l1rest.move.metadata("ibc/" + ibcDenomHash) // 0x972188e32b2ccec557eed98bbea9d42a1a6dc270da9009926365deb7c49db7dd
+  const ibcDenomHash = await restClientL1.ibcTransfer.denomHash(ibcTrace) // IBC denom = `ibc/${denom_hash}`
+  const tokenMetadata = await restClientL1.move.metadata("ibc/" + ibcDenomHash) // 0x972188e32b2ccec557eed98bbea9d42a1a6dc270da9009926365deb7c49db7dd
   const amount = 1000
 
   const msgs = [
@@ -334,7 +334,7 @@ async function main() {
   ] 
 
   const signedTx = await sender.createAndSignTx({ msgs });
-  await l2rest.tx.broadcastSync(signedTx).then(res => console.log(res));
+  await restClientL2.tx.broadcastSync(signedTx).then(res => console.log(res));
 }
 
 main()

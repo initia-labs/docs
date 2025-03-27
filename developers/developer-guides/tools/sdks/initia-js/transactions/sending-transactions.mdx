@@ -28,12 +28,13 @@ const gasPrices = process.env.GAS_PRICES || "0.015uinit"; // Will be INIT for ma
 const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
 const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu';
 const amount = process.env.AMOUNT || '1000uinit';
+```
 
 We can then use the use these variables to ultimately create the `wallet` client, as well as the `sendMsg` object. Since for this example we're making a token transfer, we'll use the `MsgSend` object. But the SDK provides many other message types for different actions related to staking, governance, and more.
 
 ```ts
 const key: MnemonicKey = new MnemonicKey({ mnemonic }); // Create a key from the mnemonic
-const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
+const restClient: RESTClient = new RESTClient(restUrl, { gasPrices });
 const wallet: Wallet = new Wallet(restClient, key);
 
 const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);  
@@ -42,7 +43,7 @@ const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);
 Finally, we can create the function to send the transaction.
 
 - We first create the transaction by calling `wallet.createAndSignTx`. This function takes in the raw message object, signs it using the `wallet`, and returns a signed transaction object.
-- We then broadcast the transaction by calling `rest.tx.broadcast`. This function takes in the signed transaction object and broadcasts it to the network.
+- We then broadcast the transaction by calling `restClient.tx.broadcast`. This function takes in the signed transaction object and broadcasts it to the network.
 
 ```ts
 async function sendTransaction(): Promise<WaitTxBroadcastResult> {
@@ -52,7 +53,7 @@ async function sendTransaction(): Promise<WaitTxBroadcastResult> {
       memo: 'memo',
     });
     
-    const result: WaitTxBroadcastResult = await rest.tx.broadcast(signedTx);
+    const result: WaitTxBroadcastResult = await restClient.tx.broadcast(signedTx);
     console.log('Transaction successful');
     console.log('Transaction hash:', result.txhash);
     return result;
@@ -96,7 +97,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
   const amount = process.env.AMOUNT || '1000uinit';
 
   const key: MnemonicKey = new MnemonicKey({ mnemonic });
-  const rest: RESTClient = new RESTClient(restUrl, { gasPrices });
+  const restClient: RESTClient = new RESTClient(restUrl, { gasPrices });
   const wallet: Wallet = new Wallet(restClient, key);
   
   const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount);
@@ -108,7 +109,7 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
         memo: 'memo',
       });
       
-      const result: WaitTxBroadcastResult = await rest.tx.broadcast(signedTx);
+      const result: WaitTxBroadcastResult = await restClient.tx.broadcast(signedTx);
       console.log('Transaction successful');
       console.log('Transaction hash:', result.txhash);
       return result;
