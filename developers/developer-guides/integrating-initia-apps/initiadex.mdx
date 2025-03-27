@@ -569,7 +569,7 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
         const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
         const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
         
-        await user.restClient.tx.broadcast(signedTx).catch(console.log)
+        await user.rest.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -606,7 +606,7 @@ After whitelisting the LP token, you can delegate your LP tokens to a validator.
         )
 
         const signedTx = await user.createAndSignTx({ msgs: [msg] })
-        await user.restClient.tx.broadcast(signedTx).catch(console.log)
+        await user.rest.tx.broadcast(signedTx).catch(console.log)
     }
     ```
     </Tab>
@@ -697,7 +697,7 @@ async function getProposalStatus(restClient: RESTClient, proposalId: number): Pr
 async function checkProposalPassed(restClient: RESTClient, proposalId: number): Promise<void> {
   for (;;) {
     console.log(`checking proposal ${proposalId} status... in ${restClient.URL}/cosmos/gov/v1/proposals/${proposalId}`)
-    const status = await getProposalStatus(rest, proposalId)
+    const status = await getProposalStatus(restClient, proposalId)
     
     if (status === ProposalStatus.PROPOSAL_STATUS_PASSED) return
     if (status === ProposalStatus.PROPOSAL_STATUS_REJECTED) throw new Error(`proposal ${proposalId} rejected`)
@@ -727,7 +727,7 @@ async function provideLiquidity(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.restClient.tx.broadcast(signedTx).catch(console.log)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function createPairScript(
@@ -762,7 +762,7 @@ async function createPairScript(
   )
 
   const signedTx = await sender.createAndSignTx({ msgs: [msg] })
-  await sender.restClient.tx.broadcast(signedTx).catch(console.log)
+  await sender.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function whitelistLP(lpMetadata: string) {
@@ -788,7 +788,7 @@ async function whitelistLP(lpMetadata: string) {
   const vote = new MsgVote(proposalId, user.key.accAddress, VoteOption.VOTE_OPTION_YES, '') 
   const signedTx = await user.createAndSignTx({ msgs: [proposal, vote]})
   
-  await user.restClient.tx.broadcast(signedTx).catch(console.log)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
   await checkProposalPassed(user.rest, proposalId)
 }
 
@@ -806,7 +806,7 @@ async function delegateLP(
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.restClient.tx.broadcast(signedTx).catch(console.log)
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
 }
 
 async function withdrawRewards() {
@@ -816,7 +816,7 @@ async function withdrawRewards() {
   )
 
   const signedTx = await user.createAndSignTx({ msgs: [msg] })
-  await user.restClient.tx.broadcast(signedTx).catch(console.log
+  await user.rest.tx.broadcast(signedTx).catch(console.log
 }
 
 // NOTE: if you uncomment step 2, there will be an error
