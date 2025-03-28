@@ -52,7 +52,7 @@ public entry fun provide(
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(restClientClient, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(

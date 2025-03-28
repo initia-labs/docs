@@ -246,7 +246,7 @@ Below are two summarized examples demonstrating how to create a multisig account
   ]
 
   // Convert each mnemonic key to a Wallet instance
-  const accounts = keys.map((mnemonic) => new Wallet(restClientClient, new MnemonicKey({ mnemonic })))
+  const accounts = keys.map((mnemonic) => new Wallet(restClient, new MnemonicKey({ mnemonic })))
 
   async function main() {
     let signedTx: Tx
