@@ -357,7 +357,7 @@ public fun swap_simulation(
 <Tabs>
     <Tab title="curl">
     ```bash
-    curl -X POST "[REST_URI]/initia/move/v1/accounts/0x1/modules/minitswap/view_functions/swap_simulation" \
+    curl -X POST "https://rest.testnet.initia.xyz/initia/move/v1/accounts/0x1/modules/minitswap/view_functions/swap_simulation" \
         -H "accept: application/json" \
         -H "Content-Type: application/json" \
         -d "{ \"args\": [ \"[BCS_ENCODED_OBJECT, BCS_ENCODED_OBJECT, BCS_ENCODED_OFFER_AMOUNT]\" ]}"
