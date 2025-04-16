@@ -369,6 +369,10 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Security",
+            "pages": ["/resources/security/audits"]
           }
         ]
       }
