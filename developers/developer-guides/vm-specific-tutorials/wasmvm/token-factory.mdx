@@ -1,5 +1,5 @@
 ---
-title: Token Factory
+title: Creating Tokens via Token Factory Module
 ---
 
 The TokenFactory module enables any account to create a new token with the following naming convention: `factory/{creator address}/{subdenom}`. 
@@ -11,19 +11,16 @@ A single account can create multiple denominations by providing a unique subdeno
 Upon creation, the original creator is granted "admin" privileges over the asset. This allows them to:
 
 - Minting the token to any account
-
 - Burning the token from any account
-
 - Transferring the token between any two accounts
-
 - Changing the admin (in the future, more admin capabilities may be added)
 
 
 ## Tutorial
 
-#### Create Denom
+#### Create Token Denom
 
-Creates a denom in the format `factory/{creator address}/{subdenom}` with the specified creator address and subdenom. Subdenoms can only contain the characters `[a-zA-Z0-9./]`.
+Creates a token denom in the format `factory/{creator address}/{subdenom}` with the specified creator address and subdenom. Subdenoms can only contain the characters `[a-zA-Z0-9./]`.
 
 <Tabs>
     <Tab title="CLI">
@@ -76,7 +73,11 @@ Creates a denom in the format `factory/{creator address}/{subdenom}` with the sp
 
 #### Mint
 
-Only the current admin can mint a specific denom. By default, the creator of the denom is its first admin.
+Minting is the process of creating new tokens for a specific denom and assigning them to a specified address. 
+
+Only the current admin can mint tokens for that denom. 
+
+By default, the creator of the denom is its first admin.
 
 <Tabs>
     <Tab title="CLI">
@@ -141,6 +142,8 @@ Only the current admin can mint a specific denom. By default, the creator of the
 </Tabs>
 
 #### Burn
+
+Burning is the process of permanently removing tokens from circulation by destroying them.
 
 Only the current admin can burn a specific denom.
 
@@ -208,7 +211,7 @@ Only the current admin can burn a specific denom.
 
 #### Change Admin
 
-Allows the current admin to transfer admin privileges for the denom to another account.
+The `change-admin` command allows the current admin to transfer admin privileges for the denom to another account.
 
 <Tabs>
     <Tab title="CLI">
