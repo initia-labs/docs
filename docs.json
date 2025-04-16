@@ -201,6 +201,7 @@
                 "icon": "rust",
                 "pages": [
                   "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
+                  "developers/developer-guides/vm-specific-tutorials/wasmvm/token-factory",
                   "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
                 ]
               }
