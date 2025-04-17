@@ -37,7 +37,7 @@ You can get the current `opchild` parameters by querying:
 ```bash
 curl ${REST_ENDPOINT}/opinit/opchild/v1/params
 
-# 📌 Example: https://rest-yominet-1.anvil.asia-southeast.initia.xyz/opinit/opchild/v1/params
+# 📌 Example: https://rest-echelon-1.anvil.asia-southeast.initia.xyz/opinit/opchild/v1/params
 # {
 #   "params": {
 #     "max_validators": 100,
@@ -106,7 +106,7 @@ To get the authority address, you can use the following command:
 ```bash
 curl ${REST_ENDPOINT}/cosmos/auth/v1beta1/module_accounts/opchild
 
-# 📌 Example: https://rest-yominet-1.anvil.asia-southeast.initia.xyz/cosmos/auth/v1beta1/module_accounts/opchild
+# 📌 Example: https://rest-echelon-1.anvil.asia-southeast.initia.xyz/cosmos/auth/v1beta1/module_accounts/opchild
 # {
 #   "account": {
 #     "@type": "/cosmos.auth.v1beta1.ModuleAccount",
@@ -140,8 +140,8 @@ Submit the parameter update messages using the CLI:
 
 ```bash
 minitiad tx opchild execute-messages ./messages.json \
-  --from operator --chain-id yominet-1 \
-  --node https://rpc-yominet-1.anvil.asia-southeast.initia.xyz
+  --from operator --chain-id echelon-1 \
+  --node https://rpc-echelon-1.anvil.asia-southeast.initia.xyz
 ```
 
 #### 4. Verify the Updated Parameters
@@ -150,7 +150,7 @@ Once the transaction is successful, verify the updated parameters:
 
 ```bash
 minitiad q opchild params \
-  --node https://rpc-yominet-1.anvil.asia-southeast.initia.xyz
+  --node https://rpc-echelon-1.anvil.asia-southeast.initia.xyz
 ```
 
 These queries will return the live parameter state for both modules.
