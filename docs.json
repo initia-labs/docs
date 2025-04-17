@@ -174,9 +174,9 @@
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
                     ]
                   },
-                  "developers/developer-guides/vm-specific-tutorials/evm/update-fee-token",
                   "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
-                  "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
+                  "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks",
+                  "developers/developer-guides/vm-specific-tutorials/evm/update-gas-price"
                 ]
               },
               {
@@ -186,7 +186,8 @@
                   "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
                   "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
                   "developers/developer-guides/vm-specific-tutorials/movevm/multisig",
-                  "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+                  "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks",
+                  "developers/developer-guides/vm-specific-tutorials/movevm/update-gas-price"
                 ]
               },
               {
@@ -194,7 +195,8 @@
                 "icon": "rust",
                 "pages": [
                   "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
-                  "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+                  "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks",
+                  "developers/developer-guides/vm-specific-tutorials/wasmvm/update-gas-price"
                 ]
               }
             ]
