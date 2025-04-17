@@ -79,7 +79,7 @@ initiad move deploy \
   --upgrade-policy COMPATIBLE \
   --from $ACCOUNT_NAME \
   --gas auto --gas-adjustment 1.5 \
-  --gas-prices 0.15uinit \
+  --gas-prices 0.015uinit \
   --node $NODE_URL \
   --chain-id $CHAIN_ID
 ```
@@ -105,7 +105,7 @@ initiad query move view $MODULE_ADDRESS read_write read \
 initiad tx move execute $MODULE_ADDRESS read_write write \
   --args '["string:new_string"]' \
   --from $ACCOUNT_NAME \
-  --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+  --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
   --node $NODE_URL --chain-id $CHAIN_ID
   
 initiad query move view $MODULE_ADDRESS read_write read \

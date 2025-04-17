@@ -233,8 +233,8 @@ Below are two summarized examples demonstrating how to create a multisig account
   }
 
   // Configure the REST client for Initia, including gas price/adjustment
-  const restClient = new RESTClient('https://b545809c-5562-4e60-b5a1-22e83df57748.initiation-2.mesa-rest.newmetric.xyz', {
-    gasPrices: '0.15uinit',
+  const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+    gasPrices: '0.015uinit',
     gasAdjustment: '1.5'
   })
 
@@ -465,9 +465,9 @@ Below are two summarized examples demonstrating how to create a multisig account
   import * as fs from 'fs';
 
   // Configure the REST client
-  const rest = new RESTClient('https://rest.testnet.initia.xyz', {
+  const restClient =  new RESTClient('https://rest.testnet.initia.xyz', {
     chainId: 'initiation-2',
-    gasPrices: '0.15uinit',
+    gasPrices: '0.015uinit',
     gasAdjustment: '2.0',
   });
 
@@ -485,7 +485,7 @@ Below are two summarized examples demonstrating how to create a multisig account
   ];
 
   // Convert each to a Wallet
-  const wallets = keys.map(key => new Wallet(rest, key));
+  const wallets = keys.map(key => new Wallet(restClient, key));
 
   // A readable name for the multisig
   const multisigName = 'multisig account';
@@ -544,7 +544,7 @@ Below are two summarized examples demonstrating how to create a multisig account
 
     // Sign and broadcast
     const signedTx = await wallets[0].createAndSignTx({ msgs });
-    const broadcastRes = await rest.tx.broadcastSync(signedTx);
+    const broadcastRes = await restClient.tx.broadcastSync(signedTx);
     console.log('[createMultisigAccount] broadcastRes:', broadcastRes);
     // You can obtain the multisig address from the transaction event.
   }
@@ -596,7 +596,7 @@ Below are two summarized examples demonstrating how to create a multisig account
 
     // Broadcast
     const signedTx = await wallets[0].createAndSignTx({ msgs });
-    const broadcastRes = await rest.tx.broadcastSync(signedTx);
+    const broadcastRes = await restClient.tx.broadcastSync(signedTx);
     console.log('[createProposal] broadcastRes:', broadcastRes);
     // Retrieve the proposal ID from the transaction event or by querying `get_proposals`.
   }
@@ -631,7 +631,7 @@ Below are two summarized examples demonstrating how to create a multisig account
 
     // Broadcast the vote
     const signedTx = await wallets[1].createAndSignTx({ msgs });
-    const broadcastRes = await rest.tx.broadcastSync(signedTx);
+    const broadcastRes = await restClient.tx.broadcastSync(signedTx);
     console.log('[vote_proposal] broadcastRes:', broadcastRes);
   }
 
@@ -661,7 +661,7 @@ Below are two summarized examples demonstrating how to create a multisig account
 
     // Sign and broadcast
     const signedTx = await wallets[0].createAndSignTx({ msgs });
-    const broadcastRes = await rest.tx.broadcastSync(signedTx);
+    const broadcastRes = await restClient.tx.broadcastSync(signedTx);
     console.log('[execute_proposal] broadcastRes:', broadcastRes);
   }
 
