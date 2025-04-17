@@ -57,13 +57,13 @@ Finally, we can create the main function to sign the transaction and compare the
 To start, we will create two `RESTClient` instances. One that is connected to the network, and one that is offline. We will be using the offline REST client to sign the transaction, and the online REST client to broadcast the transaction to later compare.
 
 ```ts
-const restOffline = new RESTClient(``, {
+const offlineRestClient = new RESTClient(``, {
   chainId: chainId,
   gasPrices: gasPrices,
 });
 
 // rest client that is connected
-const restOnline = new RESTClient(restUrl, {
+const onlineRestClient = new RESTClient(restUrl, {
   chainId: chainId,
   gasPrices: gasPrices,
 });
@@ -76,7 +76,7 @@ Next, we will generate the wallet client, as well as define the message, gas lim
 const key = new MnemonicKey({
   mnemonic: mnemonic,
 });
-const account = await restOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
+const account = await onlineRestClient.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
 const wallet = new Wallet(restClientOffline, key);
 
 // msg to send
@@ -84,7 +84,7 @@ const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');
 
 // use fixed fee to not estimate gas
 const gasLimit = 500000;
-const feeAmount = new Coins(restOffline.config.gasPrices)
+const feeAmount = new Coins(offlineRestClient.config.gasPrices)
   .toArray()[0]
   .mul(gasLimit);
 const fee = new Fee(gasLimit, new Coins([feeAmount]));
@@ -111,10 +111,10 @@ const signedTxBytes = signedTx.toBytes();
 const txHash = getTxHash(signedTxBytes);
 ```
 
-Finally, if we want to broadcast the transaction to the network later, we can do so by using the `restOnline` client. If we then retrieve the transaction hash from the online REST client and compare it to the transaction hash we computed earlier, we should see that they match.
+Finally, if we want to broadcast the transaction to the network later, we can do so by using the `onlineRestClient` client. If we then retrieve the transaction hash from the online REST client and compare it to the transaction hash we computed earlier, we should see that they match.
 
 ```ts
-const broadcastRes = await restOnline.tx.broadcastSync(signedTx);
+const broadcastRes = await onlineRestClient.tx.broadcastSync(signedTx);
 
 // true
 console.log(txHash === broadcastRes.txhash);
@@ -149,13 +149,13 @@ export function getTxHash(tx: Uint8Array): string {
 
 async function offlineSingingTest() {
   // rest client that is not connected
-  const restOffline = new RESTClient(``, {
+  const offlineRestClient = new RESTClient(``, {
     chainId: chainId,
     gasPrices: gasPrices,
   });
 
   // rest client that is connected
-  const restOnline = new RESTClient(restUrl, {
+  const onlineRestClient = new RESTClient(restUrl, {
     chainId: chainId,
     gasPrices: gasPrices,
   });
@@ -164,15 +164,15 @@ async function offlineSingingTest() {
   const key = new MnemonicKey({
     mnemonic: mnemonic,
   });
-  const account = await restOnline.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
-  const wallet = new Wallet(restClientOffline, key);
+  const account = await onlineRestClient.auth.accountInfo(key.accAddress); // you have to know account number and current sequence
+  const wallet = new Wallet(offlineRestClient, key);
 
   // msg to send
   const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit');
 
   // use fixed fee to not estimate gas
   const gasLimit = 500000;
-  const feeAmount = new Coins(restOffline.config.gasPrices)
+  const feeAmount = new Coins(offlineRestClient.config.gasPrices)
     .toArray()[0]
     .mul(gasLimit);
 
@@ -188,7 +188,7 @@ async function offlineSingingTest() {
   const signedTxBytes = signedTx.toBytes();
   const txHash = getTxHash(signedTxBytes);
 
-  const broadcastRes = await restOnline.tx.broadcastSync(signedTx);
+  const broadcastRes = await onlineRestClient.tx.broadcastSync(signedTx);
 
   // true
   console.log(txHash === broadcastRes.txhash);

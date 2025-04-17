@@ -279,20 +279,20 @@ function ibcDenom(channelId: string, denom: string) {
 } 
 
 async function main() {
-    const restClientL1 = new RESTClient('https://rest.testnet.initia.xyz', {
+    const l1RestClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasAdjustment: '1.75',
         gasPrices: '0.015uinit' // set l1 gas price
     })
 
     const sender = new Wallet(
-        restClientL1,
+        l1RestClient,
         new MnemonicKey({
             mnemonic: 'power elder gather acoustic ...' 
         })
     )
 
     const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
-    const tokenPair = await restClientL1.ophost.tokenPairByL1Denom(2, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0' }
+    const tokenPair = await l1RestClient.ophost.tokenPairByL1Denom(2, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0' }
 
     const denom = ibcDenom("channel-0", tokenPair.l1_denom) // use IBC channel on MiniWasm side
     const amount = "1000"
@@ -323,7 +323,7 @@ async function main() {
     ]
 
     const signedTx = await sender.createAndSignTx({ msgs });
-    await restClientL1.tx.broadcastSync(signedTx).then(res => console.log(res));
+    await l1RestClient.tx.broadcastSync(signedTx).then(res => console.log(res));
 }
 
 main()
