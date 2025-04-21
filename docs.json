@@ -108,6 +108,11 @@
                   "home/core-concepts/minitswap/architecture",
                   "home/core-concepts/minitswap/terminology"
                 ]
+              },
+              {
+                "group": "INIT Token",
+                "icon": "coins",
+                "pages": ["home/core-concepts/init-token/tokenomics"]
               }
             ]
           },
