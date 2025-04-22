@@ -112,7 +112,7 @@
               {
                 "group": "INIT Token",
                 "icon": "coins",
-                "pages": ["home/core-concepts/init-token/tokenomics"]
+                "pages": ["home/core-concepts/init-token/init-tokenomics"]
               }
             ]
           },
@@ -425,6 +425,11 @@
       "twitter": "https://x.com/initia",
       "discord": "https://discord.gg/initia",
       "github": "https://github.com/initia-labs"
+    }
+  },
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-MEX41J56YX"
     }
   }
 }
