@@ -112,7 +112,7 @@
               {
                 "group": "INIT Token",
                 "icon": "coins",
-                "pages": ["home/core-concepts/init-token/init-tokenomics"]
+                "pages": ["home/core-concepts/init-token/tokenomics"]
               }
             ]
           },
