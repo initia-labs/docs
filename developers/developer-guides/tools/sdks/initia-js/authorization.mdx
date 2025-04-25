@@ -1,0 +1,241 @@
+---
+title: Authorization
+---
+
+## Introduction
+
+The authorization enables one user (the granter) to authorize another (the grantee) to execute messages on their behalf.
+
+How users decide to use the authz module is up to them. 
+
+For example, a validator may prefer to create a separate account solely for voting to keep their validator key more secure.
+
+It is also possible to perform like key rotation by granting and revoking permissions
+
+## Grant Authorization
+
+Authorization can be `generic`, where a grantee is allowed to execute a specific type of message (like `MsgVote`) on behalf of the granter without limitation.
+
+Other types of authorization include `send`, `delegate`, `unbond`, and `redelegate`, where the granter can specify token limits.
+
+<Tabs>
+  <Tab title="CLI">
+    ```bash
+    export GRANTEE=init1az53qznnfy0dshqlcelv3v6lx99mw7q606wsav
+    export GRANT_MSG=/cosmos.gov.v1.MsgVote
+    export GRANTER_KEY=granter
+    
+    initiad tx authz grant $GRANTEE generic \
+      --msg-type /cosmos.gov.v1.MsgVote \
+      --from $GRANTER_KEY \
+      --node https://rpc.initiation-2.initia.xyz \
+      --chain-id initiation-2 \
+      --gas-prices 0.15uinit
+    ```
+  </Tab>
+  <Tab title="InitiaJS">
+      ```ts InitiaJS
+      import {
+        AuthorizationGrant,
+        GenericAuthorization,
+        LCDClient,
+        MnemonicKey,
+        MsgGrantAuthorization,
+        Wallet
+      } from '@initia/initia.js'
+
+      async function main() {
+        const lcd = new LCDClient('https://rest.initiation-2.initia.xyz', {
+          gasPrices: '0.15uinit'
+        })
+        const granter = new Wallet(
+          lcd,
+          new MnemonicKey({
+            mnemonic: '...'
+          })
+        )
+
+        const grantee = 'init1vkpjnr6vyxc5p6madkhmdfsf5jq2jvmpk0ua9p'
+        const grantMsg = '/cosmos.gov.v1.MsgVote'
+        const msgs = [
+          new MsgGrantAuthorization(
+            granter.key.accAddress,
+            grantee,
+            new AuthorizationGrant(new GenericAuthorization(grantMsg))
+          )
+        ]
+
+        const signedTx = await granter.createAndSignTx({ msgs })
+        await lcd.tx.broadcast(signedTx)
+      }
+
+      main().catch(console.error)
+      ```
+  </Tab>
+</Tabs>
+
+<Note>
+  The grantee account must have executed at least one transaction on the network before it can receive a grant.
+</Note>
+
+## Generate transaction
+
+To execute a message on behalf of the granter, the grantee must first generate an unsigned transaction where the transaction author (the --from address) is the granter.
+
+Create unsigned transaction
+
+```bash
+initiad tx gov vote 46 yes --from init1hk0asaef9nxvnj7gjwawv0zz0yd7adcysktpqu --generate-only > tx.json
+```
+
+`tx.json` file will be created with the following content:
+
+```json tx.json
+{
+  "auth_info": {
+    "fee": {
+      "amount": [
+        {
+          "amount": "1447",
+          "denom": "uinit"
+        }
+      ],
+      "gas_limit": "96465",
+      "granter": "",
+      "payer": ""
+    },
+    "signer_infos": [],
+    "tip": null
+  },
+  "body": {
+    "extension_options": [],
+    "memo": "",
+    "messages": [
+      {
+        "@type": "/cosmos.gov.v1.MsgVote",
+        "metadata": "",
+        "option": "VOTE_OPTION_YES",
+        "proposal_id": "46",
+        "voter": "init1hk0asaef9nxvnj7gjwawv0zz0yd7adcysktpqu"
+      }
+    ],
+    "non_critical_extension_options": [],
+    "timeout_height": "0"
+  },
+  "signatures": []
+}
+```
+
+If authorization is granted, you can see the grant in the list of grants:
+
+```bash
+export GRANTER=init1hk0asaef9nxvnj7gjwawv0zz0yd7adcysktpqu
+
+curl https://lcd.initiation-2.initia.xyz/cosmos/authz/v1beta1/grants/granter/$GRANTER
+
+# {
+#   "grants": [
+#     {
+#       "granter": "init1hk0asaef9nxvnj7gjwawv0zz0yd7adcysktpqu",
+#       "grantee": "init1vkpjnr6vyxc5p6madkhmdfsf5jq2jvmpk0ua9p",
+#       "authorization": {
+#         "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
+#         "msg": "/cosmos.gov.v1.MsgVote"
+#       },
+#       "expiration": null
+#     }
+#   ],
+#   "pagination": {
+#     "next_key": null,
+#     "total": "0"
+#   }
+# }
+```
+
+## Execute transaction
+
+Finally, the grantee can sign and send the transaction. 
+
+The author of the transaction (the --from address) is the grantee.
+
+Sign and send transaction:
+<Tabs>
+  <Tab title="CLI">
+  ```bash
+  initiad tx authz exec tx.json \
+    --from grantee \
+    --node https://rpc.initiation-2.initia.xyz \
+    --chain-id initiation-2 \
+    --gas-prices 0.15uinit
+  ```
+  </Tab>
+  <Tab title="InitiaJS">
+    ```ts InitiaJS
+    import {
+      LCDClient,
+      MnemonicKey,
+      MsgExecAuthorized,
+      MsgVote,
+      Wallet
+    } from '@initia/initia.js'
+
+    async function main() {
+      const lcd = new LCDClient('https://rest.initiation-2.initia.xyz', {
+        gasPrices: '0.15uinit'
+      })
+      const grantee = new Wallet(
+        lcd,
+        new MnemonicKey({
+          mnemonic: '...'
+        })
+      )
+
+      const msgs = [
+        new MsgExecAuthorized(grantee.key.accAddress, [
+          new MsgVote(
+            46, // proposalId
+            grantee.key.accAddress, // voter
+            1, // yes
+            '' // metadata
+          )
+        ])
+      ]
+
+      const signedTx = await grantee.createAndSignTx({ msgs })
+      await lcd.tx.broadcast(signedTx)
+    }
+
+    main()
+    ```
+  </Tab>
+</Tabs>
+
+## Revoke Authorization
+
+The granter can revoke the authorization from the grantee using the revoke command.
+
+Revoke authorization:
+
+```bash
+initiad tx authz revoke $GRANTEE $GRANT_MSG \
+  --from $GRANTER_KEY \
+  --node https://rpc.initiation-2.initia.xyz \
+  --chain-id initiation-2 \
+  --gas-prices 0.15uinit
+```
+
+View the list of grants:
+
+```bash
+export GRANTER=init1hk0asaef9nxvnj7gjwawv0zz0yd7adcysktpqu
+
+curl https://lcd.initiation-2.initia.xyz/cosmos/authz/v1beta1/grants/granter/$GRANTER
+
+# {
+#   "grants": [],
+#   "pagination": {
+#     "next_key": null,
+#     "total": "0"
+#   }
+# }
+```
