@@ -24,3 +24,33 @@ At the end of the stage, the scores for each user on each rollup are finalized, 
 The combined timelines of the the gauge voting cycle and rewards distribution stage then as follows:
 
 ![Gauge Voting and Rewards Distribution Timelines](/images/vip/vip_timelines.png)
+
+### Challenge Period
+
+At the **exact block where a stage ends**, the corresponding rollup enters a **72-hour challenge period**. During this window, the community may audit the yet-to-be-settled scores and, if warranted, propose a replacement snapshot before rewards are finalized.
+
+- Example: Stage ends on **Jan 1 10:00 UTC** → challenge period closes on **Jan 4 10:00 UTC**.
+
+#### Submitting a Challenge
+
+A challenge is lodged via an expedited or emergency proposal on Initia L1 (the normal 7-day flow cannot finish before the window closes).
+
+#### Required Parameters
+
+```
+bridge_id:           u64,        // Target rollup
+challenge_stage:     u64,        // Stage being challenged
+new_api_uri:         string,     // Endpoint serving proofs for original and new scores
+new_agent:           address,    // Replacement scoring agent
+new_merkle_root:     vector<u8>, // Merkle root of replacement score set
+new_l2_total_score:  u64         // Aggregate L2 score for the stage
+```
+
+`new_api_uri` **must** return Merkle proofs for both the original scores and the proposed replacement.
+
+#### Outcome of a Successful Challenge
+
+1. Scoring agent replaced - authority transfers to `new_agent`.
+2. Merkle root updated - `new_merkle_root` becomes canonical, and rewards for that stage are recalculated.
+
+This mechanism provides a rapid, transparent safeguard against erroneous or malicious submissions without delaying the overall VIP timeline.

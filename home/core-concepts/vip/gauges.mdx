@@ -44,35 +44,3 @@ After the voting period ends, the final Weight Pool reward distribution is calcu
 In this case, the Weight Pool rewards for the cycle will then be split 55:40:5.
 
 ![VIP Gauge Voting](/images/vip/vip_gauge_weight_voting.png)
-
-## Challenging Snapshot Submission
-
-In case of incorrect or malicious Snapshot Submissions, anyone can challenge the submission by submitting a new snapshot. To do this, they need to submit a challenge proposal to the gauge contract and include the following information:
-
-- Merkle Root: The merkle root of the correct snapshot
-- API URI: An API endpoint that can prove that the new submitted Merkle Root is valid
-- Snapshot Height: The block height at which the snapshot was taken (needs to be the same as the original snapshot submission)
-- Challenge Deposit: Proposal deposit in order to start a challenge proposal, paid in INIT tokens. INIT tokens will be returned to the challenger if the proposal was successful.
-
-### Challenge Proposal Timing
-
-Within an cycle, a challenge proposal can be made any time after the original Snapshot Submission, while leaving enough time for the challenge proposal to be voted on.
-
-For example, given
--  cycle duration: $10$ units
--  Snapshot submission time: $t = 1$
--  Challenge proposal voting period time: $3$ units
-
-Therefore, a challenge proposal can be made anytime between $t = 1$ and  $t = 10 - 3 = 7$.
-
-### Voting on Challenge Proposals
-
-Once submitted, users can start voting on the challenge proposal. Eligible voters include those who participated in gauge voting during the previous cycle, with each voter's voting power on the challenge proposal equal to the total voting power they used to vote on the gauges during the previous cycle. 
-
-For example, if a user has 100 total voting power in the previous cycle but only 50 of it was used to vote on the gauges, their voting power on the challenge proposal would be 50.
-
-If the "Yes" votes on the challenge proposal passes the quorum set within the challenge voting period, then the proposal is successful and
-
-1. the snapshot in the challenge proposal is used for this cycle
-2. the Snapshot Submitter is replaced by the challenger
-3. the challenger receives their INIT deposit back
