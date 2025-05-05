@@ -27,15 +27,17 @@ The combined timelines of the the gauge voting cycle and rewards distribution st
 
 ### Challenge Period
 
-At the **exact block where a stage ends**, the corresponding rollup enters a **72-hour challenge period**. During this window, the community may audit the yet-to-be-settled scores and, if warranted, propose a replacement snapshot before rewards are finalized.
+When a rollup finalizes its scores, the rollup enters a **72-hours challenge period**. During the challenge period, the community may audit the yet-to-be-settled scores, and may propose a replacement before all rewards for a rollup is finalized in the case of wrong score submission. 
 
-- Example: Stage ends on **Jan 1 10:00 UTC** → challenge period closes on **Jan 4 10:00 UTC**.
+For example: Rollup A submits and finalizes its scores on **Jan 1, 10:00UTC** → the challenge period ends on **Jan 4, 10:00 UTC.**
 
 #### Submitting a Challenge
 
-A challenge is lodged via an expedited or emergency proposal on Initia L1 (the normal 7-day flow cannot finish before the window closes).
+A challenge may be submitted via an expedited or emergency governance proposal on Initia L1, since a normal 7-day governance proposal will not pass within the 72 hours of challenge period. 
 
 #### Required Parameters
+
+The below parameters must be included in a challenge
 
 ```
 bridge_id:           u64,        // Target rollup
@@ -50,7 +52,7 @@ new_l2_total_score:  u64         // Aggregate L2 score for the stage
 
 #### Outcome of a Successful Challenge
 
-1. Scoring agent replaced - authority transfers to `new_agent`.
-2. Merkle root updated - `new_merkle_root` becomes canonical, and rewards for that stage are recalculated.
+1. Scoring agent is replaced - the authority is transferred to a `new_agent`.
+2. Merkle root is updated - `new_merkle_root` becomes canonical, and rewards for the stage are recalculated.
 
-This mechanism provides a rapid, transparent safeguard against erroneous or malicious submissions without delaying the overall VIP timeline.
+This mechanism provides a fast and transparent safeguard against any erroneous or malicious score submissions without delaying the overall VIP timelines.
