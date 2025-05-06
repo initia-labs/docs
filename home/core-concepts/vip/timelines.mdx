@@ -24,3 +24,14 @@ At the end of the stage, the scores for each user on each rollup are finalized, 
 The combined timelines of the the gauge voting cycle and rewards distribution stage then as follows:
 
 ![Gauge Voting and Rewards Distribution Timelines](/images/vip/vip_timelines.png)
+
+### Challenge Period
+
+When a rollup finalizes its scores, it enters a **challenge period**. This period allows users and other parties to audit the scores submitted by the rollup, ensuring their accuracy and compliance with both the VIP scoring policy and the rollup's own scoring criteria. If someone finds an incorrect scoring, they can submit a challenge through an expedited or emergency governance proposal on Initia L1.
+
+If a challenge succeeds, the following changes occur:
+
+1. The system replaces the VIP scoring agent and transfers authority to a new agent.
+2. The system recalculates rewards for the stage.
+
+Note that the challenge period happens alongside the start of the next stage and does not delay its commencement, as seen in the timeline above.
