@@ -375,8 +375,8 @@ export async function opDenomByL1Denom(
   bridge_id: number,
   l1_denom: string
 ): Promise<string> {
-  const client = new RESTClient(uri)
-  const tokenPair = await client.ophost.tokenPairByL1Denom(bridge_id, l1_denom)
+  const restClient = new RESTClient(uri)
+  const tokenPair = await restClient.ophost.tokenPairByL1Denom(bridge_id, l1_denom)
   return tokenPair.l2_denom
 }
 
@@ -395,8 +395,8 @@ export async function opDenomByL2Denom(
   bridge_id: number,
   l2_denom: string
 ): Promise<string> {
-  const client = new RESTClient(uri)
-  const tokenPair = await client.ophost.tokenPairByL2Denom(bridge_id, l2_denom)
+  const restClient = new RESTClient(uri)
+  const tokenPair = await restClient.ophost.tokenPairByL2Denom(bridge_id, l2_denom)
   return tokenPair.l1_denom
 }
 
@@ -452,16 +452,16 @@ function makeIBCHash(fullTrace: string): string {
  * from an IBC denom that starts with "ibc/...". It queries the IBC module's
  * `denom_traces` endpoint to get the path and base denom.
  *
- * @param {RESTClient} chain - The RESTClient instance for the chain.
+ * @param {RESTClient} restClient - The RESTClient instance for the chain.
  * @param {string} denom - The IBC denom (must start with "ibc/").
  * @returns {Promise<string>} - The combined path and base denom (e.g., "transfer/channel-0/uinit").
  */
-async function getFullTrace(chain: RESTClient, denom: string): Promise<string> {
+async function getFullTrace(restClient: RESTClient, denom: string): Promise<string> {
   if (!denom.startsWith('ibc/')) {
     throw Error('Not an IBC denom')
   }
 
-  const trace = await chain.apiRequester.get<DenomTrace>(
+  const trace = await restClient.apiRequester.get<DenomTrace>(
     `/ibc/apps/transfer/v1/denom_traces/${denom}`
   )
   return `${trace.denom_trace.path}/${trace.denom_trace.base_denom}`
@@ -480,14 +480,14 @@ async function getFullTrace(chain: RESTClient, denom: string): Promise<string> {
  * 4. Finally, if the resulting string begins with "transfer/", convert it to an IBC hash
  *    using `makeIBCHash`. Otherwise, return it as is.
  *
- * @param {RESTClient} chainA - The RESTClient for chain A.
+ * @param {RESTClient} restClient - The RESTClient for chain A.
  * @param {string} denom - The denom used on chain A (e.g., "uinit" or "ibc/...").
  * @param {string} chainAChannel - The channel ID on chain A (e.g., "channel-1").
  * @param {string} chainBChannel - The channel ID on chain B (e.g., "channel-2").
  * @returns {Promise<string>} - The resulting IBC denom (e.g., "ibc/...") or a "transfer/..." full trace.
  */
 export async function ibcDenom(
-  chainA: RESTClient,
+  restClient: RESTClient,
   denom: string,
   chainAChannel: string,
   chainBChannel: string
@@ -497,7 +497,7 @@ export async function ibcDenom(
 
   // If denom starts with "ibc/", retrieve the original trace
   if (denom.startsWith('ibc/')) {
-    fullTrace = await getFullTrace(chainA, denom)
+    fullTrace = await getFullTrace(restClient, denom)
 
     // If the token's trace starts with "transfer/chainAChannel/", token originated from chain B
     if (fullTrace.startsWith(`transfer/${chainAChannel}/`)) {
@@ -526,11 +526,11 @@ export async function ibcDenom(
 async function main() {
   // Example usage of ibcDenom
   const denom = 'uinit' // or "ibc/..."
-  const chainAclient = new RESTClient('https://rest.testnet.initia.xyz')
+  const restClientChainA = new RESTClient('https://rest.testnet.initia.xyz')
   const channelA = 'channel-132' // Example channel ID for chain A
   const channelB = 'channel-0'   // Example channel ID for chain B
 
-  const ibcDenomStr = await ibcDenom(chainAclient, denom, channelA, channelB)
+  const ibcDenomStr = await ibcDenom(restClientChainA, denom, channelA, channelB)
   console.log('Calculated IBC Denom:', ibcDenomStr)
 }
 

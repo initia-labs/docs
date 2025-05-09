@@ -108,6 +108,11 @@
                   "home/core-concepts/minitswap/architecture",
                   "home/core-concepts/minitswap/terminology"
                 ]
+              },
+              {
+                "group": "INIT Token",
+                "icon": "coins",
+                "pages": ["home/core-concepts/init-token/tokenomics"]
               }
             ]
           },
@@ -133,7 +138,7 @@
             "pages": [
               {
                 "group": "Running Initia L1 Nodes",
-                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave"]
+                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave","nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"]
               },
               {
                 "group": "Running a Validator",
@@ -346,7 +351,7 @@
           {
             "group": "Developer Resources",
             "pages": [
-              "resources/developer/network-information",
+              "resources/developer/initia-l1",
               {
                 "group": "Deployed Contracts",
                 "icon": "file-code",
@@ -371,6 +376,10 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Security",
+            "pages": ["/resources/security/audits"]
           }
         ]
       }
@@ -418,6 +427,11 @@
       "twitter": "https://x.com/initia",
       "discord": "https://discord.gg/initia",
       "github": "https://github.com/initia-labs"
+    }
+  },
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-MEX41J56YX"
     }
   }
 }
