@@ -4,11 +4,7 @@ title: Update Gas Price on EVM Rollup
 
 ## Overview
 
-You may want to use an ERC20 token as the Fee Token instead of the tokens issued by the Cosmos Bank module.
-
-To achieve this, you can update the chain parameter of the EVM module to set the Fee Token as an ERC20 token.
-
-Use validator (admin) account to update the chain parameter.
+You may want to use an ERC-20 token as the fee token instead of the tokens issued by the Cosmos Bank module. To do this, you need to update the chain parameters of the EVM module and set the fee token to the desired ERC-20 token. This change must be made using a admin account with the authority to modify chain parameters.
 
 <Warning>
 The deployed ERC20 token must inherit the `InitiaERC20` contract.
@@ -17,6 +13,7 @@ The deployed ERC20 token must inherit the `InitiaERC20` contract.
 ## Prerequisites
 
 - [NodeJS](https://nodejs.org)
+- Install [minitiad](/developers/developer-guides/tools/clis/minitiad-cli/introduction.mdx)
 
 ## Update Chain Parameters
 
@@ -95,44 +92,68 @@ Create a JSON file named `messages.json` with the following content:
       "@type": "/opinit.opchild.v1.MsgUpdateParams",
       "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
       "params": {
-        "max_validators": 100, // Max number of active validators
-        "historical_entries": 10000, // Number of historical blocks to retain
+        "max_validators": 100,
+        "historical_entries": 10000,
         "min_gas_prices": [
           {
-            "denom": "umin",         // Native token denomination
-            "amount": "1000000000"  // Minimum gas price in smallest unit
+            "denom": "umin",
+            "amount": "1000000000" 
           }
         ],
         "bridge_executors": [
-          "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam" // Allowed bridge executor address
+          "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam"
         ],
-        "admin": "init10g75rf30pwpkgu68yr8uh4gm824xajg09233xr", // Admin address with authority to update params
+        "admin": "init10g75rf30pwpkgu68yr8uh4gm824xajg09233xr",
         "fee_whitelist": [
-          // Addresses exempted from fees
-          "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
           "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
           "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam",
           "init1fvhhqk3tvv08vd5gmsp45x8tkzhcwv3ly8kn78"
         ],
-        "hook_max_gas": "3000000" // Maximum gas for execution hooks
+        "hook_max_gas": "3000000"
       }
     },
     {
       "@type": "/minievm.evm.v1.MsgUpdateParams",
       "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
       "params": {
-        "extra_eips": [], // Additional Ethereum Improvement Proposals to enable
-        "allowed_publishers": [], // List of allowed smart contract publishers
-        "allow_custom_erc20": true, // Whether to allow custom ERC-20 tokens
-        "allowed_custom_erc20s": [], // Whitelisted custom ERC-20 contracts
-        "fee_denom": "umin", // Fee denomination used by EVM
-        "gas_refund_ratio": "0.500000000000000000", // Refund ratio on unused gas
-        "num_retain_block_hashes": "256" // Number of recent block hashes to retain
+        "extra_eips": [],
+        "allowed_publishers": [],
+        "allow_custom_erc20": true,
+        "allowed_custom_erc20s": [],
+        "fee_denom": "umin",
+        "gas_refund_ratio": "0.500000000000000000",
+        "num_retain_block_hashes": "256"
       }
     }
   ]
 }
 ```
+
+- Message 1: `/opchild.v1.MsgUpdateParams`
+
+| Field                        | Explanation                                                      |
+|------------------------------|------------------------------------------------------------------|
+| max_validators               | Max number of active validators                                  |
+| historical_entries           | Number of historical blocks to retain                            |
+| min_gas_prices.denom         | Native token denomination                                        |
+| min_gas_prices.amount        | Minimum gas price in smallest unit                               |
+| bridge_executors             | Allowed bridge executor address                                  |
+| admin                        | Admin address with authority to update params                    |
+| fee_whitelist                | Addresses exempted from fees                                     |
+| hook_max_gas                 | Maximum gas for execution hooks                                  |
+
+
+- Message 2: `/evm.v1.MsgUpdateParams`
+
+| Field                        | Explanation                                                      |
+|------------------------------|------------------------------------------------------------------|
+| extra_eips                   | Additional Ethereum Improvement Proposals to enable              |
+| allowed_publishers           | List of allowed smart contract publishers                        |
+| allow_custom_erc20           | Whether to allow custom ERC-20 tokens                            |
+| allowed_custom_erc20s        | Whitelisted custom ERC-20 contracts                              |
+| fee_denom                    | Fee denomination used by EVM                                     |
+| gas_refund_ratio             | Refund ratio on unused gas                                       |
+| num_retain_block_hashes      | Number of recent block hashes to retain                          |
 
 <Tip>
 `authority` address will be a opchild module account regardless of the field you want to update.
