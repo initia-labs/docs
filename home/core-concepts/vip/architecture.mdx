@@ -231,3 +231,28 @@ When creating a lock-staked position, users can choose the duration for which to
 </Frame>
 
 Similarly, rollup operators' esINIT rewards are also vested, but the process is slightly different. Operator esINIT rewards are released linearly over a number of `operatorVestingStages`. For example, if the operator vesting period consists of 10 stages, the operator will receive $\frac{1}{10}$ of their esINIT at each stage.
+
+
+### VIP Mainnet Parameters
+
+| Category | Parameter | Mainnet | Explanation |
+|----------|-----------|---------|-------------|
+| VIP | `stage_interval` | 2 weeks | Length of one stage (frequency of esINIT distribution) |
+| VIP | `vesting_period` | 26 stages | Total vesting period for esINIT |
+| VIP | `minimum_lock_staking_period` | 26 weeks | Minimum lock period for an esINIT lock-staking position (“zapping”) |
+| VIP | `challenge_period` | 3 days | Window during which a score-snapshot challenge may be submitted |
+| VIP | `min_score_ratio` | 0.5 | Multiplier applied to the previous stage’s score to determine the minimum score required to fully vest esINIT in the next stage |
+| VIP | `pool_split_ratio` | 0.2 | Portion of total rewards directed to the balance pool |
+| VIP | `minimum_eligible_tvl` | 0 | Minimum INIT TVL required for whitelisting and eligibility for stage rewards |
+| VIP | `maximum_weight_ratio` | 0.4 | Maximum share of gauge votes from a single L2, relative to total votes, counted for esINIT distribution |
+| VIP (Operator) | `max_commission_rate` | 0.25 | Maximum esINIT commission rate a rollup can set |
+| VIP (TVL manager) | `snapshot_interval` | 1 hour | Frequency of TVL snapshots for all L2s |
+| VIP (Lock Staking) | `min_lock_period` | 30 days | Minimum lock period for any lock-staking position |
+| VIP (Lock Staking) | `max_lock_period` | 2 years | Maximum lock period for all lock-staking positions (including esINIT positions) |
+| VIP (Lock Staking) | `max_delegation_slot` | 60 | Maximum number of unique lock-staking positions per user |
+| VIP (gauge vote) | `cycle_start_time` | Same as stage start time | Start time of the first gauge-vote cycle |
+| VIP (gauge vote) | `cycle_interval` | 2 weeks | Length of a gauge-vote cycle |
+| VIP (gauge vote) | `voting_period` | 13 days | Duration of the voting window within a cycle |
+| VIP (gauge vote) | `max_lock_period_multiplier` | 4 | Voting-power multiplier for the maximum lock duration |
+| VIP (gauge vote) | `min_lock_period_multiplier` | 1 | Voting-power multiplier for the minimum lock duration |
+| VIP (gauge vote) | `pair_multipliers` | 1 for all pools | Voting-power multiplier applied to each enshrined liquidity pair |
