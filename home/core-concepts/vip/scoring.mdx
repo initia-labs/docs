@@ -10,7 +10,7 @@ The VIP Program employs a scoring system designed to allocate ⁠esINIT rewards 
 
 First, during each epoch, rollup teams score their users based on their activity through a `vip_score` contract. 
 
-To score users, the rollup operator must first register the `deployer` account on the `vip_score` contract using their operator key. Once registered, the deployer can add and remove user scores based on the determined criteria. See [this page](/developers/developer-guides/integrating-initia-apps/vip) for more information on how scoring works. All future scoring actions can only be performed by the deployer until they are changed or removed.
+To score users, the rollup operator must first register the `deployer` account on the `vip_score` contract using their operator key. Once registered, the deployer can add and remove user scores based on the determined criteria. See this page for more information on how scoring works. All future scoring actions can only be performed by the deployer until they are changed or removed.
 
 Once the scoring for an epoch is complete, the scores must be finalized by calling a function on the `vip_score` contract.
 
