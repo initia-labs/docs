@@ -4,7 +4,7 @@
   "name": "Initia Docs",
   "colors": {
     "primary": "#324242",
-    "light": "#868686",
+    "light": "#7ad9f7",
     "dark": "#4349FF"
   },
   "favicon": "/favicon.svg",
@@ -108,6 +108,11 @@
                   "home/core-concepts/minitswap/architecture",
                   "home/core-concepts/minitswap/terminology"
                 ]
+              },
+              {
+                "group": "INIT Token",
+                "icon": "coins",
+                "pages": ["home/core-concepts/init-token/tokenomics"]
               }
             ]
           },
@@ -348,7 +353,7 @@
           {
             "group": "Developer Resources",
             "pages": [
-              "resources/developer/network-information",
+              "resources/developer/initia-l1",
               {
                 "group": "Deployed Contracts",
                 "icon": "file-code",
@@ -373,6 +378,10 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "Security",
+            "pages": ["/resources/security/audits"]
           }
         ]
       }
@@ -420,6 +429,11 @@
       "twitter": "https://x.com/initia",
       "discord": "https://discord.gg/initia",
       "github": "https://github.com/initia-labs"
+    }
+  },
+  "integrations": {
+    "ga4": {
+      "measurementId": "G-MEX41J56YX"
     }
   }
 }

@@ -20,14 +20,16 @@ public fun get_address_from_name(name: String): Option<address>
 ```
 
 ```js InitiaJS
-const { LCDClient, bcs } = require('@initia/initia.js');
+const { RESTClient, bcs } = require('@initia/initia.js');
 
 const moduleAddress = '0x...';
-const lcdUri = 'https://...';
 const name = 'initia';
-const lcd = new LCDClient(lcdUri);
+const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-lcd.move
+restClient.move
   .view(
     moduleAddress,
     'usernames',
@@ -55,14 +57,16 @@ public fun get_name_from_address(addr: address): Option<String>
 ```
 
 ```js InitiaJS
-const { LCDClient, bcs } = require('@initia/initia.js');
+const { RESTClient, bcs } = require('@initia/initia.js');
 
 const moduleAddress = '0x...';
-const lcdUri = 'https://...';
 const address = "init1...";
-const lcd = new LCDClient(lcdUri);
+const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-lcd.move
+restClient.move
   .view(
     moduleAddress
     'usernames',

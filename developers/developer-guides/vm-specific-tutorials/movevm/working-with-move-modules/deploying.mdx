@@ -10,17 +10,17 @@ To do so, you can use the following command:
 ```bash Initia L1
 initiad tx move publish ./build/movevm/bytecode_modules/hello_world.mv \
 --from example \
---chain-id initiation-1 \
+--chain-id initiation-2 \
 --node https://rpc.testnet.initia.xyz \
---gas-prices 0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff \
+--gas-prices 0.015uinit \
 --upgrade-policy COMPATIBLE
 ```
 ```bash Rollups
 minitiad tx move publish ./build/movevm/bytecode_modules/hello_world.mv \
 --from example \
---chain-id initiation-1 \
+--chain-id initiation-2 \
 --node https://rpc.testnet.initia.xyz \
---gas-prices 0.15move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff \
+--gas-prices 0.015uinit \
 --upgrade-policy COMPATIBLE
 ```
 </CodeGroup>

@@ -1,279 +1,207 @@
 ---
 title: Running L1 Nodes with Initiad
+icon: hammer
 ---
 
-## Running Initia Node
+## Overview
 
-## Prerequisites
+This guide provides step-by-step instructions for setting up and running an Initia L1 node. It covers everything from system requirements to connecting to the Initia network.
 
-The minimum hardware requirements for running an Initia node are:
+## System Requirements
 
-- CPU: 16 cores
-- Memory: 32GB RAM
-- Disk: 2 TB NVMe/SSD Storage with Write Throughput > 1000 MiBps
-- Bandwidth: 100 Mbps
+Before proceeding, ensure your system meets the following minimum requirements:
+
+- **CPU**: 16 cores
+- **Memory**: 32GB RAM
+- **Storage**: 2 TB NVMe/SSD with Write Throughput > 1000 MiBps
+- **Network**: 100 Mbps bandwidth
 
 <Note>
-It is recommended to use Linux OS to run Initia nodes. Running Initia node has not been tested on other OS environments, and same environment settings and running conditions cannot be guaranteed. 
+We strongly recommend running Initia nodes on a Linux-based operating system. While it may be possible to run on other operating systems, we have not tested them and cannot guarantee the same environment settings and running conditions.
 </Note>
 
-#### Install Initia
+## Installation
 
-Installing Initia can be done in 2 different ways. 
+There are two ways to install the `initiad` CLI:
 
-1. Downloading the source and directly building Initia.
+### Option 1: Building from Source
 
 <Steps>
-<Step title="Build essential package">
+<Step title="Install Prerequisites">
 
-To build Initia, essential utilities must be installed. 
-
-These utilities are provided on Linux distribution, and package components for Ubuntu can be found in the following link:
-
-- [x] Ubuntu [focal](https://packages.ubuntu.com/focal/build-essential) / [jammy](https://packages.ubuntu.com/jammy/build-essential)
+Install the required packages:
 
 ```bash
 sudo apt install -y build-essential
 ```
 
-</Step>
-<Step title="Install Golang">
-
-[golang v1.22](https://go.dev/doc/install) or above is required. 
-
-Refer to the link to find out how to install Golang and use the command below to check the version.
+Also, install the latest version of Go:
 
 ```bash
-make --version # 3.8 or later
-go version # 1.22 or later
+sudo apt install -y golang
+```
+
+Verify the installed versions:
+```bash
+make --version  # Must be 3.8 or later
+go version      # Must be 1.22 or later
 ```
 
 </Step>
-<Step title="Clone and Build Initia">
+<Step title="Build the Daemon">
 
-Clone and build the [Initia source code repo](https://github.com/initia-labs/initia).
+Clone and build the Initia node:
 
 ```bash
 git clone git@github.com:initia-labs/initia.git
 cd initia
-git checkout $TAG # Tag the desired version
+git checkout $TAG  # Replace with desired version
 make install
 ```
 
-Use the command below to check if the installation is successful. 
-
-<Warning>
-If `initiad` is not found, run `go env` and check if `$GOBIN` or `$GOPATH/bin` directories are included in $PATH.
-</Warning>
-
+Verify the installation:
 ```bash
 initiad version
 ```
 
-</Step>
+<Warning>
+If `initiad` is not found, check your `$PATH` environment variable to ensure it includes `$GOBIN` or `$GOPATH/bin`.
+</Warning>
 
+</Step>
 </Steps>
 
-2. Using prebuilt binaries
+### Option 2: Using Pre-built Binaries
 
-You can download pre-built binaries for each of Testnet or Mainnet from the [initia repository](https://github.com/initia-labs/initia/releases). 
+Download pre-built `initiad` binaries from the [releases page](https://github.com/initia-labs/initia/releases). Choose the appropriate version for your operating system.
 
-Download the compression file for your OS.
+## System Configuration
 
-#### Set Up Environment
+### File Descriptor Limits
 
-On Linux, the number of files that can be opened in a single process can be set on configuration. Many Linux distributions limit the number to 1024, which is smaller than the number of files opened by Initia. To use Initia, this configuration has to be modified. 
-
-The current value can be checked with `ulimit -n` command, and root `/etc/security/limits.conf` file can be modified to change this parameter. By adding the below to `limits.conf` the maximum for all accounts can be increased to 65535. To only modify the number for the account running Initia, enter the account name instead of `*`. 
+Initia requires a higher number of file descriptors than the default Linux limit. Adjust the system limits by adding the following to `/etc/security/limits.conf`:
 
 ```bash
-*                soft    nofile          65535
-*                hard    nofile          65535
+* soft nofile 65535
+* hard nofile 65535
 ```
 
-## Boot an Initia Node
+## Node Setup
 
-#### Initia basic setup
+### Initialization
 
-The HOME directory used in this section is the default value `${HOME}/.initia`. To set a different directory, add `--home <YOUR_INITIA_HOME>` option on each command and use a different directory as Initia's HOME directory. 
-
-<Steps>
-<Step title="Initialization">
-Use the command below to initialize the Initia Node. 
+Initialize your node with a moniker (a human-readable name):
 
 ```bash
 initiad init <moniker>
 ```
 
-A moniker is a human-readable name for your node. Moniker can contain only ASCII characters, and cannot exceed 70 characters.
+Note that
 
-Your private key is generated during the initialization, and is saved in `${HOME}/.initia/config/priv_validator_key.json`. 
+- Moniker must contain only ASCII characters
+- Maximum length is 70 characters 
+- The default home directory is `${HOME}/.initia`
+- To use a different directory, add `--home <YOUR_INITIA_HOME>` to commands
 
 <Warning>
-Remember to backup your private key if you are running a validator node. 
-If a private key is lost, node may never be recoverable from a hardware failure. 
-Plan your back up through running a Testnet node, and secure your private key safely for the mainnet.
+Your private key is generated during initialization and stored in `${HOME}/.initia/config/priv_validator_key.json`. 
+**IMPORTANT**: Always backup your private key, especially for validator nodes. Loss of the private key may result in permanent node inaccessibility.
 </Warning>
 
-</Step>
-<Step title="Setting Endpoints">
-Initia supports the below endpoints for external communications.
+### Network Configuration
 
-<Info> Validator nodes are not recommended to open any of these endpoints. </Info>
+#### Endpoints
 
-- REST: RESTful HTTP API
-- gRPC/gRPC-WEB: gRPC API
-- RPC: Tendermint/CometBFT provided API
-- P2P: Gossip P2P with outher Initia nodes
+An Initia node comes with multiple endpoint that you can either enable or disable.
 
-You can modify the below config values to turn on/off each Endpoint and change ports. 
+| Endpoint | Description | Configuration File |
+|----------|-------------|-------------------|
+| REST | RESTful HTTP API | `~/.initia/config/app.toml` |
+| gRPC/gRPC-WEB | gRPC API | `~/.initia/config/app.toml` |
+| RPC | Tendermint/CometBFT API | `~/.initia/config/config.toml` |
+| P2P | Gossip P2P Network | `~/.initia/config/config.toml` |
 
-| **Type**      | **Config File Name**           | **Item**                  |
-|---------------|-----------------------------|--------------------------|
-| **REST**       | `~/.initia/config/app.toml`  | `api.enable`: Enable / disable LCD |
-|               |                             | `api.swagger`: Enable / disable swagger |
-|               |                             | `api.address`: Listen address for LCD |
-| **gRPC/gRPC-WEB** | `~/.initia/config/app.toml` | `grpc.enable`: Enable / disable GRPC |
-|               |                             | `grpc.address`: Listen address for GRPC |
-|               |                             | `grpc-web.enable`: Enable / disable GRPC-WEB |
-|               |                             | `grpc-web.address`: Listen address for GRPC-WEB |
-| **RPC**       | `~/.initia/config/config.toml` | `rpc.laddr`: Listen address for RPC |
-| **P2P**       | `~/.initia/config/config.toml` | `p2p.laddr`: Listen address for P2P |
+<Info>
+Validator nodes are not recommended to expose these endpoints publicly.
+</Info>
 
-The below is a config example which enables all endpoints and listens to 0.0.0.0 as a default port. Modify your config accordingly.
+#### Configuration Examples
 
-- `~/.initia/config/app.toml`
-
+1. **API Configuration** (`~/.initia/config/app.toml`):
 ```toml
-# ...
-
-###############################################################################
-###                           API Configuration                             ###
-###############################################################################
-
 [api]
-
-# Enable defines if the API server should be enabled.
 enable = true
-
-# Swagger defines if swagger documentation should automatically be registered.
 swagger = true
-
-# Address defines the API server to listen on.
 address = "tcp://0.0.0.0:1317"
 
-# ...
-
-
-###############################################################################
-###                           gRPC Configuration                            ###
-###############################################################################
-
 [grpc]
-
-# Enable defines if the gRPC server should be enabled.
 enable = true
-
-# Address defines the gRPC server address to bind to.
 address = "0.0.0.0:9090"
 
-# ...
-
-###############################################################################
-###                        gRPC Web Configuration                           ###
-###############################################################################
-
 [grpc-web]
-
-# GRPCWebEnable defines if the gRPC-web should be enabled.
-# NOTE: gRPC must also be enabled, otherwise, this configuration is a no-op.
 enable = true
-
-# Address defines the gRPC-web server address to bind to.
 address = "0.0.0.0:9091"
-
-# ...
 ```
 
-- `~/.initia/config/config.toml`
-
+2. **RPC and P2P Configuration** (`~/.initia/config/config.toml`):
 ```toml
-# ...
-
-#######################################################
-###       RPC Server Configuration Options          ###
-#######################################################
 [rpc]
-
-# TCP or UNIX socket address for the RPC server to listen on
 laddr = "tcp://0.0.0.0:26657"
 
-# ...
-
-#######################################################
-###           P2P Configuration Options             ###
-#######################################################
 [p2p]
-
-# Address to listen for incoming connections
 laddr = "tcp://0.0.0.0:26656"
-
-# ...
 ```
 
-</Step>
+### External Address Configuration
 
-<Step title="Set up External Address">
-To allow access from external nodes to your node through P2P network, config.toml has to be modified. By entering public IP/Port to p2p.external_address field, the network settings will allow external nodes to access your node. 
-
-The below is an example, and the values can be modified through sed, jq, and curl command lines. 
+To allow external nodes to connect to your node, configure the external address in `config.toml`:
 
 ```toml
-#######################################################
-###           P2P Configuration Options             ###
-#######################################################
 [p2p]
-
-# Address to listen for incoming connections
 laddr = "tcp://0.0.0.0:26656"
-
-# Address to advertise to peers for them to dial
-# If empty, will use the same port as the laddr,
-# and will introspect on the listener or use UPnP
-# to figure out the address. ip and port are required
-# example: 159.89.10.97:26656
-external_address = "159.89.10.97:26656"
+external_address = "YOUR_PUBLIC_IP:26656"
 ```
 
-Below command line requires sed, curl and jq to be installed, and sets all ports to the default value: 26656. 
-
+You can automatically set your public IP using:
 ```bash
-#!/usr/bash
-
 sed -i -e 's/external_address = \"\"/external_address = \"'$(curl httpbin.org/ip | jq -r .origin)':26656\"/g' ~/.initia/config/config.toml
 ```
 
-</Step>
+## Connecting to Initia Network
 
-<Step title="Run Initia">
-All local settings are completed. But to run `initiad` as a blockchain node, the node has to fetch genesis block information and be set to communicate with other nodes. 
+To fully connect to the network, you first need to first download the genesis file and configure your peers, and sync the node.
 
-Refer to [Connect to Initia Network](#connect-to-initia-network) section for more information.
+<Note>
+You can find information on the genesis file, peers, and state sync for the network you want to join in the [networks page](/resources/developer/initia-l1)
+</Note>
 
-The below section is optional, but contains information on how to register the Initia daemon to the service to make it easier to run and manage. Note that this can help you run smoothly.
+### Genesis File
 
-</Step>
-
-<Step title="Registering Initia as a Service (Optional)">
-Easily run and manage Initia by registering it as a Linux Service. The below example uses initiad as a service name.
-
-1. Open `/etc/systemd/system/initiad.service` as `root` permission and enter the below information:
-
-- Modify the Service section to match your env settings before saving
-  - User: Account name to run `initiad` (Below example: ubuntu)
-  - ExecStart: Directory where `initiad` is installed + `start` (Below example: `/user/bin initiad start`)
+To start syncing the node, you first need to download the genesis file.
 
 ```bash
+wget $GENESIS_FILE_URL -O $HOME/.initia/config/genesis.json
+```
+
+### Network Configuration
+
+Once the genesis file is downloaded, you can configure the persistent peers in `~/.initia/config/config.toml`:
+
+```bash
+persistent_peers = "peer1@ip1:port1,peer2@ip2:port2"
+```
+
+Replace `peer1@ip1:port1,peer2@ip2:port2` with the list of peers for the network you want to join.
+
+### State Sync & Snapshots
+
+To then sync the node, you can use the [state sync](https://github.com/tendermint/tendermint/blob/v0.34.x/spec/p2p/messages/state-sync.md) feature.
+
+## Running as a Service (Optional)
+
+To run Initia as a system service, create a `initiad.service` file in `/etc/systemd/system`:
+
+```ini
 [Unit]
 Description=initiad
 
@@ -291,82 +219,15 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-2. Run the below command line to activate initiad service. root permission might be required.
-
+Once the service file is created, you can enable and start the service:
 ```bash
 systemctl enable initiad
+systemctl start initiad
 ```
 
-3. The below command line can be used to start or stop Initia service. root permission might be required.
-
-- Start: `systemctl start initiad`
-- Stop: `systemctl stop initiad`
-
-4. To apply the changes to `/etc/systemd/system/initiad.service`, run the below command line. This might require `root` permission, and to apply changes to a running node, a restart is required. 
-
+To then see the logs, you can use the following commands: 
 ```bash
-systemctl daemon-reload
-systemctl restart initiad
-```
-
-5. All logs from initiad resulting from step 1 are recorded on syslog. Use the below commands to check initiad's logs.
-
-```bash
-journalctl -t initiad    # Shows the current logs and ends. Can be used with the below options
-journalctl -t initiad -f # Tracks and shows the most recent logs.
-journalctl -t initiad -n <number> # Shows the recent log at line <number>
-```
-
-</Step>
-</Steps>
-
-
-## Connect to Initia Network
-
-To establish a connection with the Initia Mainnet or Testnet, it is essential to obtain information about the genesis block and nodes currently connected to these networks.
-
-The necessary information on known peers can be accessed through [initia-registry](https://github.com/initia-labs/initia-registry/blob/main/mainnets/initia/chain.json). 
-
-By adhering to the subsequent steps outlined in this document, you will be able to operate an Initia node and monitor logs pertaining to block synchronization.
-
-#### Genesis File
-
-For `genesis.json`, you can use the below command line:
-
-```bash
-curl -s https://rpc.initia.xyz/genesis | jq -r '.result.genesis' > genesis.json
-```
-
-#### Accessing Network Information
-
-For network connectivity, utilize the publicly available persistent peer information, or alternatively, gather peer information from the `addrbook.json` file of a node that is already operational.
-
-#### Persistent Peer Configuration
-
-Information on known peers for each network is available within the network-specific repositories linked above. Choose an appropriate network, then apply the corresponding values to `p2p.persistent_peers` in the `~/.initia/config/config.toml` file.
-
-The below is an example:
-
-```bash
-persistent_peers = "093e1b89a498b6a8760ad2188fbda30a05e4f300@35.240.207.217:26656,2c729d33d22d8cdae6658bed97b3097241ca586c@195.14.6.129:26019”
-```
-
-#### State Sync & Snapshot
-
-Validators on Initia can now join the network using state sync and snapshot. For more details, please visit below sites.
-
-| **Provider** | **URL** |
-| ------------ | ------- |
-| Polkachu | https://polkachu.com/testnets/initia/snapshots |
-| bwarelabs | https://bwarelabs.com/snapshots/initia | 
-
-#### Address Book 
-
-We highly recommend to copy `addrbook.json` to `$INITIA_HOME/config/addrbook.json` for fast peer connection.
-
-```bash
-# stop initiad
-wget https://initia.s3.ap-southeast-1.amazonaws.com/interwoven-1/addrbook.json
-mv addrbook.json ~/.initia/config/addrbook.json
-# start initiad
+journalctl -t initiad    # View current logs
+journalctl -t initiad -f # Follow logs in real-time
+journalctl -t initiad -n <number> # View last N lines
 ```

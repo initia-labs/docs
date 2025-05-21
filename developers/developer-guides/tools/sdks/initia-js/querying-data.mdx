@@ -2,7 +2,7 @@
 title: Querying Data
 ---
 
-The InitiaJS SDK offers a powerful `LCDClient` that simplifies the process of querying data from both the Initia L1 and rollups. This client encapsulates various endpoints and methods into user-friendly helper functions, organized under sub-categories of the `lcd` client based on their corresponding Cosmos SDK modules.
+The InitiaJS SDK offers a powerful `RESTClient` that simplifies the process of querying data from both the Initia L1 and rollups. This client encapsulates various endpoints and methods into user-friendly helper functions, organized under sub-categories of the `rest` client based on their corresponding Cosmos SDK modules.
 
 In this tutorial, we'll explore several examples demonstrating how to leverage these helper functions to retrieve key data points efficiently using the SDK.
 
@@ -12,20 +12,19 @@ For demonstration purposes, we will assume that all of these examples are implem
 
 To query the balance of an account, we can use the `balance` function from the `bank` module. This function takes in an address and returns the balance of the account.
 
-First, we will make the necessary imports and initialize the `LCDClient`.
+First, we will make the necessary imports and initialize the `RESTClient`.
 
 ```ts
-import { LCDClient, Coin } from '@initia/initia.js';
+import { RESTClient, Coin } from '@initia/initia.js';
 
-const lcdUrl = 'https://lcd.testnet.initia.xyz';
-const lcd: LCDClient = new LCDClient(lcdUrl, {
-    chainId: '[chain-id]',
-    gasPrices: '0.15uinit', // default gas prices
+const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+    chainId: 'initiation-2',
+    gasPrices: '0.015uinit', // default gas prices
     gasAdjustment: '2.0',   // default gas adjustment for fee estimation
 });
 ```
 
-<Note> Adjust gasPrices and gasAdjustment according to current [network](/resources/developer/network-information) conditions for optimal transaction processing. </Note>
+<Note> Adjust gasPrices and gasAdjustment according to current [network](/resources/developer/initia-l1) conditions for optimal transaction processing. </Note>
 
 Next, we will create a function to query the balance of an account. This function will take in an address and return the balance of the account.
 
@@ -37,7 +36,7 @@ async function queryBalance(address: string) {
   let nextKey: string | null = null;
 
   do {
-    const [coins, pagination] = await lcd.bank.balance(address, { 'pagination.key': nextKey || undefined });
+    const [coins, pagination] = await restClient.bank.balance(address, { 'pagination.key': nextKey || undefined });
     allCoins = [...allCoins, ...coins];
     nextKey = pagination.next_key || null;
   } while (nextKey);
@@ -59,24 +58,23 @@ If successful, you should see an output similar to the following:
 
 ```sh
 init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu has:
-- 721662 move/944f8dd8dc49f96c25fea9849f16436dcfa6d564eec802f3ef7f8b3ea85368ff
+- 721662 uinit
 - 1000000 uinit
 ```
 
 ## Complete Example
 
 ```ts src/query.ts
-import { LCDClient, Coin } from '@initia/initia.js';
+import { RESTClient, Coin } from '@initia/initia.js';
 
-const lcdUrl = 'https://lcd.testnet.initia.xyz';
-const lcd: LCDClient = new LCDClient(lcdUrl, {});
+const restClient = new RESTClient('https://rest.testnet.initia.xyz');
 
 async function queryBalance(address: string) {
   let allCoins: Coin[] = [];
   let nextKey: string | null = null;
 
   do {
-    const [coins, pagination] = await lcd.bank.balance(address, { 'pagination.key': nextKey || undefined });
+    const [coins, pagination] = await restClient.bank.balance(address, { 'pagination.key': nextKey || undefined });
     allCoins = [...allCoins, ...coins];
     nextKey = pagination.next_key || null;
   } while (nextKey);
@@ -97,20 +95,20 @@ VM-agnostic queries are queries that can be used across all VMs.
 
 - `balance()` : query the balance of an account
 ```typescript
-const balances = await lcd.bank.balance('init14l3c2vxrdvu6y0sqykppey930s4kufsvt97aeu')
+const balances = await restClient.bank.balance('init14l3c2vxrdvu6y0sqykppey930s4kufsvt97aeu')
 ```
 - `blockInfo()`: query the block information
 ```typescript
-const blockInfo = await lcd.tendermint.blockInfo(10000) // If no height is given, the latest block is returned. 
+const blockInfo = await restClient.tendermint.blockInfo(10000) // If no height is given, the latest block is returned. 
 ```
 - `txInfo()`: query the transaction information
 ```typescript
-const txInfo = await lcd.tx.txInfo('6DFEE8E4BFC38341E8AADBD74A23588D8DE94FA38052CB5721DDA780A24F8B1D')
+const txInfo = await restClient.tx.txInfo('6DFEE8E4BFC38341E8AADBD74A23588D8DE94FA38052CB5721DDA780A24F8B1D')
 ```
 - `price()`: query the oracle price
 ```typescript
 const currenyPair = new CurrencyPair('BTC', 'USD')
-const price = await lcd.oracle.price(currenyPair)
+const price = await restClient.oracle.price(currenyPair)
 ```
 
 ## VM-Specific Queries
@@ -129,7 +127,7 @@ const price = await lcd.oracle.price(currenyPair)
 //     ...
 // }
 
-const res = await lcd.move.viewFunction(
+const res = await restClient.move.viewFunction(
     '0x1',                                               // owner of the module
     'object',                                            // name of the module
     'owner',                                             // function name
@@ -141,7 +139,7 @@ const res = await lcd.move.viewFunction(
 ```
 - `viewJSON()`: query the move contract view functions with JSON arguments
 ```typescript
-const res = await lcd.move.viewJSON(
+const res = await restClient.move.viewJSON(
     '0x1',                                               // owner of the module
     'object',                                            // name of the module
     'owner',                                             // function name
@@ -154,14 +152,14 @@ const res = await lcd.move.viewJSON(
 
 - `resources()`: query the move contract resources
 ```typescript
-const resources = await lcd.move.resources('0x1')
-const resource = await lcd.move.resource('0x1', '0x1::code::ModuleStore')
+const resources = await restClient.move.resources('0x1')
+const resource = await restClient.move.resource('0x1', '0x1::code::ModuleStore')
 ```
 
 - `modules()`: query the move contract modules
 ```typescript
-const modules = await lcd.move.module('0x1')
-const module = await lcd.move.module('0x1', 'object')
+const modules = await restClient.move.module('0x1')
+const module = await restClient.move.module('0x1', 'object')
 ```
 
 - `tableInfo()`: query the move contract table info
@@ -169,22 +167,22 @@ const module = await lcd.move.module('0x1', 'object')
 const tableHandle = '0xc8c40eef193fc150fcb54264419bd3e39339c2ee8ba5834aed7826a9841cfb53'
 const entryKeyBytes = 'A0vD7ATVOvfCWo1T7H8Pz2MOt5k6rvsScYEGgXe0QDw='
 
-const tableInfo = await lcd.move.tableInfo(tableHandle)
-const tableEntries = await lcd.move.tableEntries(tableHandle)
-const tableEntry = await lcd.move.tableEntry(tableHandle,entryKeyBytes)
+const tableInfo = await restClient.move.tableInfo(tableHandle)
+const tableEntries = await restClient.move.tableEntries(tableHandle)
+const tableEntry = await restClient.move.tableEntry(tableHandle,entryKeyBytes)
 ```
 
 ## WasmVM
 
 - `contractInfo()`: query the wasm contract info
 ```typescript
-const contractInfo = await lcd.wasm.contractInfo('init14mv62l7x4ducykg0crfa9a22egf8yrltmxzy84zn0wqgmr496jqs5z7k0c')
-const contracts = await lcd.wasm.contractsByCode(1) 
+const contractInfo = await restClient.wasm.contractInfo('init14mv62l7x4ducykg0crfa9a22egf8yrltmxzy84zn0wqgmr496jqs5z7k0c')
+const contracts = await restClient.wasm.contractsByCode(1) 
 ```
 
 - `smartContractState()`: query the wasm smart contract state
 ```typescript
-const contractState = await lcd.wasm
+const contractState = await restClient.wasm
   .smartContractState(
     'init1jue5rlc9dkurt3etr57duutqu7prchqrk2mes2227m52kkrual3qdrydg6',  // contract address
     Buffer.from(
@@ -195,7 +193,7 @@ const contractState = await lcd.wasm
       })
     ).toString('base64')
   )
-const allContractStates = await lcd.wasm.allContractState('init14mv62l7x4ducykg0crfa9a22egf8yrltmxzy84zn0wqgmr496jqs5z7k0c')
+const allContractStates = await restClient.wasm.allContractState('init14mv62l7x4ducykg0crfa9a22egf8yrltmxzy84zn0wqgmr496jqs5z7k0c')
 ```
 
 ## EVM
@@ -211,7 +209,7 @@ const contractInfo = JSON.parse(
 );
 const contract = new ethers.Contract(contractAddress, contractInfo.abi)
 
-const res = await lcd.evm
+const res = await restClient.evm
   .call(
     'init1jvxywa6dmdxumr9nhdez838af06f9v42w0rd26',    // sender
     '0x16e999092BF37913a3eff185949997b6f7bd698c',     // contract_addr

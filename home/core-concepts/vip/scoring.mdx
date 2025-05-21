@@ -4,7 +4,7 @@ title: VIP Scoring
 
 ## Introduction
 
-The VIP Program employs a scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team. These 
+The VIP Program employs a scoring system designed to allocate ⁠esINIT rewards to users. This system evaluates users based on their activities and contributions within a specific rollup. The specific scoring policy varies between each rollup, and the scoring process is conducted on-chain directly by the respective rollup team.
 
 ### Scoring Phase
 
@@ -14,13 +14,6 @@ To score users, the rollup operator must first register the `deployer` account o
 
 Once the scoring for an epoch is complete, the scores must be finalized by calling a function on the `vip_score` contract.
 
-<Warning>
-The VIP scoring system is designed to encourage usage of the rollup, its application, and its economy. Any misuse of the VIP scoring system will result in the rollup being removed from the VIP program. This includes, but is not limited to using VIP scores to:
-- give rewards directly to the rollup operator, team, or their associated accounts
-- incentivize activities like holding, staking, LPing for a project's token or NFT
-- incentivize users to vote for the rollup on VIP Gauges
-</Warning>
-
 ### Snapshotting Phase
 
 Once finalized, the VIP Agent snapshots and submits the scores from all miniatures, storing them in the Initia L1 VIP module. The Agent is an actor selected through Initia L1 governance. After all snapshots have been taken and stored, the esINIT rewards are distributed to the users.
@@ -28,3 +21,30 @@ Once finalized, the VIP Agent snapshots and submits the scores from all miniatur
 ### Claiming Phase
 
 Finally, the user can finally claim the distributed rewards.
+
+### VIP Criteria & Scoring Policies
+
+#### Transparency
+
+1. All scoring methodologies must be clearly listed and published in the rollup's VIP whitelisting proposal in full detail, both on the forums and in the on-chain proposal.  
+2. VIP scoring details included in the proposal must include all eligible user actions, criteria, distribution methodologies, and any calculations involved.  
+3. All scoring methodologies need to be transparent and verifiable by anyone.  
+
+#### Scoring Criteria
+
+4. Points may be allocated based on a user's usage of other chains within the Interwoven Economy, provided that the usage is relevant and beneficial to the rollup conducting the scoring.  
+5. VIP scores must only be allocated based on actions or metrics that are on-chain, such as users performing specific actions or transactions, holding assets, or other positions
+6. Actions performed off-chain, such as referrals and social media posts or engagements, cannot be used for scoring. This also include incentivizing usages of specific tools, frontends, wallets, or other applications.
+
+#### Restrictions
+
+7. VIP scores can not be granted directly to rollup operators, team members, or their associated accounts.  
+8. Rollup teams cannot use VIP scores to incentivize users to vote for them on the VIP gauges.  
+9. Incentivizing users to hold naked assets such as BTC, ETH, USDC, and governance tokens, or to provide liquidity for any pair on any DEX, is prohibited
+10. If a rollup wants to incentivize holding specific assets, those assets must be ones where the underlying token is used productively (for example, LST, staking token variants, yield-bearing assets, etc.).
+
+All whitelisting proposal and scoring criteria are reviewed by the VIP Committee. This committee consists of stewards who uphold Initia VIP requirements and prioritizes the sustainable success of the Interwoven Economy.
+
+Final approval for whitelisting rollups comes from Initia L1 governance through an on-chain vote. Any changes to a rollup's criteria must be submitted to the forums for review and approval by the VIP Committee before implementation.
+
+**Any attempts to bypass, circumvent, or abuse the VIP scoring system may result in the removal of the offending rollup from the VIP Program.**

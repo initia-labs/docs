@@ -29,7 +29,7 @@ public entry fun provide(
     initiad tx move execute 0x1 minitswap provide \
         --args '["u64:100", "option<u64>:null"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -37,22 +37,22 @@ public entry fun provide(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -71,7 +71,7 @@ public entry fun provide(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -107,7 +107,7 @@ public entry fun unbond(
     initiad tx move execute 0x1 minitswap unbond \
         --args '["u64:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -115,22 +115,22 @@ public entry fun unbond(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -148,7 +148,7 @@ public entry fun unbond(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: 'E8498469AA40E0F22499F412A009F86CE037B02C78C111078C9C4C990C1E0D18',
@@ -196,7 +196,7 @@ public fun get_unbond_list(
     initiad tx move execute 0x1 minitswap withdraw_unbond \
         --args '["u64:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -204,22 +204,22 @@ public fun get_unbond_list(
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -237,7 +237,7 @@ public fun get_unbond_list(
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -281,7 +281,7 @@ For more information on metadata, please refer to [obtaining metadata](/develope
     initiad tx move execute 0x1 minitswap swap \
         --args '["object:0x12..", "object: 0x12..", "u64:100", "option<u64>:100"]' \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -289,22 +289,22 @@ For more information on metadata, please refer to [obtaining metadata](/develope
     ```ts
     import {
         bcs,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         MsgExecute,
         Wallet,
     } from '@initia/initia.js';
 
     async function main() {
-        const lcd = new LCDClient('[rest-url]', {
-            gasPrices: '0.15uinit',
+        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
 
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-        const wallet = new Wallet(lcd, key);
+        const wallet = new Wallet(restClient, key);
 
         const msgs = [
             new MsgExecute(
@@ -325,7 +325,7 @@ For more information on metadata, please refer to [obtaining metadata](/develope
         // sign tx
         const signedTx = await wallet.createAndSignTx({ msgs });
         // send(broadcast) tx
-        lcd.tx.broadcastSync(signedTx).then(res => console.log(res));
+        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
         // {
         //   height: 0,
         //   txhash: '0F2B255EE75FBA407267BB57A6FF3E3349522DA6DBB31C0356DB588CC3933F37',
@@ -357,7 +357,7 @@ public fun swap_simulation(
 <Tabs>
     <Tab title="curl">
     ```bash
-    curl -X POST "[LCD_URI]/initia/move/v1/accounts/0x1/modules/minitswap/view_functions/swap_simulation" \
+    curl -X POST "https://rest.testnet.initia.xyz/initia/move/v1/accounts/0x1/modules/minitswap/view_functions/swap_simulation" \
         -H "accept: application/json" \
         -H "Content-Type: application/json" \
         -d "{ \"args\": [ \"[BCS_ENCODED_OBJECT, BCS_ENCODED_OBJECT, BCS_ENCODED_OFFER_AMOUNT]\" ]}"
@@ -382,12 +382,14 @@ public fun swap_simulation(
     </Tab>
     <Tab title="InitiaJS">
     ```ts
-    import { LCDClient, bcs } from '@initia/initia.js';
+    import { RESTClient, bcs } from '@initia/initia.js';
 
-    const lcdUri = 'https://....';
-    const lcd = new LCDClient(lcdUri);
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+            gasPrices: '0.015uinit',
+            gasAdjustment: '1.5',
+        });
 
-    lcd.move
+    restClient.move
         .view(
             '0x1',
             'minitswap',
@@ -454,7 +456,7 @@ To obtain the required arguments, you should
     initiad tx move execute 0x1 minitswap finalize_arb \
         --args "" \
         --from [key-name] \
-        --gas auto --gas-adjustment 1.5 --gas-prices 0.15uinit \
+        --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
     ```
     </Tab>
@@ -463,7 +465,7 @@ To obtain the required arguments, you should
     import {
         APIRequester,
         AccAddress,
-        LCDClient,
+        RESTClient,
         MnemonicKey,
         Msg,
         MsgExecute,
@@ -525,9 +527,8 @@ To obtain the required arguments, you should
     }
 
     const registryClient = new APIRequester('https://registry.testnet.initia.xyz/');
-    const lcd = new LCDClient(`https://lcd.initiation-2.initia.xyz`, {
-        chainId: 'initiation-2',
-        gasPrices: '0.15uinit',
+    const restClient = new RESTClient(`https://rest.testnet.initia.xyz`, {
+        gasPrices: '0.015uinit',
         gasAdjustment: '2.0',
     });
     const moduleAddr = '0x1';
@@ -536,7 +537,7 @@ To obtain the required arguments, you should
         mnemonic: '', // Put your mnemonic here
     });
     
-    const wallet = new Wallet(lcd, key);
+    const wallet = new Wallet(restClient, key);
     
     async function main() {
         listUp();
@@ -558,7 +559,7 @@ To obtain the required arguments, you should
                     opdenom(BigInt(bridgeId), 'uinit')
                 );
                 const ibcOpInitMetadata = '0x' + coinMetadata('0x1', ibcOpInitDenom);
-                const infos = await lcd.move.viewFunction<ArbInfo[]>(
+                const infos = await restClient.move.viewFunction<ArbInfo[]>(
                     moduleAddr,
                     'minitswap',
                     'get_arb_infos',
@@ -583,17 +584,17 @@ To obtain the required arguments, you should
     
         if (msgs.length === 0) return;
         const signedTx = await wallet.createAndSignTx({ msgs });
-        console.log(await lcd.tx.broadcastSync(signedTx));
+        console.log(await restClient..broadcastSync(signedTx));
     }
     
     async function getPools(): Promise<Pools[]> {
-        const moduleStore = await lcd.move.resource<ModuleStore>(
+        const moduleStore = await restClient.move.resource<ModuleStore>(
             moduleAddr,
             `${moduleAddr}::minitswap::ModuleStore`
         );
 
         const poolsTableHandle = moduleStore.data.pools.handle;
-        const [poolsTable] = await lcd.move.tableEntries(poolsTableHandle);
+        const [poolsTable] = await restClient.move.tableEntries(poolsTableHandle);
         const pools = poolsTable.map(entity => JSON.parse(entity.value) as Pools);
         return pools;
     }
@@ -621,7 +622,7 @@ To obtain the required arguments, you should
     
         if (!withdraw || withdraw.merkleRoot === '') return false;
     
-        const lastFinalizedOutput = await lcd.ophost.lastFinalizedOutput(
+        const lastFinalizedOutput = await restClient.ophost.lastFinalizedOutput(
             Number(pools.op_bridge_id)
         );
     
