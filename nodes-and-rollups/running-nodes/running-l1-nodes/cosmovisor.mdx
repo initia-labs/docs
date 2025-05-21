@@ -48,13 +48,18 @@ SyslogIdentifier=initiad
 LimitNOFILE=4096
 Environment="DAEMON_NAME=initiad"
 Environment="DAEMON_HOME=/home/ubuntu/.initia" 
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
 Environment="DAEMON_RESTART_DELAY=5s"
+Environment="UNSAFE_SKIP_BACKUP=true"
 
 [Install]
 WantedBy=multi-user.target
 ```
+
+<Note> 
+To update the node manually, set the environment variable `DAEMON_ALLOW_DOWNLOAD_BINARIES=false`. This disables automatic binary downloads. Afterward, download the required binary yourself and place it in the designated installation directory. 
+</Note>
 
 #### 3. Restart initiad
 
