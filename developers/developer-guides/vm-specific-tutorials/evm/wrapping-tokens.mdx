@@ -1,0 +1,110 @@
+---
+title: Wrapping Tokens
+---
+
+Initia supports two routes to move assets from Initia L1 to an rollup:
+
+1. **IBC bridge** – tokens arrive as `ibc/{hash}` (6 decimals)
+2. **OP bridge** – tokens arrive as `l2/{hash}` (6 decimals)
+
+Regardless of the path, every bridged token passes through a **Wrapping Contract** that
+mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. This wrapper is
+used for all EVM interactions, including gas fees and transfers.
+
+## Denom transformation
+
+<Frame>
+![Wrapping Tokens](/images/evm/wrapping-tokens.png)
+</Frame>
+
+| Step | Denom example | Decimals |
+|------|---------------|----------|
+| Bridge in (IBC) | `ibc/2b2...` | 6 |
+| Bridge in (OP) | `l2/6a2...` | 6 |
+| After wrapping | `evm/939...` | 18 |
+
+<Note>
+Bridging from the rollup back to L1 reverses the same steps in order, returning each denom to its original 6‑decimal form on L1.
+</Note>
+
+## Tutorial: Wrapping & Querying Tokens
+
+The guide provided in the `wrapping-tokens` [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) automates two tasks:
+
+1. **Wrap** each bridged L1 asset into its 18‑decimal `evm/{contract}` representation.
+2. **Query** the rollup for the resulting wrapped denoms.
+
+### Project setup
+
+To get started, clone the `guides` repository and navigate to the `wrapping-tokens` directory:
+
+```bash
+git clone https://github.com/initia-labs/guides.git
+cd guides/rollups/evm/wrapping-tokens
+```
+
+Install the required dependencies using `npm`:
+
+```bash
+npm install
+
+# if ts-node is not installed globally
+npm install -g typescript ts-node
+```
+
+### Configuration
+
+Copy the environment template that matches your network and fill in the variables:
+
+```bash
+cp .env.testnet.example .env   # or .env.mainnet.example
+```
+
+| Variable | Description |
+|----------|-------------|
+| `ASSET_LIST` | Comma‑separated list of L1 denoms to wrap |
+| `L1_REST_ENDPOINT` | Initia L1 REST endpoint |
+| `L2_REST_ENDPOINT` | Rollup REST endpoint |
+| `L1_GAS_PRICES` | e.g. `0.015uinit` |
+| `MNEMONIC` | account mnemonic |
+| `COIN_TYPE` | BIP‑44 coin type (default **60**) |
+
+**Account prerequisites**
+
+* Sufficient `INIT` on L1 to pay gas
+* Positive balance for every `ibc/...` denom in `ASSET_LIST` (zero balance is fine for `l2/...` denoms)
+* The account is recognised on the rollup (genesis, system, or previously funded)
+
+### Creating wrapped tokens
+
+```bash
+ts-node src/create-wrapped-tokens
+```
+
+The script will:
+
+1. Build hook messages for each L1 denom
+2. Sign and broadcast deposit transactions
+3. Wait for confirmation
+4. Output each `txhash` for reference
+
+### Fetching wrapped token denoms
+
+```bash
+ts-node src/fetch-wrapped-tokens
+```
+
+The script will:
+
+1. Query the rollup for each L1 denom
+2. Retrieve its wrapper contract address
+3. Display a mapping of L1 ↔ L2 denoms
+
+Example output:
+
+```shell
+--------------------------------
+L1Denom: uinit
+L2Denom: evm/1234...
+--------------------------------
+```
