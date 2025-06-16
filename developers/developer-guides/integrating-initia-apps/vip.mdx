@@ -2,4 +2,245 @@
 title: Integrating Initia VIP
 ---
 
-Coming Soon!
+# VIP Integration Overview
+
+This guide provides **instructions** for Interwoven rollups on how to integrate VIP into their apps, from registration to key considerations.
+
+## Onboarding Phase
+
+This phase is the **prerequisite** for joining the Vested Interest Program (VIP).
+
+### 1. Add information to Initia Registry
+
+Refer to [this page](https://docs.initia.xyz/developers/developer-guides/integrating-initia-apps/registry/introduction) for more information.
+
+Add chain details to the Initia Registry:
+
+- **`chain.json`** – basic chain information
+- **`profile.json`** – VIP criteria, including the scoring policy
+    - Please include the link to the forum post with the detailed scoring criteria
+
+<Note>
+**Scoring policy** affects future user incentives (e.g., esINIT vesting).  
+Discuss any policy with the community via the Initia Forum and public channels (Twitter, Discord, etc.) before finalizing.
+</Note>
+
+### 2. Deploy the VIP Scoring Contract
+
+- Deploy the appropriate VIP scoring contract for your rollup’s VM.
+    - EVM:https://github.com/initia-labs/vip-score-evm
+    - Wasm:https://github.com/initia-labs/vip-score-wasm
+    - Move:https://github.com/initia-labs/vip-score-move
+
+<Tip>
+VIP scores are stored on-chain and cannot be altered. Thorough testing the scoring logic on the testnet is required.
+</Tip>
+
+### 3. Post a VIP-Whitelisting proposal in the Initia Forum
+
+To whitelist your rollup on the Mainnet, the following is required. For the testnet it is not necessary.
+
+- Publish a proposal containing:
+    1. **Operator address** – receives VIP commissions
+    2. **VIP scoring contract address** – the address of the deployed contract
+
+- Proposal template: https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146
+
+### 4. L1 Governance vote
+
+- After discussion in the forum, submit a governance proposal on Initia L1.
+- If the community votes **YES**, the rollup is whitelisted for VIP and moves to the Activation Phase. The proposal will take 7 days.
+
+---
+
+## Activation Phase
+
+### 1. Scoring
+
+- Record each user’s VIP score on-chain according to the approved scoring policy.
+- Each stage lasts two weeks on mainnet.
+- You may update scores at any time during a stage, but **finalization** is allowed only once per stage and is irreversible.
+    - It is recommended to update scores as frequently as possible in order for the users to track their VIP scores regularly and find any scoring errors before finalization.
+- **Do not** change the scoring scale; doing so will alter esINIT vesting ratios.
+    - Changing the scale will affect users’ actions of meeting criteria for VIP; for example, the user will not be able to meet the half score requirement to meet the esINIT scores.
+- Please be ready to finalize score on the day required. A delay in finalization means there will be a delay for the users to get their rewards.
+
+### 2. Finalizing scores
+
+- Finalize VIP scores within **one hour** after a stage ends.
+
+<Warning>
+- After finalization, scores are immutable. Double-check before proceeding.
+- If incorrect scores are finalized, contact the Initia team immediately.
+- Once scores are finalized and the L1 snapshot is submitted, they become permanently unmodifiable.
+</Warning>
+
+### 3. Challenge period
+
+- A **three-day** challenge period follows finalization.
+
+---
+
+## Integration Tutorial (EVM Testnet Example)
+
+This guide shows how to enable VIP for an **EVM rollup** on the Initia testnet.  
+For Wasm or Move rollups, follow the same steps—just use the appropriate scoring-contract repository.
+
+<Info title="Network Details">
+You can find RPC endpoints and chain IDs in **[Network Information](/resources/developer/initia-l1.mdx)**.
+</Info>
+
+### 1. Deploy Your EVM Rollup
+
+1. Launch the rollup with your preferred stack (OP-Stack, Arbitrum Orbit, etc.).  
+2. Create a deployer account and confirm it has permission to publish contracts.
+
+### 2. Deploy the VIP Scoring Contract
+
+1. Clone **[`vip-score-evm`](https://github.com/initia-labs/vip-score-evm)**.  
+2. Compile and deploy `VIPScore.sol` using Hardhat, Foundry, Viem, or another EVM framework.  
+3. Save the deployed **contract address**; you will need it for the whitelist proposal.
+
+### 3. Register the Rollup in the Initia Registry
+
+1. Fork the Initia Registry repository.  
+2. Add two files:  
+   - `chain.json` – rollup metadata  
+   - `profile.json` – VIP criteria (include the link to your forum post)  
+3. Submit a pull request to merge these files.  
+   - Reference examples:  
+     - [`chain.json`](https://github.com/initia-labs/initia-registry/blob/main/mainnets/yominet/chain.json)  
+     - [`profile.json`](https://github.com/initia-labs/initia-registry/blob/main/profiles/yominet.json)
+
+### 4. Request VIP Whitelisting
+
+1. Create a forum post with the **[whitelist template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146)** and include:  
+   - Your operator address (receives commissions)  
+   - The VIP scoring-contract address  
+2. After discussion, the post moves to Initia L1 governance for a seven-day vote.  
+   - A successful **YES** vote activates VIP for your rollup.
+
+### 5. Operate the VIP Scoring Contract
+
+For each two-week VIP stage, use the following methods:
+
+| Action          | Method                             | Description                     |
+| --------------- | ---------------------------------- | ------------------------------- |
+| Start a stage   | `prepareStage(uint64 stage)`       | Opens a new stage               |
+| Update scores   | `updateScores(stage, addrs[], amounts[])` | Batch-write user scores         |
+| Finalize stage  | `finalizeStage(uint64 stage)`      | Locks scores (irreversible)     |
+
+```ts
+import "dotenv/config";
+import { ethers } from "ethers";
+
+const VIPScoreABI = [
+  "function prepareStage(uint64 stage)",
+  "function updateScores(uint64 stage, address[] addrs, uint64[] amounts)",
+  "function finalizeStage(uint64 stage)",
+];
+
+/* -------------------------------------------------------- *
+ *  Environment variables                                   *
+ * -------------------------------------------------------- */
+const {
+  JSON_RPC_URL     = "https://json-rpc.<your-rollup>.xyz",
+  PRIVATE_KEY      = "0xabcd1234...",
+  CONTRACT_ADDRESS = "0x12345...",
+} = process.env;
+
+if (!JSON_RPC_URL || !PRIVATE_KEY || !CONTRACT_ADDRESS) {
+  throw new Error("JSON_RPC_URL, PRIVATE_KEY, or CONTRACT_ADDRESS is missing.");
+}
+
+/* -------------------------------------------------------- *
+ *  Initialise ethers                                       *
+ * -------------------------------------------------------- */
+const provider = new ethers.JsonRpcProvider(JSON_RPC_URL);
+const signer   = new ethers.Wallet(PRIVATE_KEY, provider);
+const vip      = new ethers.Contract(CONTRACT_ADDRESS, VIPScoreABI, signer);
+
+/* -------------------------------------------------------- *
+ *  Stage operations                                        *
+ * -------------------------------------------------------- */
+async function run() {
+  const stage = 2;                                           // example epoch
+
+  // 1. prepareStage
+  console.log(`prepareStage(${stage})`);
+  await (await vip.prepareStage(stage)).wait();
+
+  // 2. updateScores (batch)
+  const addrs   = [
+    "0x1111111111111111111111111111111111111111",
+    "0x2222222222222222222222222222222222222222",
+  ];
+  const amounts = [BigInt(100), BigInt(250)];
+  console.log(`updateScores(${stage}, addrs[], amounts[])`);
+  await (await vip.updateScores(stage, addrs, amounts)).wait();
+
+  // 3. finalizeStage
+  console.log(`finalizeStage(${stage})`);
+  await (await vip.finalizeStage(stage)).wait();
+
+  console.log("Stage finalized successfully.");
+}
+
+run().catch((err) => console.error(err));
+```
+
+<Warning title="Finalization">
+`finalizeStage` is permanent. Verify all data before calling it.
+</Warning>
+
+## Additional Information
+
+- Each VIP stage lasts **two weeks**.
+- You can finalize scores **once per stage**, and finalization is irreversible.
+### L1 VIP contract address
+    - Mainnet: `init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8`
+    - Testnet: `init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz`
+### To query VIP stage start/end times
+    - Query the L1 VIP contract:  
+        - Mainnet:
+        ```bash
+        curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
+        ```
+        - Testnet:
+        ```bash
+        curl https://rest.testnet.initia.xyz/initia/move/v1/accounts/0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab/resources/by_struct_tag?struct_tag=0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab%3A%3Avip%3A%3AModuleStore
+        ```
+        
+### Updating Operator Commission
+
+- Execute `update_operator_commission` message on L1 VIP contract
+- If Rollup is not delisted before, set `${VERSION}` as 1
+- Must be executed via VIP operator account:
+    - Installation of `initiad` is required
+    ```bash
+    initiad tx move execute-json init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8 vip update_operator_commission --args '["${BRIDGE_ID}", "${VERSION}", "${NEW_COMMISSION_RATE}"]' --from $OPEARTOR_WALLET_NAME --node https://rpc.initia.xyz --chain-id interwoven-1 --gas-prices 0.015uinit --gas auto
+    ```
+
+### Updating VIP Operator Address
+
+- Execute `update_operator` message on L1 VIP contract
+- Must be executed via VIP operator account:
+    ```bash
+    initiad tx move execute-json init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8 vip update_operator --args '["${BRIDGE_ID}", "${NEW_OPERATOR_ADDRESS}"]' --from $OPERATOR_KEY --node https://rpc.initia.xyz --chain-id interwoven-1 --gas-prices 0.015uinit --gas auto
+    ```
+    
+- Changing the scoring scale impacts existing users’ esINIT vesting criteria—**do not change it**.
+
+
+<Warning>
+If you are looking to update the way you score users the flow should be as follows:
+
+1. Post a new Forum post at least 7 days before the update takes place with the updated criteria
+    - https://forum.initia.xyz/t/epoch-x-rollup-vip-update/263
+2. Post a comment to your original VIP Whitelist Proposal forum post with a link to the new forum post
+3. Notify the Initia team that you're updating your score so the VIP Committee may review
+4. VIP Committee will review and approve / suggest updates if the update does not follow the VIP criteria
+5. Publicly disclose the update to your users in advance of the change on channels such as Discord, X (Twitter), app, etc.
+
+Please note: VIP Scoring is not meant to frequently change as it can alter vesting criteria for users.
+</Warning>
