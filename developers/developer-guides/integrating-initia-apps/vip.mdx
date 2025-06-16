@@ -144,9 +144,9 @@ const VIPScoreABI = [
  *  Environment variables                                   *
  * -------------------------------------------------------- */
 const {
-  JSON_RPC_URL          = "",
-  PRIVATE_KEY      = "",
-  CONTRACT_ADDRESS = "",
+  JSON_RPC_URL     = "https://json-rpc.<your-rollup>.xyz",
+  PRIVATE_KEY      = "0xabcd1234...",
+  CONTRACT_ADDRESS = "0x12345...",
 } = process.env;
 
 if (!JSON_RPC_URL || !PRIVATE_KEY || !CONTRACT_ADDRESS) {
@@ -183,7 +183,7 @@ async function run() {
   console.log(`finalizeStage(${stage})`);
   await (await vip.finalizeStage(stage)).wait();
 
-  console.log("Stage finalised successfully.");
+  console.log("Stage finalized successfully.");
 }
 
 run().catch((err) => console.error(err));
@@ -197,13 +197,19 @@ run().catch((err) => console.error(err));
 
 - Each VIP stage lasts **two weeks**.
 - You can finalize scores **once per stage**, and finalization is irreversible.
-- L1 VIP contract address:
-    - `init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8`
-- To query VIP stage start/end times:
+### L1 VIP contract address
+    - Mainnet: `init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8`
+    - Testnet: `init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz`
+### To query VIP stage start/end times
     - Query the L1 VIP contract:  
-    ```bash
-    curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
-    ```
+        - Mainnet:
+        ```bash
+        curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
+        ```
+        - Testnet:
+        ```bash
+        curl https://rest.testnet.initia.xyz/initia/move/v1/accounts/0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab/resources/by_struct_tag?struct_tag=0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab%3A%3Avip%3A%3AModuleStore
+        ```
         
 ### Updating Operator Commission
 
