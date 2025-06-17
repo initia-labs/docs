@@ -30,7 +30,7 @@ This information applies only to MiniEVM rollups.
 Bridging from the rollup back to L1 reverses the same steps in order, returning each denom to its original 6‑decimal form on L1.
 </Note>
 
-## Tutorial: Wrapping & Querying Tokens
+## Wrapping tokens
 
 The guide provided in the `wrapping-tokens` [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) automates two tasks:
 
@@ -111,4 +111,36 @@ Example output:
 L1Denom: uinit
 L2Denom: evm/1234...
 --------------------------------
+```
+
+### Unwrapping tokens
+
+For unwrapping token and returning them to L1 via the OP bridge, we can execute [`toRemoteAndOPWithdraw`](https://github.com/initia-labs/minievm/blob/3edc63c3ddd0214e2c57145047bd5c4662e7f7db/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol#L240-L245) function on wrapper contract directly:
+
+```typescript 
+async function withdrawOP(): Promise<void> {
+  const receiver = '0x1234abcd...';
+  const localDenom     = 'evm/1234...';
+  const localAmount    = ethers.parseUnits('100', 18);
+  await wrapper.toRemoteAndOPWithdraw(receiver, localDenom, localAmount);
+}
+```
+
+For unwrapping token and returning them to L1 via the IBC bridge, we can execute [`toRemoteAndIBCTransfer`](https://github.com/initia-labs/minievm/blob/3edc63c3ddd0214e2c57145047bd5c4662e7f7db/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol#L286C14-L293) function:
+
+```typescript
+async function ibcTransfer(): Promise<void> {
+  const receiver = '0x1234abcd...';
+  const localDenom  = 'evm/5678...';
+  const localAmount = ethers.parseUnits('50', 18);
+  const channel     = 'channel-0';
+  const timeoutNs   = BigInt(Date.now() + 60_000) * 1_000_000n;
+  await wrapper.toRemoteAndIBCTransfer(
+    localDenom,
+    localAmount,
+    channel,
+    receiver,
+    timeoutNs.toString()
+  );
+}
 ```
