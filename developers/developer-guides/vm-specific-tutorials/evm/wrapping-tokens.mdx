@@ -2,14 +2,17 @@
 title: Wrapping Tokens
 ---
 
-Initia supports two routes to move assets from Initia L1 to an rollup:
+Initia supports two routes to move assets from Initia L1 to a rollup:
 
 1. **IBC bridge** – tokens arrive as `ibc/{hash}` (6 decimals)
 2. **OP bridge** – tokens arrive as `l2/{hash}` (6 decimals)
 
-Regardless of the path, every bridged token passes through a **Wrapping Contract** that
-mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. This wrapper is
-used for all EVM interactions, including gas fees and transfers.
+Regardless of the path, every bridged token passes through a **Wrapping Contract** that mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. 
+All gas fees and transfers on the EVM Rollup side are paid with the 18-decimal ERC-29 wrapped token itself and you never interact directly with the wrapping contract.
+
+<Note>
+This information applies only to MiniEVM rollups.
+</Note>
 
 ## Denom transformation
 
@@ -33,6 +36,7 @@ The guide provided in the `wrapping-tokens` [guide repository](https://github.co
 
 1. **Wrap** each bridged L1 asset into its 18‑decimal `evm/{contract}` representation.
 2. **Query** the rollup for the resulting wrapped denoms.
+3. **Unwrap** the wrapped tokens back to L1.
 
 ### Project setup
 
@@ -63,17 +67,17 @@ cp .env.testnet.example .env   # or .env.mainnet.example
 | Variable | Description |
 |----------|-------------|
 | `ASSET_LIST` | Comma‑separated list of L1 denoms to wrap |
-| `L1_REST_ENDPOINT` | Initia L1 REST endpoint |
+| `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
 | `L2_REST_ENDPOINT` | Rollup REST endpoint |
-| `L1_GAS_PRICES` | e.g. `0.015uinit` |
+| `L1_GAS_PRICES` | [L1 gas prices](/resources/developer/initia-l1.mdx) (e.g., `0.015uinit`) | 
 | `MNEMONIC` | account mnemonic |
 | `COIN_TYPE` | BIP‑44 coin type (default **60**) |
 
 **Account prerequisites**
 
-* Sufficient `INIT` on L1 to pay gas
-* Positive balance for every `ibc/...` denom in `ASSET_LIST` (zero balance is fine for `l2/...` denoms)
-* The account is recognised on the rollup (genesis, system, or previously funded)
+* Sufficient INIT on L1 to pay gas
+* Balance for every `ibc/...` denom in `ASSET_LIST` (zero balance is fine for `l2/...` denoms)
+* The account should have balance on the rollup
 
 ### Creating wrapped tokens
 
