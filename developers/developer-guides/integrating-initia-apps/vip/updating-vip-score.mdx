@@ -1,0 +1,59 @@
+---
+title: Updating VIP Score
+---
+
+This phase outlines how to update user VIP scores on-chain, finalize them, and manage the challenge period.
+
+<Steps>
+  <Step title="Record VIP scores on-chain">
+    Each two-week stage opens with continuous writing of user scores that follow the approved policy.  
+    Operators can update the contract at any time during a stage, enabling users to track their VIP scores in real time and catch errors early.
+    Keep the original scoring scale intact—altering it would distort esINIT vesting ratios and invalidate existing user expectations.  
+    Be prepared to close the stage promptly on the scheduled date; any delay pushes back user rewards.
+  </Step>
+  <Step title="Finalize scores">
+    When the stage ends, you have a one-hour grace period to seal the data with `finalizeStage`.  
+    After this transaction the scores become immutable, the L1 snapshot is submitted, and no further edits are possible.  
+    <Warning>
+    Double-check every entry before calling `finalizeStage`.  
+    If an error slips through, alert the Initia team at once.
+    </Warning>
+  </Step>
+  <Step title="Challenge period">
+    A three-day review window follows finalization.  
+    During this time the community may contest mistakes before rewards flow.
+  </Step>
+</Steps>
+
+
+## VIP Contract Address and Stage Queries
+
+### L1 VIP contract address
+
+The VIP contract address on Initia L1:
+
+<Tabs>
+  <Tab title="Mainnet">
+    `init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8`
+  </Tab>
+  <Tab title="Testnet">
+    `init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz`
+  </Tab>
+</Tabs>
+
+### How to query VIP stage start/end times
+
+You can query the start and end times of the current VIP stage: 
+
+<Tabs>
+  <Tab title="Mainnet">
+    ```bash
+    curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
+    ```
+  </Tab>
+  <Tab title="Testnet">
+    ```bash
+    curl https://rest.testnet.initia.xyz/initia/move/v1/accounts/0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab/resources/by_struct_tag?struct_tag=0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab%3A%3Avip%3A%3AModuleStore
+    ```
+  </Tab>
+</Tabs>

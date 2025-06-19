@@ -1,0 +1,37 @@
+---
+title: Updating Operator
+---
+
+## Updating Operator Commission
+
+Operator commissions can be adjusted at any time. From the operator account send an `update_operator_commission` message to the VIP contract; pass the bridge ID, the version (use `1` unless your rollup has been delisted before), and the new commission rate. A typical command issued with the initiad CLI looks like this:
+
+<Tabs>
+  <Tab title="Mainnet">
+    ```bash
+    initiad tx move execute-json init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8 vip update_operator_commission --args '["${BRIDGE_ID}", "${VERSION}", "${NEW_COMMISSION_RATE}"]' --from $OPERATOR_WALLET_NAME --node https://rpc.initia.xyz --chain-id interwoven-1 --gas-prices 0.015uinit --gas auto
+    ```
+  </Tab>
+  <Tab title="Testnet">
+    ```bash
+    initiad tx move execute-json init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz vip update_operator_commission --args '["${BRIDGE_ID}", "${VERSION}", "${NEW_COMMISSION_RATE}"]' --from $OPERATOR_WALLET_NAME --node https://rpc.testnet.initia.xyz --chain-id initiation-2 --gas-prices 0.015uinit --gas auto
+    ```
+  </Tab>
+</Tabs>
+
+## Updating VIP Operator Address
+
+If you need to replace the operator address itself, call `update_operator` with the bridge ID and the new operator address:
+
+<Tabs>
+  <Tab title="Mainnet">
+    ```bash
+    initiad tx move execute-json init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8 vip update_operator --args '["${BRIDGE_ID}", "${NEW_OPERATOR_ADDRESS}"]' --from $OPERATOR_KEY --node https://rpc.initia.xyz --chain-id interwoven-1 --gas-prices 0.015uinit --gas auto
+    ```
+  </Tab>
+  <Tab title="Testnet">
+    ```bash
+    initiad tx move execute-json init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz vip update_operator --args '["${BRIDGE_ID}", "${NEW_OPERATOR_ADDRESS}"]' --from $OPERATOR_KEY --node https://rpc.testnet.initia.xyz --chain-id initiation-2 --gas-prices 0.015uinit --gas auto
+    ```
+  </Tab>
+</Tabs>

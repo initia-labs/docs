@@ -1,0 +1,33 @@
+---
+title: Whitelisting Rollup for VIP
+---
+
+This phase is the **prerequisite** for joining the Vested Interest Program (VIP).
+
+<Steps>
+  <Step title="Add your rollup to the Initia Registry">
+    Before a rollup can be whitelisted for VIP, it needs to be first added to the Initia Registry
+    Refer to [this page](/developers/developer-guides/integrating-initia-apps/registry/introduction.mdx) for more information
+
+    - **`chain.json`**: basic chain information
+    - **`profile.json`**: VIP criteria, including metadata about the chain, such as the name, category, and description
+  </Step>
+  <Step title="Deploy the VIP Scoring Contract">
+    Deploy the appropriate VIP scoring contract for your rollup’s VM.
+      - EVM: https://github.com/initia-labs/vip-score-evm
+      - Wasm: https://github.com/initia-labs/vip-score-wasm
+      - Move: https://github.com/initia-labs/vip-score-move
+
+    <Tip>
+    Thorough testing of the scoring logic on the testnet is required.
+    </Tip>
+  </Step>
+  <Step title="Submit a Proposal">
+    Before your rollup can be whitelisted, you must open a proposal in the [Initia Forum](https://forum.initia.xyz). 
+    In the post, specify the `operator address`, `commission rate`, `VIP score policy` and `VIP scoring contract`, using the [template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146).
+  </Step>
+  <Step title="Wait for the L1 Governance vote">
+    After discussion in the forum, submit a governance proposal on Initia L1. Initia team will help with the proposal submission.
+    If the community votes **YES**, the rollup is whitelisted for VIP and moves to the Activation Phase. The proposal process will take 7 days.
+  </Step>
+</Steps>

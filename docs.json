@@ -223,8 +223,12 @@
                 "group": "VIP",
                 "icon": "award",
                 "pages": [
-                  "developers/developer-guides/integrating-initia-apps/vip/integrating-vip",
-                  "developers/developer-guides/integrating-initia-apps/vip/updating-vip-scores"
+                  "developers/developer-guides/integrating-initia-apps/vip/introduction",
+                  "developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip",
+                  "developers/developer-guides/integrating-initia-apps/vip/updating-vip-score",
+                  "developers/developer-guides/integrating-initia-apps/vip/updating-vip-scoring-policy",
+                  "developers/developer-guides/integrating-initia-apps/vip/updating-operator",
+                  "developers/developer-guides/integrating-initia-apps/vip/integration-tutorial"
                 ]
               },
               {
