@@ -222,7 +222,10 @@
               {
                 "group": "VIP",
                 "icon": "award",
-                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/vip/integrating-vip",
+                  "developers/developer-guides/integrating-initia-apps/vip/updating-vip-scores"
+                ]
               },
               {
                 "group": "Usernames",
