@@ -6,10 +6,11 @@ This phase outlines how to update user VIP scores on-chain, finalize them, and m
 
 <Steps>
   <Step title="Record VIP scores on-chain">
-    Each two-week stage opens with continuous writing of user scores that follow the approved policy.  
-    Operators can update the contract at any time during a stage, enabling users to track their VIP scores in real time and catch errors early.
-    Keep the original scoring scale intact—altering it would distort esINIT vesting ratios and invalidate existing user expectations.  
-    Be prepared to close the stage promptly on the scheduled date; any delay pushes back user rewards.
+    Each two-week stage begins with operators continuously updating user scores based on the approved policy.
+    Operators can update scores at any time during the stage and should do so as frequently as possible. 
+    This allows users to track their VIP scores in real time; not just to catch errors early, but also to monitor their progress, estimate their current rewards, and see how close they are to reaching vesting thresholds.
+    Do not change the original scoring scale; any changes would disrupt esINIT vesting ratios and undermine user expectations.
+    Make sure to end the stage exactly on the designated end date; delays in finalizing the stage will postpone when users can claim their rewards due to the challenge period.
   </Step>
   <Step title="Finalize scores">
     When the stage ends, you have a one-hour grace period to seal the data with `finalizeStage`.  
@@ -20,7 +21,7 @@ This phase outlines how to update user VIP scores on-chain, finalize them, and m
     </Warning>
   </Step>
   <Step title="Challenge period">
-    A three-day review window follows finalization.  
+    a three-day challenge period follows finalization.  
     During this time the community may contest mistakes before rewards flow.
   </Step>
 </Steps>

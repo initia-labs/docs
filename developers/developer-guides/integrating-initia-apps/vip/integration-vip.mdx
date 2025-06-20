@@ -1,0 +1,173 @@
+---
+title: Integration VIP
+---
+
+This guide shows how to enable VIP for an **EVM rollup** on the Initia testnet.  
+For Wasm or Move rollups, follow the same steps; just use the appropriate scoring contract repository.
+
+<Info title="Network Details">
+You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/resources/developer/initia-l1).
+</Info>
+
+<Steps title="VIP Integration Steps">
+  <Step title="Deploy Your EVM Rollup">
+    Launch your rollup using the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction).
+  </Step>
+  <Step title="Deploy the VIP Scoring Contract">
+    To deploy the VIP scoring contract:
+    
+    Clone [`vip-score-evm`](https://github.com/initia-labs/vip-score-evm).
+    
+    ```bash
+    git clone https://github.com/initia-labs/vip-score-evm.git
+    ```
+    
+    Compile `VIPScore.sol` contract. We use [Foundry](https://getfoundry.sh/) for this, but you can also use Hardhat or Truffle if you prefer. 
+    
+    ```bash
+    forge build
+    ```
+    
+    Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script.
+    `PRIVATE_KEY` should be the deployer's private key, and `INIT_STAGE` is the initial stage number you will use.
+
+    ```bash
+    export JSON_RPC_URL=<YOUR_RPC_URL>
+    export PRIVATE_KEY=<YOUR_DEPLOYER_PRIVATE_KEY>
+    export INIT_STAGE=<STAGE_NUMBER>
+
+    forge script script/VipScore.s.sol:DeployVipScore --rpc-url $JSON_RPC_URL --broadcast
+
+    # ...
+    # ✅  [Success] Hash: 0xd55beed5a745b203b56dc68c9e9141fcfd433c4c47587ce50655a99f5c449abc
+    # Contract Address: 0x1F00dfc319F1B74462B2Ef301c3978ee71f0d0E2
+    # Block: 238
+    # Paid: 0.000000000000525763 ETH (525763 gas * 0.000000001 gwei)
+
+    # ✅ Sequence #1 on 1982194020580198 | Total Paid: 0.000000000000525763 ETH (525763 gas * avg 0.000000001 gwei)
+    # ...
+    ```
+    
+    Save the deployed contract address; you will need it for the whitelist proposal.
+    
+  </Step>
+  <Step title="Register the Rollup in the Initia Registry">
+    Clone the Initia Registry repository.
+    
+    ```bash
+    git clone https://github.com/initia-labs/initia-registry.git
+    ```
+
+    Submit a pull request to merge these files into the mainnet or testnet directory, depending on your rollup's network.
+      - `chain.json`: rollup metadata ([example](https://github.com/initia-labs/initia-registry/blob/main/mainnets/yominet/chain.json))
+      - `profile.json`: VIP criteria and rollup information ([example](https://github.com/initia-labs/initia-registry/blob/main/profiles/yominet.json))  
+  </Step>
+  <Step title="Request VIP Whitelisting">
+    Draft a forum post with the whitelist template, specifying your operator address and the scoring-contract address.  
+    After community discussion, the request proceeds to an Initia L1 governance vote that runs for seven days; a successful “YES” activates VIP on your rollup.
+  </Step>
+  <Step title="Operate the VIP Scoring Contract">
+    For each two-week VIP stage, use the following methods:
+
+    | Action          | Method                             | Description                     |
+    | --------------- | ---------------------------------- | ------------------------------- |
+    | Start a stage   | `prepareStage(uint64 stage)`       | Opens a new stage               |
+    | Update scores   | `updateScores(stage, addrs[], amounts[])` | Batch-write user scores  |
+    | Finalize stage  | `finalizeStage(uint64 stage)`      | Locks scores (irreversible)     |
+
+    ```ts
+    import 'dotenv/config';
+    import { createPublicClient, createWalletClient, http, parseAbi, encodeFunctionData, Hash } from 'viem';
+    import { privateKeyToAccount } from 'viem/accounts';
+    import { defineChain } from 'viem/chains';
+
+    /* -------------------------------------------------------- *
+    *  Environment variables                                   *
+    * -------------------------------------------------------- */
+    const {
+      JSON_RPC_URL     = 'https://json-rpc.<your-rollup>.xyz',
+      PRIVATE_KEY      = '0xabcd1234...',
+      CONTRACT_ADDRESS = '0x12345...',
+      CHAIN_ID         = '12345',         // roll-up의 chainId
+    } = process.env;
+
+    if (!JSON_RPC_URL || !PRIVATE_KEY || !CONTRACT_ADDRESS) {
+      throw new Error('JSON_RPC_URL, PRIVATE_KEY, or CONTRACT_ADDRESS is missing.');
+    }
+
+    const chain = defineChain({
+      id:            Number(CHAIN_ID),
+      name:          'Initia-Rollup',
+      rpcUrls:       { default: { http: [JSON_RPC_URL] } },
+      nativeCurrency:{ name: 'INIT', symbol: 'INIT', decimals: 18 },
+    });
+    
+    const publicClient  = createPublicClient({ chain, transport: http(JSON_RPC_URL) });
+    const account       = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
+    const walletClient  = createWalletClient({ chain, transport: http(JSON_RPC_URL), account });
+
+    /* -------------------------------------------------------- *
+    *  ABI & helper                                            *
+    * -------------------------------------------------------- */
+    const vipAbi = parseAbi([
+      'function prepareStage(uint64 stage)',
+      'function updateScores(uint64 stage, address[] addrs, uint64[] amounts)',
+      'function finalizeStage(uint64 stage)',
+    ]);
+
+    async function send(txData: Hash) {
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txData });
+      if (receipt.status !== 'success') throw new Error(`Tx failed: ${txData}`);
+      return receipt;
+    }
+
+    /* -------------------------------------------------------- *
+    *  Stage operations                                        *
+    * -------------------------------------------------------- */
+    async function run() {
+      const stage   = 2;
+      const addrs   = [
+        '0x1111111111111111111111111111111111111111',
+        '0x2222222222222222222222222222222222222222',
+      ];
+      const amounts = [100n, 250n];
+
+      /* 1️⃣ prepareStage ----------------------------------- */
+      console.log(`prepareStage(${stage})`);
+      const tx1 = await walletClient.sendTransaction({
+        to: CONTRACT_ADDRESS as `0x${string}`,
+        data: encodeFunctionData({ abi: vipAbi, functionName: 'prepareStage', args: [BigInt(stage)] }),
+      });
+      await send(tx1);
+
+      /* 2️⃣ updateScores ---------------------------------- */
+      console.log(`updateScores(${stage}, addrs[], amounts[])`);
+      const tx2 = await walletClient.sendTransaction({
+        to: CONTRACT_ADDRESS as `0x${string}`,
+        data: encodeFunctionData({
+          abi: vipAbi,
+          functionName: 'updateScores',
+          args: [BigInt(stage), addrs, amounts],
+        }),
+      });
+      await send(tx2);
+
+      /* 3️⃣ finalizeStage --------------------------------- */
+      console.log(`finalizeStage(${stage})`);
+      const tx3 = await walletClient.sendTransaction({
+        to: CONTRACT_ADDRESS as `0x${string}`,
+        data: encodeFunctionData({ abi: vipAbi, functionName: 'finalizeStage', args: [BigInt(stage)] }),
+      });
+      await send(tx3);
+
+      console.log('Stage finalized successfully.');
+    }
+
+    run().catch(console.error);
+    ```
+
+    <Warning title="Finalization">
+    `finalizeStage` is permanent. Verify all data before calling it.
+    </Warning>
+  </Step>
+</Steps>
