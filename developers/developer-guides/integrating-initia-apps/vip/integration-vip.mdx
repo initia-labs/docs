@@ -58,109 +58,113 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     git clone https://github.com/initia-labs/initia-registry.git
     ```
 
-    Submit a pull request to merge these files into the mainnet or testnet directory, depending on your rollup's network.
-      - `chain.json`: rollup metadata ([example](https://github.com/initia-labs/initia-registry/blob/main/mainnets/yominet/chain.json))
-      - `profile.json`: VIP criteria and rollup information ([example](https://github.com/initia-labs/initia-registry/blob/main/profiles/yominet.json))  
+    Submit a pull request to merge these files into the mainnet or testnet directory, depending on your rollup's network. See the [Initia Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction) for details on how to add your rollup.
   </Step>
-  <Step title="Request VIP Whitelisting">
+  <Step title="Whitelist VIP Proposal">
     Draft a forum post with the whitelist template, specifying your operator address and the scoring-contract address.  
-    After community discussion, the request proceeds to an Initia L1 governance vote that runs for seven days; a successful “YES” activates VIP on your rollup.
+    See the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip) guide for details.
   </Step>
   <Step title="Operate the VIP Scoring Contract">
     For each two-week VIP stage, use the following methods:
 
     | Action          | Method                             | Description                     |
     | --------------- | ---------------------------------- | ------------------------------- |
-    | Start a stage   | `prepareStage(uint64 stage)`       | Opens a new stage               |
-    | Update scores   | `updateScores(stage, addrs[], amounts[])` | Batch-write user scores  |
-    | Finalize stage  | `finalizeStage(uint64 stage)`      | Locks scores (irreversible)     |
+    | Start a stage   | `prepareStage(uint64 stage)`       | Start a VIP stage               |
+    | Update scores   | `updateScores(stage, addrs[], amounts[])` | Batch update user scores |
+    | Finalize stage  | `finalizeStage(uint64 stage)`      | Finalize scores (irreversible)  |
+
+    This code snippet shows how to use the `viem` library to interact with the VIP scoring contract:
 
     ```ts
-    import 'dotenv/config';
-    import { createPublicClient, createWalletClient, http, parseAbi, encodeFunctionData, Hash } from 'viem';
-    import { privateKeyToAccount } from 'viem/accounts';
-    import { defineChain } from 'viem/chains';
+    import { createPublicClient, createWalletClient, http, parseAbi, encodeFunctionData, Hash, defineChain } from 'viem';
+    import { privateKeyToAccount } from 'viem/accounts'; 
+    import { RESTClient } from '@initia/initia.js';
 
     /* -------------------------------------------------------- *
     *  Environment variables                                   *
     * -------------------------------------------------------- */
-    const {
-      JSON_RPC_URL     = 'https://json-rpc.<your-rollup>.xyz',
-      PRIVATE_KEY      = '0xabcd1234...',
-      CONTRACT_ADDRESS = '0x12345...',
-      CHAIN_ID         = '12345',         // roll-up의 chainId
-    } = process.env;
 
-    if (!JSON_RPC_URL || !PRIVATE_KEY || !CONTRACT_ADDRESS) {
-      throw new Error('JSON_RPC_URL, PRIVATE_KEY, or CONTRACT_ADDRESS is missing.');
-    }
+    const JSON_RPC_URL     = '<YOUR_JSON_RPC_URL>'
+    const PRIVATE_KEY      = '0xabcd1234...'
+    const SCORE_CONTRACT   = '0x12345...'
+    const EVM_CHAIN_ID     = '1982194020580198'
+    const TARGET_STAGE     = '1' 
+
+    const UPDATE_ADDRESSES = [
+        '0x1111111111111111111111111111111111111111',
+        '0x2222222222222222222222222222222222222222',
+    ] as `0x${string}`[];
+    const UPDATE_SCORES = [100n, 250n];
+
+
+    // if you want to get the current stage, use `getCurrentStage` function and set following configuration
+    const L1_VIP_CONTRACT   = '0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789' // mainnet
+    const L1_REST_URL       = 'https://rest.initia.xyz'                                            // mainnet
 
     const chain = defineChain({
-      id:            Number(CHAIN_ID),
-      name:          'Initia-Rollup',
-      rpcUrls:       { default: { http: [JSON_RPC_URL] } },
-      nativeCurrency:{ name: 'INIT', symbol: 'INIT', decimals: 18 },
-    });
-    
+      id: parseInt(EVM_CHAIN_ID),
+      name: 'MiniEVM',
+      nativeCurrency: {
+        decimals: 18,
+        name: 'Gas Token',
+        symbol: 'GAS',
+      },
+      rpcUrls: {
+        default: {
+          http: [JSON_RPC_URL],
+        },
+      },
+    })
+
     const publicClient  = createPublicClient({ chain, transport: http(JSON_RPC_URL) });
     const account       = privateKeyToAccount(PRIVATE_KEY as `0x${string}`);
     const walletClient  = createWalletClient({ chain, transport: http(JSON_RPC_URL), account });
 
-    /* -------------------------------------------------------- *
-    *  ABI & helper                                            *
-    * -------------------------------------------------------- */
     const vipAbi = parseAbi([
-      'function prepareStage(uint64 stage)',
-      'function updateScores(uint64 stage, address[] addrs, uint64[] amounts)',
-      'function finalizeStage(uint64 stage)',
+        'function prepareStage(uint64 stage)',
+        'function updateScores(uint64 stage, address[] addrs, uint64[] amounts)',
+        'function finalizeStage(uint64 stage)',
     ]);
 
     async function send(txData: Hash) {
-      const receipt = await publicClient.waitForTransactionReceipt({ hash: txData });
-      if (receipt.status !== 'success') throw new Error(`Tx failed: ${txData}`);
-      return receipt;
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txData });
+        if (receipt.status !== 'success') throw new Error(`Tx failed: ${txData}`);
+        return receipt;
     }
 
-    /* -------------------------------------------------------- *
-    *  Stage operations                                        *
-    * -------------------------------------------------------- */
+    async function getCurrentStage(): Promise<string> {
+        const rest = new RESTClient(L1_REST_URL);
+        return rest.move
+            .resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`)
+            .then(res => res.data.stage);
+    }
+
     async function run() {
-      const stage   = 2;
-      const addrs   = [
-        '0x1111111111111111111111111111111111111111',
-        '0x2222222222222222222222222222222222222222',
-      ];
-      const amounts = [100n, 250n];
+        const stage = TARGET_STAGE; // or await getCurrentStage();
+        const addrs   = UPDATE_ADDRESSES;
+        const amounts = UPDATE_SCORES;
 
-      /* 1️⃣ prepareStage ----------------------------------- */
-      console.log(`prepareStage(${stage})`);
-      const tx1 = await walletClient.sendTransaction({
-        to: CONTRACT_ADDRESS as `0x${string}`,
-        data: encodeFunctionData({ abi: vipAbi, functionName: 'prepareStage', args: [BigInt(stage)] }),
-      });
-      await send(tx1);
+        /* updateScores ---------------------------------- */
+        console.log(`updateScores(${stage}, addrs[], amounts[])`);
+        const tx2 = await walletClient.sendTransaction({
+            to: SCORE_CONTRACT as `0x${string}`,
+            data: encodeFunctionData({
+                abi: vipAbi,
+                functionName: 'updateScores',
+                args: [BigInt(stage), addrs, amounts],
+            }),
+        });
+        await send(tx2);
+        console.log('Scores updated successfully.');
 
-      /* 2️⃣ updateScores ---------------------------------- */
-      console.log(`updateScores(${stage}, addrs[], amounts[])`);
-      const tx2 = await walletClient.sendTransaction({
-        to: CONTRACT_ADDRESS as `0x${string}`,
-        data: encodeFunctionData({
-          abi: vipAbi,
-          functionName: 'updateScores',
-          args: [BigInt(stage), addrs, amounts],
-        }),
-      });
-      await send(tx2);
-
-      /* 3️⃣ finalizeStage --------------------------------- */
-      console.log(`finalizeStage(${stage})`);
-      const tx3 = await walletClient.sendTransaction({
-        to: CONTRACT_ADDRESS as `0x${string}`,
-        data: encodeFunctionData({ abi: vipAbi, functionName: 'finalizeStage', args: [BigInt(stage)] }),
-      });
-      await send(tx3);
-
-      console.log('Stage finalized successfully.');
+        /* finalizeStage --------------------------------- */
+        console.log(`finalizeStage(${stage})`);
+        const tx3 = await walletClient.sendTransaction({
+            to: SCORE_CONTRACT as `0x${string}`,
+            data: encodeFunctionData({ abi: vipAbi, functionName: 'finalizeStage', args: [BigInt(stage)] }),
+        });
+        await send(tx3);
+        console.log('Stage finalized successfully.');
     }
 
     run().catch(console.error);
