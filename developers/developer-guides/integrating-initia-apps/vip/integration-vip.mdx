@@ -178,6 +178,48 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
   </Step>
   <Step title="Operate the VIP Scoring Contract">
     For each VIP stage, use the following methods:
+    
+    <Note>
+      To get the current stage info, you can follow:
+
+      <Tabs>
+        <Tab title="Mainnet (interwoven-1)">
+        ```bash curl
+        curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
+        ```
+        
+        ```ts initia.js
+        import { RESTClient } from '@initia/initia.js'
+
+        const L1_VIP_CONTRACT   = '0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789' 
+        const L1_REST_URL       = 'https://rest.initia.xyz'                                    
+
+        async function getCurrentStage(): Promise<string> {
+          const rest = new RESTClient(L1_REST_URL)
+          return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
+        }
+        ```
+        </Tab>
+        <Tab title="Testnet (initiation-2)">
+        ```bash curl
+        curl https://rest.testnet.initia.xyz/initia/move/v1/accounts/0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab/resources/by_struct_tag?struct_tag=0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab%3A%3Avip%3A%3AModuleStore
+        ```
+
+        ```ts initia.js
+        import { RESTClient } from '@initia/initia.js'
+
+        const L1_VIP_CONTRACT   = '0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab'
+        const L1_REST_URL       = 'https://rest.testnet.initia.xyz'                                   
+
+        async function getCurrentStage(): Promise<string> {
+          const rest = new RESTClient(L1_REST_URL)
+          return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
+        }
+        ```
+        </Tab>
+      </Tabs>
+      
+    </Note>
 
     <Tabs>
       <Tab title="EVM">
@@ -226,11 +268,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         ] as `0x${string}`[];
         const SCORES = [100n, 250n];
 
-
-        // if you want to get the current stage, use `getCurrentStage` function and set following configuration
-        const L1_VIP_CONTRACT   = '0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab' // testnet
-        const L1_REST_URL       = 'https://rest.testnet.initia.xyz'                                    // testnet
-
         const chain = defineChain({
           id: parseInt(EVM_CHAIN_ID),
           name: 'MiniEVM',
@@ -259,13 +296,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
             const receipt = await publicClient.waitForTransactionReceipt({ hash: txData });
             if (receipt.status !== 'success') throw new Error(`Tx failed: ${txData}`);
             return receipt;
-        }
-
-        async function getCurrentStage(): Promise<string> {
-            const rest = new RESTClient(L1_REST_URL);
-            return rest.move
-                .resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`)
-                .then(res => res.data.stage);
         }
 
         async function run() {
@@ -304,7 +334,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the stage against further changes and prepare for the next stage |
 
         ```ts
-
         import { bcs, isTxError, MnemonicKey, Msg, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
 
         /* -------------------------------------------------------- *
@@ -328,10 +357,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         ] as `0x${string}`[]
         const SCORES = [100n, 250n]
 
-        // if you want to get the current stage, use `getCurrentStage` function and set following configuration
-        const L1_VIP_CONTRACT = '0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab' // testnet
-        const L1_REST_URL = 'https://rest.testnet.initia.xyz' // testnet
-
         const restClient = new RESTClient(REST_URL)
         const wallet = new Wallet(
           restClient,
@@ -349,11 +374,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
           if (isTxError(broadcastRes)) {
             throw new Error(`Error while sending tx: ${broadcastRes.code} ${broadcastRes.raw_log}`)
           }
-        }
-
-        async function getCurrentStage(): Promise<string> {
-          const rest = new RESTClient(L1_REST_URL)
-          return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
         }
 
         async function run() {
@@ -461,10 +481,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         ]
         const SCORES = [100, 250]
 
-        // if you want to get the current stage, use `getCurrentStage` function and set following configuration
-        const L1_VIP_CONTRACT = '0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab' // testnet
-        const L1_REST_URL = 'https://rest.testnet.initia.xyz' // testnet
-
         const restClient = new RESTClient(RPC_URL)
         const wallet = new Wallet(
           restClient,
@@ -482,11 +498,6 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
           if (isTxError(broadcastRes)) {
             throw new Error(`Error while sending tx: ${broadcastRes.code} ${broadcastRes.raw_log}`)
           }
-        }
-
-        async function getCurrentStage(): Promise<string> {
-          const rest = new RESTClient(L1_REST_URL)
-          return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
         }
 
         async function run() {
