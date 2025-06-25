@@ -241,7 +241,7 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         ```
         </Note>
 
-        ```ts
+        ```ts vip-score-evm-tutorial.ts
         import { createPublicClient, createWalletClient, http, parseAbi, encodeFunctionData, Hash, defineChain } from 'viem';
         import { privateKeyToAccount } from 'viem/accounts'; 
         import { RESTClient } from '@initia/initia.js';
@@ -333,7 +333,7 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         | Update scores   | `update_score_script(signer, stage, addrs[], amounts[])` | Batch updates the scores of multiple addresses in the specified stage     |
         | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the stage against further changes and prepare for the next stage |
 
-        ```ts
+        ```ts vip-score-move-tutorial.ts
         import { bcs, isTxError, MnemonicKey, Msg, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
 
         /* -------------------------------------------------------- *
@@ -457,7 +457,7 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         | Update scores    | `update_scores(signer, stage, addrs[], amounts[])`       | Batch updates the scores of multiple addresses in the specified stage     |
         | Finalize stage   | `finalize_stage(stage)`                                  | Finalize the stage against further changes and prepare for the next stage |
       
-        ```ts
+        ```ts vip-score-wasm-tutorial.ts
         import { Coins, isTxError, MnemonicKey, Msg, MsgExecuteContract, RESTClient, Wallet } from '@initia/initia.js'
 
         /* -------------------------------------------------------- *

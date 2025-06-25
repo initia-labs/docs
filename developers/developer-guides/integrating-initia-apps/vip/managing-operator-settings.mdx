@@ -33,7 +33,7 @@ initiad tx move execute-json $VIP_CONTRACT vip update_operator --args '["'${BRID
 
 ## Operator Commission
 
-Operator commissions can be adjusted at any time. From the operator account send an `update_operator_commission` message to the VIP contract; pass the bridge ID, the version (use `1` unless your rollup has been delisted before), and the new commission rate. A typical command issued with the initiad CLI looks like this:
+Operator commissions can be adjusted at any time. From the operator account send an `update_operator_commission` message to the VIP contract; pass the bridge ID, the version (use `1` unless your rollup has been delisted before), and the new commission rate. 
 
 <Note>
 When you whitelist your rollup on VIP, you need to set [`operator_commission_max_rate` and `operator_commission_max_change_rate`](https://github.com/initia-labs/vip-contract/blob/f8b9a7fef024ace362fcddbc09ef35d694e471db/sources/vip.move#L1176-L1177).
