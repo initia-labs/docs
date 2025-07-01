@@ -1,0 +1,107 @@
+---
+title: Initia Wallet Widget v 2.0 
+---
+
+## What’s new?
+
+[Initia Wallet Widget](/home/tools/wallet-widget/wallet-widget) returns with version 2.0, featuring a redesigned interface and major new capabilities:
+
+- **New Design**
+    
+    A fresh, more user-friendly interface for smoother navigation and interaction.
+    
+- **Integrated Bridge/Swap**
+    
+    The Bridge/Swap feature, previously a separate website, is now embedded directly within the wallet widget, allowing seamless asset transfers across the Initia ecosystem from any page.
+    
+- **Expanded Route Support**
+
+   **LayerZero integration** enables broader cross-ecosystem bridging and swapping.
+   
+   **Optimized OP routes** offer more efficient transfers using smarter pathfinding.
+- **Improved Activity Display**
+    
+    Transaction history is now clearer and easier to read.
+    
+- **Direct Link to Skip Explorer**
+    
+    Activities now link directly to Skip Explorer, making it easier for users to track fund movements and view the exact route used.
+    
+- **OP Withdrawal Notifications**
+    
+    Get notified when your OP withdrawal is ready to be claimed.
+    
+- **Light Mode Available**
+    
+    Users can now toggle between dark and light themes.
+    
+- **Additional UX Enhancements**
+    
+    Minor usability improvements throughout the experience.
+    
+
+## Supported Wallets
+
+Upon connection, the Initia Wallet Widget displays only the wallets already installed as browser extensions. For example, if Metamask and Keplr are installed in your Chrome, they will appear as available options. If no compatible extensions are detected, the widget will default to showing only the Initia Global Wallet, a Privy-based wallet that supports login via external accounts such as Google. 
+
+Below is the full list of supported wallets.
+
+- EVM
+    - Metamask
+    - Rabby
+    - Leap
+    - Keplr
+    - Phantom
+    - Any other wallets that support EVM
+- Initia Global Wallet (Privy)
+    - Google
+
+## Frequently Asked Questions
+
+1. Why aren’t my assets showing up in my wallet?
+
+   Your crypto wallet (like MetaMask) acts as a signing key and does not directly display your Initia assets. This means you won’t automatically see your assets unless you’re using a wallet that fully supports Initia, like Leap or Keplr. 
+    
+   To view your assets:
+    - Visit app.initia.xyz
+    - Connect your wallet through the Initia Wallet Widget
+    - The widget will display all your assets across the Initia ecosystem. There is no need to manually add chains or track balances through your wallet extension.
+    
+2. Why haven’t I received the assets I transferred?
+
+   There are a few possible reasons:
+    
+    - **OP Bridge:** Withdrawals using the OP bridge can take time, up to 7 days. Once processed, you must **manually claim** the assets. You’ll be notified when it’s ready.
+    - **LayerZero to Ethereum:** These withdrawals typically take **up to 3 days**. We're working on reducing this time.
+    - **Swap Failure:** It’s possible the transaction failed. Check the **Wallet Activity** tab or the **Bridge/Swap Activity** tab in the Initia app for status updates.
+
+3. What is Bridge/Swap, and how does it work?
+
+   A **bridge** lets you transfer assets between different networks, while a **swap** lets you exchange one asset for another on the same chain. Initia Wallet Widget allows you to also bridge and swap in a single transaction. For example, sending INIT from Initia and receiving USDC on Echelon.
+
+4. Why do some transfer routes cost more than others?
+
+   Transfer costs depend on the technologies powering the route. Initia uses a mix of LayerZero, Skip, and CCTP, each with its own fee structure. Routes using more complex or secure services may cost more.
+    
+5. Why am I seeing two different fees during my transaction?
+    
+   Some routes involve multiple services (e.g., LayerZero bridge + Skip swap), each of which may charge a separate fee. These will be displayed transparently during the transaction process.
+    
+6. Why are certain routes unavailable or failing?
+
+   Initia’s bridge continuously updates to provide the fastest and most cost-effective routes. Sometimes, routes may fail or become temporarily unavailable due to low liquidity, network instability, or potential risk of funds getting stuck (we block such routes for your protection)
+    
+7. Why does the OP bridge take so long?
+
+   Withdrawals from Optimistic rollups take up to 7 days due to the required challenge period for security reasons. If an instant withdrawal is needed, use [Minitswap](/home/core-concepts/minitswap/introduction), a fast swap-based alternative. Please note that this is a swap, not a direct withdrawal. Therefore you may incur price impact and swap fees. 
+    
+8. Why is my wallet address different from the testnet address?
+
+   Initia previously used **Cosmos coin type 118**, but now uses **EVM-compatible coin type 60**. As a result, your mainnet and testnet addresses may differ.
+    
+    <aside>
+    📌
+    
+    ⚠️ Do **not** send funds to your old testnet address or interact with it.
+    
+    </aside>
