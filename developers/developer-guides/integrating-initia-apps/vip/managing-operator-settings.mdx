@@ -2,6 +2,9 @@
 title: Managing Operator Settings
 ---
 
+## Prerequisites
+
+- [Initiad CLI](/developers/developer-guides/tools/clis/initiad-cli)
 
 ## Operator Address
 
@@ -13,9 +16,9 @@ If you need to replace the operator address itself, call `update_operator` with 
 
 <Tab title="Updating Operator Address">
 ```bash
-BRIDGE_ID=<your_bridge_id>                  # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
-NEW_OPERATOR_ADDRESS=<new_operator_address> # Replace with the new operator address
-OPERATOR_KEY_NAME=<your_operator_key_name>            # Replace with your operator key. Check `initiad keys list` for the list of keys
+BRIDGE_ID=29                                                      # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+NEW_OPERATOR_ADDRESS=init14zmga05vl324ddaw7wqwdqt9pcvjeeyae3jn2k  # Replace with the new operator address
+OPERATOR_KEY_NAME=operator                                        # Replace with your operator key. Check `initiad keys list` for the list of keys
 
 # Mainnet (interwoven-1)
 # VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8' 
@@ -33,7 +36,7 @@ initiad tx move execute-json $VIP_CONTRACT vip update_operator --args '["'${BRID
 
 ## Operator Commission
 
-Operator commissions can be adjusted at any time. From the operator account send an `update_operator_commission` message to the VIP contract; pass the bridge ID, the version (use `1` unless your rollup has been delisted before), and the new commission rate. 
+Operator commissions can be adjusted, subject to the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings defined during VIP whitelisting. To apply an update, the operator account must send an `update_operator_commission` message to the VIP contract that includes the bridge ID, the version (use 1 unless the rollup was previously delisted), and the new commission rate.
 
 <Note>
 When you whitelist your rollup on VIP, you need to set [`operator_commission_max_rate` and `operator_commission_max_change_rate`](https://github.com/initia-labs/vip-contract/blob/f8b9a7fef024ace362fcddbc09ef35d694e471db/sources/vip.move#L1176-L1177).
@@ -45,10 +48,10 @@ When you whitelist your rollup on VIP, you need to set [`operator_commission_max
 
 <Tab title="Updating Operator Commission">
 ```bash
-BRIDGE_ID=<your_bridge_id>                  # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
-VERSION=<version>                           # Use 1 unless your rollup has been delisted before
-NEW_COMMISSION_RATE=<new_commission_rate>   # Replace with the new commission rate (e.g., 0.05 for 5%)
-OPERATOR_KEY_NAME=<your_operator_key_name>  # Replace with your operator key name
+BRIDGE_ID=29                         # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+VERSION=1                            # Use 1 unless your rollup has been delisted before
+NEW_COMMISSION_RATE=0.05             # Replace with the new commission rate (e.g., 0.05 for 5%)
+OPERATOR_KEY_NAME=operator           # Replace with your operator key name
 
 # Mainnet (interwoven-1)
 # VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8'
