@@ -15,7 +15,9 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
 
 <Steps title="VIP Integration Steps">
   <Step title="Deploy Your Rollup and Install Minitiad CLI">
-    First, launch your rollup by using the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). After the rollup is live, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s VM version so that later commands use the correct binary.
+    First, launch your rollup by using the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). You can follow [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
+    
+    After the rollup is live, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s VM version so that later commands use the correct binary.
     <Tabs>
       <Tab title="EVM">
       ```bash
@@ -50,7 +52,8 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     </Tabs>
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Create an operator and VIP contract deployer account that will be used to deploy the VIP scoring contract. Use the `minitiad` CLI to create a new account or import an existing one.
+    Create an operator and VIP contract deployer account that will be used to deploy the VIP scoring contract.
+    The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
 
     ```bash
     export OPERATOR_KEY_NAME=operator
@@ -65,9 +68,10 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     # room fruit chalk buyer budget wisdom theme sound north square regular truck deal anxiety wrestle toy flight release actress critic saddle garment just found
     ```
 
-    You can see the list of accounts by running `minitiad keys list`. The output will look like this:
+    You can see the list of accounts by running `minitiad keys list`. The output will look like this.
+    
     ```bash
-    $ minitiad keys list
+    minitiad keys list
       
     - address: init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
       name: deployer
@@ -82,17 +86,17 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     To convert a bech32 address to its raw 20-byte hex format, you can use the `minitiad keys parse` command.
 
     ```bash
-    $ minitiad keys parse init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
+    minitiad keys parse init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
 
     bytes: C5EA55D90AE84E307622F1B8B13535EC3EFF0475
     human: init
     ```
 
-    `0xC5EA55D90AE84E307622F1B8B13535EC3EFF0475` is the 20-byte hex address corresponding to the bech32 address `init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6`.
-    Use this hex string whenever a contract or script expects a 0x-prefixed address rather than a bech32 one.
+    Whenever a contract or script expects a 0x-prefixed address (rather than bech32), use this hex format `0xC5EA55D90AE84E307622F1B8B13535EC3EFF0475`.
   </Step>
   <Step title="Deploy the VIP Scoring Contract">
-    In this step, you will deploy the VIP scoring contract that tracks addresses and scores. Choose the instructions for your VM, then compile and deploy the contract with the provided scripts.
+    In this step, you will deploy the VIP scoring contract that tracks addresses and scores.
+    Choose the instructions for your VM, then compile and deploy the contract with the provided scripts.
     
     <Tabs>
       <Tab title="EVM">
@@ -135,7 +139,8 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         git clone https://github.com/initia-labs/vip-score-move.git
         ```
 
-        Set the `vip_score.move` deployer address in the `Move.toml` file. This address will be used to deploy the contract and interact with it.
+        Set the `vip_score.move` deployer address in the `Move.toml` file.
+        This address will be used to deploy the contract and interact with it.
 
         ```toml
         [addresses]
@@ -206,11 +211,11 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         The output will be the code ID of the uploaded contract, which you will use to instantiate the contract.
         
         ```bash
-        ADDRESS=$(minitiad keys show $KEY_NAME -a)
-        CODE_ID=100         # Replace with the actual code ID from the previous step
-        INIT_STAGE=1        # Set the initial stage number
-        LABEL="vip_score"   # Set the label for the contract
-        INIT_MSG='{"allow_list":["'"$ADDRESS"'"],"init_stage":'"$INIT_STAGE"'}'
+        export ADDRESS=$(minitiad keys show $KEY_NAME -a)
+        export CODE_ID=100         # Replace with the actual code ID from the previous step
+        export INIT_STAGE=1        # Set the initial stage number
+        export LABEL="vip_score"   # Set the label for the contract
+        export INIT_MSG='{"allow_list":["'"$ADDRESS"'"],"init_stage":'"$INIT_STAGE"'}'
 
         minitiad tx wasm instantiate "$CODE_ID" "$INIT_MSG" \
           --admin $ADDRESS \

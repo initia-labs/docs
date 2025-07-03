@@ -9,7 +9,9 @@ Therefore, when changing the criteria, follow the process outlined below to ensu
 The vesting of esINIT positions depends on the `minimum_score_ratio`, which is multiplied to the score the users received on each stage. For details on what `minimum_score_ratio` is, see the [maintaining a VIP score](/home/core-concepts/vip/architecture#maintaining-a-vip-score). 
 Any significant change to the VIP scoring scale will change the minimum score needed and can impact the vesting of existing esINIT positions.
 
-Consider a case where the average user score was 1,000 in the previous stage and dropped to 10 in the current stage. The minimum score needed for vesting from the previous stage is 500. Due to the scale drop, the user cannot fully vest their position even if they engage heavily with the rollup. On the other hand, if the average score increases from 10 to 1,000, users may fully vest previous positions with minimal engagement.
+Consider a case where the average user score was 1,000 in the previous stage and dropped to 10 in the current stage.
+The minimum score needed for vesting from the previous stage is 500. Due to the scale drop, the user cannot fully vest their position even if they engage heavily with the rollup. 
+On the other hand, if the average score increases from 10 to 1,000, users may fully vest previous positions with minimal engagement.
 
 To maintain consistency and prevent unintended effects, do not change the score scale when updating the scoring criteria.
 </Warning>
@@ -32,7 +34,6 @@ To maintain consistency and prevent unintended effects, do not change the score 
   </Step>
   <Step title= "Public Announcement">
     After the VIP committee approves the new scoring criteria, announce the update at least one week in advance by posting on Discord, X (Twitter), and in the app with a banner or popup.
-
     Make sure the announcement clearly summarizes what has changed, states the date and time for the new criteria, links to the forum post, and outlines any required user actions so users have enough time to prepare.
   </Step>
 </Steps>

@@ -10,15 +10,13 @@ title: Managing Operator Settings
 
 The operator is the account you specify during VIP whitelisting; it receives the operator commission for your rollup.
 
-Operator commission is a fixed percentage of the rollup's total VIP reward. For details, see [distribution to rollup operators](/home/core-concepts/vip/architecture#distribution-to-rollup-operators).
-
-If you need to replace the operator address itself, call `update_operator` with the bridge ID and the new operator address:
+Operator commission is a fixed percentage of the rollup's total VIP reward. For details, see [distribution to rollup operators](/home/core-concepts/vip/architecture#distribution-to-rollup-operators). If you need to replace the operator address itself, call `update_operator` with the bridge ID and the new operator address:
 
 <Tab title="Updating Operator Address">
 ```bash
-BRIDGE_ID=29                                                      # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
-NEW_OPERATOR_ADDRESS=init14zmga05vl324ddaw7wqwdqt9pcvjeeyae3jn2k  # Replace with the new operator address
-OPERATOR_KEY_NAME=operator                                        # Replace with your operator key. Check `initiad keys list` for the list of keys
+export BRIDGE_ID=29                                                      # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+export NEW_OPERATOR_ADDRESS=init14zmga05vl324ddaw7wqwdqt9pcvjeeyae3jn2k  # Replace with the new operator address
+export OPERATOR_KEY_NAME=operator                                        # Replace with your operator key. Check `initiad keys list` for the list of keys
 
 # Mainnet (interwoven-1)
 # VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8' 
@@ -36,7 +34,8 @@ initiad tx move execute-json $VIP_CONTRACT vip update_operator --args '["'${BRID
 
 ## Operator Commission
 
-Operator commissions can be adjusted, subject to the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings defined during VIP whitelisting. To apply an update, the operator account must send an `update_operator_commission` message to the VIP contract that includes the bridge ID, the version (use 1 unless the rollup was previously delisted), and the new commission rate.
+Operator commissions can be adjusted, subject to the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings defined during VIP whitelisting. 
+To apply an update, the operator account must send an `update_operator_commission` message to the VIP contract that includes the bridge ID, the version (use 1 unless the rollup was previously delisted), and the new commission rate.
 
 <Note>
 When you whitelist your rollup on VIP, you need to set [`operator_commission_max_rate` and `operator_commission_max_change_rate`](https://github.com/initia-labs/vip-contract/blob/f8b9a7fef024ace362fcddbc09ef35d694e471db/sources/vip.move#L1176-L1177).
@@ -48,10 +47,10 @@ When you whitelist your rollup on VIP, you need to set [`operator_commission_max
 
 <Tab title="Updating Operator Commission">
 ```bash
-BRIDGE_ID=29                         # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
-VERSION=1                            # Use 1 unless your rollup has been delisted before
-NEW_COMMISSION_RATE=0.05             # Replace with the new commission rate (e.g., 0.05 for 5%)
-OPERATOR_KEY_NAME=operator           # Replace with your operator key name
+export BRIDGE_ID=29                         # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+export VERSION=1                            # Use 1 unless your rollup has been delisted before
+export NEW_COMMISSION_RATE=0.05             # Replace with the new commission rate (e.g., 0.05 for 5%)
+export OPERATOR_KEY_NAME=operator           # Replace with your operator key name
 
 # Mainnet (interwoven-1)
 # VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8'
