@@ -2,7 +2,7 @@
 title: Integrating VIP
 ---
 
-This guide shows how to integrate VIP for a rollup on the Initia. Follow the steps below to deploy the scoring contract, register your rollup, and manage VIP stages.
+This guide shows how to integrate VIP for a rollup on Initia. Follow the steps below to deploy the scoring contract, register your rollup, and manage VIP stages.
 
 <Info title="Network Details">
 You can find Initia L1 RPC endpoints and chain IDs on the [Network Information page](/resources/developer/initia-l1).
@@ -18,7 +18,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     First, launch your rollup with the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction), then follow the [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
 
     After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. 
-    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, use https://rpc.minimove-2.initia.xyz/abci_info.
+    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, use https://rpc.minimove-2.initia.xyz/abci_info.
 
     <Tabs>
       <Tab title="EVM">
@@ -54,7 +54,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     </Tabs>
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, while the VIP contract deployer is the account that deploys the VIP scoring contract.
+    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, and the VIP contract deployer is the account that deploys the VIP scoring contract.
     The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
 
     ```bash
@@ -75,7 +75,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     ```bash
     minitiad keys add $OPERATOR_KEY_NAME --ledger
     ```
-    
+
     You can see the list of accounts by running `minitiad keys list`.
     
     ```bash
@@ -108,7 +108,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     ```
   </Step>
   <Step title="Deploy the VIP Scoring Contract">
-    In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VMs.
+    In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VM.
     
     <Note>
       The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
@@ -165,7 +165,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         forge build
         ```
 
-        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP scorer’s deployer key, and `INIT_STAGE` to the starting VIP stage number.
+        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number.
         To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
 
         ```bash
@@ -299,10 +299,10 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
 
     <Tabs>
       <Tab title="EVM">
-        | Action          | Method                                    | Description                                                                                 |
-        | --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
-        | Update scores   | `updateScores(stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                           |
-        | Finalize stage  | `finalizeStage(uint64 stage)`             | Finalize the given stage from further changes and prepares the contract for the next stage |
+        | Action          | Method                                    | Description                                                                                       |
+        | --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+        | Update scores   | `updateScores(stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                                  |
+        | Finalize stage  | `finalizeStage(uint64 stage)`             | Finalize the given stage, preventing further changes and prepares the contract for the next stage |
 
         This code snippet shows how to use the [viem](https://viem.sh/) library to interact with the VIP scoring contract:
         
@@ -401,12 +401,12 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         ```
       </Tab>
       <Tab title="MoveVM">
-        | Action          | Method                                                   | Description                                                                                |
-        | --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+        | Action          | Method                                                   | Description                                                                                       |
+        | --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
         | Add deployer    | `add_deployer_script(signer, stage)`                     | Add the deployer to the VIP scoring contract for the specified stage. This ensures that the deployer has the necessary permissions to interact with the contract. |
-        | Set init stage  | `set_init_stage(signer, stage)`                          | Set the initial stage for the VIP process                                                  |
-        | Update scores   | `update_score_script(signer, stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                           |
-        | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the given stage from further changes and prepares the contract for the next stage |
+        | Set init stage  | `set_init_stage(signer, stage)`                          | Set the initial stage for the VIP process                                                         |
+        | Update scores   | `update_score_script(signer, stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                                  |
+        | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the given stage, preventing further changes and prepares the contract for the next stage |
 
         ```ts vip-score-move-tutorial.ts
         import { bcs, isTxError, MnemonicKey, Msg, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
@@ -527,10 +527,10 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
 
       </Tab>
       <Tab title="WasmVM">
-        | Action           | Method                                                   | Description                                                                 |
-        | ---------------- | -------------------------------------------------------- | --------------------------------------------------------------------------- |
-        | Update scores    | `update_scores(signer, stage, addrs[], amounts[])`       | Batch updates the scores of multiple addresses in the specified stage       |
-        | Finalize stage   | `finalize_stage(stage)`                                  | Finalizes the stage against further changes and prepares for the next stage |
+        | Action           | Method                                                   | Description                                                                                       |
+        | ---------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+        | Update scores    | `update_scores(signer, stage, addrs[], amounts[])`       | Update the scores for a list of addresses in the specified stage                                  |
+        | Finalize stage   | `finalize_stage(stage)`                                  | Finalize the given stage, preventing further changes and prepares the contract for the next stage |
       
         ```ts vip-score-wasm-tutorial.ts
         import { Coins, isTxError, MnemonicKey, Msg, MsgExecuteContract, RESTClient, Wallet } from '@initia/initia.js'

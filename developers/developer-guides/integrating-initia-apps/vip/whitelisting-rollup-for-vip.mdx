@@ -11,8 +11,7 @@ For testnet rollups, you can contact the Initia team to get your rollup whitelis
 
 <Steps>
   <Step title="Add your rollup to the Initia Registry">
-    Add the rollup to the [Initia Registry](https://github.com/initia-labs/initia-registry) before requesting VIP whitelisting
-    Refer to [this page](/developers/developer-guides/integrating-initia-apps/registry/introduction) for more information on how to add your rollup to the Initia Registry.
+    Add the rollup to the [Initia Registry](https://github.com/initia-labs/initia-registry) before requesting VIP whitelisting. Refer to [this page](/developers/developer-guides/integrating-initia-apps/registry/introduction) for more information on how to add your rollup to the Initia Registry.
     When you add your rollup to the Initia Registry, you must create or update the following files in your pull request.
 
     - **`chain.json`** contains metadata about the chain, such as its name, chain ID, and network type, which is essential for users to interact with the chain.
@@ -26,14 +25,14 @@ For testnet rollups, you can contact the Initia team to get your rollup whitelis
   </Step>
   <Step title="Submit a Forum Proposal">
     Before your rollup can be whitelisted, you must create a proposal in the [Initia Forum](https://forum.initia.xyz). In the proposal, specify the `operator address`, `commission rate`, `VIP score policy`, and `VIP scoring contract`, using the [template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146).
-    `operator address` is the address that will receive the operator commission and you must create it before submitting the proposal.
+    `operator address` is the address that will receive the operator commission, and you must create it before submitting the proposal.
     `commission rate` is the percentage of the total VIP rewards that the operator will receive.
     `VIP score policy` is the scoring criteria that will be used to calculate the VIP scores for users on your rollup. The policy must follow the [VIP Criteria & Scoring Policies](/home/core-concepts/vip/scoring#vip-criteria-%26-scoring-policies).
-    `VIP scoring contract` is the address of the deployed VIP scoring contract and you need to specify the contract address in the proposal. For details on how to deploy the VIP scoring contract, see the [Integrating VIP](/developers/developer-guides/integrating-initia-apps/vip/integrating-vip) guide.
+    `VIP scoring contract` is the address of the deployed VIP scoring contract, and you need to specify the contract address in the proposal. For details on how to deploy the VIP scoring contract, see the [Integrating VIP](/developers/developer-guides/integrating-initia-apps/vip/integrating-vip) guide.
   </Step>
   <Step title="Submit a L1 Governance Proposal">
-    After creating the forum proposal, You can submit the L1 governance proposal for VIP whitelisting as follows.
-    ```ts vip_l1_propsal.ts
+    After creating the forum proposal, you can submit the L1 governance proposal for VIP whitelisting as follows.
+    ```ts vip-l1-gov-proposal.ts
     import { MnemonicKey, RESTClient, Wallet, bcs, MsgSubmitProposal, MsgGovExecute } from '@initia/initia.js'
 
     const MNEMONIC_KEY = process.env.MNEMONIC_KEY || 'castle lung ...' // Your wallet's mnemonic key
@@ -52,7 +51,7 @@ For testnet rollups, you can contact the Initia team to get your rollup whitelis
     const PROPOSAL_METADATA = process.env.PROPOSAL_METADATA || 'https://forum.initia.xyz/t/whitelist-echelon-on-vip/62/1'   // VIP proposal forum URL
     const PROPOSAL_TITLE = process.env.PROPOSAL_TITLE || 'Whitelist Echelon on VIP'                                         // VIP proposal title
     const PROPOSAL_SUMMARY = process.env.PROPOSAL_SUMMARY || 'This proposal is to whitelist Echelon on Initia VIP program.' // VIP proposal summary
-    const ROLLUP_VM_TYPE = process.env.ROLLUP_VM_TYPE || 0                                                                  // Rollup VM type, 0 for MOVE, 1 for Wasm, 2 for EVM
+    const ROLLUP_VM_TYPE = process.env.ROLLUP_VM_TYPE || 0                                                                  // Rollup VM type, 0 for MoveVM, 1 for WasmVM, 2 for EVM
 
     async function main() {
       const key = new MnemonicKey({ mnemonic: MNEMONIC_KEY })
@@ -100,6 +99,6 @@ For testnet rollups, you can contact the Initia team to get your rollup whitelis
 
   </Step>
   <Step title="Wait for the L1 Governance vote">
-    Once the community approves a rollup whitelisting, the Initia team will create a governance proposal on Initia L1 like [this example](https://scan.initia.xyz/interwoven-1/proposals/27). If the proposal passes after the voting period, the rollup will be whitelisted in VIP.
+    Once the community approves a rollup whitelisting, the Initia team will create a governance proposal on Initia L1 like [this example](https://scan.initia.xyz/interwoven-1/proposals/27). If the proposal passes after the voting period, the rollup will be whitelisted for VIP.
   </Step>
 </Steps>

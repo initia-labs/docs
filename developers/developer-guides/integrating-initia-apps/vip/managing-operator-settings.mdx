@@ -10,7 +10,7 @@ title: Managing Operator Settings
 
 The operator is the account you specify during VIP whitelisting and receives your rollup's operator commission.
 
-Operator commission is a fixed percentage of the rollup's total VIP reward. For details, see [distribution to rollup operators](/home/core-concepts/vip/architecture#distribution-to-rollup-operators). To replace the operator address, call update_operator on the VIP contract and pass two arguments in order: the rollup bridge ID and the new operator address. The bridge ID uniquely identifies your rollup bridge and can be retrieved from `${REST_URL}/opinit/opchild/v1/bridge_info`.
+Operator commission is a fixed percentage of the rollup's total VIP reward. For details, see [distribution to rollup operators](/home/core-concepts/vip/architecture#distribution-to-rollup-operators). To replace the operator address, call `update_operator` on the VIP contract and pass two arguments in order: the rollup bridge ID and the new operator address. The bridge ID uniquely identifies your rollup bridge and can be retrieved from `${REST_URL}/opinit/opchild/v1/bridge_info`.
 
 <Tabs>
     <Tab title="Mainnet (interwoven-1)">
@@ -54,13 +54,13 @@ Operator commission is a fixed percentage of the rollup's total VIP reward. For 
 
 ## Updating Operator Commission
 
-Operator commissions can be adjusted in line with the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings defined during VIP whitelisting. A commission can be changed only once per stage and any updated rate takes effect starting with the next stage. 
+Operator commissions can be adjusted according to the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings defined during VIP whitelisting. A commission can be changed only once per stage and any updated rate takes effect starting in the next stage. 
 Call `update_operator_commission` on the VIP contract with three arguments in order: the rollup bridge ID, the version number, and the new commission rate. Use version 1 when the rollup is listed for the first time. If the rollup is delisted and later listed again, set the version to the previous value plus 1.
 
 <Note>
 When you whitelist your rollup on VIP, you need to set [`operator_commission_max_rate` and `operator_commission_max_change_rate`](https://github.com/initia-labs/vip-contract/blob/f8b9a7fef024ace362fcddbc09ef35d694e471db/sources/vip.move#L1176-L1177).
 
-`operator_commission_max_rate` limits on the operator commission. For example, if you set it to `0.1`, the operator commission can be at most 10%. This value is used to ensure that the operator commission does not exceed a certain threshold.
+`operator_commission_max_rate` limits the operator commission. For example, if you set it to `0.1`, the operator commission can be at most 10%. This value is used to ensure that the operator commission does not exceed a certain threshold.
 
 `operator_commission_max_change_rate` is the maximum rate at which the operator commission can be changed. For example, if you set it to `0.05`, the operator commission can be increased or decreased by up to 5% in that stage.
 </Note>
