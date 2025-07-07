@@ -1,11 +1,11 @@
 ---
-title: Integration VIP
+title: Integrating VIP
 ---
 
-This guide shows how to enable VIP for a rollup on the Initia testnet. By following the steps below, you will deploy the scoring contract, register your rollup, and operate VIP stages smoothly.
+This guide shows how to integrate VIP for a rollup on the Initia. Follow the steps below to deploy the scoring contract, register your rollup, and manage VIP stages.
 
 <Info title="Network Details">
-You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/resources/developer/initia-l1).
+You can find Initia L1 RPC endpoints and chain IDs on the [Network Information page](/resources/developer/initia-l1).
 </Info>
 
 ## Prerequisites
@@ -15,13 +15,15 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
 
 <Steps title="VIP Integration Steps">
   <Step title="Deploy Your Rollup and Install Minitiad CLI">
-    First, launch your rollup by using the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). You can follow [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
-    
-    After the rollup is live, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s VM version so that later commands use the correct binary.
+    First, launch your rollup with the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction), then follow the [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
+
+    After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. 
+    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, use https://rpc.minimove-2.initia.xyz/abci_info.
+
     <Tabs>
       <Tab title="EVM">
       ```bash
-      export MINIEVM_VERSION=1.1.7
+      export MINIEVM_VERSION=1.1.7 # Replace with your rollup's version
       
       git clone https://github.com/initia-labs/minievm.git
       cd minievm
@@ -35,13 +37,13 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
 
       git clone https://github.com/initia-labs/minimove.git
       cd minimove
-      git checkout $MINIMOVE_VERSION
+      git checkout $MINIMOVE_VERSION # Replace with your rollup's version
       make install
       ```
       </Tab>
       <Tab title="WasmVM">
       ```bash
-      export MINIWASM_VERSION=1.0.6
+      export MINIWASM_VERSION=1.0.6 # Replace with your rollup's version
 
       git clone https://github.com/initia-labs/miniwasm.git
       cd miniwasm
@@ -52,7 +54,7 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     </Tabs>
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Create an operator and VIP contract deployer account that will be used to deploy the VIP scoring contract.
+    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, while the VIP contract deployer is the account that deploys the VIP scoring contract.
     The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
 
     ```bash
@@ -68,11 +70,21 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
     # room fruit chalk buyer budget wisdom theme sound north square regular truck deal anxiety wrestle toy flight release actress critic saddle garment just found
     ```
 
-    You can see the list of accounts by running `minitiad keys list`. The output will look like this.
+    If you want to use a Ledger hardware wallet, you can use the `--ledger` option to create an account that uses Ledger for signing transactions.
+
+    ```bash
+    minitiad keys add $OPERATOR_KEY_NAME --ledger
+    ```
+    
+    You can see the list of accounts by running `minitiad keys list`.
     
     ```bash
     minitiad keys list
-      
+    ```
+
+    The output will look like this:
+
+    ```bash
     - address: init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
       name: deployer
       pubkey: '{"@type":"/initia.crypto.v1beta1.ethsecp256k1.PubKey","key":"AwVclEI0Va22hhMXlF/TOlYQJQQBV7Yt/iW44jB7RTJH"}'
@@ -87,168 +99,19 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
 
     ```bash
     minitiad keys parse init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
+    ```
+    The output will be in the following format:
 
+    ```bash
     bytes: C5EA55D90AE84E307622F1B8B13535EC3EFF0475
     human: init
     ```
-
-    Whenever a contract or script expects a 0x-prefixed address (rather than bech32), use this hex format `0xC5EA55D90AE84E307622F1B8B13535EC3EFF0475`.
   </Step>
   <Step title="Deploy the VIP Scoring Contract">
-    In this step, you will deploy the VIP scoring contract that tracks addresses and scores.
-    Choose the instructions for your VM, then compile and deploy the contract with the provided scripts.
-    
-    <Tabs>
-      <Tab title="EVM">
-        Clone the [`vip-score-evm`](https://github.com/initia-labs/vip-score-evm) repository.
-      
-        ```bash
-        git clone https://github.com/initia-labs/vip-score-evm.git
-        ```
-        
-        Compile the `VIPScore.sol` contract. 
-        
-        ```bash
-        forge build
-        ```
-
-        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script.
-        `JSON_RPC_URL` should point to your rollup's JSON RPC endpoint, `PRIVATE_KEY` should be the deployer's private key, and `INIT_STAGE` is the initial stage number you will use.
-
-        ```bash
-        export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz
-        export PRIVATE_KEY=0xabcd1234...  # Replace with your deployer's private key
-        export INIT_STAGE=1               # Set the starting stage number for scoring.
-
-        forge script script/VipScore.s.sol:DeployVipScore --rpc-url $JSON_RPC_URL --broadcast
-
-        # ...
-        # ✅  [Success] Hash: 0xd55beed5a745b203b56dc68c9e9141fcfd433c4c47587ce50655a99f5c449abc
-        # Contract Address: 0x1F00dfc319F1B74462B2Ef301c3978ee71f0d0E2
-        # Block: 238
-        # Paid: 0.000000000000525763 ETH (525763 gas * 0.000000001 gwei)
-
-        # ✅ Sequence #1 on 1982194020580198 | Total Paid: 0.000000000000525763 ETH (525763 gas * avg 0.000000001 gwei)
-        # ...
-        ```
-      </Tab>
-      <Tab title="MoveVM">
-        Clone the [`vip-score-move`](https://github.com/initia-labs/vip-score-move) repository.
-
-        ```bash
-        git clone https://github.com/initia-labs/vip-score-move.git
-        ```
-
-        Set the `vip_score.move` deployer address in the `Move.toml` file.
-        This address will be used to deploy the contract and interact with it.
-
-        ```toml
-        [addresses]
-        vip_score = "0x1234..." # Replace with your deployer address
-        ```
-
-        Compile the Move package.
-
-        ```bash
-        cd vip-score-move
-        minitiad move build
-        ```
-
-        Deploy the contract. Make sure to set the `KEY_NAME`, `GAS_PRICES`, `RPC_NODE_URL`, and `CHAIN_ID` environment variables before running the command.
-
-        ```bash
-        export KEY_NAME=deployer 
-        export GAS_PRICES=0.015l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd
-        export RPC_NODE_URL=https://rpc.minimove-2.initia.xyz
-        export CHAIN_ID=minimove-2
-
-        minitiad move deploy \
-          --from $KEY_NAME \
-          --gas auto \
-          --gas-prices $GAS_PRICES \
-          --node $RPC_NODE_URL \
-          --chain-id $CHAIN_ID
-        ```
-      </Tab>
-      <Tab title="WasmVM">
-        Clone the [`vip-score-wasm`](https://github.com/initia-labs/vip-score-wasm) repository.
-
-        ```bash
-        git clone https://github.com/initia-labs/vip-score-wasm.git
-        ```
-
-        Compile the Wasm package.
-
-        ```bash
-        cd vip-score-wasm
-        cargo build --release --target wasm32-unknown-unknown
-        ```
-
-        Upload the contract. Make sure to set the `KEY_NAME`, `GAS_PRICES`, `RPC_NODE_URL`, and `CHAIN_ID` environment variables before running the command.
-
-        ```bash
-        export KEY_NAME=deployer 
-        export GAS_PRICES=0.015l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0
-        export RPC_NODE_URL=https://rpc.miniwasm-2.initia.xyz
-        export CHAIN_ID=miniwasm-2
-
-        minitiad tx wasm store ./target/wasm32-unknown-unknown/release/vip_score.wasm \
-          --from $KEY_NAME \
-          --gas auto \
-          --gas-prices $GAS_PRICES \
-          --node $RPC_NODE_URL \
-          --chain-id $CHAIN_ID
-        ```
-
-        To instantiate the contract, you need to fetch the code ID from the transaction output. Install [`jq`](https://jqlang.org/download/) to parse the JSON output.
-
-        ```bash
-        TX_HASH=4CDCE81C5D0FFBCB92683E64198B4DA9F449707BB4F87FCFD8E3F02EBCE042CF
-        RESP=$(minitiad q tx $TX_HASH -o json --node $RPC_NODE_URL)
-        echo "$RESP" | jq -r '.events[]| select(.type=="store_code").attributes[]| select(.key=="code_id").value'
-        ```
-
-        The output will be the code ID of the uploaded contract, which you will use to instantiate the contract.
-        
-        ```bash
-        export ADDRESS=$(minitiad keys show $KEY_NAME -a)
-        export CODE_ID=100         # Replace with the actual code ID from the previous step
-        export INIT_STAGE=1        # Set the initial stage number
-        export LABEL="vip_score"   # Set the label for the contract
-        export INIT_MSG='{"allow_list":["'"$ADDRESS"'"],"init_stage":'"$INIT_STAGE"'}'
-
-        minitiad tx wasm instantiate "$CODE_ID" "$INIT_MSG" \
-          --admin $ADDRESS \
-          --from $KEY_NAME \
-          --label $LABEL \
-          --gas auto \
-          --gas-prices $GAS_PRICES \
-          --node $RPC_NODE_URL \
-          --chain-id $CHAIN_ID
-        ```
-      </Tab>
-    </Tabs>
-    
-    Save the deployed contract address; you will need it for the whitelist proposal.
-
-  </Step>
-  <Step title="Register the Rollup in the Initia Registry">
-    Clone the Initia Registry repository.
-    
-    ```bash
-    git clone https://github.com/initia-labs/initia-registry.git
-    ```
-
-    Submit a pull request to add your rollup to the Initia Registry. For detailed instructions, see the [Initia Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction).
-  </Step>
-  <Step title="Whitelist VIP Proposal">
-    Draft a forum post with the whitelist template and include your operator address, scoring policy, and VIP score contract address. The full procedure is described in the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip) guide. This proposal is required only for Mainnet rollups; for testnet deployments, contact the Initia team directly to have your rollup whitelisted.
-  </Step>
-  <Step title="Operate the VIP Scoring Contract">
-    Each VIP stage follows a similar sequence of steps. Use the methods below to update scores and finalize each stage.
+    In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VMs.
     
     <Note>
-      To retrieve the current stage, choose the example for your network and run either the curl request or the TypeScript example; both will query the VIP module store on L1 and return the current stage information.
+      The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
       <Tabs>
         <Tab title="Mainnet (interwoven-1)">
         ```bash curl
@@ -290,16 +153,161 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
 
     <Tabs>
       <Tab title="EVM">
-        | Action          | Method                                    | Description                                                                 |
-        | --------------- | ----------------------------------------- | --------------------------------------------------------------------------- |
-        | Update scores   | `updateScores(stage, addrs[], amounts[])` | Batch updates the scores of multiple addresses in the specified stage       |
-        | Finalize stage  | `finalizeStage(uint64 stage)`             | Finalizes the stage against further changes and prepares for the next stage |
+        Clone the [`vip-score-evm`](https://github.com/initia-labs/vip-score-evm) repository.
+      
+        ```bash
+        git clone https://github.com/initia-labs/vip-score-evm.git
+        ```
+        
+        Compile the `VIPScore.sol` contract. If you do not have [Foundry](https://github.com/foundry-rs/foundry) installed, follow the [Foundry installation instructions](https://getfoundry.sh).
+        
+        ```bash
+        forge build
+        ```
+
+        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP scorer’s deployer key, and `INIT_STAGE` to the starting VIP stage number.
+        To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+
+        ```bash
+        export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz  # Replace with your rollup's JSON_RPC endpoint
+        export PRIVATE_KEY=0xabcd1234...                           # Replace with your deployer's private key
+        export INIT_STAGE=1                                        # Replace with the starting stage number for scoring.
+
+        forge script script/VipScore.s.sol:DeployVipScore --rpc-url $JSON_RPC_URL --broadcast
+
+        # ...
+        # ✅  [Success] Hash: 0xd55beed5a745b203b56dc68c9e9141fcfd433c4c47587ce50655a99f5c449abc
+        # Contract Address: 0x1F00dfc319F1B74462B2Ef301c3978ee71f0d0E2
+        # Block: 238
+        # Paid: 0.000000000000525763 ETH (525763 gas * 0.000000001 gwei)
+
+        # ✅ Sequence #1 on 1982194020580198 | Total Paid: 0.000000000000525763 ETH (525763 gas * avg 0.000000001 gwei)
+        # ...
+        ```
+      </Tab>
+      <Tab title="MoveVM">
+        Clone the [`vip-score-move`](https://github.com/initia-labs/vip-score-move) repository.
+
+        ```bash
+        git clone https://github.com/initia-labs/vip-score-move.git
+        ```
+
+        Set the `vip_score.move` deployer address in the `Move.toml` file. This address will be used to deploy the contract and interact with it.
+
+        ```toml
+        [addresses]
+        vip_score = "0x1234..." # Replace with your deployer address
+        ```
+
+        Compile the Move package.
+
+        ```bash
+        cd vip-score-move
+        minitiad move build
+        ```
+
+        Deploy the contract. Make sure to set the `GAS_PRICES`, `RPC_NODE_URL`, and `CHAIN_ID` environment variables before running the command.
+
+        ```bash
+        export GAS_PRICES=0.015l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd # Replace with your roll gas prices
+        export RPC_NODE_URL=https://rpc.minimove-2.initia.xyz                                      # Replace with your rollup's RPC endpoint       
+        export CHAIN_ID=minimove-2                                                                 # Replace with your rollup's chain ID
+
+        minitiad move deploy \
+          --from $DEPLOYER_KEY_NAME \
+          --gas auto \
+          --gas-prices $GAS_PRICES \
+          --node $RPC_NODE_URL \
+          --chain-id $CHAIN_ID
+        ```
+      </Tab>
+      <Tab title="WasmVM">
+        Clone the [`vip-score-wasm`](https://github.com/initia-labs/vip-score-wasm) repository.
+
+        ```bash
+        git clone https://github.com/initia-labs/vip-score-wasm.git
+        ```
+
+        Compile the Wasm package. If you don't have [Rust](https://www.rust-lang.org/), follow the [Rust and Cargo installation instructions](https://doc.rust-lang.org/cargo/getting-started/installation.html).
+
+        ```bash
+        cd vip-score-wasm
+        cargo build --release --target wasm32-unknown-unknown
+        ```
+
+        Upload the contract. Make sure to set the `GAS_PRICES`, `RPC_NODE_URL`, and `CHAIN_ID` environment variables before running the command.
+
+        ```bash
+        export GAS_PRICES=0.015l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0 # Replace with your rollup gas prices
+        export RPC_NODE_URL=https://rpc.miniwasm-2.initia.xyz                                      # Replace with your rollup's RPC endpoint
+        export CHAIN_ID=miniwasm-2                                                                 # Replace with your rollup's chain ID
+
+        minitiad tx wasm store ./target/wasm32-unknown-unknown/release/vip_score.wasm \
+          --from $DEPLOYER_KEY_NAME \
+          --gas auto \
+          --gas-prices $GAS_PRICES \
+          --node $RPC_NODE_URL \
+          --chain-id $CHAIN_ID
+        ```
+
+        To instantiate the contract, you need to fetch the code ID from the transaction output. You'll need [`jq`](https://jqlang.org/download/) to parse the JSON output.
+
+        ```bash
+        TX_HASH=4CDCE81C5D0FFBCB92683E64198B4DA9F449707BB4F87FCFD8E3F02EBCE042CF
+        RESP=$(minitiad q tx $TX_HASH -o json --node $RPC_NODE_URL)
+        echo "$RESP" | jq -r '.events[]| select(.type=="store_code").attributes[]| select(.key=="code_id").value'
+        ```
+
+        The output will be the code ID of the uploaded contract, which you will use to instantiate the contract.
+        To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+        
+        ```bash
+        export ADDRESS=$(minitiad keys show $KEY_NAME -a)
+        export CODE_ID=100         # Replace with the actual code ID from the previous step
+        export INIT_STAGE=1        # Set the initial stage number
+        export LABEL="vip_score"   # Set the label for the contract
+        export INIT_MSG='{"allow_list":["'"$ADDRESS"'"],"init_stage":'"$INIT_STAGE"'}'
+
+        minitiad tx wasm instantiate "$CODE_ID" "$INIT_MSG" \
+          --admin $ADDRESS \
+          --from $KEY_NAME \
+          --label $LABEL \
+          --gas auto \
+          --gas-prices $GAS_PRICES \
+          --node $RPC_NODE_URL \
+          --chain-id $CHAIN_ID
+        ```
+      </Tab>
+    </Tabs>
+    
+    Save the deployed contract address. It will be required for the VIP whitelist proposal.
+  </Step>
+  <Step title="Register the Rollup in the Initia Registry">
+    Clone the Initia Registry repository.
+    
+    ```bash
+    git clone https://github.com/initia-labs/initia-registry.git
+    ```
+
+    Submit a pull request to add your rollup to the Initia Registry. For detailed instructions, see the [Initia Registry page](/developers/developer-guides/integrating-initia-apps/registry/introduction).
+  </Step>
+  <Step title="Whitelist VIP Proposal">
+    Draft a forum post with the whitelist template and include your operator address, scoring policy, and VIP score contract address. The full procedure is described in the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip) guide. This proposal is required only for mainnet rollups. For testnet deployments, contact the Initia team directly to have your rollup whitelisted.
+  </Step>
+  <Step title="Operate the VIP Scoring Contract">
+    Each VIP stage follows the same sequence of steps. Use the methods below to update scores and finalize each stage.
+
+    <Tabs>
+      <Tab title="EVM">
+        | Action          | Method                                    | Description                                                                                 |
+        | --------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+        | Update scores   | `updateScores(stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                           |
+        | Finalize stage  | `finalizeStage(uint64 stage)`             | Finalize the given stage from further changes and prepares the contract for the next stage |
 
         This code snippet shows how to use the [viem](https://viem.sh/) library to interact with the VIP scoring contract:
         
         <Note>
-        To get the EVM chain ID, you can query using the `eth_chainId` JSON RPC method.
-        For example, using `curl`:
+        To get the EVM chain ID, call the `eth_chainId` JSON RPC method. For example, using `curl`:
         
         ```bash
         curl -X POST https://json-rpc.minievm-2.initia.xyz/ \
@@ -393,12 +401,12 @@ You can find Initia L1 RPC endpoints and chain IDs in [Network Information](/res
         ```
       </Tab>
       <Tab title="MoveVM">
-        | Action          | Method                                                   | Description                                                               |
-        | --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------- |
-        | Add deployer    | `add_deployer_script(signer, stage)`                     | Add the deployer to the VIP scoring contract for the specified stage      |
-        | Set init stage  | `set_init_stage(signer, stage)`                          | Set the initial stage for the VIP process                                 |
-        | Update scores   | `update_score_script(signer, stage, addrs[], amounts[])` | Batch updates the scores of multiple addresses in the specified stage     |
-        | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the stage against further changes and prepares for the next stage|
+        | Action          | Method                                                   | Description                                                                                |
+        | --------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+        | Add deployer    | `add_deployer_script(signer, stage)`                     | Add the deployer to the VIP scoring contract for the specified stage. This ensures that the deployer has the necessary permissions to interact with the contract. |
+        | Set init stage  | `set_init_stage(signer, stage)`                          | Set the initial stage for the VIP process                                                  |
+        | Update scores   | `update_score_script(signer, stage, addrs[], amounts[])` | Update the scores for a list of addresses in the specified stage                           |
+        | Finalize stage  | `finalize_script(signer, stage)`                         | Finalize the given stage from further changes and prepares the contract for the next stage |
 
         ```ts vip-score-move-tutorial.ts
         import { bcs, isTxError, MnemonicKey, Msg, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
