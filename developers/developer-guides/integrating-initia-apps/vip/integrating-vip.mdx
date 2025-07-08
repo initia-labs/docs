@@ -18,7 +18,22 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     First, launch your rollup with the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction), then follow the [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
 
     After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. 
-    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, use https://rpc.minimove-2.initia.xyz/abci_info.
+    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, you can check the version by calling https://rpc.minimove-2.initia.xyz/abci_info.
+
+    ```json
+    {
+      "jsonrpc": "2.0",
+      "id": -1,
+      "result": {
+        "response": {
+          "data": "minitia",
+          "version": "v1.0.2",
+          "last_block_height": "10458738",
+          "last_block_app_hash": "lS/hN6BDFU45Z0Oee04MZm15TS49yx+//SQJsXSSfms="
+        }
+      }
+    }
+    ```
 
     <Tabs>
       <Tab title="EVM">
