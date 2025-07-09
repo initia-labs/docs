@@ -8,139 +8,220 @@ Initia supports two routes to move assets from Initia L1 to a rollup:
 2. **OP bridge** – tokens arrive as `l2/{hash}` (6 decimals)
 
 Regardless of the path, every bridged token passes through a **Wrapping Contract** that mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. 
-All gas fees and transfers on the EVM Rollup side are paid with the 18-decimal ERC-29 wrapped token itself and you never interact directly with the wrapping contract.
-
-<Note>
-This information applies only to MiniEVM rollups.
-</Note>
+All gas fees and transfers on the EVM rollup are paid with the 18-decimal wrapped ERC-20 token. For most operations, you do not need to interact with the wrapping contract directly.
 
 ## Denom transformation
 
+When you bridge tokens from Initia L1 to the EVM rollup, the following transformations occur:
+
 <Frame>
-![Wrapping Tokens](/images/evm/wrapping-tokens.png)
+![Wrapping Tokens](/images/evm/wrapping-erc20-tokens.png)
 </Frame>
 
-| Step | Denom example | Decimals |
-|------|---------------|----------|
-| Bridge in (IBC) | `ibc/2b2...` | 6 |
-| Bridge in (OP) | `l2/6a2...` | 6 |
-| After wrapping | `evm/939...` | 18 |
-
-<Note>
 Bridging from the rollup back to L1 reverses the same steps in order, returning each denom to its original 6‑decimal form on L1.
-</Note>
+
+<Frame>
+![Unwrapping Tokens](/images/evm/unwrapping-erc20-tokens.png)
+</Frame>
+
+The table below illustrates the transformation of a token's denomination as it moves from Initia L1 to the EVM rollup and back:
+
+| Step                 | Denom example | Decimals |
+|----------------------|---------------|----------|
+| Bridge in (IBC)      | `ibc/2b2...`  | 6        |
+| Bridge in (OP)       | `l2/6a2...`   | 6        |
+| After wrapping (IBC) | `evm/939...`  | 18       |
+| After wrapping (OP)  | `evm/B04...`  | 18       |
+
+
+## Prerequisites
+
+- [NodeJS](https://nodejs.org)
 
 ## Wrapping tokens
 
-The guide provided in the `wrapping-tokens` [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) automates two tasks:
+The guide demonstrates how to wrap tokens on the EVM rollup using the wrapping contract. This process will convert tokens from Initia L1 to the EVM rollup, creating 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}`.
 
-1. **Wrap** each bridged L1 asset into its 18‑decimal `evm/{contract}` representation.
-2. **Query** the rollup for the resulting wrapped denoms.
-3. **Unwrap** the wrapped tokens back to L1.
+<Steps>
+  <Step title="Project Setup">
+    To get started, clone the [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) and navigate to the `wrapping-tokens` directory:
 
-### Project setup
+    ```bash
+    git clone https://github.com/initia-labs/guides.git
+    cd guides/rollups/evm/wrapping-tokens
+    ```
 
-To get started, clone the `guides` repository and navigate to the `wrapping-tokens` directory:
+    Install the required dependencies using `npm`:
+    ```bash
+    npm install
+    ```
+  </Step>
+  <Step title="Configuration">
+    Copy the environment template that matches your target network to `.env`:
 
-```bash
-git clone https://github.com/initia-labs/guides.git
-cd guides/rollups/evm/wrapping-tokens
-```
+    <Tabs>
+      <Tab title="Mainnet (interwoven-1)">
+        ```bash
+        cp .env.mainnet.example .env
+        ```
+      </Tab>
+      <Tab title="Testnet (initiation-2)">
+        ```bash
+        cp .env.testnet.example .env
+        ```
+      </Tab>
+    </Tabs>
 
-Install the required dependencies using `npm`:
+    Open the `.env` file  and set the required variables:
 
-```bash
-npm install
+    | Variable           | Description                               |
+    |--------------------|-------------------------------------------|
+    | `ASSET_LIST`       | Comma‑separated list of L1 denoms to wrap |
+    | `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
+    | `L2_REST_ENDPOINT` | Rollup REST endpoint                      |
+    | `MNEMONIC`         | account mnemonic                          |
+    | `COIN_TYPE`        | BIP‑44 coin type (default **60**)         |
+    | `AMOUNT`           | Amount of asset to wrap or unwrap         |
 
-# if ts-node is not installed globally
-npm install -g typescript ts-node
-```
+    Ensure the account has sufficient balance for the `ASSET_LIST` denoms and enough INIT on L1 to pay for gas fees.
+  </Step>
+  <Step title="Creating Wrapped Tokens">
+    After configuring the environment, you can run the script to create wrapped tokens.
 
-### Configuration
+    ```bash
+    npm run create-wrapped-tokens
+    ```
 
-Copy the environment template that matches your network and fill in the variables:
+    The script will perform building and broadcasting of deposit transactions for each L1 denom specified in the `ASSET_LIST` environment variable. If the transaction is successful, you will see output similar to this:
 
-```bash
-cp .env.testnet.example .env   # or .env.mainnet.example
-```
+    ```shell
+    L2 Denom: ibc/37A3FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C5A50 for uinit
+    Initiate token deposit tx hash: 787D3A6186992AE4C5A2440B4565A7799BE610276A1177147AF3303DEEABC233
+    ```
 
-| Variable | Description |
-|----------|-------------|
-| `ASSET_LIST` | Comma‑separated list of L1 denoms to wrap |
-| `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
-| `L2_REST_ENDPOINT` | Rollup REST endpoint |
-| `L1_GAS_PRICES` | [L1 gas prices](/resources/developer/initia-l1.mdx) (e.g., `0.015uinit`) | 
-| `MNEMONIC` | account mnemonic |
-| `COIN_TYPE` | BIP‑44 coin type (default **60**) |
+  </Step>
+  <Step title="Fetching Wrapped Token Denoms">
+    After creating the wrapped tokens, you can fetch the wrapped token denoms by running:
+    
+    ```bash
+    npm run fetch-wrapped-tokens
+    ```
 
-**Account prerequisites**
+    This script will query the rollup for each L1 denom and retrieve its corresponding L2 denom. You will see output similar to this:
 
-* Sufficient INIT on L1 to pay gas
-* Balance for every `ibc/...` denom in `ASSET_LIST` (zero balance is fine for `l2/...` denoms)
-* The account should have balance on the rollup
+    ```shell
+    --------------------------------
+    L1Denom: uinit
+    L2Denom: evm/1234...
+    --------------------------------
+    ```
+  </Step>
+</Steps>
 
-### Creating wrapped tokens
+## Unwrapping tokens
 
-```bash
-ts-node src/create-wrapped-tokens
-```
+To unwrap tokens and return them to L1, you can use either the OP bridge or the IBC bridge. For both methods, you will need to interact with the `ERC20Wrapper` contract deployed on the EVM rollup.
 
-The script will:
+<Tabs>
+  <Tab title="OP Bridge">
+    ```solidity ERC20Wrapper.sol
+    /// @notice Converts local tokens to remote tokens and initiates an OP withdraw using a specific amount of local tokens
+    /// @dev This is a convenience wrapper that automatically converts and withdraws the specified amount of local tokens
+    /// @param receiver The destination address that will receive the unwrapped remote tokens
+    /// @param localDenom The denomination identifier of the local wrapped token to convert
+    /// @param localAmount The amount of local tokens to convert
+    function toRemoteAndOPWithdraw(
+        string memory receiver,
+        string memory localDenom,
+        uint localAmount
+    ) public {
+        toRemoteAndOPWithdraw(receiver, localDenom, localAmount, 250_000);
+    }
+    ```
+  </Tab>
+  <Tab title="IBC Bridge">
+    ```solidity ERC20Wrapper.sol
+    /// @notice Converts local tokens to remote tokens and initiates an IBC transfer
+    /// @dev This is a convenience wrapper that automatically converts and transfers local tokens.
+    /// @param localDenom The denomination identifier of the local wrapped token to convert (e.g. "evm/123...")
+    /// @param localAmount The amount of local tokens to convert and transfer
+    /// @param channel The IBC channel identifier to use for the transfer (e.g. "channel-0")
+    /// @param receiver The destination address that will receive the unwrapped remote tokens on the target chain
+    /// @param timeout The Unix timestamp in nanoseconds after which the IBC transfer will timeout and revert
+    function toRemoteAndIBCTransfer(
+        string memory localDenom,
+        uint localAmount,
+        // args for IBC transfer
+        string memory channel,
+        string memory receiver,
+        uint timeout
+    ) public {
+        toRemoteAndIBCTransfer(
+            localDenom,
+            localAmount,
+            channel,
+            receiver,
+            timeout,
+            "{}",
+            250_000
+        );
+    }
+    ```
+  </Tab>
+</Tabs>
 
-1. Build hook messages for each L1 denom
-2. Sign and broadcast deposit transactions
-3. Wait for confirmation
-4. Output each `txhash` for reference
+The following guide demonstrates how to unwrap tokens on the EVM rollup using the wrapping contract. This process will convert 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}` back to Initia L1.
 
-### Fetching wrapped token denoms
+<Steps>
+  <Step title="Project Setup">
+    To get started, clone the [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) and navigate to the `wrapping-tokens` directory:
 
-```bash
-ts-node src/fetch-wrapped-tokens
-```
+    ```bash
+    git clone https://github.com/initia-labs/guides.git
+    cd guides/rollups/evm/wrapping-tokens
+    ```
 
-The script will:
+    Install the required dependencies using `npm`:
+    ```bash
+    npm install
+    ```
+  </Step>
+  <Step title="Configuration">
+    Copy the environment template that matches your target network to `.env`:
 
-1. Query the rollup for each L1 denom
-2. Retrieve its wrapper contract address
-3. Display a mapping of L1 ↔ L2 denoms
+    <Tabs>
+      <Tab title="Mainnet (interwoven-1)">
+        ```bash
+        cp .env.mainnet.example .env
+        ```
+      </Tab>
+      <Tab title="Testnet (initiation-2)">
+        ```bash
+        cp .env.testnet.example .env
+        ```
+      </Tab>
+    </Tabs>
 
-Example output:
+    Open the `.env` file  and set the required variables:
 
-```shell
---------------------------------
-L1Denom: uinit
-L2Denom: evm/1234...
---------------------------------
-```
+    | Variable           | Description                               |
+    |--------------------|-------------------------------------------|
+    | `ASSET_LIST`       | Comma‑separated list of L1 denoms to wrap |
+    | `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
+    | `L2_REST_ENDPOINT` | Rollup REST endpoint                      |
+    | `MNEMONIC`         | account mnemonic                          |
+    | `COIN_TYPE`        | BIP‑44 coin type (default **60**)         |
+    | `AMOUNT`           | Amount of asset to wrap or unwrap         |
 
-### Unwrapping tokens
+    Ensure the account has sufficient balance for the `ASSET_LIST` denoms and enough gas token on L2 to pay for gas fees.
+  </Step>
+  <Step title="Creating Wrapped Tokens">
+    After configuring the environment, you can run the script to unwrap the wrapped tokens and return them to Initia L1.
 
-For unwrapping token and returning them to L1 via the OP bridge, we can execute [`toRemoteAndOPWithdraw`](https://github.com/initia-labs/minievm/blob/3edc63c3ddd0214e2c57145047bd5c4662e7f7db/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol#L240-L245) function on wrapper contract directly:
+    ```bash
+    npm run unwrap-wrapped-tokens
+    ```
 
-```typescript 
-async function withdrawOP(): Promise<void> {
-  const receiver = '0x1234abcd...';
-  const localDenom     = 'evm/1234...';
-  const localAmount    = ethers.parseUnits('100', 18);
-  await wrapper.toRemoteAndOPWithdraw(receiver, localDenom, localAmount);
-}
-```
-
-For unwrapping token and returning them to L1 via the IBC bridge, we can execute [`toRemoteAndIBCTransfer`](https://github.com/initia-labs/minievm/blob/3edc63c3ddd0214e2c57145047bd5c4662e7f7db/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol#L286C14-L293) function:
-
-```typescript
-async function ibcTransfer(): Promise<void> {
-  const receiver = '0x1234abcd...';
-  const localDenom  = 'evm/5678...';
-  const localAmount = ethers.parseUnits('50', 18);
-  const channel     = 'channel-0';
-  const timeoutNs   = BigInt(Date.now() + 60_000) * 1_000_000n;
-  await wrapper.toRemoteAndIBCTransfer(
-    localDenom,
-    localAmount,
-    channel,
-    receiver,
-    timeoutNs.toString()
-  );
-}
-```
+    The script will perform building and broadcasting of withdraw transactions for each L1 denom specified in the `ASSET_LIST` environment variable.
+  </Step>
+</Steps>
