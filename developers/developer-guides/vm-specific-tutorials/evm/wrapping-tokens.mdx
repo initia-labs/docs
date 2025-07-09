@@ -7,7 +7,7 @@ Initia supports two routes to move assets from Initia L1 to a rollup:
 1. **IBC bridge** – tokens arrive as `ibc/{hash}` (6 decimals)
 2. **OP bridge** – tokens arrive as `l2/{hash}` (6 decimals)
 
-Regardless of the path, every bridged token passes through a **Wrapping Contract** that mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. 
+Regardless of the path, every bridged token passes through a [Wrapping Contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol) that mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. 
 All gas fees and transfers on the EVM rollup are paid with the 18-decimal wrapped ERC-20 token. For most operations, you do not need to interact with the wrapping contract directly.
 
 ## Denom transformation
@@ -40,7 +40,7 @@ The table below illustrates the transformation of a token's denomination as it m
 
 ## Wrapping tokens
 
-The guide demonstrates how to wrap tokens on the EVM rollup using the wrapping contract. This process will convert tokens from Initia L1 to the EVM rollup, creating 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}`.
+The guide will convert tokens from Initia L1 to the EVM rollup, creating 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}`.
 
 <Steps>
   <Step title="Project Setup">
@@ -120,7 +120,7 @@ The guide demonstrates how to wrap tokens on the EVM rollup using the wrapping c
 
 ## Unwrapping tokens
 
-To unwrap tokens and return them to L1, you can use either the OP bridge or the IBC bridge. For both methods, you will need to interact with the `ERC20Wrapper` contract deployed on the EVM rollup.
+To unwrap tokens back to L1, you must use the same bridge type that was used to wrap them. The wrapping contract provides two convenience functions for this purpose:
 
 <Tabs>
   <Tab title="OP Bridge">
@@ -170,7 +170,7 @@ To unwrap tokens and return them to L1, you can use either the OP bridge or the 
   </Tab>
 </Tabs>
 
-The following guide demonstrates how to unwrap tokens on the EVM rollup using the wrapping contract. This process will convert 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}` back to Initia L1.
+The following guide will convert 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}` back to Initia L1.
 
 <Steps>
   <Step title="Project Setup">
