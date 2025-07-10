@@ -2,45 +2,38 @@
 title: Wrapping Tokens
 ---
 
-Initia supports two routes to move assets from Initia L1 to a rollup:
+All assets on an EVM rollup are represented as 18-decimal ERC-20 tokens. When you transfer assets from Initia L1 to a rollup, they must be wrapped, regardless of whether you use the IBC or OP bridge. This process is handled by a [Wrapping Contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol), which mints an 18-decimal ERC-20 representation for the bridged L1 asset. This guide will walk you through the process of wrapping and unwrapping tokens between Initia L1 and an EVM rollup.
 
-1. **IBC bridge** – tokens arrive as `ibc/{hash}` (6 decimals)
-2. **OP bridge** – tokens arrive as `l2/{hash}` (6 decimals)
+## Overview
 
-Regardless of the path, every bridged token passes through a [Wrapping Contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol) that mints an 18‑decimal ERC‑20 wrapper denominated as `evm/{token-contract-address}`. 
-All gas fees and transfers on the EVM rollup are paid with the 18-decimal wrapped ERC-20 token. For most operations, you do not need to interact with the wrapping contract directly.
-
-## Denom transformation
-
-When you bridge tokens from Initia L1 to the EVM rollup, the following transformations occur:
+When you bridge a 6-decimal token from Initia L1 to an EVM rollup, it will be converted into an 18-decimal ERC-20 token.
 
 <Frame>
 ![Wrapping Tokens](/images/evm/wrapping-erc20-tokens.png)
 </Frame>
 
-Bridging from the rollup back to L1 reverses the same steps in order, returning each denom to its original 6‑decimal form on L1.
+Bridging from the rollup back to L1 reverses the process, returning the token to its original 6-decimal format on L1.
 
 <Frame>
 ![Unwrapping Tokens](/images/evm/unwrapping-erc20-tokens.png)
 </Frame>
 
-The table below illustrates the transformation of a token's denomination as it moves from Initia L1 to the EVM rollup and back:
+The following table illustrates how a token's denomination changes as it moves from Initia L1 to an EVM rollup and back:
 
-| Step                 | Denom example | Decimals |
-|----------------------|---------------|----------|
-| Bridge in (IBC)      | `ibc/2b2...`  | 6        |
-| Bridge in (OP)       | `l2/6a2...`   | 6        |
-| After wrapping (IBC) | `evm/939...`  | 18       |
-| After wrapping (OP)  | `evm/B04...`  | 18       |
+| Asset                 | Denom example                                                           | Decimals |
+|-----------------------|-------------------------------------------------------------------------|----------|
+| Original on Initia L1 | `uinit`                                                                 | 6        |
+| Bridge in (IBC)       | `ibc/6a23FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C51f5`  | 6        |
+| Bridge in (OP)        | `l2/262570d305b2d43f6cf33b41043d9429daa5d2a1038095a894febdc308966605`   | 6        |
+| After wrapping (IBC)  | `evm/93968E6563D59EA0ED06EABFB5E62B985E931aa5`                          | 18       |
+| After wrapping (OP)   | `evm/BO44e96171884CeDBF064f2b25610b006A162ff8`                          | 18       |
 
 
 ## Prerequisites
 
 - [NodeJS](https://nodejs.org)
 
-## Wrapping tokens
-
-The guide will convert tokens from Initia L1 to the EVM rollup, creating 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}`.
+## Project Setup
 
 <Steps>
   <Step title="Project Setup">
@@ -76,8 +69,8 @@ The guide will convert tokens from Initia L1 to the EVM rollup, creating 18‑de
 
     | Variable           | Description                               |
     |--------------------|-------------------------------------------|
-    | `ASSET_LIST`       | Comma‑separated list of L1 denoms to wrap |
-    | `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
+    | `ASSET_LIST`       | Comma separated list of L1 denoms to wrap |
+    | `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1) |
     | `L2_REST_ENDPOINT` | Rollup REST endpoint                      |
     | `MNEMONIC`         | account mnemonic                          |
     | `COIN_TYPE`        | BIP‑44 coin type (default **60**)         |
@@ -85,42 +78,39 @@ The guide will convert tokens from Initia L1 to the EVM rollup, creating 18‑de
 
     Ensure the account has sufficient balance for the `ASSET_LIST` denoms and enough INIT on L1 to pay for gas fees.
   </Step>
-  <Step title="Creating Wrapped Tokens">
-    After configuring the environment, you can run the script to create wrapped tokens.
-
-    ```bash
-    npm run create-wrapped-tokens
-    ```
-
-    The script will perform building and broadcasting of deposit transactions for each L1 denom specified in the `ASSET_LIST` environment variable. If the transaction is successful, you will see output similar to this:
-
-    ```shell
-    L2 Denom: ibc/37A3FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C5A50 for uinit
-    Initiate token deposit tx hash: 787D3A6186992AE4C5A2440B4565A7799BE610276A1177147AF3303DEEABC233
-    ```
-
-  </Step>
-  <Step title="Fetching Wrapped Token Denoms">
-    After creating the wrapped tokens, you can fetch the wrapped token denoms by running:
-    
-    ```bash
-    npm run fetch-wrapped-tokens
-    ```
-
-    This script will query the rollup for each L1 denom and retrieve its corresponding L2 denom. You will see output similar to this:
-
-    ```shell
-    --------------------------------
-    L1Denom: uinit
-    L2Denom: evm/1234...
-    --------------------------------
-    ```
-  </Step>
 </Steps>
 
-## Unwrapping tokens
+## Wrapping Tokens
 
-To unwrap tokens back to L1, you must use the same bridge type that was used to wrap them. The wrapping contract provides two convenience functions for this purpose:
+After setting up the project, you can wrap tokens from Initia L1 to the EVM rollup. This process creates 18-decimal ERC-20 tokens denominated as `evm/{token-contract-address}`.
+
+```bash
+npm run create-wrapped-tokens
+```
+
+The script builds and broadcasts deposit transactions for each L1 denom in the `ASSET_LIST` environment variable. A successful transaction will produce output similar to this:
+
+```shell
+L2 Denom: l2/5c7570d305b2d43f6cf33b41043d9429daa5d2a1038095a894febdc308966ff3 for uinit
+Initiate token deposit tx hash: 4C94B116AADD714092DFED18F7206C9D85E9C8D81A66110F0355BD2F0C9A73B9
+```
+
+After creating the wrapped tokens, you can fetch their wrapped denominations by running:
+
+```bash
+npm run fetch-wrapped-tokens
+```
+
+This script queries the rollup for each L1 denom and retrieves its corresponding `evm/<wrapped-token-address>` denoms. You will see output similar to this:
+
+```shell
+L1Denom: uinit, L2Denom: l2/5c7570d305b2d43f6cf33b41043d9429daa5d2a1038095a894febdc308966ff3
+Wrapped Token Address: evm/4f7566f67941283a30cf65de7b9c6fdf2c04FCA1
+```
+
+## Unwrapping Tokens
+
+To return tokens to Initia L1, you must unwrap them using the same bridge (IBC or OP) that was used for wrapping. The wrapping contract provides two convenience functions for this:
 
 <Tabs>
   <Tab title="OP Bridge">
@@ -170,58 +160,23 @@ To unwrap tokens back to L1, you must use the same bridge type that was used to 
   </Tab>
 </Tabs>
 
-The following guide will convert 18‑decimal ERC‑20 tokens denominated as `evm/{token-contract-address}` back to Initia L1.
+To unwrap tokens, you can use the `unwrap-wrapped-tokens` script. This script will initiate the unwrapping process by calling the appropriate function based on the bridge used for wrapping.
 
-<Steps>
-  <Step title="Project Setup">
-    To get started, clone the [guide repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/wrapping-tokens) and navigate to the `wrapping-tokens` directory:
+<Note>
+When you unwrap tokens, the wrapping contract will convert the 18-decimal ERC-20 tokens back to their original 6-decimal form. Therefore, the `AMOUNT` specified in the `.env` file should be in the 18-decimal format of the wrapped token. For example, if you want to unwrap 1000 `uinit` from rollup, you should set `AMOUNT=1000000000000000` (which is 1000 * $10^{12}$).
 
-    ```bash
-    git clone https://github.com/initia-labs/guides.git
-    cd guides/rollups/evm/wrapping-tokens
-    ```
+```bash .env
+ASSET_LIST=evm/4f7566f67941283a30cf65de7b9c6fdf2c04FCA1
+AMOUNT=1000000000000000
+```
+</Note>
 
-    Install the required dependencies using `npm`:
-    ```bash
-    npm install
-    ```
-  </Step>
-  <Step title="Configuration">
-    Copy the environment template that matches your target network to `.env`:
+```bash
+npm run unwrap-wrapped-tokens
+```
 
-    <Tabs>
-      <Tab title="Mainnet (interwoven-1)">
-        ```bash
-        cp .env.mainnet.example .env
-        ```
-      </Tab>
-      <Tab title="Testnet (initiation-2)">
-        ```bash
-        cp .env.testnet.example .env
-        ```
-      </Tab>
-    </Tabs>
+A successful transaction will produce the following output, indicating that the unwrapping process has started. The tokens will be returned to their original 6-decimal form on Initia L1.
 
-    Open the `.env` file  and set the required variables:
-
-    | Variable           | Description                               |
-    |--------------------|-------------------------------------------|
-    | `ASSET_LIST`       | Comma‑separated list of L1 denoms to wrap |
-    | `L1_REST_ENDPOINT` | [Initia L1 REST endpoint](/resources/developer/initia-l1.mdx) |
-    | `L2_REST_ENDPOINT` | Rollup REST endpoint                      |
-    | `MNEMONIC`         | account mnemonic                          |
-    | `COIN_TYPE`        | BIP‑44 coin type (default **60**)         |
-    | `AMOUNT`           | Amount of asset to wrap or unwrap         |
-
-    Ensure the account has sufficient balance for the `ASSET_LIST` denoms and enough gas token on L2 to pay for gas fees.
-  </Step>
-  <Step title="Creating Wrapped Tokens">
-    After configuring the environment, you can run the script to unwrap the wrapped tokens and return them to Initia L1.
-
-    ```bash
-    npm run unwrap-wrapped-tokens
-    ```
-
-    The script will perform building and broadcasting of withdraw transactions for each L1 denom specified in the `ASSET_LIST` environment variable.
-  </Step>
-</Steps>
+```bash
+Withdraw token tx hash: B088D68F9EC7DC20E47E70250EBD3FEF0EA72C37C40792E0E224B667644D999D
+```
