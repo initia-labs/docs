@@ -38,6 +38,18 @@ cd initia-wallet-widget
 npm install @initia/widget-react wagmi @tanstack/react-query cosmjs-types
 ```
 
+For the widget to function properly, `reactStrictMode` should be disabled in your `next.config.ts`.
+
+```ts next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+};
+
+export default nextConfig;
+```
+
 Once we have the project setup, we can start developing the frontend.
 
 ## Developing
@@ -379,6 +391,15 @@ export default function Providers({ children }: PropsWithChildren) {
     </WagmiProvider>
   );
 }
+```
+```ts next.config.ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  reactStrictMode: true,
+};
+
+export default nextConfig;
 ```
 </CodeGroup>
 
