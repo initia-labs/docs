@@ -15,7 +15,9 @@
         "groups": [
           {
             "group": "Welcome",
-            "pages": ["home/general/welcome"]
+            "pages": [
+              "home/general/welcome"
+            ]
           },
           {
             "group": "Core Concepts",
@@ -112,13 +114,18 @@
               {
                 "group": "INIT Token",
                 "icon": "coins",
-                "pages": ["home/core-concepts/init-token/tokenomics"]
+                "pages": [
+                  "home/core-concepts/init-token/tokenomics"
+                ]
               }
             ]
           },
           {
             "group": "Tooling",
-            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
+            "pages": [
+              "home/tools/wallet-widget",
+              "home/tools/bridge"
+            ]
           }
         ]
       },
@@ -127,18 +134,25 @@
         "groups": [
           {
             "group": "Nodes and Rollups",
-            "pages": ["nodes-and-rollups/introduction"]
+            "pages": [
+              "nodes-and-rollups/introduction"
+            ]
           },
           {
             "group": "Rollups",
-            "pages": ["nodes-and-rollups/deploying-rollups/deploy"]
+            "pages": [
+              "nodes-and-rollups/deploying-rollups/deploy"
+            ]
           },
           {
             "group": "Nodes",
             "pages": [
               {
                 "group": "Running Initia L1 Nodes",
-                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave","nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"]
+                "pages": [
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave",
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"
+                ]
               },
               {
                 "group": "Running a Validator",
@@ -155,12 +169,16 @@
         "groups": [
           {
             "group": "Developers",
-            "pages": ["developers/introduction"]
+            "pages": [
+              "developers/introduction"
+            ]
           },
           {
             "group": "Quick Guides",
             "icon": "book",
-            "pages": ["developers/developer-guides/guides/exchange-integration"]
+            "pages": [
+              "developers/developer-guides/guides/exchange-integration"
+            ]
           },
           {
             "group": "VM Specific Tutorials",
@@ -217,17 +235,23 @@
               {
                 "group": "DEX",
                 "icon": "swap",
-                "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/initiadex"
+                ]
               },
               {
                 "group": "VIP",
                 "icon": "award",
-                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/vip"
+                ]
               },
               {
                 "group": "Usernames",
                 "icon": "user",
-                "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/usernames"
+                ]
               }
             ]
           },
@@ -238,7 +262,20 @@
               {
                 "group": "Frontend",
                 "icon": "desktop",
-                "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
+                "pages": [
+                  {
+                    "group": "InterwovenKit",
+                    "pages": [
+                      {
+                        "group": "Integrating Initia Wallet",
+                        "pages": [
+                          "developers/developer-guides/frontend/interwovenkit/native-integration",
+                          "developers/developer-guides/frontend/interwovenkit/rainbowkit"
+                        ]
+                      }
+                    ]
+                  }
+                ]
               },
               {
                 "group": "SDKs",
@@ -296,7 +333,9 @@
                   },
                   {
                     "group": "Rollup CLI",
-                    "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+                    "pages": [
+                      "developers/developer-guides/tools/clis/minitiad-cli/introduction"
+                    ]
                   }
                 ]
               },
@@ -353,7 +392,9 @@
               {
                 "group": "Deployed Contracts",
                 "icon": "file-code",
-                "pages": ["resources/developer/deployed-contracts/minievm"]
+                "pages": [
+                  "resources/developer/deployed-contracts/minievm"
+                ]
               },
               {
                 "group": "Contracts References",
@@ -377,7 +418,9 @@
           },
           {
             "group": "Security",
-            "pages": ["/resources/security/audits"]
+            "pages": [
+              "/resources/security/audits"
+            ]
           }
         ]
       }
@@ -408,7 +451,9 @@
   },
   "api": {
     "mdx": {
-      "server": ["https://rest.testnet.initia.xyz"]
+      "server": [
+        "https://rest.testnet.initia.xyz"
+      ]
     }
   },
   "appearance": {
