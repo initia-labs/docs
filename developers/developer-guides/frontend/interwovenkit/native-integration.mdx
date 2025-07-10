@@ -60,7 +60,7 @@ Once we have the project setup, we can start developing the frontend.
 
 ### Creating a Provider component
 
-First, we need to create a new **client component** that will inject the CSS styles required by the widget and wrap your application into `<WagmiProvider>`, `<QueryClientProvider>` and `<InitiaWidgetProvider>`.
+First, we need to create a new **client component** that will inject the CSS styles required by the widget and wrap your application into `<WagmiProvider>`, `<QueryClientProvider>` and `<InterwovenKitProvider>`.
 
 ```tsx src/components/Providers.tsx
 "use client"; // this is needed to make this a client component
@@ -70,7 +70,7 @@ import { useEffect, type PropsWithChildren } from "react";
 import { createConfig, http, WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injectStyles, InitiaWidgetProvider } from "@initia/interwovenkit-react";
+import { injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react";
 import initiaWidgetStyles from "@initia/interwovenkit-react/styles.js";
 
 // initialize wagmi and react-query
@@ -91,7 +91,7 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InitiaWidgetProvider>{children}</InitiaWidgetProvider>
+        <InterwovenKitProvider>{children}</InterwovenKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
@@ -369,7 +369,7 @@ import { useEffect, type PropsWithChildren } from "react";
 import { createConfig, http, WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injectStyles, InitiaWidgetProvider } from "@initia/interwovenkit-react";
+import { injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react";
 import initiaWidgetStyles from "@initia/interwovenkit-react/styles.js";
 
 // initialize wagmi and react-query
@@ -389,7 +389,7 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InitiaWidgetProvider>{children}</InitiaWidgetProvider>
+        <InterwovenKitProvider>{children}</InterwovenKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

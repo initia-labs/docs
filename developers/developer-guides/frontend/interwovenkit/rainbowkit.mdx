@@ -26,16 +26,17 @@ npx create-next-app@latest initia-wallet-widget
 
 Select "**Yes**" for all of the configuration prompts except for "Would you like to customize the default import alias".
 
-Once the project is created, navigate into the project directory and install the dependencies. For this tutorial, we will need to use 4 libraries:
+Once the project is created, navigate into the project directory and install the dependencies. For this tutorial, we will need to use 5 libraries:
 
 - `@initia/interwovenkit-react`: A React library that provides all the components for the Initia Wallet Widget.
 - `wagmi`: A React library for managing connections to EVM wallets.
 - `@tanstack/react-query`: A data-fetching library for React.
+- `@rainbow-me/rainbowkit`: The library that we will use to show the connect wallet page.
 - `cosmjs-types`: A javascript library that provides message definitions for interacting with Cosmos SDK-based blockchains.
 
 ```sh
 cd initia-wallet-widget
-npm install @initia/interwovenkit-react wagmi @tanstack/react-query cosmjs-types
+npm install @initia/interwovenkit-react wagmi @tanstack/react-query @rainbow-me/rainbowkit cosmjs-types
 ```
 
 <Info>
@@ -60,7 +61,7 @@ Once we have the project setup, we can start developing the frontend.
 
 ### Creating a Provider component
 
-First, we need to create a new **client component** that will inject the CSS styles required by the widget and wrap your application into `<WagmiProvider>`, `<QueryClientProvider>` and `<InitiaWidgetProvider>`.
+First, we need to create a new **client component** that will inject the CSS styles required by the widget and wrap your application into `<WagmiProvider>`, `<QueryClientProvider>` and `<InterwovenKitProvider>`.
 
 ```tsx src/components/Providers.tsx
 "use client"; // this is needed to make this a client component
@@ -70,7 +71,9 @@ import { useEffect, type PropsWithChildren } from "react";
 import { createConfig, http, WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injectStyles, InitiaWidgetProvider } from "@initia/interwovenkit-react";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import { injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react";
 import initiaWidgetStyles from "@initia/interwovenkit-react/styles.js";
 
 // initialize wagmi and react-query
@@ -91,7 +94,9 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InitiaWidgetProvider>{children}</InitiaWidgetProvider>
+        <RainbowKitProvider theme={darkTheme()}>
+          <InterwovenKitProvider>{children}</InterwovenKitProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
@@ -138,22 +143,23 @@ First, we declare `use client` at the top of the file and import the necessary l
 
 import { useState } from "react";
 import { useInterwovenKit } from "@initia/interwovenkit-react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 ```
 
 - `useInterwovenKit`: The hook that we will use to interact with the widget
+- `ConnectButton`: the button that we will use to open RainbowKit's connect modal
 - `MsgSend`: A message type that is used to send tokens from one wallet to another.
 
 Finally, we will implement the Home component that will house our webapp functionality. We begin by declaring the the necessary state variables.
 
 ```tsx src/app/page.tsx
-const { address, openConnect, openWallet, requestTxBlock } = useInterwovenKit();
+const { address, openWallet, requestTxBlock } = useInterwovenKit();
 const [isLoading, setIsLoading] = useState(false);
 const [transactionHash, setTransactionHash] = useState<string | null>(null);
 ```
 
 - `address`: The Initia address of the connected wallet.
-- `openConnect`: A function that we can use to open the wallet connect modal.
 - `openWallet`: A function that allows us to open the wallet widget modal.
 - `requestTxBlock`: A function that allows us to request a transaction from the wallet.
 - `isLoading`: A state variable that indicates whether the transaction is being requested.
@@ -232,12 +238,7 @@ return (
             )}
           </div>
         ) : (
-          <button
-            onClick={openConnect}
-            className="bg-transparent text-black font-bold py-2 px-4 rounded border border-black h-[10vh] flex items-center justify-center"
-          >
-            Connect
-          </button>
+          <ConnectButton />
         )}
       </div>
     </main>
@@ -250,9 +251,10 @@ The final `src/app/layout.tsx`, `src/app/page.tsx` and `src/components/Providers
 ```tsx src/app/page.tsx
 "use client";
 
-import { useInterwovenKit } from "@initia/interwovenkit-react";
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 import { useState } from "react";
+import { useInterwovenKit } from "@initia/widget-react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 
 export default function Home() {
   const { initiaAddress, openConnect, openWallet, requestTxBlock } =
@@ -284,7 +286,7 @@ export default function Home() {
         memo: "Hello world!",
       });
       setTransactionHash(hash);
-      console.log("Transaction successful: ", hash);
+      console.log("Transaction successfull: ", hash);
     } catch (error) {
       console.error("Transaction failed: ", error);
     } finally {
@@ -325,12 +327,7 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <button
-            onClick={openConnect}
-            className="bg-transparent text-black font-bold py-2 px-4 rounded border border-black h-[10vh] flex items-center justify-center"
-          >
-            Connect
-          </button>
+          <ConnectButton />
         )}
       </div>
     </main>
@@ -369,8 +366,10 @@ import { useEffect, type PropsWithChildren } from "react";
 import { createConfig, http, WagmiProvider } from "wagmi";
 import { mainnet } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { injectStyles, InitiaWidgetProvider } from "@initia/interwovenkit-react";
-import initiaWidgetStyles from "@initia/interwovenkit-react/styles.js";
+import { RainbowKitProvider, darkTheme } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import { injectStyles, InterwovenKitProvider } from "@initia/widget-react";
+import initiaWidgetStyles from "@initia/widget-react/styles.js";
 
 // initialize wagmi and react-query
 const wagmiConfig = createConfig({
@@ -389,7 +388,9 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InitiaWidgetProvider>{children}</InitiaWidgetProvider>
+        <RainbowKitProvider theme={darkTheme()}>
+          <InterwovenKitProvider theme="dark">{children}</InterwovenKitProvider>
+        </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );
