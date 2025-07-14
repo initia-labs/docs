@@ -17,8 +17,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
   <Step title="Deploy Your Rollup and Install Minitiad CLI">
     First, launch your rollup with the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction), then follow the [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
 
-    After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. 
-    For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, you can check the version by calling https://rpc.minimove-2.initia.xyz/abci_info.
+    After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, you can check the version by calling https://rpc.minimove-2.initia.xyz/abci_info.
 
     ```json
     {
@@ -69,8 +68,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     </Tabs>
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, and the VIP contract deployer is the account that deploys the VIP scoring contract.
-    The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
+    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, and the VIP contract deployer is the account that deploys the VIP scoring contract. The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
 
     ```bash
     export OPERATOR_KEY_NAME=operator
@@ -180,8 +178,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         forge build
         ```
 
-        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number.
-        To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number. To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
 
         ```bash
         export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz  # Replace with your rollup's JSON_RPC endpoint
@@ -273,8 +270,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         echo "$RESP" | jq -r '.events[]| select(.type=="store_code").attributes[]| select(.key=="code_id").value'
         ```
 
-        The output will be the code ID of the uploaded contract, which you will use to instantiate the contract.
-        To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+        The output will be the code ID of the uploaded contract, which you will use to instantiate the contract. To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
         
         ```bash
         export ADDRESS=$(minitiad keys show $KEY_NAME -a)

@@ -5,14 +5,12 @@ title: Whitelisting Rollup for VIP
 A rollup must be whitelisted before it can participate in the Vested Interest Program (VIP).
 
 <Note>
-Mainnet rollups must submit a proposal and participate in a governance vote to be whitelisted for VIP.
-For testnet rollups, you can contact the Initia team to get your rollup whitelisted for VIP.
+Mainnet rollups must submit a proposal and participate in a governance vote to be whitelisted for VIP. For testnet rollups, you can contact the Initia team to get your rollup whitelisted for VIP.
 </Note>
 
 <Steps>
   <Step title="Add your rollup to the Initia Registry">
-    Add the rollup to the [Initia Registry](https://github.com/initia-labs/initia-registry) before requesting VIP whitelisting. Refer to [this page](/developers/developer-guides/integrating-initia-apps/registry/introduction) for more information on how to add your rollup to the Initia Registry.
-    When you add your rollup to the Initia Registry, you must create or update the following files in your pull request.
+    Add the rollup to the [Initia Registry](https://github.com/initia-labs/initia-registry) before requesting VIP whitelisting. Refer to [this page](/developers/developer-guides/integrating-initia-apps/registry/introduction) for more information on how to add your rollup to the Initia Registry. When you add your rollup to the Initia Registry, you must create or update the following files in your pull request.
 
     - **`chain.json`** contains metadata about the chain, such as its name, chain ID, and network type, which is essential for users to interact with the chain.
     - **`profile.json`** contains metadata about the chain, such as its name, category, and description. This information helps users understand the chain's purpose and includes details relevant to the VIP program, such as actions users can take to earn VIP rewards.
@@ -24,14 +22,11 @@ For testnet rollups, you can contact the Initia team to get your rollup whitelis
       - Move: https://github.com/initia-labs/vip-score-move
   </Step>
   <Step title="Submit a Forum Proposal">
-    Before your rollup can be whitelisted, you must create a proposal in the [Initia Forum](https://forum.initia.xyz). In the proposal, specify the `operator address`, `commission rate`, `VIP score policy`, and `VIP scoring contract`, using the [template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146).
-    `operator address` is the address that will receive the operator commission, and you must create it before submitting the proposal.
-    `commission rate` is the percentage of the total VIP rewards that the operator will receive.
-    `VIP score policy` is the scoring criteria that will be used to calculate the VIP scores for users on your rollup. The policy must follow the [VIP Criteria & Scoring Policies](/home/core-concepts/vip/scoring#vip-criteria-%26-scoring-policies).
-    `VIP scoring contract` is the address of the deployed VIP scoring contract, and you need to specify the contract address in the proposal. For details on how to deploy the VIP scoring contract, see the [Integrating VIP](/developers/developer-guides/integrating-initia-apps/vip/integrating-vip) guide.
+    Before your rollup can be whitelisted, you must create a proposal in the [Initia Forum](https://forum.initia.xyz). In the proposal, specify the `operator address`, `commission rate`, `VIP score policy`, and `VIP scoring contract`, using the [template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146). `operator address` is the address that will receive the operator commission, and you must create it before submitting the proposal. `commission rate` is the percentage of the total VIP rewards that the operator will receive. `VIP score policy` is the scoring criteria that will be used to calculate the VIP scores for users on your rollup. The policy must follow the [VIP Criteria & Scoring Policies](/home/core-concepts/vip/scoring#vip-criteria-%26-scoring-policies). `VIP scoring contract` is the address of the deployed VIP scoring contract, and you need to specify the contract address in the proposal. For details on how to deploy the VIP scoring contract, see the [Integrating VIP](/developers/developer-guides/integrating-initia-apps/vip/integrating-vip) guide.
   </Step>
   <Step title="Submit a L1 Governance Proposal">
     After creating the forum proposal, you can submit the L1 governance proposal for VIP whitelisting as follows.
+    
     ```ts vip-l1-gov-proposal.ts
     import { MnemonicKey, RESTClient, Wallet, bcs, MsgSubmitProposal, MsgGovExecute } from '@initia/initia.js'
 
