@@ -1,435 +1,416 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
-  "name": "Initia Docs",
-  "colors": {
-    "primary": "#324242",
-    "light": "#7ad9f7",
-    "dark": "#4349FF"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Home",
-        "groups": [
-          {
-            "group": "Welcome",
-            "pages": ["home/general/welcome"]
-          },
-          {
-            "group": "Core Concepts",
-            "pages": [
-              {
-                "group": "Initia & Rollups",
-                "icon": "sitemap",
-                "pages": [
-                  "home/core-concepts/initia-and-rollups/high-level-architecture",
-                  "home/core-concepts/initia-and-rollups/initia-l1",
-                  {
-                    "group": "Interwoven Rollups",
-                    "pages": [
-                      "home/core-concepts/initia-and-rollups/rollups/introduction",
-                      {
-                        "group": "Rollup VMs",
-                        "pages": [
-                          {
-                            "group": "MiniEVM",
-                            "pages": [
-                              "home/core-concepts/initia-and-rollups/rollups/vms/minievm/introduction",
-                              "home/core-concepts/initia-and-rollups/rollups/vms/minievm/evm-compatibility-and-changes"
-                            ]
-                          },
-                          {
-                            "group": "MiniMove",
-                            "pages": [
-                              "home/core-concepts/initia-and-rollups/rollups/vms/minimove/introduction"
-                            ]
-                          },
-                          {
-                            "group": "MiniWasm",
-                            "pages": [
-                              "home/core-concepts/initia-and-rollups/rollups/vms/miniwasm/introduction"
-                            ]
-                          }
+    "$schema": "https://mintlify.com/docs.json",
+    "theme": "mint",
+    "name": "Initia Docs",
+    "colors": {
+        "primary": "#324242",
+        "light": "#7ad9f7",
+        "dark": "#4349FF"
+    },
+    "favicon": "/favicon.svg",
+    "navigation": {
+        "tabs": [{
+                "tab": "Home",
+                "groups": [{
+                        "group": "Welcome",
+                        "pages": ["home/general/welcome"]
+                    },
+                    {
+                        "group": "Core Concepts",
+                        "pages": [{
+                                "group": "Initia & Rollups",
+                                "icon": "sitemap",
+                                "pages": [
+                                    "home/core-concepts/initia-and-rollups/high-level-architecture",
+                                    "home/core-concepts/initia-and-rollups/initia-l1",
+                                    {
+                                        "group": "Interwoven Rollups",
+                                        "pages": [
+                                            "home/core-concepts/initia-and-rollups/rollups/introduction",
+                                            {
+                                                "group": "Rollup VMs",
+                                                "pages": [{
+                                                        "group": "MiniEVM",
+                                                        "pages": [
+                                                            "home/core-concepts/initia-and-rollups/rollups/vms/minievm/introduction",
+                                                            "home/core-concepts/initia-and-rollups/rollups/vms/minievm/evm-compatibility-and-changes"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "group": "MiniMove",
+                                                        "pages": [
+                                                            "home/core-concepts/initia-and-rollups/rollups/vms/minimove/introduction"
+                                                        ]
+                                                    },
+                                                    {
+                                                        "group": "MiniWasm",
+                                                        "pages": [
+                                                            "home/core-concepts/initia-and-rollups/rollups/vms/miniwasm/introduction"
+                                                        ]
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Interwoven Stack",
+                                "icon": "waves-sine",
+                                "pages": [
+                                    "home/core-concepts/interwoven-stack/introduction",
+                                    {
+                                        "group": "OPinit Framework",
+                                        "pages": [{
+                                            "group": "Components",
+                                            "pages": [
+                                                "home/core-concepts/interwoven-stack/opinit-framework/components/introduction",
+                                                "home/core-concepts/interwoven-stack/opinit-framework/components/opinit-bridge",
+                                                "home/core-concepts/interwoven-stack/opinit-framework/components/executor",
+                                                "home/core-concepts/interwoven-stack/opinit-framework/components/challenger"
+                                            ]
+                                        }]
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Vested Interest Program",
+                                "icon": "award",
+                                "pages": [
+                                    "home/core-concepts/vip/introduction",
+                                    "home/core-concepts/vip/architecture",
+                                    "home/core-concepts/vip/gauges",
+                                    "home/core-concepts/vip/timelines",
+                                    "home/core-concepts/vip/eligibility",
+                                    "home/core-concepts/vip/scoring"
+                                ]
+                            },
+                            "home/core-concepts/initiadex",
+                            {
+                                "group": "Enshrined Liquidity",
+                                "icon": "droplet",
+                                "pages": [
+                                    "home/core-concepts/enshrined-liquidity/introduction",
+                                    "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
+                                ]
+                            },
+                            {
+                                "group": "Minitswap",
+                                "icon": "rotate",
+                                "pages": [
+                                    "home/core-concepts/minitswap/introduction",
+                                    "home/core-concepts/minitswap/architecture",
+                                    "home/core-concepts/minitswap/terminology"
+                                ]
+                            },
+                            {
+                                "group": "INIT Token",
+                                "icon": "coins",
+                                "pages": ["home/core-concepts/init-token/tokenomics"]
+                            }
                         ]
-                      }
-                    ]
-                  }
+                    },
+                    {
+                        "group": "Tooling",
+                        "pages": [{
+                            "group": "Initia Wallet Widget",
+                            "icon": "wallet",
+                            "pages": ["home/tools/wallet-widget/wallet-widget", "home/tools/wallet-widget/wallet-widget-v2"]
+                        }, "home/tools/bridge"]
+                    }
                 ]
-              },
-              {
-                "group": "Interwoven Stack",
-                "icon": "waves-sine",
-                "pages": [
-                  "home/core-concepts/interwoven-stack/introduction",
-                  {
-                    "group": "OPinit Framework",
-                    "pages": [
-                      {
-                        "group": "Components",
-                        "pages": [
-                          "home/core-concepts/interwoven-stack/opinit-framework/components/introduction",
-                          "home/core-concepts/interwoven-stack/opinit-framework/components/opinit-bridge",
-                          "home/core-concepts/interwoven-stack/opinit-framework/components/executor",
-                          "home/core-concepts/interwoven-stack/opinit-framework/components/challenger"
+            },
+            {
+                "tab": "Nodes and Rollups",
+                "groups": [{
+                        "group": "Nodes and Rollups",
+                        "pages": ["nodes-and-rollups/introduction"]
+                    },
+                    {
+                        "group": "Rollups",
+                        "pages": ["nodes-and-rollups/deploying-rollups/deploy"]
+                    },
+                    {
+                        "group": "Nodes",
+                        "pages": [{
+                                "group": "Running Initia L1 Nodes",
+                                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave", "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"]
+                            },
+                            {
+                                "group": "Running a Validator",
+                                "pages": [
+                                    "nodes-and-rollups/running-nodes/running-a-validator/becoming-a-validator"
+                                ]
+                            }
                         ]
-                      }
-                    ]
-                  }
+                    }
                 ]
-              },
-              {
-                "group": "Vested Interest Program",
-                "icon": "award",
-                "pages": [
-                  "home/core-concepts/vip/introduction",
-                  "home/core-concepts/vip/architecture",
-                  "home/core-concepts/vip/gauges",
-                  "home/core-concepts/vip/timelines",
-                  "home/core-concepts/vip/eligibility",
-                  "home/core-concepts/vip/scoring"
-                ]
-              },
-              "home/core-concepts/initiadex",
-              {
-                "group": "Enshrined Liquidity",
-                "icon": "droplet",
-                "pages": [
-                  "home/core-concepts/enshrined-liquidity/introduction",
-                  "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
-                ]
-              },
-              {
-                "group": "Minitswap",
-                "icon": "rotate",
-                "pages": [
-                  "home/core-concepts/minitswap/introduction",
-                  "home/core-concepts/minitswap/architecture",
-                  "home/core-concepts/minitswap/terminology"
-                ]
-              },
-              {
-                "group": "INIT Token",
-                "icon": "coins",
-                "pages": ["home/core-concepts/init-token/tokenomics"]
-              }
-            ]
-          },
-          {
-            "group": "Tooling",
-            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
-          }
-        ]
-      },
-      {
-        "tab": "Nodes and Rollups",
-        "groups": [
-          {
-            "group": "Nodes and Rollups",
-            "pages": ["nodes-and-rollups/introduction"]
-          },
-          {
-            "group": "Rollups",
-            "pages": ["nodes-and-rollups/deploying-rollups/deploy"]
-          },
-          {
-            "group": "Nodes",
-            "pages": [
-              {
-                "group": "Running Initia L1 Nodes",
-                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave","nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"]
-              },
-              {
-                "group": "Running a Validator",
-                "pages": [
-                  "nodes-and-rollups/running-nodes/running-a-validator/becoming-a-validator"
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Developers",
-        "groups": [
-          {
-            "group": "Developers",
-            "pages": ["developers/introduction"]
-          },
-          {
-            "group": "Quick Guides",
-            "icon": "book",
-            "pages": ["developers/developer-guides/guides/exchange-integration"]
-          },
-          {
-            "group": "VM Specific Tutorials",
-            "icon": "book",
-            "pages": [
-              {
-                "group": "EVM",
-                "icon": "ethereum",
-                "pages": [
-                  "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
-                  "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
-                  {
-                    "group": "Creating ERC20s",
-                    "pages": [
-                      "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
-                      "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
-                    ]
-                  },
-                  "developers/developer-guides/vm-specific-tutorials/evm/update-fee-token",
-                  "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
-                  "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
-                ]
-              },
-              {
-                "group": "MoveVM",
-                "icon": "note-sticky",
-                "pages": [
-                  "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
-                  "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
-                  "developers/developer-guides/vm-specific-tutorials/movevm/multisig",
-                  "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
-                ]
-              },
-              {
-                "group": "WasmVM",
-                "icon": "rust",
-                "pages": [
-                  "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
-                  "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Integrating with Initia Apps",
-            "pages": [
-              {
-                "group": "Initia Registry",
-                "icon": "file-code",
-                "pages": [
-                  "developers/developer-guides/integrating-initia-apps/registry/introduction"
-                ]
-              },
-              {
-                "group": "DEX",
-                "icon": "swap",
-                "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
-              },
-              {
-                "group": "VIP",
-                "icon": "award",
-                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
-              },
-              {
-                "group": "Usernames",
-                "icon": "user",
-                "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
-              }
-            ]
-          },
-          {
-            "group": "Tools",
-            "icon": "screwdriver-wrench",
-            "pages": [
-              {
-                "group": "Frontend",
-                "icon": "desktop",
-                "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
-              },
-              {
-                "group": "SDKs",
-                "icon": "toolbox",
-                "pages": [
-                  {
-                    "group": "InitiaJS",
-                    "pages": [
-                      "developers/developer-guides/tools/sdks/initia-js/introduction",
-                      "developers/developer-guides/tools/sdks/initia-js/quickstart",
-                      "developers/developer-guides/tools/sdks/initia-js/querying-data",
-                      "developers/developer-guides/tools/sdks/initia-js/accounts",
-                      {
-                        "group": "Transactions",
-                        "pages": [
-                          "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
-                          "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
-                          "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
+            },
+            {
+                "tab": "Developers",
+                "groups": [{
+                        "group": "Developers",
+                        "pages": ["developers/introduction"]
+                    },
+                    {
+                        "group": "Quick Guides",
+                        "icon": "book",
+                        "pages": ["developers/developer-guides/guides/exchange-integration"]
+                    },
+                    {
+                        "group": "VM Specific Tutorials",
+                        "icon": "book",
+                        "pages": [{
+                                "group": "EVM",
+                                "icon": "ethereum",
+                                "pages": [
+                                    "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
+                                    "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
+                                    {
+                                        "group": "Creating ERC20s",
+                                        "pages": [
+                                            "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
+                                            "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
+                                        ]
+                                    },
+                                    "developers/developer-guides/vm-specific-tutorials/evm/update-fee-token",
+                                    "developers/developer-guides/vm-specific-tutorials/evm/connect-oracles",
+                                    "developers/developer-guides/vm-specific-tutorials/evm/ibc-hooks"
+                                ]
+                            },
+                            {
+                                "group": "MoveVM",
+                                "icon": "note-sticky",
+                                "pages": [
+                                    "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
+                                    "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
+                                    "developers/developer-guides/vm-specific-tutorials/movevm/multisig",
+                                    "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"
+                                ]
+                            },
+                            {
+                                "group": "WasmVM",
+                                "icon": "rust",
+                                "pages": [
+                                    "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
+                                    "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
+                                ]
+                            }
                         ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "CLIs",
-                "icon": "terminal",
-                "pages": [
-                  {
-                    "group": "Weave CLI",
-                    "pages": [
-                      "developers/developer-guides/tools/clis/weave-cli/introduction",
-                      "developers/developer-guides/tools/clis/weave-cli/installation",
-                      "developers/developer-guides/tools/clis/weave-cli/gas-station",
-                      "developers/developer-guides/tools/clis/weave-cli/initia-node",
-                      {
-                        "group": "Rollup Management",
-                        "pages": [
-                          "developers/developer-guides/tools/clis/weave-cli/rollup/introduction",
-                          "developers/developer-guides/tools/clis/weave-cli/rollup/launch",
-                          "developers/developer-guides/tools/clis/weave-cli/rollup/relayer",
-                          "developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots"
+                    },
+                    {
+                        "group": "Integrating with Initia Apps",
+                        "pages": [{
+                                "group": "Initia Registry",
+                                "icon": "file-code",
+                                "pages": [
+                                    "developers/developer-guides/integrating-initia-apps/registry/introduction"
+                                ]
+                            },
+                            {
+                                "group": "DEX",
+                                "icon": "swap",
+                                "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+                            },
+                            {
+                                "group": "VIP",
+                                "icon": "award",
+                                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+                            },
+                            {
+                                "group": "Usernames",
+                                "icon": "user",
+                                "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+                            }
                         ]
-                      }
-                    ]
-                  },
-                  {
-                    "group": "Initia CLI",
-                    "pages": [
-                      "developers/developer-guides/tools/clis/initiad-cli/introduction",
-                      "developers/developer-guides/tools/clis/initiad-cli/accounts",
-                      "developers/developer-guides/tools/clis/initiad-cli/querying-data",
-                      "developers/developer-guides/tools/clis/initiad-cli/transactions"
-                    ]
-                  },
-                  {
-                    "group": "Rollup CLI",
-                    "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
-                  }
-                ]
-              },
-              {
-                "group": "Indexers",
-                "icon": "database",
-                "pages": [
-                  {
-                    "group": "Rollup Indexers",
-                    "pages": [
-                      "developers/developer-guides/tools/indexers/indexer-introduction",
-                      "developers/developer-guides/tools/indexers/transactions-by-account",
-                      "developers/developer-guides/tools/indexers/transactions-by-height",
-                      "developers/developer-guides/tools/indexers/transactions-by-hash",
-                      "developers/developer-guides/tools/indexers/nft-collections-by-account",
-                      "developers/developer-guides/tools/indexers/nft-collection-details",
-                      "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
-                      "developers/developer-guides/tools/indexers/nft-tokens-by-account"
-                    ]
-                  }
-                ]
-              },
-              {
-                "group": "Oracles",
-                "icon": "list-ol",
-                "pages": [
-                  {
-                    "group": "Connect",
-                    "pages": [
-                      "developers/developer-guides/tools/oracles/connect/introduction",
-                      {
-                        "group": "Fetching Prices from API",
-                        "pages": [
-                          "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
-                          "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
+                    },
+                    {
+                        "group": "Tools",
+                        "icon": "screwdriver-wrench",
+                        "pages": [{
+                                "group": "Frontend",
+                                "icon": "desktop",
+                                "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
+                            },
+                            {
+                                "group": "SDKs",
+                                "icon": "toolbox",
+                                "pages": [{
+                                    "group": "InitiaJS",
+                                    "pages": [
+                                        "developers/developer-guides/tools/sdks/initia-js/introduction",
+                                        "developers/developer-guides/tools/sdks/initia-js/quickstart",
+                                        "developers/developer-guides/tools/sdks/initia-js/querying-data",
+                                        "developers/developer-guides/tools/sdks/initia-js/accounts",
+                                        {
+                                            "group": "Transactions",
+                                            "pages": [
+                                                "developers/developer-guides/tools/sdks/initia-js/transactions/messages",
+                                                "developers/developer-guides/tools/sdks/initia-js/transactions/sending-transactions",
+                                                "developers/developer-guides/tools/sdks/initia-js/transactions/signing-transactions"
+                                            ]
+                                        }
+                                    ]
+                                }]
+                            },
+                            {
+                                "group": "CLIs",
+                                "icon": "terminal",
+                                "pages": [{
+                                        "group": "Weave CLI",
+                                        "pages": [
+                                            "developers/developer-guides/tools/clis/weave-cli/introduction",
+                                            "developers/developer-guides/tools/clis/weave-cli/installation",
+                                            "developers/developer-guides/tools/clis/weave-cli/gas-station",
+                                            "developers/developer-guides/tools/clis/weave-cli/initia-node",
+                                            {
+                                                "group": "Rollup Management",
+                                                "pages": [
+                                                    "developers/developer-guides/tools/clis/weave-cli/rollup/introduction",
+                                                    "developers/developer-guides/tools/clis/weave-cli/rollup/launch",
+                                                    "developers/developer-guides/tools/clis/weave-cli/rollup/relayer",
+                                                    "developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots"
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "group": "Initia CLI",
+                                        "pages": [
+                                            "developers/developer-guides/tools/clis/initiad-cli/introduction",
+                                            "developers/developer-guides/tools/clis/initiad-cli/accounts",
+                                            "developers/developer-guides/tools/clis/initiad-cli/querying-data",
+                                            "developers/developer-guides/tools/clis/initiad-cli/transactions"
+                                        ]
+                                    },
+                                    {
+                                        "group": "Rollup CLI",
+                                        "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+                                    }
+                                ]
+                            },
+                            {
+                                "group": "Indexers",
+                                "icon": "database",
+                                "pages": [{
+                                    "group": "Rollup Indexers",
+                                    "pages": [
+                                        "developers/developer-guides/tools/indexers/indexer-introduction",
+                                        "developers/developer-guides/tools/indexers/transactions-by-account",
+                                        "developers/developer-guides/tools/indexers/transactions-by-height",
+                                        "developers/developer-guides/tools/indexers/transactions-by-hash",
+                                        "developers/developer-guides/tools/indexers/nft-collections-by-account",
+                                        "developers/developer-guides/tools/indexers/nft-collection-details",
+                                        "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
+                                        "developers/developer-guides/tools/indexers/nft-tokens-by-account"
+                                    ]
+                                }]
+                            },
+                            {
+                                "group": "Oracles",
+                                "icon": "list-ol",
+                                "pages": [{
+                                    "group": "Connect",
+                                    "pages": [
+                                        "developers/developer-guides/tools/oracles/connect/introduction",
+                                        {
+                                            "group": "Fetching Prices from API",
+                                            "pages": [
+                                                "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-supported-feeds",
+                                                "developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price"
+                                            ]
+                                        },
+                                        "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
+                                    ]
+                                }]
+                            }
                         ]
-                      },
-                      "developers/developer-guides/tools/oracles/connect/fetching-prices-from-contracts"
-                    ]
-                  }
+                    }
                 ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "Resources",
-        "groups": [
-          {
-            "group": "Developer Resources",
-            "pages": [
-              "resources/developer/initia-l1",
-              {
-                "group": "Deployed Contracts",
-                "icon": "file-code",
-                "pages": ["resources/developer/deployed-contracts/minievm"]
-              },
-              {
-                "group": "Contracts References",
-                "icon": "asterisk",
-                "pages": [
-                  {
-                    "group": "EVM",
-                    "pages": [
-                      "resources/developer/contract-references/evm/connect",
-                      "resources/developer/contract-references/evm/cosmos",
-                      "resources/developer/contract-references/evm/erc20-acl",
-                      "resources/developer/contract-references/evm/erc20-registry",
-                      "resources/developer/contract-references/evm/initia-erc20",
-                      "resources/developer/contract-references/evm/erc20-factory",
-                      "resources/developer/contract-references/evm/initia-custom-erc20"
-                    ]
-                  }
+            },
+            {
+                "tab": "Resources",
+                "groups": [{
+                        "group": "Developer Resources",
+                        "pages": [
+                            "resources/developer/initia-l1",
+                            {
+                                "group": "Deployed Contracts",
+                                "icon": "file-code",
+                                "pages": ["resources/developer/deployed-contracts/minievm"]
+                            },
+                            {
+                                "group": "Contracts References",
+                                "icon": "asterisk",
+                                "pages": [{
+                                    "group": "EVM",
+                                    "pages": [
+                                        "resources/developer/contract-references/evm/connect",
+                                        "resources/developer/contract-references/evm/cosmos",
+                                        "resources/developer/contract-references/evm/erc20-acl",
+                                        "resources/developer/contract-references/evm/erc20-registry",
+                                        "resources/developer/contract-references/evm/initia-erc20",
+                                        "resources/developer/contract-references/evm/erc20-factory",
+                                        "resources/developer/contract-references/evm/initia-custom-erc20"
+                                    ]
+                                }]
+                            }
+                        ]
+                    },
+                    {
+                        "group": "Security",
+                        "pages": ["/resources/security/audits"]
+                    }
                 ]
-              }
+            }
+        ],
+        "global": {
+            "anchors": [{
+                    "anchor": "Twitter",
+                    "href": "https://x.com/initia",
+                    "icon": "twitter"
+                },
+                {
+                    "anchor": "Discord",
+                    "href": "https://discord.gg/initia",
+                    "icon": "discord"
+                },
+                {
+                    "anchor": "GitHub",
+                    "href": "https://github.com/initia-labs",
+                    "icon": "github"
+                }
             ]
-          },
-          {
-            "group": "Security",
-            "pages": ["/resources/security/audits"]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Twitter",
-          "href": "https://x.com/initia",
-          "icon": "twitter"
-        },
-        {
-          "anchor": "Discord",
-          "href": "https://discord.gg/initia",
-          "icon": "discord"
-        },
-        {
-          "anchor": "GitHub",
-          "href": "https://github.com/initia-labs",
-          "icon": "github"
         }
-      ]
+    },
+    "logo": {
+        "light": "/logo/logo_light.svg",
+        "dark": "/logo/logo_dark.svg"
+    },
+    "api": {
+        "mdx": {
+            "server": ["https://rest.testnet.initia.xyz"]
+        }
+    },
+    "appearance": {
+        "default": "dark"
+    },
+    "background": {
+        "decoration": "grid",
+        "color": {
+            "dark": "#060606"
+        }
+    },
+    "footer": {
+        "socials": {
+            "twitter": "https://x.com/initia",
+            "discord": "https://discord.gg/initia",
+            "github": "https://github.com/initia-labs"
+        }
+    },
+    "integrations": {
+        "ga4": {
+            "measurementId": "G-MEX41J56YX"
+        }
     }
-  },
-  "logo": {
-    "light": "/logo/logo_light.svg",
-    "dark": "/logo/logo_dark.svg"
-  },
-  "api": {
-    "mdx": {
-      "server": ["https://rest.testnet.initia.xyz"]
-    }
-  },
-  "appearance": {
-    "default": "dark"
-  },
-  "background": {
-    "decoration": "grid",
-    "color": {
-      "dark": "#060606"
-    }
-  },
-  "footer": {
-    "socials": {
-      "twitter": "https://x.com/initia",
-      "discord": "https://discord.gg/initia",
-      "github": "https://github.com/initia-labs"
-    }
-  },
-  "integrations": {
-    "ga4": {
-      "measurementId": "G-MEX41J56YX"
-    }
-  }
 }
