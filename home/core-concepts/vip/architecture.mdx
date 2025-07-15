@@ -10,6 +10,10 @@ The total rewards are first distributed to each rollup, then subsequently to the
 Before a rollup can qualify for VIP rewards, it must first achieve a minimum INIT TVL and then be whitelisted by the Initia L1 governance through an on-chain proposal. See the [VIP Eligibility](/home/core-concepts/vip/eligibility) page for more details.
 </Note>
 
+<Note>
+For details on the specific VIP parameters such as stage and cycle duration, see the [VIP Parameters](/resources/developer/initia-l1#vip-parameters) section.
+</Note>
+
 ## Rewards Distribution
 
 At each rewards distribution stage $t$, the total VIP rewards for that stage $R_t$ are distributed amongst each rollup ecosystem. The distribution is split into multiple steps:
@@ -139,7 +143,7 @@ These tokens are initially non-transferable and can be vested in two ways:
 
 **Vesting Process**
 
-VIP esINIT rewards are converted into regular INIT tokens over multiple `vestingPeriod`, denoted as $p$, with each period lasting one stage. For instance, if the vesting period is 52 stages, the user will receive $\frac{1}{52}$ of their esINIT at each stage.
+VIP esINIT rewards are converted into regular INIT tokens over multiple `vestingPeriod`, denoted as $p$, with each period lasting one stage. For instance, if the vesting period is 26 stages, the user will receive $\frac{1}{26}$ of their esINIT at each stage.
 
 **Achieving the Required Score**
 
