@@ -353,7 +353,10 @@
               {
                 "group": "Deployed Contracts",
                 "icon": "file-code",
-                "pages": ["resources/developer/deployed-contracts/minievm"]
+                "pages": [
+                  "resources/developer/deployed-contracts/initia",
+                  "resources/developer/deployed-contracts/minievm"
+                ]
               },
               {
                 "group": "Contracts References",
