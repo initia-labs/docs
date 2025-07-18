@@ -2,26 +2,16 @@
 title: Wrapping Tokens
 ---
 
-All assets on an EVM rollup are represented as 18-decimal ERC-20 tokens. When you transfer assets from Initia L1 to a rollup, they must be wrapped, regardless of whether you use the IBC or OP bridge. This process is handled by a [Wrapping Contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol), which mints an 18-decimal ERC-20 representation for the bridged L1 asset. This guide will walk you through the process of wrapping and unwrapping tokens between Initia L1 and an EVM rollup.
+In MiniEVM Rollup, every bridged token is wrapped to 18 decimals, regardless of token or bridge type. This enforces a single decimal format and avoids issues caused by decimal differences. Wrapping is handled by the [Wrapper precompile](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/erc20_wrapper/ERC20Wrapper.sol) in MiniEVM. Initia bridge handles tokens with 6 decimals, so wrapped tokens with 18 decimals are unwrapped to 6 decimals before they are bridged to L1.
 
-When you bridge a 6-decimal token from Initia L1 to an EVM rollup, it will be converted into an 18-decimal ERC-20 token.
+When you bridge 6 decimals token from Initia L1 to an EVM rollup, it is converted into an 18 decimals ERC‑20 token.
 
 <Frame>
 ![Wrapping Tokens](/images/evm/wrapping-erc20-tokens.png)
 </Frame>
 
-Bridging from the rollup back to L1 reverses the process, returning the token to its original 6-decimal format on L1.
+Unwrapping tokens is the reverse process, where you convert the 18 decimals ERC-20 token back to the original 6 decimals token on Initia L1. 
 
 <Frame>
 ![Unwrapping Tokens](/images/evm/unwrapping-erc20-tokens.png)
 </Frame>
-
-The following table illustrates how a token's denomination changes as it moves from Initia L1 to an EVM rollup.
-
-| Asset                 | Denom example                                                           | Decimals |
-|-----------------------|-------------------------------------------------------------------------|----------|
-| Original on Initia L1 | `uinit`                                                                 | 6        |
-| Bridge in (IBC)       | `ibc/6a23FB4FED4CA04ED6D9E5DA36C6D27248645F0E22F585576A1488B8A89C51f5`  | 6        |
-| Bridge in (OP)        | `l2/262570d305b2d43f6cf33b41043d9429daa5d2a1038095a894febdc308966605`   | 6        |
-| After wrapping (IBC)  | `evm/93968E6563D59EA0ED06EABFB5E62B985E931aa5`                          | 18       |
-| After wrapping (OP)   | `evm/BO44e96171884CeDBF064f2b25610b006A162ff8`                          | 18       |
