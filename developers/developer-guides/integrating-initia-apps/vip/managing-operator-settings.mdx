@@ -1,0 +1,107 @@
+---
+title: Managing Operator Settings
+---
+
+## Prerequisites
+
+- [Initiad CLI](/developers/developer-guides/tools/clis/initiad-cli)
+
+## Updating Operator Address
+
+The operator is the account you specify during VIP whitelisting that will receives your rollup's operator commission rewards. To learn more about the VIP operator rewards, see [this section](/home/core-concepts/vip/architecture#distribution-to-rollup-operators). 
+
+To replace the operator address, call `update_operator` on the VIP contract and pass two arguments in order: the rollup bridge ID and the new operator address. The bridge ID uniquely identifies your rollup bridge and can be retrieved from `${REST_URL}/opinit/opchild/v1/bridge_info`.
+
+<Tabs>
+    <Tab title="Mainnet (interwoven-1)">
+        ```bash
+        export BRIDGE_ID=29                                                      # Replace with your rollup bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+        export NEW_OPERATOR_ADDRESS=init14zmga05vl324ddaw7wqwdqt9pcvjeeyae3jn2k  # Replace with the new operator address
+        export OPERATOR_KEY_NAME=operator                                        # Replace with your operator key. Check `initiad keys list` for the list of your keys
+        export VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8' 
+        export RPC_URL='https://rpc.initia.xyz'
+        export CHAIN_ID='interwoven-1'
+
+        initiad tx move execute-json $VIP_CONTRACT vip update_operator \
+            --args '["'${BRIDGE_ID}'", "'${NEW_OPERATOR_ADDRESS}'"]' \
+            --from $OPERATOR_KEY_NAME \
+            --node $RPC_URL \
+            --chain-id $CHAIN_ID \
+            --gas-prices 0.015uinit \
+            --gas auto
+        ```
+    </Tab>
+    <Tab title="Testnet (initiation-2)">
+        ```bash
+        export BRIDGE_ID=29                                                      # Replace with your rollup bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+        export NEW_OPERATOR_ADDRESS=init14zmga05vl324ddaw7wqwdqt9pcvjeeyae3jn2k  # Replace with the new operator address
+        export OPERATOR_KEY_NAME=operator                                        # Replace with your operator key. Check `initiad keys list` for the list of your keys
+        export VIP_CONTRACT='init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz'
+        export RPC_URL='https://rpc.testnet.initia.xyz'
+        export CHAIN_ID='initiation-2'
+
+        initiad tx move execute-json $VIP_CONTRACT vip update_operator \
+            --args '["'${BRIDGE_ID}'", "'${NEW_OPERATOR_ADDRESS}'"]' \
+            --from $OPERATOR_KEY_NAME \
+            --node $RPC_URL \
+            --chain-id $CHAIN_ID \
+            --gas-prices 0.015uinit \
+            --gas auto
+        ```
+    </Tab>
+</Tabs>
+
+
+## Updating Operator Commission
+
+Operator commissions can be adjusted based on the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings established during VIP whitelisting.
+
+Note that the commission value can be modified only once per stage, and any updated rate will take effect starting from the next stage. To update the operator commission, call `update_operator_commission` on the VIP contract. This function takes three arguments
+
+1. the rollup bridge ID
+2. the version number
+3. the new commission rate
+
+Use version value `1` when the rollup is listed for the first time. If the rollup is delisted and later relisted, set the version to the previous value plus 1.
+
+
+<Tabs>
+    <Tab title="Mainnet (interwoven-1)">
+        ```bash
+        export BRIDGE_ID=29                         # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+        export VERSION=1                            # Use 1 unless your rollup has been delisted before
+        export NEW_COMMISSION_RATE=0.05             # Replace with the new commission rate (e.g., 0.05 for 5%)
+        export OPERATOR_KEY_NAME=operator           # Replace with your operator key name. Check `initiad keys list` for the list of your keys
+        export VIP_CONTRACT='init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8'
+        export RPC_URL='https://rpc.initia.xyz'
+        export CHAIN_ID='interwoven-1'
+
+        initiad tx move execute-json $VIP_CONTRACT vip update_operator_commission \
+            --args '["'${BRIDGE_ID}'", "'${VERSION}'", "'${NEW_COMMISSION_RATE}'"]' \
+            --from $OPERATOR_KEY_NAME \
+            --node $RPC_URL \
+            --chain-id $CHAIN_ID \
+            --gas-prices 0.015uinit \
+            --gas auto
+        ```
+    </Tab>
+    <Tab title="Testnet (initiation-2)">
+        ```bash
+        export BRIDGE_ID=29                         # Replace with your actual bridge ID. You can get it from `${REST_URL}/opinit/opchild/v1/bridge_info`
+        export VERSION=1                            # Use 1 unless your rollup has been delisted before
+        export NEW_COMMISSION_RATE=0.05             # Replace with the new commission rate (e.g., 0.05 for 5%)
+        export OPERATOR_KEY_NAME=operator           # Replace with your operator key name. Check `initiad keys list` for the list of your keys
+        export VIP_CONTRACT='init1u4wvsgl0ksgma40w6fdv55nhy2d9f332kdmfqp0cdnzyhsxquk4swhuwfz'
+        export RPC_URL='https://rpc.testnet.initia.xyz'
+        export CHAIN_ID='initiation-2'
+
+        initiad tx move execute-json $VIP_CONTRACT vip update_operator_commission \
+            --args '["'${BRIDGE_ID}'", "'${VERSION}'", "'${NEW_COMMISSION_RATE}'"]' \
+            --from $OPERATOR_KEY_NAME \
+            --node $RPC_URL \
+            --chain-id $CHAIN_ID \
+            --gas-prices 0.015uinit \
+            --gas auto
+        ```
+    </Tab>
+</Tabs>

@@ -1,0 +1,98 @@
+---
+title: Whitelisting Rollup for VIP
+---
+
+A rollup must be whitelisted before it can participate in the Vested Interest Program (VIP).
+
+<Note>
+1. The following steps are for whitelisting a rollup for VIP on Mainnet. For testnet rollups, please contact the Initia team. This section also assumes you have already added your rollup to the [Initia Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction). If not, please follow the guide in the [previous section](/developers/developer-guides/integrating-initia-apps/vip/integrating-vip).
+</Note>
+
+<Steps>
+  <Step title="Deploy the VIP Scoring Contract">
+    Deploy the appropriate VIP scoring contract for your rollup’s VM.
+      - EVM: https://github.com/initia-labs/vip-score-evm
+      - Wasm: https://github.com/initia-labs/vip-score-wasm
+      - Move: https://github.com/initia-labs/vip-score-move
+  </Step>
+  <Step title="Submit a Forum Proposal">
+    Before your rollup can be whitelisted, you must create a proposal in the [Initia Forum](https://forum.initia.xyz). See the [template](https://forum.initia.xyz/t/whitelist-new-rollup-on-vip/146) for the necessary information.
+  </Step>
+  <Step title="Submit a L1 Governance Proposal">
+    After creating the forum proposal, you finally need to submit a governance proposal on the Initia L1. The script below shows how to do so.
+    
+    ```ts vip-l1-gov-proposal.ts expandable
+    import { MnemonicKey, RESTClient, Wallet, bcs, MsgSubmitProposal, MsgGovExecute } from '@initia/initia.js'
+
+    const MNEMONIC_KEY = process.env.MNEMONIC_KEY || 'castle lung ...' // Your wallet's mnemonic key
+    const REST_URL = process.env.REST_URL || 'https://rest.initia.xyz' // Initia L1 REST endpoint
+
+    // Core parameters
+    const VIP_CONTRACT_ADDRESS =
+      process.env.VIP_CONTRACT || 'init182yxkv4gqfvz7tjyde6dfgjdr4ldqxklgmf23aju2u3cslnss7ys6dy6w8'                         // Rollup's VIP contract address
+    const OPERATOR_ADDRESS =
+      process.env.OPERATOR_ADDRESS || '0x68b8295438b3d50f81679db88260a596b8ab1f4be1caa94af87c6b853baf7b20'                  // Rollup's VIP operator address
+    const BRIDGE_ID = process.env.BRIDGE_ID || '16'                                                                         // Bridge ID
+    const BRIDGE_ADDRESS = process.env.BRIDGE_ADDRESS || 'init1y3avrs2r9q3ggj5xs2q5zg4mmpqvr2necwl6s6fhfergtyp93ueq5270ht'  // Bridge address
+    const L2_SCORE_CONTRACT_ADDRESS = process.env.L2_SCORE_CONTRACT_ADDRESS || '0x668dc438bd71f365d1e9ae39ac92f35d5ccde03d' // L2 score contract address
+    
+    // Operator commission settings
+    const OPERATOR_COMMISSION_MAX_RATE = process.env.OPERATOR_COMMISSION_MAX_RATE || '0.2'                                  // Operator commission max rate, e.g., 0.2 for 20%
+    const OPERATOR_COMMISSION_MAX_CHANGE_RATE = process.env.OPERATOR_COMMISSION_MAX_CHANGE_RATE || '0.2'                    // Operator commission max change rate, e.g., 0.2 for 20%
+    const OPERATOR_COMMISSION_RATE = process.env.OPERATOR_COMMISSION_RATE || '0.2'                                          // Operator commission rate, e.g., 0.2 for 20%
+    
+    // Proposal parameters
+    const PROPOSAL_METADATA = process.env.PROPOSAL_METADATA || 'https://forum.initia.xyz'                                  // VIP proposal forum URL
+    const PROPOSAL_TITLE = process.env.PROPOSAL_TITLE || 'Whitelist Rollup on VIP'                                         // VIP proposal title
+    const PROPOSAL_SUMMARY = process.env.PROPOSAL_SUMMARY || 'This proposal is to whitelist Rollup on Initia VIP program.' // VIP proposal summary
+    const ROLLUP_VM_TYPE = process.env.ROLLUP_VM_TYPE || 0                                                                 // Rollup VM type, 0 for MoveVM, 1 for WasmVM, 2 for EVM
+
+    async function main() {
+      const key = new MnemonicKey({ mnemonic: MNEMONIC_KEY })
+      const rest = new RESTClient(REST_URL, {
+        gasPrices: `0.015uinit`
+      })
+      const wallet = new Wallet(rest, key)
+
+      const msg = new MsgSubmitProposal(
+        [
+          new MsgGovExecute(
+            'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',
+            VIP_CONTRACT_ADDRESS,
+            VIP_CONTRACT_ADDRESS,
+            'vip',
+            'register',
+            [],
+            [
+              bcs.address().serialize(OPERATOR_ADDRESS).toBase64(),
+              bcs.u64().serialize(BRIDGE_ID).toBase64(),
+              bcs.address().serialize(BRIDGE_ADDRESS).toBase64(),
+              bcs.string().serialize(L2_SCORE_CONTRACT_ADDRESS).toBase64(),
+              bcs.bigdecimal().serialize(OPERATOR_COMMISSION_MAX_RATE).toBase64(),
+              bcs.bigdecimal().serialize(OPERATOR_COMMISSION_MAX_CHANGE_RATE).toBase64(),
+              bcs.bigdecimal().serialize(OPERATOR_COMMISSION_RATE).toBase64(),
+              bcs.u64().serialize(ROLLUP_VM_TYPE).toBase64()
+            ]
+          )
+        ],
+        '100000000uinit',
+        wallet.key.accAddress,
+        PROPOSAL_METADATA,
+        PROPOSAL_TITLE,
+        PROPOSAL_SUMMARY,
+        false
+      )
+
+      const tx = await wallet.createAndSignTx({ msgs: [msg] })
+      const result = await rest.tx.broadcast(tx)
+      console.log('Transaction result:', result)
+    }
+
+    main().catch(console.error)
+    ```  
+
+  </Step>
+  <Step title="Proposal Voting Period">
+    Once the proposal is submitted, it will enter a voting period of 7 days. Finally, if the proposal passes, the rollup will be whitelisted and active for VIP.
+  </Step>
+</Steps>

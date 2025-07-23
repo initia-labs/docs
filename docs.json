@@ -222,7 +222,12 @@
               {
                 "group": "VIP",
                 "icon": "award",
-                "pages": ["developers/developer-guides/integrating-initia-apps/vip"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/vip/integrating-vip",
+                  "developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip",
+                  "developers/developer-guides/integrating-initia-apps/vip/updating-vip-scoring-criteria",
+                  "developers/developer-guides/integrating-initia-apps/vip/managing-operator-settings"
+                ]
               },
               {
                 "group": "Usernames",
