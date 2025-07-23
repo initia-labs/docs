@@ -2,11 +2,7 @@
 title: Integrating VIP
 ---
 
-This guide shows how to integrate VIP for a rollup on Initia. Follow the steps below to deploy the scoring contract, register your rollup, and manage VIP stages.
-
-<Info title="Network Details">
-You can find Initia L1 RPC endpoints and chain IDs on the [Network Information page](/resources/developer/initia-l1).
-</Info>
+This guide explains how a rollup can prepare for and integrate Initia's [VIP](/home/core-concepts/vip).
 
 ## Prerequisites
 
@@ -15,11 +11,18 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
 
 <Steps title="VIP Integration Steps">
   <Step title="Deploy Your Rollup and Install Minitiad CLI">
-    First, launch your rollup with the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction), then follow the [Launching a Rollup](/developers/developer-guides/tools/clis/weave-cli/rollup/launch) guide to set up your rollup node.
+    First, launch your rollup. For local deployments, you can use the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction) to launch a rollup.
 
-    After your rollup is running and bridge setup and IBC / OPinit bot configuration are complete, install the [Minitiad CLI](/developers/developer-guides/tools/clis/minitiad-cli/introduction) that matches your rollup’s version so that later commands use the correct binary. For bridge and bot setup, see the [Rollup Management page](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction). To confirm the rollup version, use `${RPC_URL}/abci_info`, where `${RPC_URL}` is your rollup's RPC endpoint. For example, you can check the version by calling https://rpc.minimove-2.initia.xyz/abci_info.
+    Once your rollup is running, we need to fetch the rollup's version. To do so, run the following command:
 
-    ```json
+    ```bash
+    export RPC_URL={YOUR_ROLLUP_RPC_URL}
+    curl -X POST $RPC_URL/abci_info
+    ```
+
+    The output will be in the format below. The `version` field is the rollup's version.
+
+    ```json highlight={7}
     {
       "jsonrpc": "2.0",
       "id": -1,
@@ -33,6 +36,8 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
       }
     }
     ```
+
+    We then need to install the `minitiad` CLI that matches the rollup's version.
 
     <Tabs>
       <Tab title="EVM">
@@ -68,7 +73,11 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     </Tabs>
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Create a VIP operator account and a VIP contract deployer account that will be used to deploy the VIP scoring contract. VIP operator is the account that receives the VIP commission, and the VIP contract deployer is the account that deploys the VIP scoring contract. The `--recover` option allows you to recover an existing account using a BIP39 mnemonic phrase. If you don't have a mnemonic phrase, you can create a new account without the option.
+    Next, we will create a VIP operator account and a VIP contract deployer account to deploy the VIP scoring contract.
+    - The VIP operator account will receive the VIP operator rewards
+    -  the VIP contract deployer account will handle the deployment of the VIP scoring contract.
+    
+    If you have an existing account you want to use for these roles, you can use the `--recover` option to recover it using a BIP39 mnemonic phrase. If you do not have a mnemonic phrase, you can create a new account without this option.
 
     ```bash
     export OPERATOR_KEY_NAME=operator
@@ -83,47 +92,16 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     # room fruit chalk buyer budget wisdom theme sound north square regular truck deal anxiety wrestle toy flight release actress critic saddle garment just found
     ```
 
-    If you want to use a Ledger hardware wallet, you can use the `--ledger` option to create an account that uses Ledger for signing transactions.
+    Alternatively, if you want to use a Ledger hardware wallet, you can use the `--ledger` option to create an account that uses Ledger for signing transactions.
 
     ```bash
     minitiad keys add $OPERATOR_KEY_NAME --ledger
-    ```
-
-    You can see the list of accounts by running `minitiad keys list`.
-    
-    ```bash
-    minitiad keys list
-    ```
-
-    The output will look like this:
-
-    ```bash
-    - address: init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
-      name: deployer
-      pubkey: '{"@type":"/initia.crypto.v1beta1.ethsecp256k1.PubKey","key":"AwVclEI0Va22hhMXlF/TOlYQJQQBV7Yt/iW44jB7RTJH"}'
-      type: local
-    - address: init13jkjtmyq5yzj9sjcut6e40cqqmy5ghgmwz3rlq
-      name: operator
-      pubkey: '{"@type":"/initia.crypto.v1beta1.ethsecp256k1.PubKey","key":"Aj7lpnVlSjsmhCEmOP+7bUicFvnajMI83GNcR5qkZmUX"}'
-      type: local
-    ```
-
-    To convert a bech32 address to its raw 20-byte hex format, you can use the `minitiad keys parse` command.
-
-    ```bash
-    minitiad keys parse init1ch49tkg2ap8rqa3z7xutzdf4asl07pr4nx0ps6
-    ```
-    The output will be in the following format:
-
-    ```bash
-    bytes: C5EA55D90AE84E307622F1B8B13535EC3EFF0475
-    human: init
     ```
   </Step>
   <Step title="Deploy the VIP Scoring Contract">
     In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VM.
     
-    <Note>
+
       The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
       <Tabs>
         <Tab title="Mainnet (interwoven-1)">
@@ -162,7 +140,6 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         </Tab>
       </Tabs>
       
-    </Note>
 
     <Tabs>
       <Tab title="EVM">
@@ -178,7 +155,9 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         forge build
         ```
 
-        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number. To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number.
+        
+        To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
 
         ```bash
         export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz  # Replace with your rollup's JSON_RPC endpoint
@@ -300,7 +279,7 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
     git clone https://github.com/initia-labs/initia-registry.git
     ```
 
-    Submit a pull request to add your rollup to the Initia Registry. For detailed instructions, see the [Initia Registry page](/developers/developer-guides/integrating-initia-apps/registry/introduction).
+    Then, add your rollup information to the registry repo before submitting a pull request. For detailed instructions, see the [Initia Registry page](/developers/developer-guides/integrating-initia-apps/registry/introduction).
   </Step>
   <Step title="Whitelist VIP Proposal">
     Draft a forum post with the whitelist template and include your operator address, scoring policy, and VIP score contract address. The full procedure is described in the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelisting-rollup-for-vip) guide. This proposal is required only for mainnet rollups. For testnet deployments, contact the Initia team directly to have your rollup whitelisted.
@@ -316,16 +295,6 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
         | Finalize stage  | `finalizeStage(uint64 stage)`             | Finalize the given stage, preventing further changes and prepares the contract for the next stage |
 
         This code snippet shows how to use the [viem](https://viem.sh/) library to interact with the VIP scoring contract:
-        
-        <Note>
-        To get the EVM chain ID, call the `eth_chainId` JSON RPC method. For example, using `curl`:
-        
-        ```bash
-        curl -X POST https://json-rpc.minievm-2.initia.xyz/ \
-          -H "Content-Type: application/json" \
-          -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
-        ```
-        </Note>
 
         ```ts vip-score-evm-tutorial.ts
         import { createPublicClient, createWalletClient, http, parseAbi, encodeFunctionData, Hash, defineChain } from 'viem';
@@ -410,6 +379,10 @@ You can find Initia L1 RPC endpoints and chain IDs on the [Network Information p
 
         run().catch(console.error);
         ```
+
+        <Note>
+        To get the EVM chain ID, call the `eth_chainId` JSON-RPC method. For example, using `curl`:
+        </Note>
       </Tab>
       <Tab title="MoveVM">
         | Action          | Method                                                   | Description                                                                                       |
