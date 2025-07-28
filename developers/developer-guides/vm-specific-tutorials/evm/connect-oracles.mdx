@@ -82,15 +82,10 @@ We then need to define the constructor for our contract. This will be used to in
 
 Once the constructor is implement, we move on to defining the different functions that our contract will have
 
-- `oracle_get_all_currency_pairs`: This function will return all of the asset pairs currently supported by Connect
 - `oracle_get_price`: This function will return the price of a single asset pair
 - `oracle_get_prices`: This function will return the price of multiple asset pairs
 
 ```solidity src/Oracle.sol
-    function oracle_get_all_currency_pairs() external {
-        currencyPairs = connect.get_all_currency_pairs();
-    }
-
     function oracle_get_price() external {
         string memory base = "BTC";
         string memory quote = "USD";
@@ -132,10 +127,6 @@ contract Oracle {
 
     constructor (address _connect) {
         connect = IConnectOracle(_connect);
-    }
-
-    function oracle_get_all_currency_pairs() external {
-        currencyPairs = connect.get_all_currency_pairs();
     }
 
     function oracle_get_price() external {
@@ -202,29 +193,13 @@ Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To
 ```sh
 export PRIVATE_KEY=0x...
 export RPC_URL=http://...
-forge create src/Oracle.sol:Oracle --private-key $PRIVATE_KEY --rpc-url $RPC_URL --constructor-args 0xc47ef2D751f64bC3FADc7dE3027fE02C94122056 --legacy
+forge create src/Oracle.sol:Oracle --private-key $PRIVATE_KEY --rpc-url $RPC_URL --constructor-args 0x031ECb63480983FD216D17BB6e1d393f3816b72F --legacy
 
 # [Expected Output]:
 # No files changed, compilation skipped
 # Deployer: 0xc5D26D0281e28599c7790aacc810226BBDf0E431
 # Deployed to: 0xdDa3cB3675238f3264F417DF48bf559bE8704a47
 # Transaction hash: 0xa3fbbbe112b2341fcbfecde5f7b5908b59b63361019370ac531ab31a043df501
-```
-
-To confirm that the contract was deployed successfully, we can try calling the `oracle_get_all_currency_pairs` function using Foundry's `cast send` command.
-
-```sh
-cast send 0xdDa3cB3675238f3264F417DF48bf559bE8704a47 \
-"oracle_get_all_currency_pairs()" \
---private-key $PRIVATE_KEY \
---rpc-url $RPC_URL \
-
-# [Expected Output]:
-# blockHash               0x312c712feae5d2bb0bc69e5463767465e1270c3a48863a9e08eea94986c9da1a
-# blockNumber             89847
-# contractAddress         
-# cumulativeGasUsed       2353429
-# ...
 ```
 
 If you then try querying the `currencyPairs` variable using Foundry's `cast call` command, you should see the response from Connect.
