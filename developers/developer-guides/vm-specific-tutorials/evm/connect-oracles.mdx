@@ -5,7 +5,7 @@ title: Using Connect Oracle
 [Tutorial GitHub Repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/connect-oracle)
 
 <Warning>
-Compiling contracts that uses ConnectOracle.sol requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
+Compiling contracts that uses [ConnectOracle.sol](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/connect_oracle/ConnectOracle.sol) requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
 </Warning>
 
 ### Foundry
@@ -35,9 +35,7 @@ Before writing our contract, we first need to rename the template contract to `O
 mv src/Counter.sol src/Oracle.sol
 ```
 
-We then update the contract from the template to be our oracle contract.
-
-We declare the `IConnectOracle` interface, which will be used to interact with the ConnectOracle contract.
+We then update the contract from the template to be our oracle contract. We declare the `IConnectOracle` interface, which will be used to interact with the ConnectOracle contract.
 
 ```solidity src/Oracle.sol
 // SPDX-License-Identifier: MIT
@@ -67,6 +65,12 @@ We then need to define the constructor for our contract. This will be used to in
 The ConnectOracle contract is on MiniEVM precompiles. You can get its address by querying `${REST_URL}/minievm/evm/v1/connect_oracle` where `${REST_URL}` refers to the REST endpoint URL of the rollup.
 ```sh
 curl https://rest.minievm-2.initia.xyz/minievm/evm/v1/connect_oracle
+```
+The output will look like this:
+```json
+{
+  "address": "0x031ECb63480983FD216D17BB6e1d393f3816b72F"
+}
 ```
 </Note>
 
@@ -183,7 +187,7 @@ forge compile;
 
 ## Deploying the Contract
 
-Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge deploy` command.  First, we need to create a script file that will handle the deployment. Create a new file named `Oracle.s.sol` in the `script` directory.
+Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge script` command.  First, we need to create a script file that will handle the deployment. Create a new file named `Oracle.s.sol` in the `script` directory.
 
 ```solidity script/Oracle.s.sol
     // SPDX-License-Identifier: UNLICENSED
