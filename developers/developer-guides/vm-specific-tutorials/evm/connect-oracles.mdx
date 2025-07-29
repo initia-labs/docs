@@ -5,7 +5,7 @@ title: Using Connect Oracle
 [Tutorial GitHub Repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/connect-oracle)
 
 <Warning>
-Compiling contracts that uses [ConnectOracle.sol](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/connect_oracle/ConnectOracle.sol) requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
+Compiling contracts that use [ConnectOracle.sol](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/connect_oracle/ConnectOracle.sol) requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
 </Warning>
 
 ### Foundry
@@ -14,16 +14,11 @@ For this tutorial, we will be using [Foundry](https://github.com/foundry-rs/foun
 
 ## Setup
 
-First, we need to create a new directory for our project.
+Create a new project directory and initialize it with `forge init`:
 
 ```sh
 mkdir connect-oracle
 cd connect-oracle
-```
-
-Next, we will initialize a new Foundry project side that directory.
-
-```sh
 forge init
 ```
 
@@ -80,7 +75,7 @@ The output will look like this:
     }
 ```
 
-Once the constructor is implement, we move on to defining the different functions that our contract will have
+Once the constructor is implemented, we move on to defining the different functions that our contract will have
 
 - `oracle_get_price`: This function will return the price of a single asset pair
 - `oracle_get_prices`: This function will return the price of multiple asset pairs
@@ -187,7 +182,7 @@ forge compile;
 
 ## Deploying the Contract
 
-Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge script` command.  First, we need to create a script file that will handle the deployment. Create a new file named `Oracle.s.sol` in the `script` directory.
+Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge script` command.  First, we need to create a script file to handle the deployment. Create a new file named `Oracle.s.sol` in the `script` directory.
 
 ```solidity script/Oracle.s.sol
     // SPDX-License-Identifier: UNLICENSED
@@ -260,4 +255,9 @@ Output should look like this:
 0x00000000000000000000000000000000000000000000000000000002c3cd0d430000000000000000000000000000000000000000000000001856610b4b695788
 ```
 
-The output is a hexadecimal representation of the price and timestamp.
+The output is an ABI-encoded hexadecimal result containing the price and timestamp. The first 32 bytes represent the price, and the next 32 bytes represent the timestamp.
+
+| Field     | ABI-Encoded Value | Decoded Value |
+|-----------|-------------------|---------------|
+| Price     | 0x2c3cd0d43       | 11874929987   |
+| Timestamp | 0x1856610b4b695788| 1753695806045116296 |
