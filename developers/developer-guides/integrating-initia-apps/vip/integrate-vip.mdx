@@ -382,6 +382,11 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
 
         <Note>
         To get the EVM chain ID, call the `eth_chainId` JSON-RPC method. For example, using `curl`:
+        ```bash
+        curl -X POST https://json-rpc.minievm-2.initia.xyz/ \
+          -H "Content-Type: application/json" \
+          -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
+        ```
         </Note>
       </Tab>
       <Tab title="MoveVM">
