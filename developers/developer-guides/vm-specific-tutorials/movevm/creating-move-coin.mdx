@@ -59,7 +59,7 @@ public entry fun initialize(
         'initialize',
         [],
         [
-            // max supply, if you want to set max supply, insert number instaed of null
+            // max supply, if you want to set max supply, insert number instead of null
             bcs.option(bcs.u128()).serialize(null).toBase64(),
             bcs.string().serialize('my_coin').toBase64(), // name
             bcs.string().serialize('MYCOIN').toBase64(), // symbol
