@@ -210,7 +210,7 @@ So, we need to set the ACL for the contract to prevent unauthorized access.
 ```typescript
 // for initia L1, you can update ACL by submitting a proposal  
 const aclMsg = new MsgUpdateACL(
-  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
   'init14qcr2mczuzlav8z2uqm3d0zdw04nuhf2jgndc3', // contract address
   true                                           // allow
 )
@@ -233,7 +233,7 @@ If you want to update MiniMove ACL, you need to use `MsgExecuteMessages` in OPch
 
 ```typescript
 const aclMsg = new MsgUpdateACL(
-  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
   'init14qcr2mczuzlav8z2uqm3d0zdw04nuhf2jgndc3', // contract address
   true                                           // allow
 )
