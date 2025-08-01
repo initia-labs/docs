@@ -2,19 +2,19 @@
 title: Running IBC Relayer
 ---
 
+<Warning>
+Weave v0.3.0 or later is required. You can upgrade to the latest version by running `weave upgrade`.
+</Warning>
+
 An IBC relayer is a software component that facilitates communication between two distinct blockchain networks that support the Inter-Blockchain Communication (IBC) protocol.
 
 It is required for built-in oracle, Minitswap, and other cross-chain services to function with your rollup.
 
-While setting up a relayer is traditionally one of the most complex tasks in the Cosmos ecosystem, 
-Weave simplifies this process significantly, reducing the typical 10+ step IBC Relayer setup to just a few simple steps.
+Weave currently only supports Rapid relayer configuration generation. It will support running the rapid relayer directly in the future.
 
-<Warning>
-Weave only supports IBC relayer setup between Initia L1 and Interwoven Rollups. Setting up relayers between other arbitrary networks is not supported.
-</Warning>
 
 <Note>
-Currently, Weave only supports the `Hermes` relayer. For detailed information about Hermes, please refer to the [Hermes documentation](https://github.com/informalsystems/hermes).
+For more detailed information about Rapid relayer, see the [Rapid relayer documentation](https://github.com/initia-labs/rapid-relayer).
 </Note>
 
 ## Setting up
@@ -29,61 +29,55 @@ This command will guide you through 2 major parts of the relayer setup:
 
 
 For the former, Weave will present you with three options:
-1. Configure channels between Initia L1 and a whitelisted Rollup (those available in [Initia Registry](https://github.com/initia-labs/initia-registry)
+1. Configure channels between Initia L1 and a whitelisted Rollup (those available in [Initia Registry](https://github.com/initia-labs/initia-registry))
 2. Configure using artifacts from `weave rollup launch` (recommended for users who have just launched their rollup)
 3. Configure manually
 
-As for the latter, Weave will ask whether you want to use OPinit Challenger bot account for the relayer. This is recommended as it is exempted from gas fees on the rollup and able to stop other relayers from relaying when it detects a malicious message coming from it.
+As for the latter, Weave will ask whether you want to use the OPinit Challenger bot account for the relayer. This is recommended as it is exempted from gas fees on the rollup and able to stop other relayers from relaying when it detects a malicious message.
 
 <Warning>
-  Relayer requires funds to relay messages between Initia L1 and your rollup (if it's not in the fee whitelist). If Weave detects that your account does not have enough funds, Weave will ask you to fund via Gas Station.
+Relayer requires funds to relay messages between Initia L1 and your rollup (if it's not in the fee whitelist). If Weave detects that your account does not have enough funds, Weave will ask you to fund via Gas Station.
 </Warning>
-
-<Note>
-For advanced configuration options, you can refer to the [Hermes Configuration Guide](https://hermes.informal.systems/documentation/configuration/configure-hermes.html) and customize the relayer's configuration file located at `~/.hermes/config.toml`.
-</Note>
 
 ## Running Relayer
 
-<Tabs>
-  <Tab title="Start">
+Currently, Weave generates the relayer configuration file but does not run the relayer directly. You'll need to manually set up and run the Rapid relayer using the generated configuration.
+
+<Note>
+Make sure you have Node.js and npm installed on your system before proceeding with the installation.
+</Note>
+
+<Steps>
+  <Step title="Clone and Install Rapid relayer">
+    Clone the Rapid relayer repository and install its dependencies:
+
     ```bash
-    weave relayer start
+    git clone https://github.com/initia-labs/rapid-relayer
+    cd rapid-relayer
+    npm install
     ```
-    **Available Flags**
-    <ParamField path="--detach, -d" type="boolean" default="false">
-      Whether to run the node in the background.
-    </ParamField>
-    <ParamField path="--update-client" type="string" default="true">
-      Whether to update the IBC clients on the rollup before starting the relayer.
-      
-      Valid values are `true` and `false`.
-    </ParamField>
-  </Tab>
-  <Tab title="Stop">
+  </Step>
+
+  <Step title="Copy Configuration File">
+    Move the generated configuration file to the Rapid relayer directory:
+
     ```bash
-    weave relayer stop
+    cp ~/.relayer/config.json ./config.json
     ```
-  </Tab>
-  <Tab title="Restart">
+  </Step>
+
+  <Step title="Start the Relayer">
+    Launch the relayer with the configuration:
+
     ```bash
-    weave relayer restart
+    npm start
     ```
-  </Tab>
-  <Tab title="View logs">
-    ```bash
-    weave relayer log
-    ```
-    **Available Flags**
-    <ParamField path="-n" type="number" default="100">
-      The number of lines to display from the end of the logs.
-    </ParamField>
-  </Tab>
-</Tabs>
+  </Step>
+</Steps>
 
 ## Help
 
-To see all the available commands: 
+To see all the available commands:
 ```bash
 weave relayer --help
 ```
