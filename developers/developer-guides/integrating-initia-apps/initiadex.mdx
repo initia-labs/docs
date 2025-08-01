@@ -117,7 +117,7 @@ public entry fun provide_liquidity_script(
 ```
 - `pair`: The metadata or object address of pair.
 - `coin_a_amount_in` and `coin_b_amount_in`: Amount of token provided for `coin_a` and `coin_b`.
-- `min_liquidity`: Minimum amout of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
+- `min_liquidity`: Minimum amount of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
 
 
 <Tabs>
@@ -186,7 +186,7 @@ public entry fun provide_liquidity_script(
 
 ### Single Asset Provide Liquidity
 
-Instead of creating a pair, the user can provide a pool of only one token. Internally, the token will be swapped to another token and provide liquidity, so there can be fee and slippage in occurance. The Move function interface is as follows:
+Instead of creating a pair, the user can provide a pool of only one token. Internally, the token will be swapped to another token and provide liquidity, so there can be fee and slippage in occurrence. The Move function interface is as follows:
 
 ```move
 public entry fun single_asset_provide_liquidity_script(
@@ -201,7 +201,7 @@ public entry fun single_asset_provide_liquidity_script(
 - `pair`: The metadata or object address of pair.
 - `provide_coin`: The metadata of the provided coin.
 - `amount_in`: The amount of provided coin.
-- `min_liquidity`: Minimum amout of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
+- `min_liquidity`: Minimum amount of liquidity token to receive. In case that the actual value is smaller than `min_liquidity`, the transaction will fail.
 
 <Tabs>
     <Tab title="CLI">
@@ -284,7 +284,7 @@ public entry fun withdraw_liquidity_script(
 
 - `pair`: The metadata or object address of pair.
 - `liquidity`: Amount of liquidity token. 
-- `min_coin_a_amount` and `min_coin_b_amount` : Minimum amout of `coin_a` or `coin_b` to receive. In case that the actual value is smaller than `min_coin_a_amount` or `min_coin_b_amount`, the transaction will fail.
+- `min_coin_a_amount` and `min_coin_b_amount` : Minimum amount of `coin_a` or `coin_b` to receive. In case that the actual value is smaller than `min_coin_a_amount` or `min_coin_b_amount`, the transaction will fail.
 
 
 <Tabs>
@@ -548,7 +548,7 @@ To delegate your LP tokens to a validator, you need to whitelist the LP token fi
 
     async function whitelistLP(lpMetadata: string) {
         const msgWhiteList = new MsgWhitelist(
-            'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+            'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
             AccAddress.fromHex(lpMetadata),                // metadata
             '1000000000000000000'                          // weight for reward (10^18)
         )
@@ -767,7 +767,7 @@ async function createPairScript(
 
 async function whitelistLP(lpMetadata: string) {
   const msgWhiteList = new MsgWhitelist(
-    'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // autority
+    'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
     AccAddress.fromHex(lpMetadata),                // metadata
     '1000000000000000000'                          // weight for reward (10^18)
   )
