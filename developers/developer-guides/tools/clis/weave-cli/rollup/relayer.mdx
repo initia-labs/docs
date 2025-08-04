@@ -2,9 +2,7 @@
 title: Running IBC Relayer
 ---
 
-An IBC relayer is a software component that facilitates communication between two distinct blockchain networks that support the Inter-Blockchain Communication (IBC) protocol.
-
-It is required for built-in oracle, Minitswap, and other cross-chain services to function with your rollup.
+An IBC relayer is a software component that facilitates communication between two distinct blockchain networks that support the Inter-Blockchain Communication (IBC) protocol. It is required for built-in oracle, Minitswap, and other cross-chain services to function with your rollup.
 
 Weave currently only supports Rapid relayer configuration generation. It will support running the rapid relayer directly in the future. For more detailed information about Rapid relayer, see the [Rapid relayer documentation](https://github.com/initia-labs/rapid-relayer).
 
@@ -14,9 +12,7 @@ Weave only supports IBC relayer setup between Initia L1 and Interwoven Rollups. 
 
 ## Setting up
 
-<Warning>
-Weave v0.3.0 or later is required. You can upgrade to the latest version by running `weave upgrade`.
-</Warning>
+For this guide, you'll need Weave v0.3.0 or newer. You can check your Weave version by running `weave version`. If you need to upgrade, run `weave upgrade`.
 
 ```bash
 weave relayer init
