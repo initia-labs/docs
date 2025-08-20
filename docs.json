@@ -244,15 +244,26 @@
                 "group": "Frontend",
                 "icon": "desktop",
                 "pages": [
-                  "developers/developer-guides/frontend/initia-wallet-widget",
                   {
                     "group": "Initia Wallet Widget",
                     "pages": [
                       "developers/developer-guides/frontend/widget/introduction",
                       "developers/developer-guides/frontend/widget/getting-started",
                       "developers/developer-guides/frontend/widget/migrating-to-v2",
-                      "developers/developer-guides/frontend/widget/evm-integration",
-                      "developers/developer-guides/frontend/widget/reference"
+                      {
+                        "group": "Integration",
+                        "pages": [
+                          "developers/developer-guides/frontend/widget/integration/integration-evm",
+                          "developers/developer-guides/frontend/widget/integration/integration-rainbowkit"
+                        ]
+                      },
+                      {
+                        "group": "Reference",
+                        "pages": [
+                          "developers/developer-guides/frontend/widget/reference/interwovenkit-provider",
+                          "developers/developer-guides/frontend/widget/reference/useinterwovenkit"
+                        ]
+                      }
                     ]
                   }
                 ]
