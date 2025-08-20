@@ -1,0 +1,170 @@
+---
+title: Getting Started
+---
+
+Integrate Initia Wallet into your React application using InterwovenKit.
+
+# Quick Start
+
+Clone the prebuilt example to get started quickly:
+
+```bash
+git clone https://github.com/initia-labs/examples.git
+git checkout -t origin/feature/interwovenkit-react@2.0.0-rc.5 # TEMPORARY UNTIL RELEASE
+cd examples/frontend/interwovenkit-react
+npm i
+npm run dev
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000/).
+
+Alternatively, you can manually integrate Initia Wallet into your existing project.
+
+# Manual Setup
+
+### Installation
+
+Install `@initia/interwovenkit-react` along with its peer dependencies:
+
+```sh npm
+npm i @initia/interwovenkit-react wagmi viem @tanstack/react-query
+```
+
+```sh yarn
+yarn add @initia/interwovenkit-react wagmi viem @tanstack/react-query
+```
+
+```sh pnpm
+pnpm add @initia/interwovenkit-react wagmi viem @tanstack/react-query
+```
+
+```sh bun
+bun add @initia/interwovenkit-react wagmi viem @tanstack/react-query
+```
+
+<Warning>
+  If you are using `pnpm` or `bun` as your package manager, you may need to install `zod` explicitly to resolve dependencies.
+</Warning>
+
+### **Configure Providers**
+
+Wrap your app with providers:
+
+```tsx
+// providers.tsx
+"use client"
+
+import { PropsWithChildren, useEffect } from "react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+const queryClient = new QueryClient()
+
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    // Inject styles into the shadow DOM used by Initia Wallet
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">{children}</InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+Then wrap your application root:
+
+```tsx
+// layout.tsx
+import Providers from "./providers"
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+### Basic Example
+
+Connect the wallet, check the balance, and send a transaction:
+
+```tsx
+// page.tsx
+"use client"
+
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+import { truncate } from "@initia/utils"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function Home() {
+  const { address, username, openConnect, openWallet, openBridge, requestTxSync, waitForTxConfirmation } =
+    useInterwovenKit()
+
+  const send = async () => {
+    const messages = [
+      {
+        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+        value: MsgSend.fromPartial({
+          fromAddress: address,
+          toAddress: address,
+          amount: [{ amount: "1000000", denom: "uinit" }],
+        }),
+      },
+    ]
+
+    const transactionHash = await requestTxSync({ messages })
+    console.log("Transaction sent:", transactionHash)
+
+    await waitForTxConfirmation({ txHash: transactionHash })
+    console.log("Transaction confirmed:", transactionHash)
+  }
+  
+  const ETH = "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954"
+  const USDC = "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4"
+
+  const bridgeTransferDetails = {
+    srcChainId: "interwoven-1",
+    srcDenom: ETH,
+    dstChainId: "interwoven-1",
+    dstDenom: USDC,
+  }
+  
+  if (!address) {
+    return <button onClick={openConnect}>Connect</button>
+  }
+
+  return (
+    <>
+      <button onClick={send}>Send</button>
+      <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
+      <button onClick={openWallet}>{truncate(username ?? address)}</button>
+    </>
+  )
+}
+```
+
+### Additional Resources
+
+Following the steps above is enough to configure and use Initia Wallet. For more advanced use cases, refer to the following:
+
+- [Integration EVM](https://www.notion.so/Integration-EVM-24786c34856f8141870bf602dbc0abb7?pvs=21)
+- [Integration RainbowKit](https://www.notion.so/Integration-RainbowKit-24786c34856f81efa9cbec0c6a8da9af?pvs=21)
+- [InterwovenKitProvider](https://www.notion.so/Reference-InterwovenKitProvider-24786c34856f81139ac6c440d87ad86f?pvs=21)
+- [useInterwovenKit](https://www.notion.so/Reference-useInterwovenKit-24786c34856f817f8c97eeb08ce524b4?pvs=21)

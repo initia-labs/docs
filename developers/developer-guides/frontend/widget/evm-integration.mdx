@@ -1,0 +1,231 @@
+---
+title: EVM Integration
+---
+
+
+If your chain is EVM-based, point [wagmi](https://wagmi.sh/) at your own network instead of Ethereum mainnet. This lets you use wagmi to talk directly to your EVM chain, while reserving Initia Wallet for viewing interwoven rollup balances or bridging.
+
+<Info>
+  If your chain is not EVM-based, you can leave default chain set to mainnet. Initia Wallet won’t connect to Ethereum itself. It only borrows an arbitrary signer to sign amino messages.
+</Info>
+
+### Configure Providers
+
+```tsx
+// providers.tsx
+"use client"
+
+import { PropsWithChildren, useEffect } from "react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+const minievm = {
+  id: 4303131403034904,
+  name: "Minievm",
+  nativeCurrency: { name: "GAS", symbol: "GAS", decimals: 18 },
+  rpcUrls: { default: { http: ["https://json-rpc.minievm-2.initia.xyz"] } },
+}
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [minievm],
+  transports: { [minievm.id]: http() },
+})
+const queryClient = new QueryClient()
+
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    // Inject styles into the shadow DOM used by Initia Wallet
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider {...TESTNET} defaultChainId="minievm-2">
+          {children}
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+### Basic Example
+
+To follow the example, install `viem` by running:
+
+```bash
+pnpm add viem
+```
+
+Here’s a minimal React component that uses wagmi’s `useSendTransaction` hook to send a simple value transfer on your custom EVM chain:
+
+```tsx
+// page.tsx
+"use client"
+
+import { parseEther } from "viem"
+import { useAccount, useChainId, useSendTransaction, useSwitchChain } from "wagmi"
+import { truncate, useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function Home() {
+  const chainId = useChainId()
+  const { address } = useAccount()
+  const { switchChainAsync } = useSwitchChain()
+  const { sendTransactionAsync } = useSendTransaction()
+  const { username, openConnect, openWallet, openBridge } = useInterwovenKit()
+
+  const send = async () => {
+    await switchChainAsync({ chainId })
+    const transactionHash = await sendTransactionAsync({ to: address, value: parseEther("0.01"), chainId: chainId })
+    console.log("Transaction sent:", transactionHash)
+  }
+
+  const bridgeTransferDetails = {
+    srcChainId: "interwoven-1",
+    srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
+    dstChainId: "interwoven-1",
+    dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
+  }
+
+  if (!address) {
+    return <button onClick={openConnect}>Connect</button>
+  }
+
+  return (
+    <>
+      <button onClick={send}>Send</button>
+      <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
+      <button onClick={openWallet}>{truncate(username ?? address)}</button>
+    </>
+  )
+}
+```
+
+## RainbowKit
+
+If you’re already using [RainbowKit](https://rainbowkit.com/) (which is built on [wagmi](https://wagmi.sh/)), you can drop it in as the UI for Initia Wallet. Initia Wallet uses wagmi connectors under the hood, so swapping in RainbowKit only affects the connect UI. You get all Initia features exactly as before.
+
+### Configure Providers
+
+To install RainbowKit, use the following command:
+
+```bash
+pnpm add @rainbow-me/rainbowkit
+```
+
+Wrap your providers in `RainbowKitProvider`:
+
+```tsx
+// providers.tsx
+"use client"
+
+import { PropsWithChildren, useEffect } from "react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit"
+import "@rainbow-me/rainbowkit/styles.css"
+import { initiaPrivyWallet, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Recommended",
+      wallets: [initiaPrivyWallet],
+    },
+  ],
+  {
+    appName: "Privy",
+    projectId: "Demo",
+  }
+)
+
+const wagmiConfig = createConfig({
+  connectors,
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+const queryClient = new QueryClient()
+
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    // Inject styles into the shadow DOM used by Initia Wallet
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <RainbowKitProvider>
+          <InterwovenKitProvider defaultChainId="interwoven-1">{children}</InterwovenKitProvider>
+        </RainbowKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+
+```
+
+<Info>
+  We only provide the basic setup here. If you want to further customize RainbowKit, you should visit https://rainbowkit.com/docs.
+</Info>
+
+### Basic Example
+
+```tsx
+// page.tsx
+"use client"
+
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
+import { truncate, useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function Home() {
+  const { address, username, openWallet, openBridge, requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+
+  const send = async () => {
+    const messages = [
+      {
+        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+        value: MsgSend.fromPartial({
+          fromAddress: address,
+          toAddress: address,
+          amount: [{ amount: "1000000", denom: "uinit" }],
+        }),
+      },
+    ]
+
+    const transactionHash = await requestTxSync({ messages })
+    console.log("Transaction sent:", transactionHash)
+
+    await waitForTxConfirmation({ txHash: transactionHash })
+    console.log("Transaction confirmed:", transactionHash)
+  }
+
+  const bridgeTransferDetails = {
+    srcChainId: "interwoven-1",
+    srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
+    dstChainId: "interwoven-1",
+    dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
+  }
+
+  if (!address) {
+    return <button onClick={openConnect}>Connect</button> // [\!code --]
+    return <ConnectButton /> // [\!code ++]
+  }
+
+  return (
+    <>
+      <button onClick={send}>Send</button>
+      <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
+      <button onClick={openWallet}>{truncate(username ?? address)}</button>
+    </>
+  )
+}
+```
+
+That’s it! Only the connect UI changes. Everything else (hooks, messages, transactions) works the same. You can swap in any wagmi-compatible wallet UI library in this same way.

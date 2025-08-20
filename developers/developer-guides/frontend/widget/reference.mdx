@@ -1,0 +1,245 @@
+---
+title: Reference
+---
+
+## InterwovenKitProvider
+
+### Props
+
+- `defaultChainId?: string`
+
+The default chain ID for wallet connection (registered in [initia-registry](https://github.com/initia-labs/initia-registry/)). Defaults to `interwoven-1`.
+
+```tsx
+export default function Providers() {
+  return (
+    <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+- `customChain?: Chain`
+
+Custom chain configuration when your chain is not registered in [initia-registry](https://github.com/initia-labs/initia-registry/).
+
+```tsx
+import { Chain } from "@initia/initia-registry-types"
+import { ChainSchema } from "@initia/initia-registry-types/zod"
+import { InterwovenKit } from "@initia/interwovenkit-react"
+
+const customChain: Chain = ChainSchema.parse({
+  chain_id: "YOUR_CHAIN_ID",
+  chain_name: "YOUR_CHAIN_NAME",
+  apis: {
+    rpc: [{ address: "YOUR_RPC_URL" }],
+    rest: [{ address: "YOUR_LCD_URL" }],
+  },
+  fees: {
+    fee_tokens: [{ denom: "YOUR_FEE_DENOM", fixed_min_gas_price: 0.015 }],
+  },
+  bech32_prefix: "init",
+  network_type: "mainnet",
+})
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID" customChain={customChain}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+- `theme?: "light" | "dark"`
+
+UI theme preference. Defaults to `dark`.
+
+```tsx
+export default function Providers() {
+  return (
+    <InterwovenKitProvider theme="light">
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+- `protoTypes?: Iterable<[string, GeneratedType]>`
+
+Protobuf message types for custom transaction signing. Only required when using custom message types not included in default Cosmos or Initia modules.
+
+```tsx
+import type { GeneratedType } from "@cosmjs/proto-signing"
+import { MsgCustomAction } from "./codec/myapp/tx"
+
+const protoTypes = [
+  ["/myapp.MsgCustomAction", MsgCustomAction],
+] as const
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider protoTypes={protoTypes}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+- `aminoConverters?: AminoConverters`
+
+Amino converters for encoding/decoding custom messages. Only required when using custom Amino-compatible messages not covered by default Cosmos or Initia converters.
+
+```tsx
+import type { AminoConverters } from "@cosmjs/stargate"
+
+const aminoConverters: AminoConverters = {
+  "/myapp.MsgCustomAction": {
+    aminoType: "myapp/MsgCustomAction",
+    toAmino: (msg) => ({
+      creator: msg.creator,
+      data: msg.data,
+    }),
+    fromAmino: (amino) => ({
+      creator: amino.creator,
+      data: amino.data,
+    }),
+  },
+}
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider aminoConverters={aminoConverters}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### Usage on Testnet
+
+The values below are provided for Initia’s infrastructure and do not need to be set when configuring a rollup:
+
+- `registryUrl?: string`
+- `routerApiUrl?: string`
+- `usernamesModuleAddress?: string`
+
+On testnet, these endpoints must point to the testnet versions. To simplify this, the kit exports a `TESTNET` constant. Pass it as top-level props:
+
+```tsx
+// providers.tsx
+import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider {...TESTNET}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+This automatically configures `registryUrl`, `routerApiUrl`, and `usernamesModuleAddress` for the testnet environment.
+
+<Warning>
+  However, when switching between the testnet and mainnet, please clear your
+  `localStorage`. Since interwovenkit stores chain information in
+  `localStorage`, previously stored values may cause errors. This behavior may be
+  improved in future updates.
+</Warning>
+
+
+## useInterwovenKit
+
+### Addresses
+
+- `address: string` Current address in either Bech32 or hex format, depending on the configured `minitia` type.
+- `initiaAddress: string` Bech32-formatted Initia wallet address of the connected account.
+- `hexAddress: string` Hex-encoded Ethereum-compatible address of the connected account.
+- `username?: string | null` Optional username linked to the account.
+
+
+```tsx
+export default function Home() {
+  const { address, initiaAddress, hexAddress, username } = useInterwovenKit()
+
+  return (
+    <>
+      <div>{address}</div>
+      <div>{initiaAddress}</div>
+      <div>{hexAddress}</div>
+      <div>{username}</div>
+    </>
+  )
+}
+```
+
+### UI Methods
+
+- `openConnect(): void` Opens a drawer for connecting an external wallet.
+- `openWallet(): void` Opens the main wallet drawer showing balances for the connected account.
+- `openBridge(defaultValues: Partial<BridgeFormValues>): void`: Opens the bridge drawer to onboard assets. `BridgeFormValues` interface:
+
+```tsx
+interface BridgeFormValues {
+  srcChainId?: string
+  srcDenom?: string
+  dstChainId?: string
+  dstDenom?: string
+  quantity?: string // Refers to the value entered by the user. For example, if you want to set 1 INIT as the initial bridge value, use "1" instead of "1000000".
+}
+```
+
+Example: 
+
+```tsx
+export default function Home() {
+  const { openConnect, openWallet, openBridge } = useInterwovenKit()
+
+  return (
+    <>
+      <button onClick={openConnect}>Connect</button>
+      <button onClick={openWallet}>Wallet</button>
+      <button onClick={() => openBridge({ srcChainId: 'chain-id', srcDenom: 'denom', dstChainId: 'chain-id', dstDenom: 'denom', quantity: '100' })}>
+        Bridge
+      </button>
+    </>
+  )
+}
+```
+
+### Transactions
+
+Helpers for estimating and sending transactions on a rollup.
+
+- `estimateGas` Estimates gas needed for a transaction.
+- `requestTxBlock` Signs, broadcasts, and waits for block inclusion, returning the full response.
+- `requestTxSync` Signs and broadcasts, returning the transaction hash immediately.
+- `waitForTxConfirmation` Polls for transaction confirmation on-chain.
+
+```tsx
+import type { EncodeObject } from '@cosmjs/proto-signing'
+import type { DeliverTxResponse, IndexedTx } from '@cosmjs/stargate'
+
+interface TxRequest {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string       // defaults to provider's `defaultChainId`
+  gasAdjustment?: number // multiplier for gas estimate (default: 1.4)
+  gas?: number           // if set, uses this value instead of estimate
+  fee?: StdFee | null    // if set, skips fee denom selection UI
+}
+
+interface TxQuery {
+  txHash: string           // hash of the transaction to track
+  chainId?: string         // chain ID where the tx was broadcast
+  timeoutSeconds?: number  // fail if not found within (default: 30)
+  intervalSeconds?: number // polling interval in seconds (default: 1)
+}
+
+declare function estimateGas(txRequest: TxRequest): Promise<number>
+declare function requestTxBlock(txRequest: TxRequest): Promise<DeliverTxResponse>
+declare function requestTxSync(txRequest: TxRequest): Promise<string>
+declare function waitForTxConfirmation(params: TxQuery): Promise<IndexedTx>
+```
