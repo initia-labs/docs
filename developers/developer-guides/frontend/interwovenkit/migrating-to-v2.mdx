@@ -18,18 +18,16 @@ Follow these steps to update your code from v1 (`@initia/react-wallet-widget`) t
     All imports from `@initia/react-wallet-widget` must now come from `@initia/interwovenkit-react`.
   </Step>
   <Step title="Remove SSR Helpers">
-    Remove server-side rendering helpers and CDN scripts.
+    You no longer need SSR helpers or special build settings.
 
-    ```diff
-    - import { ssrHelpers } from "@initia/react-wallet-widget/ssr"
-    - ssrHelpers.injectScripts()
-    ```
+    - Remove any imports from `@initia/react-wallet-widget/ssr`.
+    - Remove CDN scripts and `swcMinify: false` settings.
   </Step>
   <Step title="Install Peer Dependencies">
     Install the required peer dependencies:
 
     ```bash
-    pnpm add wagmi viem @tanstack/react-query
+    npm add wagmi viem @tanstack/react-query
     ```
   </Step>
   <Step title="Provider Setup">
@@ -170,11 +168,9 @@ export default function Home() {
 }
 ```
 
-```tsx
 <Warning>
-  Ensure your app is wrapped in <InterwovenKitProvider> at the root
+  Ensure your app is wrapped in `<InterwovenKitProvider>` at the root
 </Warning>
-```
 
 ### Requesting a Transaction
 
@@ -210,11 +206,9 @@ export default function Home() {
 }
 ```
 
-```tsx
 <Info>
   To first get the transaction hash before chain inclusion and later poll for confirmation, combine `requestTxSync()` with `waitForTxConfirmation()`. (See [Basic Example](./getting-started#basic-example))
 </Info>
-```
 
 ## Interoperability with `@initia/initia.js`
 

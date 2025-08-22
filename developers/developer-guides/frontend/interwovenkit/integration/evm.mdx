@@ -1,5 +1,5 @@
 ---
-title: Integration EVM
+title: EVM
 ---
 
 If your chain is EVM-based, point [wagmi](https://wagmi.sh/) at your own network instead of Ethereum mainnet. This lets you use wagmi to talk directly to your EVM chain, while reserving Initia Wallet for viewing interwoven rollup balances or bridging.
@@ -56,7 +56,7 @@ export default function Providers({ children }: PropsWithChildren) {
 To follow the example, install `viem` by running:
 
 ```bash
-pnpm add viem
+npm add viem
 ```
 
 Here’s a minimal React component that uses wagmi’s `useSendTransaction` hook to send a simple value transfer on your custom EVM chain:

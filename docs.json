@@ -245,23 +245,23 @@
                 "icon": "desktop",
                 "pages": [
                   {
-                    "group": "Initia Wallet Widget",
+                    "group": "InterwovenKit",
                     "pages": [
-                      "developers/developer-guides/frontend/widget/introduction",
-                      "developers/developer-guides/frontend/widget/getting-started",
-                      "developers/developer-guides/frontend/widget/migrating-to-v2",
+                      "developers/developer-guides/frontend/interwovenkit/introduction",
+                      "developers/developer-guides/frontend/interwovenkit/getting-started",
+                      "developers/developer-guides/frontend/interwovenkit/migrating-to-v2",
                       {
                         "group": "Integration",
                         "pages": [
-                          "developers/developer-guides/frontend/widget/integration/integration-evm",
-                          "developers/developer-guides/frontend/widget/integration/integration-rainbowkit"
+                          "developers/developer-guides/frontend/interwovenkit/integration/evm",
+                          "developers/developer-guides/frontend/interwovenkit/integration/rainbowkit"
                         ]
                       },
                       {
                         "group": "Reference",
                         "pages": [
-                          "developers/developer-guides/frontend/widget/reference/interwovenkit-provider",
-                          "developers/developer-guides/frontend/widget/reference/useinterwovenkit"
+                          "developers/developer-guides/frontend/interwovenkit/reference/interwovenkit-provider",
+                          "developers/developer-guides/frontend/interwovenkit/reference/useinterwovenkit"
                         ]
                       }
                     ]
