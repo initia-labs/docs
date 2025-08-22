@@ -8,9 +8,28 @@ If you’re already using [RainbowKit](https://rainbowkit.com/) (which is built 
 
 To install RainbowKit, use the following command:
 
-```bash
-pnpm add @rainbow-me/rainbowkit
-```
+<Tabs>
+  <Tab title="npm">
+  ```sh npm
+  npm i @rainbow-me/rainbowkit
+  ```
+  </Tab>
+  <Tab title="yarn">
+  ```sh yarn
+  yarn add @rainbow-me/rainbowkit
+  ```
+  </Tab>
+  <Tab title="pnpm">
+  ```sh pnpm
+  pnpm add @rainbow-me/rainbowkit
+  ```
+  </Tab>
+  <Tab title="bun">
+  ```sh bun
+  bun add @rainbow-me/rainbowkit
+  ```
+  </Tab>
+</Tabs>
 
 Wrap your providers in `RainbowKitProvider`:
 
@@ -57,7 +76,7 @@ export default function Providers({ children }: PropsWithChildren) {
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
         <RainbowKitProvider>
-          <InterwovenKitProvider defaultChainId="interwoven-1">{children}</InterwovenKitProvider>
+          <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">{children}</InterwovenKitProvider>
         </RainbowKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
@@ -103,9 +122,9 @@ export default function Home() {
   }
 
   const bridgeTransferDetails = {
-    srcChainId: "interwoven-1",
+    srcChainId: "SOURCE_CHAIN_ID",
     srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
-    dstChainId: "interwoven-1",
+    dstChainId: "DESTINATION_CHAIN_ID",
     dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
   }
 

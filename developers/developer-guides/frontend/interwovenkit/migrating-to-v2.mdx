@@ -26,9 +26,29 @@ Follow these steps to update your code from v1 (`@initia/react-wallet-widget`) t
   <Step title="Install Peer Dependencies">
     Install the required peer dependencies:
 
-    ```bash
-    npm add wagmi viem @tanstack/react-query
-    ```
+    <Tabs>
+      <Tab title="npm">
+      ```sh npm
+      npm i wagmi viem @tanstack/react-query
+      ```
+      </Tab>
+      <Tab title="yarn">
+      ```sh yarn
+      yarn add wagmi viem @tanstack/react-query
+      ```
+      </Tab>
+      <Tab title="pnpm">
+      ```sh pnpm
+      pnpm add wagmi viem @tanstack/react-query
+      ```
+      </Tab>
+      <Tab title="bun">
+      ```sh bun
+      bun add wagmi viem @tanstack/react-query
+      ```
+      </Tab>
+    </Tabs>
+
   </Step>
   <Step title="Provider Setup">
     ```tsx
@@ -72,13 +92,13 @@ Follow these steps to update your code from v1 (`@initia/react-wallet-widget`) t
 Replace `<WalletWidgetProvider>` with `<InterwovenKitProvider>`:
 
 ```diff
-- <WalletWidgetProvider chainId="interwoven-1" />
-+ <InterwovenKitProvider defaultChainId="interwoven-1" />
+- <WalletWidgetProvider chainId="YOUR_CHAIN_ID" />
++ <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID" />
 ```
 
 ```diff
-- <WalletWidgetProvider customLayer={chain} />
-+ <InterwovenKitProvider customChain={chain} />
+- <WalletWidgetProvider customLayer={YOUR_CHAIN_ID} />
++ <InterwovenKitProvider customChain={YOUR_CHAIN_ID} />
 ```
 
 Default bridge options have moved to the `openBridge` method:
@@ -88,7 +108,7 @@ Default bridge options have moved to the `openBridge` method:
 import { createRoot } from "react-dom/client"
 
 export default function Providers() {
-  return <WalletWidgetProvider bridgeOptions={{ defaultDstChainId: "interwoven-1", defaultDstAssetDenom: "uinit" }} />
+  return <WalletWidgetProvider bridgeOptions={{ defaultDstChainId: "YOUR_CHAIN_ID", defaultDstAssetDenom: "YOUR_DENOM" }} />
 }
 ```
 
@@ -100,7 +120,7 @@ export default function Home() {
   const { openBridge } = useInterwovenKit()
 
   return (
-    <button onClick={() => openBridge({ dstChainId: "interwoven-1", dstDenom: "uinit" })}>
+    <button onClick={() => openBridge({ dstChainId: "YOUR_CHAIN_ID", dstDenom: "YOUR_DENOM" })}>
       Bridge
     </button>
   )
@@ -182,7 +202,7 @@ export default function Home() {
   const { requestTx } = useWallet()
 
   const send = async () => {
-    const transactionHash = await requestTx({ messages: [] }, { chainId: "interwoven-1" })
+    const transactionHash = await requestTx({ messages: [] }, { chainId: "YOUR_CHAIN_ID" })
     console.log(transactionHash)
   }
 
@@ -198,7 +218,7 @@ export default function Home() {
   const { requestTxBlock } = useInterwovenKit()
 
   const send = async () => {
-    const { transactionHash } = await requestTxBlock({ messages: [], chainId: "interwoven-1" })
+    const { transactionHash } = await requestTxBlock({ messages: [], chainId: "YOUR_CHAIN_ID" })
     console.log(transactionHash)
   }
 
@@ -236,7 +256,7 @@ export default function Home() {
     ]
 
     const messages = msgs.map(toEncodeObject)
-    const { transactionHash } = await requestTxBlock({ messages, chainId: "interwoven-1" })
+    const { transactionHash } = await requestTxBlock({ messages, chainId: "YOUR_CHAIN_ID" })
     console.log(transactionHash)
   }
 

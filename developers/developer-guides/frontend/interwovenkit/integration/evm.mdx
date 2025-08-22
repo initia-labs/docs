@@ -55,9 +55,29 @@ export default function Providers({ children }: PropsWithChildren) {
 
 To follow the example, install `viem` by running:
 
-```bash
-npm add viem
-```
+
+<Tabs>
+  <Tab title="npm">
+  ```sh npm
+  npm i viem
+  ```
+  </Tab>
+  <Tab title="yarn">
+  ```sh yarn
+  yarn add viem
+  ```
+  </Tab>
+  <Tab title="pnpm">
+  ```sh pnpm
+  pnpm add viem
+  ```
+  </Tab>
+  <Tab title="bun">
+  ```sh bun
+  bun add viem
+  ```
+  </Tab>
+</Tabs>
 
 Here’s a minimal React component that uses wagmi’s `useSendTransaction` hook to send a simple value transfer on your custom EVM chain:
 
@@ -83,9 +103,9 @@ export default function Home() {
   }
 
   const bridgeTransferDetails = {
-    srcChainId: "interwoven-1",
+    srcChainId: "SOURCE_CHAIN_ID",
     srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
-    dstChainId: "interwoven-1",
+    dstChainId: "DESTINATION_CHAIN_ID",
     dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
   }
 
