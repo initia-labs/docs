@@ -118,7 +118,7 @@
           },
           {
             "group": "Tooling",
-            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
+            "pages": ["home/tools/wallet", "home/tools/bridge"]
           }
         ]
       },
