@@ -1,0 +1,29 @@
+---
+title: Next Steps
+---
+
+## Building on Your Rollup
+
+Once your rollup node is launched and both the OPinit bots and IBC Relayer are configured, you can start integrating it with Initia tools. The resources below will help you get started:
+
+- **VM-specific tutorials**: Learn how to deploy contracts and interact with your rollup on each VM. 
+  - [EVM tutorials](/developers/developer-guides/vm-specific-tutorials/evm)
+  - [MoveVM tutorials](/developers/developer-guides/vm-specific-tutorials/movevm)
+  - [WasmVM tutorials](/developers/developer-guides/vm-specific-tutorials/wasmvm)
+- **[Oracle](/developers/developer-guides/tools/oracles/connect/fetching-prices-from-api/getting-single-asset-price)**: Integrate oracles to fetch off-chain token price data and use it in your rollup applications.
+- **[Indexer](/developers/developer-guides/tools/indexers/transactions-by-account)**: Use the Initia Indexer to query and retrieve data from your rollup.
+- **[SDKs](/developers/developer-guides/tools/sdks)**: Explore the Initia SDKs for building applications on your rollup.
+
+## Going Live
+
+<Note>
+  If you are launching a rollup for testing purposes, you can skip this section. When your rollup is ready for production and you want it to be publicly visible in the Initia ecosystem, contact the Initia team first via [Discord](https://discord.gg/initia) by raising a ticket. We will walk you through the registry and bridge integration steps described below.
+</Note>
+
+To make your rollup node visible to the Initia ecosystem, register it in the [Initia Registry](https://github.com/initia-labs/initia-registry) and the [Skip Go Registry](https://github.com/initia-labs/skip-go-registry). To list your rollup node on **InitiaScan** and the **Initia Wallet widget**, follow these steps:
+
+- **[Register Initia Registry](/nodes-and-rollups/deploying-rollups/initia-registry)**
+
+For bridge integration, register your rollup in Initia Registry first, then open a PR that adds your node information to **skip-go-registry** repository.
+
+- **[Skip Go Registry Repository](https://github.com/skip-mev/skip-go-registry)**
