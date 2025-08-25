@@ -10,10 +10,33 @@ Follow these steps to update your code from v1 (`@initia/react-wallet-widget`) t
   <Step title="Install and Imports">
     Change the package name and update imports.
 
-    ```diff
-    - pnpm add @initia/react-wallet-widget
-    + pnpm add @initia/interwovenkit-react
-    ```
+    <Tabs>
+      <Tab title="npm">
+      ```diff
+      - npm install @initia/react-wallet-widget
+      + npm install @initia/interwovenkit-react
+      ```
+      </Tab>
+      <Tab title="yarn">
+      ```diff
+      - yarn add @initia/react-wallet-widget
+      + yarn add @initia/interwovenkit-react
+      ```
+      </Tab>
+      <Tab title="pnpm">
+      ```diff
+      - pnpm add @initia/react-wallet-widget
+      + pnpm add @initia/interwovenkit-react
+      ```
+      </Tab>
+      <Tab title="bun">
+      ```diff
+      - bun add @initia/react-wallet-widget
+      + bun add @initia/interwovenkit-react
+      ```
+      </Tab>
+    </Tabs>
+    
 
     All imports from `@initia/react-wallet-widget` must now come from `@initia/interwovenkit-react`.
   </Step>
@@ -29,7 +52,7 @@ Follow these steps to update your code from v1 (`@initia/react-wallet-widget`) t
     <Tabs>
       <Tab title="npm">
       ```sh npm
-      npm i wagmi viem @tanstack/react-query
+      npm install wagmi viem @tanstack/react-query
       ```
       </Tab>
       <Tab title="yarn">
