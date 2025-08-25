@@ -1,0 +1,215 @@
+---
+title: Update Gas Price on EVM Rollup
+---
+
+## Overview
+
+You may want to use an ERC-20 token as the fee token instead of the tokens issued by the Cosmos Bank module. To do this, you need to update the chain parameters of the EVM module and set the fee token to the desired ERC-20 token. This change must be made using a admin account with the authority to modify chain parameters.
+
+<Warning>
+The deployed ERC20 token must inherit the `InitiaERC20` contract.
+</Warning>
+
+## Prerequisites
+
+- [NodeJS](https://nodejs.org)
+- Install [minitiad](/developers/developer-guides/tools/clis/minitiad-cli/introduction.mdx)
+
+## Update Chain Parameters
+
+#### 1. Set Up Operator Key
+
+Add your `operator` key to the local keyring. This key will be used to sign transactions.
+
+```bash
+minitiad keys add operator --recover --key-type secp256k1 --coin-type 118
+```
+
+- `--recover`: Recovers a key from a mnemonic phrase.
+- `--key-type secp256k1`: Common key type used in Cosmos SDK-based chains.
+- `--coin-type 118`: Standard coin type for Cosmos-based chains.
+
+#### 2. Create Update Messages
+
+You need to create messages for both:
+
+- `opchild.v1.MsgUpdateParams`
+- `evm.v1.MsgUpdateParams`
+
+You can get the current `opchild` and `evm` parameters by querying:
+
+```bash
+curl ${REST_ENDPOINT}/opinit/opchild/v1/params
+
+# 📌 Example: https://rest-yominet-1.anvil.asia-southeast.initia.xyz/opinit/opchild/v1/params
+# {
+#   "params": {
+#     "max_validators": 100,
+#     "historical_entries": 10000,
+#     "min_gas_prices": [
+#       {
+#         "denom": "GAS",
+#         "amount": "30000000.000000000000000000"
+#       }
+#     ],
+#     "bridge_executors": [
+#       "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam"
+#     ],
+#     "admin": "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
+#     "fee_whitelist": [
+#       "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
+#       "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
+#       "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam",
+#       "init1fvhhqk3tvv08vd5gmsp45x8tkzhcwv3ly8kn78"
+#     ],
+#     "hook_max_gas": "3000000"
+#   }
+# }
+
+curl ${REST_ENDPOINT}/minievm/evm/v1/params
+
+# 📌 Example: https://rest-yominet-1.anvil.asia-southeast.initia.xyz/minievm/evm/v1/params
+# {
+#   "params": {
+#     "extra_eips": [],
+#     "allowed_publishers": [],
+#     "allow_custom_erc20": true,
+#     "allowed_custom_erc20s": [],
+#     "fee_denom": "GAS",
+#     "gas_refund_ratio": "0.500000000000000000",
+#     "num_retain_block_hashes": "0"
+#   }
+# }
+```
+
+Create a JSON file named `messages.json` with the following content:
+
+```json
+// messages.json
+{
+  "messages": [
+    {
+      "@type": "/opinit.opchild.v1.MsgUpdateParams",
+      "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
+      "params": {
+        "max_validators": 100,
+        "historical_entries": 10000,
+        "min_gas_prices": [
+          {
+            "denom": "umin",
+            "amount": "1000000000" 
+          }
+        ],
+        "bridge_executors": [
+          "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam"
+        ],
+        "admin": "init10g75rf30pwpkgu68yr8uh4gm824xajg09233xr",
+        "fee_whitelist": [
+          "init1ppzptg22xx259zzpgpejphzcvjmc7r2ff984c3",
+          "init1jaz6hxkn8cx9dxjwrjwy4v2qs2u09pf25ztcam",
+          "init1fvhhqk3tvv08vd5gmsp45x8tkzhcwv3ly8kn78"
+        ],
+        "hook_max_gas": "3000000"
+      }
+    },
+    {
+      "@type": "/minievm.evm.v1.MsgUpdateParams",
+      "authority": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
+      "params": {
+        "extra_eips": [],
+        "allowed_publishers": [],
+        "allow_custom_erc20": true,
+        "allowed_custom_erc20s": [],
+        "fee_denom": "umin",
+        "gas_refund_ratio": "0.500000000000000000",
+        "num_retain_block_hashes": "256"
+      }
+    }
+  ]
+}
+```
+
+- Message 1: `/opchild.v1.MsgUpdateParams`
+
+| Field                        | Explanation                                                      |
+|------------------------------|------------------------------------------------------------------|
+| max_validators               | Max number of active validators                                  |
+| historical_entries           | Number of historical blocks to retain                            |
+| min_gas_prices.denom         | Native token denomination                                        |
+| min_gas_prices.amount        | Minimum gas price in smallest unit                               |
+| bridge_executors             | Allowed bridge executor address                                  |
+| admin                        | Admin address with authority to update params                    |
+| fee_whitelist                | Addresses exempted from fees                                     |
+| hook_max_gas                 | Maximum gas for execution hooks                                  |
+
+
+- Message 2: `/evm.v1.MsgUpdateParams`
+
+| Field                        | Explanation                                                      |
+|------------------------------|------------------------------------------------------------------|
+| extra_eips                   | Additional Ethereum Improvement Proposals to enable              |
+| allowed_publishers           | List of allowed smart contract publishers                        |
+| allow_custom_erc20           | Whether to allow custom ERC-20 tokens                            |
+| allowed_custom_erc20s        | Whitelisted custom ERC-20 contracts                              |
+| fee_denom                    | Fee denomination used by EVM                                     |
+| gas_refund_ratio             | Refund ratio on unused gas                                       |
+| num_retain_block_hashes      | Number of recent block hashes to retain                          |
+
+<Tip>
+`authority` address will be a opchild module account regardless of the field you want to update.
+To get the authority address, you can use the following command:
+
+```bash
+curl ${REST_ENDPOINT}/cosmos/auth/v1beta1/module_accounts/opchild
+
+# 📌 Example: https://rest-yominet-1.anvil.asia-southeast.initia.xyz/cosmos/auth/v1beta1/module_accounts/opchild
+# {
+#   "account": {
+#     "@type": "/cosmos.auth.v1beta1.ModuleAccount",
+#     "base_account": {
+#       "address": "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne",
+#       "pub_key": null,
+#       "account_number": "2771",
+#       "sequence": "0"
+#     },
+#     "name": "opchild",
+#     "permissions": [
+#       "minter",
+#       "burner"
+#     ]
+#   }
+# }
+```
+</Tip>
+
+<Warning>
+If you set empty values on the field, it will be set to the empty value, which may cause issues.
+Be careful to set any fields you do not wish to change with their existing values.
+Update your values carefully — especially the `admin` address.
+</Warning>
+
+Save the content above as `messages.json`.
+
+#### 3. Execute the Update Transaction
+
+Submit the parameter update messages using the CLI:
+
+```bash
+minitiad tx opchild execute-messages ./messages.json \
+  --from operator --chain-id yominet-1 \
+  --node https://rpc-yominet-1.anvil.asia-southeast.initia.xyz
+```
+
+#### 4. Verify the Updated Parameters
+
+Once the transaction is successful, verify the updated parameters:
+
+```bash
+minitiad q opchild params \
+  --node https://rpc-yominet-1.anvil.asia-southeast.initia.xyz
+
+minitiad q evm params \
+  --node https://rpc-yominet-1.anvil.asia-southeast.initia.xyz
+```
+
+These queries will return the live parameter state for both modules.

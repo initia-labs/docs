@@ -1,3 +1,32 @@
 ---
 title: Introduction
 ---
+
+For rollup development, use the **minitiad** CLI, which expose rollup-specific functionality.
+
+## Getting Started
+
+Choose the variant that matches your rollup's VM:
+
+| Rollup VM | CLI | Repository |
+|-----------|-----|------------|
+| EVM  | **minitiad**  | https://github.com/initia-labs/minievm  |
+| Wasm | **minitiad** | https://github.com/initia-labs/miniwasm |
+| Move | **minitiad** | https://github.com/initia-labs/minimove |
+
+Then install the *minitiad* CLI.
+
+```bash
+export VERSION=v1.0.0
+git clone https://github.com/initia-labs/minievm.git
+cd minievm
+git checkout $VERSION
+make install
+```
+
+If the installation is successful, you should be able to run the following command:
+
+```bash
+minitiad version
+# v1.0.0
+```
