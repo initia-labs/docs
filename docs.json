@@ -249,19 +249,20 @@
                     "pages": [
                       "developers/developer-guides/frontend/interwovenkit/introduction",
                       "developers/developer-guides/frontend/interwovenkit/getting-started",
-                      "developers/developer-guides/frontend/interwovenkit/migrating-to-v2",
+                      "developers/developer-guides/frontend/interwovenkit/migration",
                       {
                         "group": "Integration",
                         "pages": [
-                          "developers/developer-guides/frontend/interwovenkit/integration/evm",
-                          "developers/developer-guides/frontend/interwovenkit/integration/rainbowkit"
+                          "developers/developer-guides/frontend/interwovenkit/integrations/native",
+                          "developers/developer-guides/frontend/interwovenkit/integrations/evm",
+                          "developers/developer-guides/frontend/interwovenkit/integrations/rainbowkit"
                         ]
                       },
                       {
                         "group": "Reference",
                         "pages": [
-                          "developers/developer-guides/frontend/interwovenkit/reference/interwovenkit-provider",
-                          "developers/developer-guides/frontend/interwovenkit/reference/useinterwovenkit"
+                          "developers/developer-guides/frontend/interwovenkit/references/interwovenkit-provider",
+                          "developers/developer-guides/frontend/interwovenkit/references/useinterwovenkit"
                         ]
                       }
                     ]

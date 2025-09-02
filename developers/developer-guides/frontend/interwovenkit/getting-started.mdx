@@ -1,167 +1,64 @@
 ---
 title: Getting Started
+description: Integrate Initia Wallet into your React application with InterwovenKit
 ---
 
-Integrate Initia Wallet into your React application using InterwovenKit.
+## Overview
 
-## Quick Start
+InterwovenKit is a React library that provides seamless integration with Initia Wallet, enabling users to connect their wallets, manage accounts, and interact with the Initia blockchain directly from your React applications. It offers a complete wallet connection experience with built-in support for transactions, bridging, and account management.
 
-Clone the prebuilt example to get started quickly:
+## New Projects
+
+The fastest way to get started is by cloning our example project:
 
 ```bash
 git clone https://github.com/initia-labs/examples.git
 cd examples/frontend/interwovenkit-react
-npm i
-npm run dev
 ```
 
-The app will be available at [http://localhost:3000](http://localhost:3000/). Alternatively, you can manually integrate Initia Wallet into your existing project.
-
-## Manual Setup
-
-<Steps>
- <Step title="Installation"> 
-  Install `@initia/interwovenkit-react` along with its peer dependencies:
-
-  <Tabs>
-    <Tab title="npm">
-    ```sh npm
-    npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query
-    ```
-    </Tab>
-    <Tab title="yarn">
-    ```sh yarn
-    yarn add @initia/interwovenkit-react wagmi viem @tanstack/react-query
-    ```
-    </Tab>
-    <Tab title="pnpm">
-    ```sh pnpm
-    pnpm add @initia/interwovenkit-react wagmi viem @tanstack/react-query
-    ```
-    </Tab>
-    <Tab title="bun">
-    ```sh bun
-    bun add @initia/interwovenkit-react wagmi viem @tanstack/react-query
-    ```
-    </Tab>
-  </Tabs>
- </Step>
- <Step title="Configure Providers">
-  Wrap your app with providers:
-
-  ```tsx
-  // providers.tsx
-  "use client"
-
-  import { PropsWithChildren, useEffect } from "react"
-  import { createConfig, http, WagmiProvider } from "wagmi"
-  import { mainnet } from "wagmi/chains"
-  import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-  import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
-  import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
-
-  const wagmiConfig = createConfig({
-    connectors: [initiaPrivyWalletConnector],
-    chains: [mainnet],
-    transports: { [mainnet.id]: http() },
-  })
-  const queryClient = new QueryClient()
-
-  export default function Providers({ children }: PropsWithChildren) {
-    useEffect(() => {
-      // Inject styles into the shadow DOM used by Initia Wallet
-      injectStyles(InterwovenKitStyles)
-    }, [])
-
-    return (
-      <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={wagmiConfig}>
-            <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">{children}</InterwovenKitProvider>
-        </WagmiProvider>
-      </QueryClientProvider>
-    )
-  }
+<CodeGroup>
+  ```bash npm
+  npm install
+  npm run dev
   ```
 
-  Then wrap your application root:
-
-  ```tsx
-  // layout.tsx
-  import Providers from "./providers"
-
-  export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-    return (
-      <html>
-        <body>
-          <Providers>{children}</Providers>
-        </body>
-      </html>
-    )
-  }
+  ```bash yarn
+  yarn install
+  yarn dev
   ```
- </Step>
- <Step title="Basic Example">
-  Connect the wallet, check the balance, and send a transaction:
 
-  ```tsx
-  // page.tsx
-  "use client"
-
-  import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-  import { truncate } from "@initia/utils"
-  import { useInterwovenKit } from "@initia/interwovenkit-react"
-
-  export default function Home() {
-    const { address, username, openConnect, openWallet, openBridge, requestTxBlock } = useInterwovenKit()
-
-    const send = async () => {
-      const messages = [
-        {
-          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-          value: MsgSend.fromPartial({
-            fromAddress: address,
-            toAddress: address,
-            amount: [{ amount: "1000000", denom: "uinit" }],
-          }),
-        },
-      ]
-
-      const { transactionHash } = await requestTxBlock({ messages })
-      console.log("Transaction sent:", transactionHash)
-    }
-    
-    const ETH = "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954"
-    const USDC = "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4"
-
-    const bridgeTransferDetails = {
-      srcChainId: "SOURCE_CHAIN_ID",
-      srcDenom: ETH,
-      dstChainId: "DESTINATION_CHAIN_ID",
-      dstDenom: USDC,
-    }
-    
-    if (!address) {
-      return <button onClick={openConnect}>Connect</button>
-    }
-
-    return (
-      <>
-        <button onClick={send}>Send</button>
-        <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
-        <button onClick={openWallet}>{truncate(username ?? address)}</button>
-      </>
-    )
-  }
+  ```bash pnpm
+  pnpm install
+  pnpm dev
   ```
- </Step>
-</Steps>
 
+  ```bash bun
+  bun install
+  bun dev
+  ```
+</CodeGroup>
 
-## Additional Resources
+The app will be available at [http://localhost:3000](http://localhost:3000/). This example demonstrates all core InterwovenKit features and serves as a reference implementation.
 
-Following the steps above is enough to configure and use Initia Wallet. For more advanced use cases, refer to the following:
+## Existing Projects
 
-- [Integration with EVM](./integration/evm)
-- [Integration with RainbowKit](./integration/rainbowkit)
-- [InterwovenKitProvider](./reference/interwovenkit-provider)
-- [useInterwovenKit](./reference/useinterwovenkit)
+<CardGroup>
+  <Card
+    title="Native Integration"
+    icon="wallet"
+    href="/developers/developer-guides/frontend/interwovenkit/integrations/native">
+    Set up InterwovenKit as the default wallet connection option for your application
+  </Card>
+  <Card 
+    title="EVM Integration" 
+    icon="ethereum"
+    href="/developers/developer-guides/frontend/interwovenkit/integrations/evm">
+    Integrate InterwovenKit with an existing EVM application
+  </Card>
+  <Card
+    title="RainbowKit Integration"
+    icon="rainbow"
+    href="/developers/developer-guides/frontend/interwovenkit/integrations/rainbowkit">
+    Integrate InterwovenKit with an existing RainbowKit application
+  </Card>
+</CardGroup>

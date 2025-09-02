@@ -1,0 +1,158 @@
+---
+title: RainbowKit Integration
+---
+
+Replace InterwovenKit's default connect UI with [RainbowKit](https://rainbowkit.com) while preserving all Initia functionality. Since InterwovenKit uses wagmi connectors internally, integrating RainbowKit only changes the wallet connection interface—all other features remain identical.
+
+<Note>
+  This integration is perfect if you're already using RainbowKit in your application or prefer its UI components over the default InterwovenKit interface.
+</Note>
+
+## Overview
+
+RainbowKit integration with InterwovenKit provides:
+
+- **Familiar UI**: Keep using RainbowKit's polished wallet connection interface
+- **Full Compatibility**: All InterwovenKit hooks and features work exactly the same
+- **Easy Migration**: Drop-in replacement for the default connect UI
+- **Customization**: Full access to RainbowKit's theming and customization options
+
+## Integration Steps
+
+<Steps>
+  <Step title="Install RainbowKit">
+    Add RainbowKit to your project dependencies:
+
+    <CodeGroup>
+      ```sh npm
+      npm install @rainbow-me/rainbowkit
+      ```
+
+      ```sh yarn
+      yarn add @rainbow-me/rainbowkit
+      ```
+
+      ```sh pnpm
+      pnpm add @rainbow-me/rainbowkit
+      ```
+
+      ```sh bun
+      bun add @rainbow-me/rainbowkit
+      ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Configure Providers">
+    Update your provider configuration to include RainbowKit:
+
+    ```tsx
+    // providers.tsx
+    "use client"
+
+    import { PropsWithChildren, useEffect } from "react"
+    import { createConfig, http, WagmiProvider } from "wagmi"
+    import { mainnet } from "wagmi/chains"
+    import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+    import { connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit"
+    import "@rainbow-me/rainbowkit/styles.css"
+    import { initiaPrivyWallet, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
+    import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+    const connectors = connectorsForWallets(
+      [
+        {
+          groupName: "Recommended",
+          wallets: [initiaPrivyWallet],
+        },
+      ],
+      {
+        appName: "Your App Name",
+        projectId: "your-project-id",
+      }
+    )
+
+    const wagmiConfig = createConfig({
+      connectors,
+      chains: [mainnet],
+      transports: { [mainnet.id]: http() },
+    })
+
+    const queryClient = new QueryClient()
+
+    export default function Providers({ children }: PropsWithChildren) {
+      useEffect(() => {
+        // Inject styles into the shadow DOM used by Initia Wallet
+        injectStyles(InterwovenKitStyles)
+      }, [])
+
+      return (
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <RainbowKitProvider>
+              <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+                {children}
+              </InterwovenKitProvider>
+            </RainbowKitProvider>
+          </WagmiProvider>
+        </QueryClientProvider>
+      )
+    }
+    ```
+
+    <Warning>
+      Replace `YOUR_CHAIN_ID` with your actual chain ID and update the app configuration values (`appName`, `projectId`) to match your application.
+    </Warning>
+  </Step>
+
+  <Step title="Use RainbowKit Components">
+    Replace InterwovenKit's connect UI with RainbowKit's `ConnectButton`:
+
+    ```tsx
+    // page.tsx
+    "use client"
+
+    import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+    import { ConnectButton } from "@rainbow-me/rainbowkit"
+    import { truncate, useInterwovenKit } from "@initia/interwovenkit-react"
+
+    export default function Home() {
+      const { address, username, openWallet, openBridge, requestTxBlock } = useInterwovenKit()
+
+      const send = async () => {
+        const messages = [
+          {
+            typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+            value: MsgSend.fromPartial({
+              fromAddress: address,
+              toAddress: address,
+              amount: [{ amount: "1000000", denom: "uinit" }],
+            }),
+          },
+        ]
+
+        const { transactionHash } = await requestTxBlock({ messages })
+        console.log("Transaction sent:", transactionHash)
+      }
+
+      const bridgeTransferDetails = {
+        srcChainId: "SOURCE_CHAIN_ID",
+        srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
+        dstChainId: "DESTINATION_CHAIN_ID",
+        dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
+      }
+
+      if (!address) {
+        return <ConnectButton />
+      }
+
+      return (
+        <>
+          <button onClick={send}>Send</button>
+          <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
+          <button onClick={openWallet}>{truncate(username ?? address)}</button>
+        </>
+      )
+    }
+    ```
+  </Step>
+</Steps>

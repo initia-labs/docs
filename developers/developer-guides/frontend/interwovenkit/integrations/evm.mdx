@@ -1,14 +1,25 @@
 ---
-title: EVM
+title: EVM Integration
 ---
 
-If your chain is EVM-based, point [wagmi](https://wagmi.sh/) at your own network instead of Ethereum mainnet. This lets you use wagmi to talk directly to your EVM chain, while reserving Initia Wallet for viewing interwoven rollup balances or bridging.
+## Overview
+
+When working with EVM-based chains, you can configure [wagmi](https://wagmi.sh/) to connect directly to your custom EVM network instead of Ethereum mainnet. This approach allows you to:
+
+- Use wagmi for direct interaction with your EVM chain
+- Leverage Initia Wallet for interwoven rollup balance viewing and bridging
+- Maintain seamless connectivity between different blockchain environments
 
 <Info>
-  If your chain is not EVM-based, you can leave default chain set to mainnet. Initia Wallet won’t connect to Ethereum itself. It only borrows an arbitrary signer to sign amino messages.
+  **Non-EVM chains**: If your chain is not EVM-based, you can leave the default chain set to mainnet. Initia Wallet won't actually connect to Ethereum—it only uses an arbitrary signer to sign amino messages.
 </Info>
 
-## Configure Providers
+## Setup Guide
+
+<Steps>
+<Step title="Configure Providers">
+
+Set up your providers to connect wagmi to your custom EVM chain. This configuration includes your chain details, wagmi config, and the InterwovenKit provider.
 
 ```tsx
 // providers.tsx
@@ -51,9 +62,17 @@ export default function Providers({ children }: PropsWithChildren) {
 }
 ```
 
-## Basic Example
+**Key Configuration Elements:**
 
-To follow the example, install `viem` by running:
+- **Chain Definition**: Define your custom EVM chain with its ID, name, native currency, and RPC endpoints
+- **Wagmi Config**: Set up wagmi to use your custom chain and the Initia Privy wallet connector
+- **Style Injection**: Use `injectStyles()` to ensure proper styling within Initia Wallet's shadow DOM
+- **Provider Hierarchy**: Wrap your app with QueryClient, WagmiProvider, and InterwovenKitProvider
+
+</Step>
+<Step title="Install Dependencies">
+
+To follow the implementation example, install `viem` for Ethereum utilities:
 
 
 <Tabs>
@@ -79,7 +98,14 @@ To follow the example, install `viem` by running:
   </Tab>
 </Tabs>
 
-Here’s a minimal React component that uses wagmi’s `useSendTransaction` hook to send a simple value transfer on your custom EVM chain:
+</Step>
+<Step title="Implementation Example">
+
+The following React component demonstrates a complete integration that combines wagmi's EVM functionality with InterwovenKit features. This example shows how to:
+
+- Send transactions on your custom EVM chain using wagmi
+- Access Initia Wallet features for bridging and account management
+- Handle wallet connection states and user interactions
 
 ```tsx
 // page.tsx
@@ -122,3 +148,13 @@ export default function Home() {
   )
 }
 ```
+
+**Component Features:**
+
+- **Transaction Handling**: The `send()` function switches to the correct chain and sends a value transfer using wagmi's `useSendTransaction`
+- **Bridge Integration**: The `bridgeTransferDetails` object defines parameters for cross-chain bridging operations
+- **Wallet Management**: Conditional rendering based on connection status, with buttons for connecting, sending transactions, bridging, and accessing the wallet interface
+- **User Experience**: Displays truncated usernames or addresses for connected users
+
+</Step>
+</Steps>
