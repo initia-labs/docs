@@ -112,8 +112,7 @@ The app will be available at [http://localhost:3000](http://localhost:3000/). Al
   import { useInterwovenKit } from "@initia/interwovenkit-react"
 
   export default function Home() {
-    const { address, username, openConnect, openWallet, openBridge, requestTxSync, waitForTxConfirmation } =
-      useInterwovenKit()
+    const { address, username, openConnect, openWallet, openBridge, requestTxBlock } = useInterwovenKit()
 
     const send = async () => {
       const messages = [
@@ -127,11 +126,8 @@ The app will be available at [http://localhost:3000](http://localhost:3000/). Al
         },
       ]
 
-      const transactionHash = await requestTxSync({ messages })
+      const { transactionHash } = await requestTxBlock({ messages })
       console.log("Transaction sent:", transactionHash)
-
-      await waitForTxConfirmation({ txHash: transactionHash })
-      console.log("Transaction confirmed:", transactionHash)
     }
     
     const ETH = "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954"

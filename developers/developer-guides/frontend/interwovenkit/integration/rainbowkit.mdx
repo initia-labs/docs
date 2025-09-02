@@ -100,7 +100,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit"
 import { truncate, useInterwovenKit } from "@initia/interwovenkit-react"
 
 export default function Home() {
-  const { address, username, openWallet, openBridge, requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+  const { address, username, openWallet, openBridge, requestTxBlock } = useInterwovenKit()
 
   const send = async () => {
     const messages = [
@@ -114,11 +114,8 @@ export default function Home() {
       },
     ]
 
-    const transactionHash = await requestTxSync({ messages })
+    const { transactionHash } = await requestTxBlock({ messages })
     console.log("Transaction sent:", transactionHash)
-
-    await waitForTxConfirmation({ txHash: transactionHash })
-    console.log("Transaction confirmed:", transactionHash)
   }
 
   const bridgeTransferDetails = {
