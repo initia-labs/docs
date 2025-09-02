@@ -121,10 +121,10 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
     import { createConfig, http, WagmiProvider } from "wagmi"
     import { mainnet } from "wagmi/chains"
     import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-    import { 
-      initiaPrivyWalletConnector, 
-      injectStyles, 
-      InterwovenKitProvider 
+    import {
+      initiaPrivyWalletConnector,
+      injectStyles,
+      InterwovenKitProvider
     } from "@initia/interwovenkit-react"
     import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
 
@@ -191,11 +191,11 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
 ```tsx Legacy (v1) - Provider Level
 export default function Providers() {
   return (
-    <WalletWidgetProvider 
-      bridgeOptions={{ 
-        defaultDstChainId: "YOUR_CHAIN_ID", 
-        defaultDstAssetDenom: "YOUR_DENOM" 
-      }} 
+    <WalletWidgetProvider
+      bridgeOptions={{
+        defaultDstChainId: "YOUR_CHAIN_ID",
+        defaultDstAssetDenom: "YOUR_DENOM"
+      }}
     />
   )
 }
@@ -208,10 +208,10 @@ export default function Home() {
   const { openBridge } = useInterwovenKit()
 
   return (
-    <button 
-      onClick={() => openBridge({ 
-        dstChainId: "YOUR_CHAIN_ID", 
-        dstDenom: "YOUR_DENOM" 
+    <button
+      onClick={() => openBridge({
+        dstChainId: "YOUR_CHAIN_ID",
+        dstDenom: "YOUR_DENOM"
       })}
     >
       Bridge
@@ -304,7 +304,7 @@ export default function TransactionComponent() {
   const handleSubmit = async () => {
     try {
       const transactionHash = await requestTx(
-        { messages: [] }, 
+        { messages: [] },
         { chainId: "YOUR_CHAIN_ID" }
       )
       console.log("Transaction submitted:", transactionHash)
@@ -325,9 +325,9 @@ export default function TransactionComponent() {
 
   const handleSubmit = async () => {
     try {
-      const { transactionHash } = await requestTxBlock({ 
-        messages: [], 
-        chainId: "YOUR_CHAIN_ID" 
+      const { transactionHash } = await requestTxBlock({
+        messages: [],
+        chainId: "YOUR_CHAIN_ID" // optional, default to InterwovenKit's `defaultChainId`
       })
       console.log("Transaction confirmed:", transactionHash)
     } catch (error) {
@@ -341,7 +341,7 @@ export default function TransactionComponent() {
 </CodeGroup>
 
 <Tip>
-  For more granular control over transaction states, use `requestTxSync()` to get the transaction hash immediately, then `waitForTxConfirmation()` to wait for blockchain confirmation. See the [Getting Started guide](./getting-started#basic-example) for details.
+  For more granular control over transaction states, use `requestTxSync()` to get the transaction hash immediately, then `waitForTxConfirmation()` to wait for blockchain confirmation. See the [useInterwovenKit reference](./references/useinterwovenkit#transactions) for details.
 </Tip>
 
 ## Advanced Integration
@@ -357,9 +357,9 @@ import { useInterwovenKit } from "@initia/interwovenkit-react"
 // Helper function to convert Initia.js messages to InterwovenKit format
 function toEncodeObject(msg: Msg) {
   const data = msg.toData()
-  return { 
-    typeUrl: data["@type"], 
-    value: msg.toProto() 
+  return {
+    typeUrl: data["@type"],
+    value: msg.toProto()
   }
 }
 
@@ -378,11 +378,11 @@ export default function SendTransaction() {
 
     // Convert to InterwovenKit format
     const messages = msgs.map(toEncodeObject)
-    
+
     try {
-      const { transactionHash } = await requestTxBlock({ 
-        messages, 
-        chainId: "YOUR_CHAIN_ID" 
+      const { transactionHash } = await requestTxBlock({
+        messages,
+        chainId: "YOUR_CHAIN_ID"
       })
       console.log("Transfer successful:", transactionHash)
     } catch (error) {
@@ -407,21 +407,21 @@ export default function SendTransaction() {
     - [ ] Installed peer dependencies (`wagmi`, `viem`, `@tanstack/react-query`)
     - [ ] Updated all import statements
   </Accordion>
-  
+
   <Accordion title="✅ Configuration Cleanup">
     - [ ] Removed SSR-related imports
     - [ ] Removed build configuration changes
     - [ ] Removed CDN scripts
     - [ ] Updated provider configuration
   </Accordion>
-  
+
   <Accordion title="✅ API Updates">
     - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider`
     - [ ] Updated `useWallet` to `useInterwovenKit`
     - [ ] Migrated method calls (`onboard` → `openConnect`, etc.)
     - [ ] Updated transaction handling (`requestTx` → `requestTxBlock`)
   </Accordion>
-  
+
   <Accordion title="✅ Testing">
     - [ ] Wallet connection works correctly
     - [ ] Bridge functionality works

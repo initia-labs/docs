@@ -8,8 +8,8 @@ InterwovenKit provides a native React integration for connecting and interacting
 
 Before integrating InterwovenKit, ensure you have:
 
-- A React application (Next.js, Vite, or Create React App)
-- Node.js 16+ installed
+- A React application (Next.js or Vite)
+- Node.js 22+ installed
 - Basic familiarity with React hooks and TypeScript
 
 ## Installation & Setup
@@ -17,7 +17,7 @@ Before integrating InterwovenKit, ensure you have:
 Follow these steps to set up InterwovenKit in your application:
 
 <Steps>
- <Step title="Install InterwovenKit"> 
+ <Step title="Install InterwovenKit">
   Install the core InterwovenKit package and its peer dependencies:
 
   <CodeGroup>
@@ -40,7 +40,7 @@ Follow these steps to set up InterwovenKit in your application:
 
   These packages provide:
   - **@initia/interwovenkit-react**: React hooks and components for Initia wallet integration
-  - **wagmi**: Ethereum wallet infrastructure (required for cross-chain compatibility)  
+  - **wagmi**: Ethereum wallet infrastructure (required for cross-chain compatibility)
   - **viem**: Low-level Ethereum interaction library
   - **@tanstack/react-query**: Data fetching and state management
 
@@ -51,7 +51,6 @@ Follow these steps to set up InterwovenKit in your application:
 
   ```tsx providers.tsx
   "use client"
-
 
   import { PropsWithChildren, useEffect } from "react"
   import { createConfig, http, WagmiProvider } from "wagmi"
@@ -91,10 +90,10 @@ Follow these steps to set up InterwovenKit in your application:
   ```tsx layout.tsx
   import Providers from "./providers"
 
-  export default function RootLayout({ 
-    children 
-  }: Readonly<{ 
-    children: React.ReactNode 
+  export default function RootLayout({
+    children
+  }: Readonly<{
+    children: React.ReactNode
   }>) {
     return (
       <html lang="en">
@@ -120,12 +119,12 @@ Follow these steps to set up InterwovenKit in your application:
   import { useInterwovenKit } from "@initia/interwovenkit-react"
 
   export default function WalletConnection() {
-    const { 
-      address, 
-      username, 
+    const {
+      address,
+      username,
       isConnected,
-      openConnect, 
-      openWallet 
+      openConnect,
+      openWallet
     } = useInterwovenKit()
 
     if (!isConnected) {
@@ -200,8 +199,8 @@ Follow these steps to set up InterwovenKit in your application:
     return (
       <div>
         <h3>Send Transaction</h3>
-        <button 
-          onClick={sendTransaction} 
+        <button
+          onClick={sendTransaction}
           disabled={isLoading}
         >
           {isLoading ? "Sending..." : "Send 1 INIT to Self"}

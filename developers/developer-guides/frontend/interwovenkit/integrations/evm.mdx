@@ -113,7 +113,8 @@ The following React component demonstrates a complete integration that combines 
 
 import { parseEther } from "viem"
 import { useAccount, useChainId, useSendTransaction, useSwitchChain } from "wagmi"
-import { truncate, useInterwovenKit } from "@initia/interwovenkit-react"
+import { truncate } from "@initia/utils"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
 
 export default function Home() {
   const chainId = useChainId()
@@ -130,9 +131,9 @@ export default function Home() {
 
   const bridgeTransferDetails = {
     srcChainId: "SOURCE_CHAIN_ID",
-    srcDenom: "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
+    srcDenom: "SOURCE_ASSET_DENOM",
     dstChainId: "DESTINATION_CHAIN_ID",
-    dstDenom: "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
+    dstDenom: "DESTINATION_ASSET_DENOM",
   }
 
   if (!address) {
