@@ -1,0 +1,177 @@
+---
+title: InterwovenKitProvider
+---
+
+The `InterwovenKitProvider` is the root component that enables wallet connectivity and transaction signing.
+
+<Info>
+  All applications using InterwovenKit must be wrapped with `InterwovenKitProvider` at the root level to enable wallet functionality.
+</Info>
+
+## Basic Configuration
+
+### Chain Connection
+
+<ParamField path="defaultChainId" type="string" default="interwoven-1">
+  The default chain ID for wallet connection. Must be registered in the [initia-registry](https://github.com/initia-labs/initia-registry/).
+</ParamField>
+
+```tsx
+export default function Providers() {
+  return (
+    <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### Custom Chain Support
+
+<ParamField path="customChain" type="Chain">
+  Custom chain configuration for chains not registered in the initia-registry. Use this when connecting to private or development chains.
+</ParamField>
+
+```tsx
+import { Chain } from "@initia/initia-registry-types"
+import { ChainSchema } from "@initia/initia-registry-types/zod"
+import { InterwovenKit } from "@initia/interwovenkit-react"
+
+const customChain: Chain = ChainSchema.parse({
+  chain_id: "YOUR_CHAIN_ID",
+  chain_name: "YOUR_CHAIN_NAME",
+  apis: {
+    rpc: [{ address: "YOUR_RPC_URL" }],
+    rest: [{ address: "YOUR_LCD_URL" }],
+  },
+  fees: {
+    fee_tokens: [{ denom: "YOUR_FEE_DENOM", fixed_min_gas_price: 0.015 }],
+  },
+  bech32_prefix: "init",
+  network_type: "mainnet",
+})
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID" customChain={customChain}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### UI Theme
+
+<ParamField path="theme" type='"light" | "dark"' default="dark">
+  Controls the visual theme of wallet modals and components.
+</ParamField>
+
+```tsx
+export default function Providers() {
+  return (
+    <InterwovenKitProvider theme="light">
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+## Advanced Configuration
+
+### Custom Message Types
+
+For applications that use custom transaction types beyond the standard Cosmos and Initia modules, you'll need to configure protobuf types and amino converters.
+
+<ParamField path="protoTypes" type="Iterable<[string, GeneratedType]>">
+  Protobuf message types for custom transaction signing. Only required when using message types not included in default modules.
+</ParamField>
+
+```tsx
+import type { GeneratedType } from "@cosmjs/proto-signing"
+import { MsgCustomAction } from "./codec/myapp/tx"
+
+const protoTypes = [
+  ["/myapp.MsgCustomAction", MsgCustomAction],
+] as const
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider protoTypes={protoTypes}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+<ParamField path="aminoConverters" type="AminoConverters">
+  Amino converters for encoding/decoding custom messages. Required for Amino-compatible messages not covered by default converters.
+</ParamField>
+
+```tsx
+import type { AminoConverters } from "@cosmjs/stargate"
+
+const aminoConverters: AminoConverters = {
+  "/myapp.MsgCustomAction": {
+    aminoType: "myapp/MsgCustomAction",
+    toAmino: (msg) => ({
+      creator: msg.creator,
+      data: msg.data,
+    }),
+    fromAmino: (amino) => ({
+      creator: amino.creator,
+      data: amino.data,
+    }),
+  },
+}
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider aminoConverters={aminoConverters}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+## Testnet Configuration
+
+### Infrastructure Endpoints
+
+The following props are automatically configured for Initia's mainnet infrastructure and typically don't need to be set for rollup configurations:
+
+<ParamField path="registryUrl" type="string">
+  URL for the chain registry service
+</ParamField>
+
+<ParamField path="routerApiUrl" type="string">
+  URL for the router API service
+</ParamField>
+
+<ParamField path="usernamesModuleAddress" type="string">
+  Contract address for the usernames module
+</ParamField>
+
+### Testnet Setup
+
+For testnet development, use the exported `TESTNET` constant which automatically configures all required endpoints:
+
+```tsx
+// providers.tsx
+import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
+
+export default function Providers() {
+  return (
+    <InterwovenKitProvider {...TESTNET}>
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+```
+
+<Tip>
+  The `TESTNET` constant automatically sets the correct `registryUrl`, `routerApiUrl`, and `usernamesModuleAddress` for Initia's testnet environment.
+</Tip>
+
+<Warning>
+  When switching between testnet and mainnet environments, clear your browser's `localStorage` to avoid conflicts. InterwovenKit stores chain information locally, and cached values from different networks can cause connection errors.
+</Warning>

@@ -1,0 +1,436 @@
+---
+title: Migrating from Wallet Widget
+description: Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
+icon: up
+---
+
+This comprehensive guide will help you migrate from the legacy `@initia/react-wallet-widget` to the new and improved `@initia/interwovenkit-react`. InterwovenKit v2 offers better performance, improved TypeScript support, and a more intuitive API.
+
+<Note>
+  **Migration Benefits**
+  - No more SSR configuration required
+  - Better TypeScript support
+  - Improved performance and bundle size
+  - Simplified API with consistent naming
+  - Enhanced error handling
+</Note>
+
+## Step-by-Step Migration
+
+<Steps>
+  <Step title="Update Package Installation">
+    Replace the legacy wallet widget package with InterwovenKit.
+
+    <CodeGroup>
+    ```bash npm
+    # Remove old package
+    npm uninstall @initia/react-wallet-widget
+
+    # Install new package
+    npm install @initia/interwovenkit-react
+    ```
+
+    ```bash yarn
+    # Remove old package
+    yarn remove @initia/react-wallet-widget
+
+    # Install new package
+    yarn add @initia/interwovenkit-react
+    ```
+
+    ```bash pnpm
+    # Remove old package
+    pnpm remove @initia/react-wallet-widget
+
+    # Install new package
+    pnpm add @initia/interwovenkit-react
+    ```
+
+    ```bash bun
+    # Remove old package
+    bun remove @initia/react-wallet-widget
+
+    # Install new package
+    bun add @initia/interwovenkit-react
+    ```
+    </CodeGroup>
+
+    <Warning>
+      Update all imports from `@initia/react-wallet-widget` to `@initia/interwovenkit-react` throughout your codebase.
+    </Warning>
+  </Step>
+
+  <Step title="Clean Up Legacy Configuration">
+    Remove SSR-related imports and configuration that are no longer needed.
+
+    <AccordionGroup>
+      <Accordion title="Remove SSR Imports">
+        ```diff
+        - import { ... } from "@initia/react-wallet-widget/ssr"
+        ```
+      </Accordion>
+      <Accordion title="Remove Build Configuration">
+        ```diff
+        // next.config.js
+        module.exports = {
+        - swcMinify: false,
+        }
+        ```
+      </Accordion>
+      <Accordion title="Remove CDN Scripts">
+        ```diff
+        <!-- Remove any CDN script tags for the wallet widget -->
+        - <script src="...wallet-widget.js"></script>
+        ```
+      </Accordion>
+    </AccordionGroup>
+  </Step>
+
+  <Step title="Install Required Peer Dependencies">
+    InterwovenKit requires specific peer dependencies for proper functionality.
+
+    <CodeGroup>
+    ```bash npm
+    npm install wagmi viem @tanstack/react-query
+    ```
+
+    ```bash yarn
+    yarn add wagmi viem @tanstack/react-query
+    ```
+
+    ```bash pnpm
+    pnpm add wagmi viem @tanstack/react-query
+    ```
+
+    ```bash bun
+    bun add wagmi viem @tanstack/react-query
+    ```
+    </CodeGroup>
+
+    <Info>
+      These dependencies enable advanced wallet functionality and improved chain interaction capabilities.
+    </Info>
+  </Step>
+
+  <Step title="Update Provider Configuration">
+    Replace the legacy provider setup with the new InterwovenKit configuration.
+
+    ```tsx providers.tsx
+    "use client"
+
+    import { PropsWithChildren, useEffect } from "react"
+    import { createConfig, http, WagmiProvider } from "wagmi"
+    import { mainnet } from "wagmi/chains"
+    import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+    import {
+      initiaPrivyWalletConnector,
+      injectStyles,
+      InterwovenKitProvider
+    } from "@initia/interwovenkit-react"
+    import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+    // Configure Wagmi for wallet connections
+    const wagmiConfig = createConfig({
+      connectors: [initiaPrivyWalletConnector],
+      chains: [mainnet],
+      transports: { [mainnet.id]: http() },
+    })
+
+    const queryClient = new QueryClient()
+
+    export default function Providers({ children }: PropsWithChildren) {
+      useEffect(() => {
+        // Inject styles into the shadow DOM used by Initia Wallet
+        injectStyles(InterwovenKitStyles)
+      }, [])
+
+      return (
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+              {children}
+            </InterwovenKitProvider>
+          </WagmiProvider>
+        </QueryClientProvider>
+      )
+    }
+    ```
+
+    <Tip>
+      The new provider structure separates concerns better and provides more flexibility for wallet configuration.
+    </Tip>
+  </Step>
+</Steps>
+
+## API Migration Guide
+
+### Provider Configuration Changes
+
+<CodeGroup>
+```tsx Legacy (v1)
+<WalletWidgetProvider chainId="YOUR_CHAIN_ID" />
+```
+
+```tsx New (v2)
+<InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID" />
+```
+</CodeGroup>
+
+<CodeGroup>
+```tsx Legacy (v1)
+<WalletWidgetProvider customLayer={YOUR_CHAIN} />
+```
+
+```tsx New (v2)
+<InterwovenKitProvider customChain={YOUR_CHAIN} />
+```
+</CodeGroup>
+
+#### Bridge Configuration Migration
+
+<CodeGroup>
+```tsx Legacy (v1) - Provider Level
+export default function Providers() {
+  return (
+    <WalletWidgetProvider
+      bridgeOptions={{
+        defaultDstChainId: "YOUR_CHAIN_ID",
+        defaultDstAssetDenom: "YOUR_DENOM"
+      }}
+    />
+  )
+}
+```
+
+```tsx New (v2) - Method Level
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function Home() {
+  const { openBridge } = useInterwovenKit()
+
+  return (
+    <button
+      onClick={() => openBridge({
+        dstChainId: "YOUR_CHAIN_ID",
+        dstDenom: "YOUR_DENOM"
+      })}
+    >
+      Bridge
+    </button>
+  )
+}
+```
+</CodeGroup>
+
+<Note>
+  Bridge configuration has moved from the provider level to individual method calls, providing more flexibility and better user experience.
+</Note>
+
+#### Removed Provider Props
+
+The following props are no longer supported:
+
+```diff
+- <WalletWidgetProvider additionalWallets={...} />
+- <WalletWidgetProvider filterWallet={...} />
+```
+
+<Info>
+  To customize wallet options, use [wagmi connectors](https://wagmi.sh/react/api/connectors) in your wagmi configuration instead.
+</Info>
+
+### Hook and Method Changes
+
+#### Wallet Connection Interface
+
+<CodeGroup>
+```tsx Legacy (v1)
+import { truncate } from "@initia/utils"
+import { useWallet } from "@initia/react-wallet-widget"
+
+export default function WalletButton() {
+  const { address, onboard, view, bridge, isLoading } = useWallet()
+
+  if (!address) {
+    return (
+      <button onClick={onboard} disabled={isLoading}>
+        {isLoading ? "Loading..." : "Connect Wallet"}
+      </button>
+    )
+  }
+
+  return (
+    <div>
+      <button onClick={bridge}>Open Bridge</button>
+      <button onClick={view}>{truncate(address)}</button>
+    </div>
+  )
+}
+```
+
+```tsx New (v2)
+import { truncate } from "@initia/utils"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function WalletButton() {
+  const { address, openConnect, openWallet, openBridge } = useInterwovenKit()
+
+  if (!address) {
+    return <button onClick={openConnect}>Connect Wallet</button>
+  }
+
+  return (
+    <div>
+      <button onClick={openBridge}>Open Bridge</button>
+      <button onClick={openWallet}>{truncate(address)}</button>
+    </div>
+  )
+}
+```
+</CodeGroup>
+
+<Warning>
+  Ensure your entire application is wrapped with `<InterwovenKitProvider>` at the root level for the hooks to function properly.
+</Warning>
+
+#### Transaction Handling
+
+<CodeGroup>
+```tsx Legacy (v1)
+import { useWallet } from "@initia/react-wallet-widget"
+
+export default function TransactionComponent() {
+  const { requestTx } = useWallet()
+
+  const handleSubmit = async () => {
+    try {
+      const transactionHash = await requestTx(
+        { messages: [] },
+        { chainId: "YOUR_CHAIN_ID" }
+      )
+      console.log("Transaction submitted:", transactionHash)
+    } catch (error) {
+      console.error("Transaction failed:", error)
+    }
+  }
+
+  return <button onClick={handleSubmit}>Submit Transaction</button>
+}
+```
+
+```tsx New (v2)
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function TransactionComponent() {
+  const { requestTxBlock } = useInterwovenKit()
+
+  const handleSubmit = async () => {
+    try {
+      const { transactionHash } = await requestTxBlock({
+        messages: [],
+        chainId: "YOUR_CHAIN_ID" // optional, default to InterwovenKit's `defaultChainId`
+      })
+      console.log("Transaction confirmed:", transactionHash)
+    } catch (error) {
+      console.error("Transaction failed:", error)
+    }
+  }
+
+  return <button onClick={handleSubmit}>Submit Transaction</button>
+}
+```
+</CodeGroup>
+
+<Tip>
+  For more granular control over transaction states, use `requestTxSync()` to get the transaction hash immediately, then `waitForTxConfirmation()` to wait for blockchain confirmation. See the [useInterwovenKit reference](./references/useinterwovenkit#transactions) for details.
+</Tip>
+
+## Advanced Integration
+
+### Working with @initia/initia.js
+
+For complex transaction building, InterwovenKit seamlessly integrates with `@initia/initia.js`:
+
+```tsx example-usage.tsx
+import { MsgSend, Msg } from "@initia/initia.js"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+// Helper function to convert Initia.js messages to InterwovenKit format
+function toEncodeObject(msg: Msg) {
+  const data = msg.toData()
+  return {
+    typeUrl: data["@type"],
+    value: msg.toProto()
+  }
+}
+
+export default function SendTransaction() {
+  const { initiaAddress, requestTxBlock } = useInterwovenKit()
+
+  const handleSend = async () => {
+    // Build messages using initia.js
+    const msgs = [
+      MsgSend.fromPartial({
+        fromAddress: initiaAddress,
+        toAddress: "recipient_address_here",
+        amount: [{ amount: "1000000", denom: "uinit" }],
+      }),
+    ]
+
+    // Convert to InterwovenKit format
+    const messages = msgs.map(toEncodeObject)
+
+    try {
+      const { transactionHash } = await requestTxBlock({
+        messages,
+        chainId: "YOUR_CHAIN_ID"
+      })
+      console.log("Transfer successful:", transactionHash)
+    } catch (error) {
+      console.error("Transfer failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={handleSend} disabled={!initiaAddress}>
+      Send INIT
+    </button>
+  )
+}
+```
+
+## Migration Checklist
+
+<AccordionGroup>
+  <Accordion title="✅ Package & Dependencies">
+    - [ ] Uninstalled `@initia/react-wallet-widget`
+    - [ ] Installed `@initia/interwovenkit-react`
+    - [ ] Installed peer dependencies (`wagmi`, `viem`, `@tanstack/react-query`)
+    - [ ] Updated all import statements
+  </Accordion>
+
+  <Accordion title="✅ Configuration Cleanup">
+    - [ ] Removed SSR-related imports
+    - [ ] Removed build configuration changes
+    - [ ] Removed CDN scripts
+    - [ ] Updated provider configuration
+  </Accordion>
+
+  <Accordion title="✅ API Updates">
+    - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider`
+    - [ ] Updated `useWallet` to `useInterwovenKit`
+    - [ ] Migrated method calls (`onboard` → `openConnect`, etc.)
+    - [ ] Updated transaction handling (`requestTx` → `requestTxBlock`)
+  </Accordion>
+
+  <Accordion title="✅ Testing">
+    - [ ] Wallet connection works correctly
+    - [ ] Bridge functionality works
+    - [ ] Transaction submission works
+    - [ ] No console errors or warnings
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+  Need help with migration? Check out the [Getting Started guide](./getting-started) for complete implementation examples, or refer to the [API Reference](./references) for detailed method documentation.
+</Note>

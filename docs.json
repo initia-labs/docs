@@ -241,35 +241,6 @@
             "icon": "screwdriver-wrench",
             "pages": [
               {
-                "group": "Frontend",
-                "icon": "desktop",
-                "pages": [
-                  {
-                    "group": "InterwovenKit",
-                    "pages": [
-                      "developers/developer-guides/frontend/interwovenkit/introduction",
-                      "developers/developer-guides/frontend/interwovenkit/getting-started",
-                      "developers/developer-guides/frontend/interwovenkit/migration",
-                      {
-                        "group": "Integration",
-                        "pages": [
-                          "developers/developer-guides/frontend/interwovenkit/integrations/native",
-                          "developers/developer-guides/frontend/interwovenkit/integrations/evm",
-                          "developers/developer-guides/frontend/interwovenkit/integrations/rainbowkit"
-                        ]
-                      },
-                      {
-                        "group": "Reference",
-                        "pages": [
-                          "developers/developer-guides/frontend/interwovenkit/references/interwovenkit-provider",
-                          "developers/developer-guides/frontend/interwovenkit/references/useinterwovenkit"
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
                 "group": "SDKs",
                 "icon": "toolbox",
                 "pages": [
@@ -368,6 +339,34 @@
                   }
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab":"InterwovenKit",
+        "groups": [
+          {
+            "group": "InterwovenKit",
+            "pages": [
+              "interwovenkit/introduction",
+              "interwovenkit/getting-started",
+              "interwovenkit/migration"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "interwovenkit/integrations/native",
+              "interwovenkit/integrations/evm",
+              "interwovenkit/integrations/rainbowkit"
+            ]
+          },
+          {
+            "group": "References",
+            "pages": [
+              "interwovenkit/references/interwovenkit-provider",
+              "interwovenkit/references/useinterwovenkit"
             ]
           }
         ]
