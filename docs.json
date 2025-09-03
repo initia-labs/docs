@@ -463,5 +463,17 @@
     "ga4": {
       "measurementId": "G-MEX41J56YX"
     }
+  },
+  "contextuals": {
+    "options": [
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   }
 }
