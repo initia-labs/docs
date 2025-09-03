@@ -7,6 +7,15 @@
     "light": "#7ad9f7",
     "dark": "#4349FF"
   },
+  "contextual": {
+    "options": [
+      "copy",
+      "chatgpt",
+      "claude",
+      "mcp",
+      "cursor"
+    ]
+  },
   "favicon": "/favicon.svg",
   "navigation": {
     "tabs": [
@@ -440,17 +449,5 @@
     "ga4": {
       "measurementId": "G-MEX41J56YX"
     }
-  },
-  "contextuals": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
   }
 }
