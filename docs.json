@@ -10,10 +10,12 @@
   "contextual": {
     "options": [
       "copy",
+      "view",
       "chatgpt",
       "claude",
       "mcp",
-      "cursor"
+      "cursor",
+      "vscode"
     ]
   },
   "favicon": "/favicon.svg",
