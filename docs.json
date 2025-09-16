@@ -129,7 +129,7 @@
           },
           {
             "group": "Tooling",
-            "pages": ["home/tools/wallet-widget", "home/tools/bridge"]
+            "pages": ["home/tools/wallet", "home/tools/bridge"]
           }
         ]
       },
@@ -252,11 +252,6 @@
             "icon": "screwdriver-wrench",
             "pages": [
               {
-                "group": "Frontend",
-                "icon": "desktop",
-                "pages": ["developers/developer-guides/frontend/initia-wallet-widget"]
-              },
-              {
                 "group": "SDKs",
                 "icon": "toolbox",
                 "pages": [
@@ -356,6 +351,34 @@
                   }
                 ]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab":"InterwovenKit",
+        "groups": [
+          {
+            "group": "InterwovenKit",
+            "pages": [
+              "interwovenkit/introduction",
+              "interwovenkit/getting-started",
+              "interwovenkit/migration"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "interwovenkit/integrations/native",
+              "interwovenkit/integrations/evm",
+              "interwovenkit/integrations/rainbowkit"
+            ]
+          },
+          {
+            "group": "References",
+            "pages": [
+              "interwovenkit/references/interwovenkit-provider",
+              "interwovenkit/references/useinterwovenkit"
             ]
           }
         ]

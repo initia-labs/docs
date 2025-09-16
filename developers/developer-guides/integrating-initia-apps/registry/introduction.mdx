@@ -2,7 +2,7 @@
 title: Introduction
 ---
 
-For an asset or rollup to be supported by all of Initia's apps, including App, Bridge, Scan, and Wallet Widget, it must be registered in the [Initia Registry](http://github.com/initia-labs/initia-registry). Currently, registration is done via a GitHub pull request to the registry repository. The file and directory that need to be updated in the PR vary depending on the type of information being added.
+For an asset or rollup to be supported by all of Initia's apps, including App, Bridge, Scan, and Wallet, it must be registered in the [Initia Registry](http://github.com/initia-labs/initia-registry). Currently, registration is done via a GitHub pull request to the registry repository. The file and directory that need to be updated in the PR vary depending on the type of information being added.
 
 ## Adding Profiles
 
@@ -12,7 +12,7 @@ This step can be completed at anytime before your rollup is live and public.
 
 ## Adding Rollups
 
-Once your rollup is live, you also then need to register it in the registry for it to supported on the Bridge, Scan, and Wallet Widget pages. For this, navigate to the corresponding network directory in the registry repository and create a new folder. The folder name should be the same as the profile JSON file name you created in the previous step. You then need to create two files in the folder:
+Once your rollup is live, you also then need to register it in the registry for it to supported on the Bridge, Scan, and Wallet pages. For this, navigate to the corresponding network directory in the registry repository and create a new folder. The folder name should be the same as the profile JSON file name you created in the previous step. You then need to create two files in the folder:
 
 1. [chain.json](https://github.com/initia-labs/initia-registry/blob/main/chain.schema.json) - Contains key information about the rollup including the chain ID, name, API endpoints, and more.
 2. [assetlist.json](https://github.com/initia-labs/initia-registry/blob/main/assetlist.schema.json) - A file containing all of the major assets on the rollup such as symbol, logo, and decimal precision.

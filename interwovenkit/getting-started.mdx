@@ -1,0 +1,65 @@
+---
+title: Getting Started
+description: Integrate Initia Wallet into your React application with InterwovenKit
+icon: play
+---
+
+## Overview
+
+InterwovenKit is a React library that provides seamless integration with Initia Wallet, enabling users to connect their wallets, manage accounts, and interact with the Initia blockchain directly from your React applications. It offers a complete wallet connection experience with built-in support for transactions, bridging, and account management.
+
+## New Projects
+
+The fastest way to get started is by cloning our example project:
+
+```bash
+git clone https://github.com/initia-labs/examples.git
+cd examples/frontend/interwovenkit-react
+```
+
+<CodeGroup>
+  ```bash npm
+  npm install
+  npm run dev
+  ```
+
+  ```bash yarn
+  yarn install
+  yarn dev
+  ```
+
+  ```bash pnpm
+  pnpm install
+  pnpm dev
+  ```
+
+  ```bash bun
+  bun install
+  bun dev
+  ```
+</CodeGroup>
+
+The app will be available at [http://localhost:3000](http://localhost:3000/). This example demonstrates all core InterwovenKit features and serves as a reference implementation.
+
+## Existing Projects
+
+<CardGroup>
+  <Card
+    title="Native Integration"
+    icon="wallet"
+    href="/interwovenkit/integrations/native">
+    Set up InterwovenKit as the default wallet connection option for your application
+  </Card>
+  <Card 
+    title="EVM Integration" 
+    icon="ethereum"
+    href="/interwovenkit/integrations/evm">
+    Integrate InterwovenKit with an existing EVM application
+  </Card>
+  <Card
+    title="RainbowKit Integration"
+    icon="rainbow"
+    href="/interwovenkit/integrations/rainbowkit">
+    Integrate InterwovenKit with an existing RainbowKit application
+  </Card>
+</CardGroup>

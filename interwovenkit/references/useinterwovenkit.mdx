@@ -1,0 +1,212 @@
+---
+title: useInterwovenKit
+---
+
+The `useInterwovenKit` hook provides access to wallet connection state, account information, UI controls, and transaction utilities for interacting with the Initia blockchain.
+
+<Info>
+  This hook must be used within a component wrapped by `InterwovenKitProvider` to access wallet functionality.
+</Info>
+
+## Account Information
+
+The hook provides multiple address formats and account details for the currently connected wallet:
+
+<ParamField path="address" type="string">
+  Current address in either Bech32 or hex format, depending on the configured `minitia` type.
+</ParamField>
+
+<ParamField path="initiaAddress" type="string">
+  Bech32-formatted Initia wallet address of the connected account.
+</ParamField>
+
+<ParamField path="hexAddress" type="string">
+  Hex-encoded Ethereum-compatible address of the connected account.
+</ParamField>
+
+<ParamField path="username" type="string | null">
+  Optional username linked to the account. Returns `null` if no username is associated.
+</ParamField>
+
+
+```tsx
+export default function Home() {
+  const { address, initiaAddress, hexAddress, username } = useInterwovenKit()
+
+  return (
+    <>
+      <div>{address}</div>
+      <div>{initiaAddress}</div>
+      <div>{hexAddress}</div>
+      <div>{username}</div>
+    </>
+  )
+}
+```
+
+## UI Controls
+
+The hook provides methods for controlling wallet-related UI components:
+
+<ParamField path="openConnect" type="() => void">
+  Opens a drawer for connecting an external wallet.
+</ParamField>
+
+<ParamField path="openWallet" type="() => void">
+  Opens the main wallet drawer showing balances for the connected account.
+</ParamField>
+
+<ParamField path="openBridge" type="(defaultValues?: Partial<BridgeFormValues>) => void">
+  Opens the bridge drawer to onboard assets with optional pre-populated values.
+</ParamField>
+
+### Bridge Form Interface
+
+The `BridgeFormValues` interface defines the optional parameters for pre-populating the bridge form:
+
+<ParamField path="srcChainId" type="string">
+  Source chain ID for the bridge transaction.
+</ParamField>
+
+<ParamField path="srcDenom" type="string">
+  Source token denomination to bridge from.
+</ParamField>
+
+<ParamField path="dstChainId" type="string">
+  Destination chain ID for the bridge transaction.
+</ParamField>
+
+<ParamField path="dstDenom" type="string">
+  Destination token denomination to bridge to.
+</ParamField>
+
+<ParamField path="quantity" type="string">
+  Initial bridge amount as entered by the user. Use human-readable values (e.g., "1" for 1 INIT, not "1000000").
+</ParamField>
+
+<Tip>
+  All bridge form values are optional. You can pre-populate any subset of fields to improve the user experience.
+</Tip>
+
+```tsx
+interface BridgeFormValues {
+  srcChainId?: string
+  srcDenom?: string
+  dstChainId?: string
+  dstDenom?: string
+  quantity?: string
+}
+```
+
+### Example Usage 
+
+```tsx
+export default function Home() {
+  const { openConnect, openWallet, openBridge } = useInterwovenKit()
+
+  return (
+    <>
+      <button onClick={openConnect}>Connect</button>
+      <button onClick={openWallet}>Wallet</button>
+      <button onClick={() => openBridge({ srcChainId: 'chain-id', srcDenom: 'denom', dstChainId: 'chain-id', dstDenom: 'denom', quantity: '100' })}>
+        Bridge
+      </button>
+    </>
+  )
+}
+```
+
+## Transaction Methods
+
+The hook provides utilities for estimating, signing, and sending transactions on the blockchain:
+
+<ParamField path="estimateGas" type="(txRequest: TxRequest) => Promise<number>">
+  Estimates the gas required for a transaction before execution.
+</ParamField>
+
+<ParamField path="requestTxBlock" type="(txRequest: TxRequest) => Promise<DeliverTxResponse>">
+  Signs, broadcasts, and waits for block inclusion, returning the complete transaction response.
+</ParamField>
+
+<ParamField path="requestTxSync" type="(txRequest: TxRequest) => Promise<string>">
+  Signs and broadcasts a transaction, returning the transaction hash immediately without waiting for block inclusion.
+</ParamField>
+
+<ParamField path="waitForTxConfirmation" type="(params: TxQuery) => Promise<IndexedTx>">
+  Polls for transaction confirmation on-chain using a transaction hash.
+</ParamField>
+
+<Tip>
+  Use `requestTxSync` for better UX when you want to show immediate feedback, then use `waitForTxConfirmation` to track the final transaction status. Use `requestTxBlock` when you need the complete transaction result immediately.
+</Tip>
+
+### Transaction Request Interface
+
+The `TxRequest` interface defines the parameters for transaction operations:
+
+<ParamField path="messages" type="EncodeObject[]" required>
+  Array of encoded transaction messages to include in the transaction.
+</ParamField>
+
+<ParamField path="memo" type="string">
+  Optional memo to attach to the transaction.
+</ParamField>
+
+<ParamField path="chainId" type="string">
+  Target chain ID for the transaction. Defaults to the provider's `defaultChainId`.
+</ParamField>
+
+<ParamField path="gasAdjustment" type="number" default="1.4">
+  Multiplier applied to the estimated gas amount for safety margin.
+</ParamField>
+
+<ParamField path="gas" type="number">
+  Explicit gas limit for the transaction. If provided, skips gas estimation.
+</ParamField>
+
+<ParamField path="fee" type="StdFee | null">
+  Explicit fee for the transaction. If provided, skips the fee denomination selection UI.
+</ParamField>
+
+### Transaction Query Interface
+
+The `TxQuery` interface defines parameters for tracking transaction confirmation:
+
+<ParamField path="txHash" type="string" required>
+  Hash of the transaction to track for confirmation.
+</ParamField>
+
+<ParamField path="chainId" type="string">
+  Chain ID where the transaction was broadcast.
+</ParamField>
+
+<ParamField path="timeoutSeconds" type="number" default="30">
+  Maximum time to wait for transaction confirmation before failing.
+</ParamField>
+
+<ParamField path="intervalSeconds" type="number" default="1">
+  Polling interval in seconds for checking transaction status.
+</ParamField>
+
+### Type Definitions
+
+```tsx
+import type { EncodeObject } from '@cosmjs/proto-signing'
+import type { DeliverTxResponse, IndexedTx } from '@cosmjs/stargate'
+
+interface TxRequest {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string
+  gasAdjustment?: number
+  gas?: number
+  fee?: StdFee | null
+}
+
+interface TxQuery {
+  txHash: string
+  chainId?: string
+  timeoutSeconds?: number
+  intervalSeconds?: number
+}
+```
