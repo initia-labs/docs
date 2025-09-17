@@ -5,7 +5,7 @@ title: Your First Move Module
 In this guide, we'll walk through the process of creating, compiling, and deploying a simple Move module using the Move Virtual Machine (MoveVM). We'll use the Initia L1 testnet for this example, but the process is similar for MiniMove rollups.
 
 <Note>
-Before you start, make sure you have set up the CLI for your network, created an account using the CLI, and that your account has some tokens to pay for gas. Follow the steps outlined in the [previous page](../setting-up) to get set up.
+Before you start, make sure you have set up the CLI for your network, created an account using the CLI or SDK, and that your account has some tokens to pay for gas. Follow the steps outlined in the [previous page](./setting-up) to get set up.
 </Note>
 
 <Steps>
@@ -107,6 +107,43 @@ minitiad move deploy \
   --node $RPC_URL \
   --chain-id $CHAIN_ID
 ```
+```ts InitiaJS
+import { isTxError, MnemonicKey, MsgPublish, RESTClient, Wallet } from '@initia/initia.js'
+import fs from 'fs'
+import path from 'path'
+
+const RPC_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = ''                                 // Replace with your mnemonic
+
+const MODULE_NAME = 'hello_world'
+const MODULE_PATH = path.join(__dirname, `./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
+
+function buildMsg(wallet: Wallet): MsgPublish {
+  const packageBytes = fs.readFileSync(MODULE_PATH).toString('base64')
+
+  return new MsgPublish(wallet.key.accAddress, [packageBytes], MsgPublish.Policy.COMPATIBLE)
+}
+
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
+
+  const msg = buildMsg(wallet)
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
+
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
+
+main().catch(console.error)
+```
 </CodeGroup>
 </Step>
 <Step title="Interact with the Module">
@@ -131,6 +168,44 @@ minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
   --gas-prices $GAS_PRICES \
   --chain-id $CHAIN_ID
 ```
+```ts InitiaJS
+import { bcs, isTxError, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+const RPC_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = ''                                                 // Replace with your mnemonic
+
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
+
+  const msg = new MsgExecute(
+    wallet.key.accAddress,                        // tx sender
+    MODULE_ADDRESS,                               // module address
+    MODULE_NAME,                                  // module name
+    'save_message',                               // function name
+    [],                                           // type args
+    [
+      bcs.string().serialize('data').toBase64(),  // function args
+    ]
+  )
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
+
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
+
+main().catch(console.error)
+```
 </CodeGroup>
 
 Once the transaction is successful, we can retrieve the message we just saved.
@@ -145,6 +220,30 @@ initiad query move view $MODULE_ADDRESS hello_world view_message \
 minitiad query move view $MODULE_ADDRESS hello_world view_message \
     --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
     --node $RPC_URL
+```
+```ts InitiaJS
+import { bcs, RESTClient } from '@initia/initia.js'
+
+const RPC_URL = 'https://rest.testnet.initia.xyz'
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const restClient = new RESTClient(RPC_URL, { gasPrices: '0.015uinit' })
+
+  const result = await restClient.move.view(
+    MODULE_ADDRESS,
+    MODULE_NAME,
+    'view_message',
+    [],
+    [
+      bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()
+    ]
+  )
+  console.log('Result:', result)
+}
+
+main().catch(console.error)
 ```
 </CodeGroup>
 

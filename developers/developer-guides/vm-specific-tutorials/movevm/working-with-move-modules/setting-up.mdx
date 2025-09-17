@@ -1,0 +1,92 @@
+---
+title: Setting Up
+---
+
+For this tutorial, we will mainly be using either the `initiad` CLI if you are developing for the Initia L1 or the `minitiad` CLI if you are developing for MiniMove rollups. If you prefer to interact with the chain from JavaScript/TypeScript instead of the CLI, you can also use the InitiaJS SDK.
+
+<Steps>
+<Step title="Install the CLI or SDK">
+First, we need to install the CLI for the network we are working on. The CLI and instructions for installation differ slightly between Initia L1 and MiniMove rollups.
+
+<CardGroup>
+<Card title="initiad" href="/developers/developer-guides/tools/clis/initiad-cli/introduction">
+The CLI for interacting with Initia L1.
+</Card>
+<Card title="minitiad" href="/developers/developer-guides/tools/clis/minitiad-cli/introduction">
+The CLI for interacting with MiniMove rollups.
+</Card>
+</CardGroup>
+
+Alternatively, if you prefer to interact with the chain from TypeScript instead of the CLI, you can also use the InitiaJS.
+
+<CardGroup>
+<Card title="InitiaJS" href="/developers/developer-guides/tools/sdks/initia-js/introduction">
+The SDK for interacting with Initia from TypeScript.
+</Card>
+</CardGroup>
+</Step>
+<Step title="Creating a Account">
+Once we have the CLI installed, we can create an account to use for our module.
+<CodeGroup>
+```bash Initia L1
+initiad keys add example
+```
+```bash Rollups
+minitiad keys add example
+```
+```ts InitiaJS
+import { MnemonicKey } from '@initia/initia.js'
+
+const key = new MnemonicKey({
+    mnemonic: 'across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model',
+})
+
+console.log('mnemonic:', key.mnemonic)
+console.log('private key:', key.privateKey)
+console.log('public key:', key.publicKey)
+console.log('account address:', key.accAddress)
+```
+</CodeGroup>
+
+You should see output similar to the following.
+
+<CodeGroup>
+```bash Initia L1
+- address: init1ejr270mhdw260hk4ggp4kwmxd20authfag282m
+  name: example
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AzBfkuS1ojSqNfqztk34Pn86n7D5MbhKobmsUIN372QG"}'
+  type: local
+
+
+**Important** write this mnemonic phrase in a safe place.
+It is the only way to recover your account if you ever forget your password.
+
+era witness crunch art alcohol join paddle detect shaft middle stick panel fault trouble door candy obscure cabin assault volcano sort nose always two
+```
+```bash Rollups
+- address: init1ejr270mhdw260hk4ggp4kwmxd20authfag282m
+  name: example
+  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AzBfkuS1ojSqNfqztk34Pn86n7D5MbhKobmsUIN372QG"}'
+  type: local
+
+
+**Important** write this mnemonic phrase in a safe place.
+It is the only way to recover your account if you ever forget your password.
+
+era witness crunch art alcohol join paddle detect shaft middle stick panel fault trouble door candy obscure cabin assault volcano sort nose always two
+```
+```bash InitiaJS
+mnemonic: across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model
+private key: <Buffer e5 71 db 8c 0c 44 d4 81 e1 ef 62 81 ec ab 5a 26 b4 35 db fb 6b ec b6 51 43 8e d8 c9 ef e0 40 c1>
+public key: Z { key: 'AmXrEF5FHNkRMehfDmBM3AwqZ4Y21r2H+hUMjS6++CSP' }
+account address: init17mq4sqemx2djc59tda76y20nwp4pfn4943x9ze
+```
+</CodeGroup>
+
+</Step>
+<Step title="Funding Your Account">
+Once we have created our account, we can fund it with some tokens. For testnet, you can get testnet tokens from the [faucet](https://faucet.initia.xyz/).
+</Step>
+</Steps>
+
+Once everything is setup, you're now ready to start developing. In the next section, we will go over how to create, compile, deploy, and interact with a basic Move module.

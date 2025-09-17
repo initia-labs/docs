@@ -1,0 +1,115 @@
+---
+title: Interacting with Modules
+---
+
+## Executing Transactions
+
+Once you have deployed your Move module, you can interact with it by sending transactions.
+
+<CodeGroup>
+```bash Initia L1
+export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
+initiad tx move execute $MODULE_ADDRESS hello_world save_message \
+  --args '["string:data"]'  \
+  --node $RPC_URL \
+  --from docs \
+  --gas-prices $GAS_PRICES \
+  --chain-id $CHAIN_ID
+```
+```bash Rollups
+export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
+minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
+  --args '["string:data"]'  \
+  --node $RPC_URL \
+  --from docs \
+  --gas-prices $GAS_PRICES \
+  --chain-id $CHAIN_ID
+```
+```ts InitiaJS
+import { bcs, isTxError, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+const RPC_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = ''                                                 // Replace with your mnemonic
+
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
+
+  const msg = new MsgExecute(
+    wallet.key.accAddress,                        // tx sender
+    MODULE_ADDRESS,                               // module address
+    MODULE_NAME,                                  // module name
+    'save_message',                               // function name
+    [],                                           // type args
+    [
+      bcs.string().serialize('data').toBase64(),  // function args
+    ]
+  )
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
+
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
+
+main().catch(console.error)
+```
+</CodeGroup>
+
+## Querying State
+
+Once the transaction is successful, we can retrieve the message we just saved.
+
+<CodeGroup>
+```bash Initia L1
+initiad query move view $MODULE_ADDRESS hello_world view_message \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
+    --node $RPC_URL
+```
+```bash Rollups
+minitiad query move view $MODULE_ADDRESS hello_world view_message \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
+    --node $RPC_URL
+```
+```ts InitiaJS
+import { bcs, RESTClient } from '@initia/initia.js'
+
+const RPC_URL = 'https://rest.testnet.initia.xyz'
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const restClient = new RESTClient(RPC_URL, { gasPrices: '0.015uinit' })
+
+  const result = await restClient.move.view(
+    MODULE_ADDRESS,
+    MODULE_NAME,
+    'view_message',
+    [],
+    [
+      bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()
+    ]
+  )
+  console.log('Result:', result)
+}
+
+main().catch(console.error)
+```
+</CodeGroup>
+
+If both steps are successful, you should see the following output:
+
+```
+data: '"data"'
+events: []
+gas_used: "1071"
+```
