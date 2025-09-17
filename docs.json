@@ -200,19 +200,9 @@
                 "group": "MoveVM",
                 "icon": "note-sticky",
                 "pages": [
+                  "developers/developer-guides/vm-specific-tutorials/movevm/setting-up",
+                  "developers/developer-guides/vm-specific-tutorials/movevm/building-move-modules",
                   "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
-                  {
-                    "group": "Working with Move Modules",
-                    "icon": "file-code",
-                    "pages": [
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/setting-up",
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/your-first-module",
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/creating-a-module",
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/compiling-modules",
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/deploying",
-                      "developers/developer-guides/vm-specific-tutorials/movevm/working-with-move-modules/interacting"
-                    ]
-                  },
                   "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
                   "developers/developer-guides/vm-specific-tutorials/movevm/multisig",
                   "developers/developer-guides/vm-specific-tutorials/movevm/ibc-hooks"

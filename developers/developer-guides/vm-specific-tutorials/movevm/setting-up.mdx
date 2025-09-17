@@ -1,5 +1,5 @@
 ---
-title: Setting Up Your Development Environment
+title: Setting Up
 ---
 
 This guide walks you through setting up your development environment for working with Move modules on Initia. You'll learn how to install the necessary tools, create accounts, and prepare for Move development on either Initia L1 or Move rollups.
@@ -177,15 +177,19 @@ After funding, verify your account has received tokens:
 <Tabs>
 <Tab title="Initia L1">
 ```bash
-initiad query bank balances [your-address]
+initiad query bank balances [your-address] --node https://rpc.testnet.initia.xyz
 ```
 </Tab>
 <Tab title="Move Rollups">
 ```bash
-minitiad query bank balances [your-address]
+minitiad query bank balances [your-address] --node [your-rollup-rpc-url]
 ```
 </Tab>
 </Tabs>
+
+<Note>
+For Move rollups, replace `[your-rollup-rpc-url]` with your specific rollup's RPC endpoint. You can find rollup-specific RPC URLs in the [Initia Registry](https://github.com/initia-labs/initia-registry/tree/main) or your rollup's documentation.
+</Note>
 </Step>
 </Steps>
 

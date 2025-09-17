@@ -1,5 +1,5 @@
 ---
-title: Building Your First Move Module
+title: Building Move Module
 ---
 
 This comprehensive guide walks you through the complete process of creating, compiling, deploying, and interacting with a Move module from scratch. You'll build a simple "Hello World" module that demonstrates core Move concepts and deployment workflows.
@@ -236,7 +236,7 @@ Deploy your compiled module to the blockchain network.
 <CodeGroup>
 ```bash Initia L1
 initiad move deploy \
-  --path . \
+  --path .
   --upgrade-policy COMPATIBLE \
   --from example \
   --gas auto --gas-adjustment 1.5 \
@@ -246,7 +246,7 @@ initiad move deploy \
 ```
 ```bash Move Rollups
 minitiad move deploy \
-  --path . \
+  --path .
   --upgrade-policy COMPATIBLE \
   --from example \
   --gas auto --gas-adjustment 1.5 \
