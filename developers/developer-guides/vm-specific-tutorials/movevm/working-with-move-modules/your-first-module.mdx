@@ -36,7 +36,7 @@ cd examples/movevm
 ```
 </Step>
 <Step title="Update Move.toml">
-Next, before we can compiled our module, we need to update the `Move.toml` to set `example` to our deployer address.
+Next, before we can compile our module, we need to update the `Move.toml` to set `example` to our deployer address.
 
 To find your hex address, run the following command.
 
@@ -112,7 +112,7 @@ import { isTxError, MnemonicKey, MsgPublish, RESTClient, Wallet } from '@initia/
 import fs from 'fs'
 import path from 'path'
 
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MNEMONIC = ''                                 // Replace with your mnemonic
 
 const MODULE_NAME = 'hello_world'
@@ -126,7 +126,7 @@ function buildMsg(wallet: Wallet): MsgPublish {
 
 async function main() {
   const wallet = new Wallet(
-    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
     new MnemonicKey({ mnemonic: MNEMONIC })
   )
 
@@ -171,7 +171,7 @@ minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
 ```ts InitiaJS
 import { bcs, isTxError, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
 
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MNEMONIC = ''                                                 // Replace with your mnemonic
 
 const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
@@ -179,7 +179,7 @@ const MODULE_NAME = 'hello_world'
 
 async function main() {
   const wallet = new Wallet(
-    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
     new MnemonicKey({ mnemonic: MNEMONIC })
   )
 
@@ -224,12 +224,12 @@ minitiad query move view $MODULE_ADDRESS hello_world view_message \
 ```ts InitiaJS
 import { bcs, RESTClient } from '@initia/initia.js'
 
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
 const MODULE_NAME = 'hello_world'
 
 async function main() {
-  const restClient = new RESTClient(RPC_URL, { gasPrices: '0.015uinit' })
+  const restClient = new RESTClient(REST_URL, { gasPrices: '0.015uinit' })
 
   const result = await restClient.move.view(
     MODULE_ADDRESS,
@@ -259,4 +259,4 @@ gas_used: "1071"
 
 ## Next Steps
 
-Now that you have a basic understanding of how to create, compile, deploy, and interact with Move modules, you can start building your own modules and smart contracts. For a more detailed guide on individual steps of this guide, check out the [next section](../working-with-move-modules).
+Now that you have a basic understanding of how to create, compile, deploy, and interact with Move modules, you can start building your own modules and smart contracts. For more detailed guide on individual steps covered in this tutorial, check out the [next section](../working-with-move-modules).

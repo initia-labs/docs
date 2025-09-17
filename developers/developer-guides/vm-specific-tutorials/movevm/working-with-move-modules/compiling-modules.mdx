@@ -6,7 +6,7 @@ Once you have created your module, you need to compile it before it can be deplo
 
 <Steps>
 <Step title="Update Move.toml">
-Before compiling your module, you need to update the `Move.toml` file to specify the address for your `hello` module. Specifically, this will be the address that you'll use to deploy your module, as well as the address that the module will live under.
+Before compiling your module, update the Move.toml file to set the address for your hello module. This address determines where the module will be deployed and stored on the blockchain.
 
 To add the `hello` address to your `Move.toml`, modify the `[addresses]` section to include the `hello` address. Your `Move.toml` should look like this:
 
@@ -20,7 +20,7 @@ InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "pr
 
 [addresses]
 std =  "0x1"
-hello = "0x2" # Replace with the deployer address
+hello = "0xCC86AF3F776B95A7DED542035B3B666A9FDE2EE9" # Replace with the deployer address
 ```
 
 </Step>

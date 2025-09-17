@@ -12,7 +12,7 @@ export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with 
 initiad tx move execute $MODULE_ADDRESS hello_world save_message \
   --args '["string:data"]'  \
   --node $RPC_URL \
-  --from docs \
+  --from example \
   --gas-prices $GAS_PRICES \
   --chain-id $CHAIN_ID
 ```
@@ -21,14 +21,14 @@ export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with 
 minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
   --args '["string:data"]'  \
   --node $RPC_URL \
-  --from docs \
+  --from example \
   --gas-prices $GAS_PRICES \
   --chain-id $CHAIN_ID
 ```
 ```ts InitiaJS
 import { bcs, isTxError, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
 
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MNEMONIC = ''                                                 // Replace with your mnemonic
 
 const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
@@ -36,7 +36,7 @@ const MODULE_NAME = 'hello_world'
 
 async function main() {
   const wallet = new Wallet(
-    new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
     new MnemonicKey({ mnemonic: MNEMONIC })
   )
 
@@ -83,12 +83,12 @@ minitiad query move view $MODULE_ADDRESS hello_world view_message \
 ```ts InitiaJS
 import { bcs, RESTClient } from '@initia/initia.js'
 
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
 const MODULE_NAME = 'hello_world'
 
 async function main() {
-  const restClient = new RESTClient(RPC_URL, { gasPrices: '0.015uinit' })
+  const restClient = new RESTClient(REST_URL, { gasPrices: '0.015uinit' })
 
   const result = await restClient.move.view(
     MODULE_ADDRESS,

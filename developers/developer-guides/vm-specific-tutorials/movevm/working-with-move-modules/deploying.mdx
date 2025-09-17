@@ -8,81 +8,61 @@ To do so, you can use the following command:
 
 <CodeGroup>
 ```bash Initia L1
-initiad tx move publish ./build/movevm/bytecode_modules/hello_world.mv \
---from example \
---chain-id initiation-2 \
---node https://rpc.testnet.initia.xyz \
---gas-prices 0.015uinit \
---upgrade-policy COMPATIBLE
+initiad move deploy \
+  --path . \
+  --upgrade-policy COMPATIBLE \
+  --from example \
+  --gas auto --gas-adjustment 1.5 \
+  --gas-prices $GAS_PRICES \
+  --node $RPC_URL \
+  --chain-id $CHAIN_ID
 ```
 ```bash Rollups
-minitiad tx move publish ./build/movevm/bytecode_modules/hello_world.mv \
---from example \
---chain-id initiation-2 \
---node https://rpc.testnet.initia.xyz \
---gas-prices 0.015uinit \
---upgrade-policy COMPATIBLE
+minitiad move deploy \
+  --path . \
+  --upgrade-policy COMPATIBLE \
+  --from example \
+  --gas auto --gas-adjustment 1.5 \
+  --gas-prices $GAS_PRICES \
+  --node $RPC_URL \
+  --chain-id $CHAIN_ID
 ```
 ```ts InitiaJS
 import { isTxError, MnemonicKey, MsgPublish, RESTClient, Wallet } from '@initia/initia.js'
 import fs from 'fs'
 import path from 'path'
 
-// Configuration
-const RPC_URL = 'https://rest.testnet.initia.xyz'
+const REST_URL = 'https://rest.testnet.initia.xyz'
 const MNEMONIC = ''                                 // Replace with your mnemonic
+
 const MODULE_NAME = 'hello_world'
+const MODULE_PATH = path.join(__dirname, `./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
 
-function buildDeployMessage(wallet: Wallet, moduleName: string): MsgPublish {
-  // Path to your compiled module
-  const modulePath = path.join(__dirname, `./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
+function buildMsg(wallet: Wallet): MsgPublish {
+  const packageBytes = fs.readFileSync(MODULE_PATH).toString('base64')
 
-  // Read and encode the module bytecode
-  const moduleBytes = fs.readFileSync(modulePath).toString('base64')
-
-  // Create publish message with COMPATIBLE upgrade policy
-  return new MsgPublish(
-    wallet.key.accAddress,
-    [moduleBytes],
-    MsgPublish.Policy.COMPATIBLE
-  )
+  return new MsgPublish(wallet.key.accAddress, [packageBytes], MsgPublish.Policy.COMPATIBLE)
 }
 
-async function deployModule() {
-  try {
-    // Initialize wallet
-    const wallet = new Wallet(
-      new RESTClient(RPC_URL, { gasPrices: '0.015uinit' }),
-      new MnemonicKey({ mnemonic: MNEMONIC })
-    )
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
 
-    console.log(`🚀 Deploying module from address: ${wallet.key.accAddress}`)
+  const msg = buildMsg(wallet)
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
 
-    // Build deployment message
-    const deployMsg = buildDeployMessage(wallet, MODULE_NAME)
-
-    // Create and sign transaction
-    const signedTx = await wallet.createAndSignTx({
-      msgs: [deployMsg],
-      gasAdjustment: 1.5
-    })
-
-    // Broadcast transaction
-    const result = await wallet.rest.tx.broadcast(signedTx)
-
-    if (isTxError(result)) {
-      console.error(`❌ Deployment failed (code ${result.code}):`, result.raw_log)
-    } else {
-      console.log(`✅ Module deployed successfully!`)
-      console.log(`Transaction hash: ${result.txhash}`)
-    }
-  } catch (error) {
-    console.error('❌ Deployment error:', error)
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
   }
 }
 
-// Execute deployment
-deployModule().catch(console.error)
+main().catch(console.error)
 ```
 </CodeGroup>
 
