@@ -185,6 +185,7 @@
                   "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
                   {
                     "group": "Creating ERC20s",
+                    "icon": "file-code",
                     "pages": [
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
@@ -199,6 +200,8 @@
                 "group": "MoveVM",
                 "icon": "note-sticky",
                 "pages": [
+                  "developers/developer-guides/vm-specific-tutorials/movevm/setting-up",
+                  "developers/developer-guides/vm-specific-tutorials/movevm/building-move-modules",
                   "developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin",
                   "developers/developer-guides/vm-specific-tutorials/movevm/connect-oracles",
                   "developers/developer-guides/vm-specific-tutorials/movevm/multisig",

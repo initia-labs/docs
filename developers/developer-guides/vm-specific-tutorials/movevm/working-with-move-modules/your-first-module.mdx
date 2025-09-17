@@ -1,0 +1,445 @@
+---
+title: Building Your First Move Module
+---
+
+This comprehensive guide walks you through the complete process of creating, compiling, deploying, and interacting with a Move module from scratch. You'll build a simple "Hello World" module that demonstrates core Move concepts and deployment workflows.
+
+<Note>
+Before starting, ensure you have set up your development environment, created an account, and funded it with testnet tokens. Follow the [Setting Up Your Development Environment](./setting-up) guide if you haven't completed these prerequisites.
+</Note>
+
+## Overview
+
+In this tutorial, you'll learn to:
+- **Create** a new Move project and module structure
+- **Compile** Move source code into bytecode
+- **Deploy** your module to the blockchain
+- **Interact** with your deployed module through transactions and queries
+
+<Info>
+This guide supports both Initia L1 and Move rollup development. Code examples are provided for CLI tools and InitiaJS SDK to accommodate different development preferences.
+</Info>
+
+## What You'll Build
+
+You'll create a simple message storage module with two functions:
+- `save_message`: Store a string message in the user's account
+- `view_message`: Retrieve the stored message from an account
+
+<Steps>
+<Step title="Set Up Environment Variables">
+Configure your development environment with the necessary network parameters.
+
+```bash
+export RPC_URL=https://rpc.testnet.initia.xyz # Replace with your target network's RPC
+export CHAIN_ID=initiation-2 # Replace with your target network's chain ID  
+export GAS_PRICES=0.015uinit # Replace with appropriate gas prices for your network
+```
+
+### Network Parameters Reference
+
+| Variable | Description |
+|----------|-------------|
+| `RPC_URL` | The RPC endpoint for blockchain interaction and transaction broadcasting |
+| `CHAIN_ID` | Unique identifier for the specific blockchain network you're targeting |
+| `GAS_PRICES` | Transaction fee rates in `{amount}{denomination}` format |
+
+<Tip>
+Find network-specific values in our [Networks Documentation](/resources/developer/initia-l1/) for Initia L1, or the [Initia Registry](https://github.com/initia-labs/initia-registry/tree/main) for Move rollups.
+</Tip>
+</Step>
+
+<Step title="Create Your Project Structure">
+Start by creating a new directory and initializing it as a Move project.
+
+### Create Project Directory
+```bash
+mkdir hello_world
+cd hello_world
+```
+
+### Initialize Move Package
+Initialize your directory as a Move package, which creates the necessary project structure.
+
+<CodeGroup>
+```bash Initia L1
+initiad move new hello_world
+```
+```bash Move Rollups
+minitiad move new hello_world
+```
+</CodeGroup>
+
+### Understanding the Project Structure
+Your project now contains these essential components:
+
+```
+hello_world/
+├── Move.toml          # Package manifest and configuration
+└── sources/           # Directory for Move source code files
+```
+
+<AccordionGroup>
+<Accordion title="Move.toml - Package Manifest" icon="file-code">
+The `Move.toml` file serves as your package's configuration center, containing:
+- **Package metadata**: name, version, and description
+- **Dependencies**: external packages your project requires  
+- **Address mappings**: logical names mapped to blockchain addresses
+- **Build settings**: compilation options and flags
+</Accordion>
+
+<Accordion title="sources/ - Source Code Directory" icon="folder">
+The `sources` directory is where you'll write your Move smart contracts:
+- Contains all `.move` source files
+- Organizes your module implementations
+- Houses the core business logic of your application
+</Accordion>
+</AccordionGroup>
+</Step>
+
+<Step title="Write Your Move Module">
+Create your first Move module with message storage functionality.
+
+### Create the Module File
+Create a new file called `hello_world.move` in the `sources` directory:
+
+```move hello_world.move
+module hello::hello_world {
+    use std::string::String;
+
+    struct Message has key {
+        content: String,
+    }
+
+    public entry fun save_message(account: &signer, message: String) {
+        let message_struct = Message { content: message };
+        move_to(account, message_struct);
+    }
+
+    #[view]
+    public fun view_message(account: address): String acquires Message {
+        borrow_global<Message>(account).content
+    }
+}
+```
+
+### Understanding the Code
+
+<AccordionGroup>
+<Accordion title="Module Declaration" icon="cube">
+```move
+module hello::hello_world {
+```
+Declares a module named `hello_world` under the `hello` address namespace. This establishes the module's identity on the blockchain.
+</Accordion>
+
+<Accordion title="Resource Structure" icon="database">
+```move
+struct Message has key {
+    content: String,
+}
+```
+Defines a `Message` resource with the `key` ability, allowing it to be stored in account storage. Resources are Move's way of representing owned data.
+</Accordion>
+
+<Accordion title="Entry Function" icon="arrow-right">
+```move
+public entry fun save_message(account: &signer, message: String) {
+```
+Entry functions can be called directly via transactions. The `&signer` parameter represents the transaction sender's authority.
+</Accordion>
+
+<Accordion title="View Function" icon="eye">
+```move
+#[view]
+public fun view_message(account: address): String acquires Message {
+```
+View functions are read-only operations marked with `#[view]`. The `acquires` clause indicates this function accesses the `Message` resource.
+</Accordion>
+</AccordionGroup>
+</Step>
+
+<Step title="Configure and Compile Your Module">
+Set up your module's deployment address and compile the source code.
+
+### Get Your Deployment Address
+First, retrieve your account's hexadecimal address for the Move.toml configuration:
+
+<CodeGroup>
+```bash Initia L1
+initiad keys parse $(initiad keys show example --address)
+```
+```bash Move Rollups  
+minitiad keys parse $(minitiad keys show example --address)
+```
+</CodeGroup>
+
+**Expected output:**
+```bash
+bytes: CC86AF3F776B95A7DED542035B3B666A9FDE2EE9
+human: init
+```
+
+### Configure Move.toml
+Update your `Move.toml` file with the deployment address and dependencies:
+
+```toml Move.toml
+[package]
+name = "hello_world"
+version = "0.0.0"
+
+[dependencies]
+InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
+
+[addresses]
+std = "0x1"
+hello = "0xCC86AF3F776B95A7DED542035B3B666A9FDE2EE9" # Replace with your address from above
+```
+
+<Warning>
+**Address Configuration**
+Ensure you add the "0x" prefix to your address and replace the example address with your actual deployment address. This determines where your module will be deployed on the blockchain.
+</Warning>
+
+### Compile Your Module
+Build your Move module into deployable bytecode:
+
+<CodeGroup>
+```bash Initia L1
+initiad move build
+```
+```bash Move Rollups
+minitiad move build
+```
+</CodeGroup>
+
+**Successful compilation output:**
+```bash
+Compiling, may take a little while to download git dependencies...
+UPDATING GIT DEPENDENCY https://github.com/initia-labs/movevm.git
+INCLUDING DEPENDENCY InitiaStdlib
+INCLUDING DEPENDENCY MoveNursery
+INCLUDING DEPENDENCY MoveStdlib
+BUILDING hello_world
+```
+
+### Verify Build Output
+After compilation, you'll find a new `build/` directory containing:
+- Compiled bytecode modules
+- Dependency information
+- Build artifacts and metadata
+</Step>
+
+<Step title="Deploy Your Module">
+Deploy your compiled module to the blockchain network.
+
+<CodeGroup>
+```bash Initia L1
+initiad move deploy \
+  --path . \
+  --upgrade-policy COMPATIBLE \
+  --from example \
+  --gas auto --gas-adjustment 1.5 \
+  --gas-prices $GAS_PRICES \
+  --node $RPC_URL \
+  --chain-id $CHAIN_ID
+```
+```bash Move Rollups
+minitiad move deploy \
+  --path . \
+  --upgrade-policy COMPATIBLE \
+  --from example \
+  --gas auto --gas-adjustment 1.5 \
+  --gas-prices $GAS_PRICES \
+  --node $RPC_URL \
+  --chain-id $CHAIN_ID
+```
+```ts InitiaJS SDK
+import { isTxError, MnemonicKey, MsgPublish, RESTClient, Wallet } from '@initia/initia.js'
+import fs from 'fs'
+import path from 'path'
+
+const REST_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = ''                                 // Replace with your mnemonic
+
+const MODULE_NAME = 'hello_world'
+const MODULE_PATH = path.join(__dirname, `./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
+
+function buildMsg(wallet: Wallet): MsgPublish {
+  const packageBytes = fs.readFileSync(MODULE_PATH).toString('base64')
+
+  return new MsgPublish(wallet.key.accAddress, [packageBytes], MsgPublish.Policy.COMPATIBLE)
+}
+
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
+
+  const msg = buildMsg(wallet)
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
+
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
+
+main().catch(console.error)
+```
+</CodeGroup>
+
+### Understanding Deployment Options
+
+<AccordionGroup>
+<Accordion title="Upgrade Policies" icon="arrow-up">
+The `--upgrade-policy` flag controls future module updates:
+
+- **`COMPATIBLE`**: Allows backward-compatible upgrades that don't break existing functionality
+- **`IMMUTABLE`**: Prevents any future modifications to the deployed module
+
+Choose based on whether you anticipate needing to update your module after deployment.
+</Accordion>
+
+<Accordion title="Gas Configuration" icon="fuel-pump">
+Gas settings control transaction costs:
+
+- `--gas auto`: Automatically estimates required gas
+- `--gas-adjustment 1.5`: Adds 50% buffer to gas estimate
+- `--gas-prices`: Sets the price per unit of gas
+
+These settings help ensure your transaction succeeds while managing costs.
+</Accordion>
+</AccordionGroup>
+
+<Tip>
+**Successful Deployment**
+Once deployed successfully, your module will be stored at the address specified in your `Move.toml` file and can be interacted with by any user on the network.
+</Tip>
+</Step>
+
+<Step title="Interact with Your Deployed Module">
+Test your module by executing transactions and querying stored data.
+
+### Execute Transactions
+Call your module's `save_message` function to store data on-chain:
+
+<CodeGroup>
+```bash Initia L1
+export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
+initiad tx move execute $MODULE_ADDRESS hello_world save_message \
+  --args '["string:Hello from Move!"]'  \
+  --node $RPC_URL \
+  --from example \
+  --gas-prices $GAS_PRICES \
+  --chain-id $CHAIN_ID
+```
+```bash Move Rollups
+export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
+minitiad tx move execute $MODULE_ADDRESS hello_world save_message \
+  --args '["string:Hello from Move!"]'  \
+  --node $RPC_URL \
+  --from example \
+  --gas-prices $GAS_PRICES \
+  --chain-id $CHAIN_ID
+```
+```ts InitiaJS SDK
+import { bcs, isTxError, MnemonicKey, MsgExecute, RESTClient, Wallet } from '@initia/initia.js'
+
+const REST_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = ''                                                 // Replace with your mnemonic
+
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC })
+  )
+
+  const msg = new MsgExecute(
+    wallet.key.accAddress,                        // tx sender
+    MODULE_ADDRESS,                               // module address
+    MODULE_NAME,                                  // module name
+    'save_message',                               // function name
+    [],                                           // type args
+    [
+      bcs.string().serialize('Hello from Move!').toBase64(),  // function args
+    ]
+  )
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
+
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
+
+main().catch(console.error)
+```
+</CodeGroup>
+
+### Query Stored Data
+Retrieve the message you just saved using the `view_message` function:
+
+<CodeGroup>
+```bash Initia L1
+initiad query move view $MODULE_ADDRESS hello_world view_message \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
+    --node $RPC_URL
+```
+```bash Move Rollups
+minitiad query move view $MODULE_ADDRESS hello_world view_message \
+    --args '["address:0xcc86af3f776b95a7ded542035b3b666a9fde2ee9"]' \
+    --node $RPC_URL
+```
+```ts InitiaJS SDK
+import { bcs, RESTClient } from '@initia/initia.js'
+
+const REST_URL = 'https://rest.testnet.initia.xyz'
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
+
+async function main() {
+  const restClient = new RESTClient(REST_URL, { gasPrices: '0.015uinit' })
+
+  const result = await restClient.move.view(
+    MODULE_ADDRESS,
+    MODULE_NAME,
+    'view_message',
+    [],
+    [
+      bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()
+    ]
+  )
+  console.log('Result:', result)
+}
+
+main().catch(console.error)
+```
+</CodeGroup>
+
+### Expected Results
+If both operations succeed, your query should return:
+
+```json
+{
+  "data": "\"Hello from Move!\"",
+  "events": [],
+  "gas_used": "1071"
+}
+```
+
+<Check>
+**Success!** You've successfully created, deployed, and interacted with your first Move module. The message is now permanently stored on the blockchain and can be retrieved by anyone.
+</Check>
+</Step>
+</Steps>
