@@ -69,6 +69,11 @@ export default function Providers({ children }: PropsWithChildren) {
 - **Wagmi Config**: Set up wagmi to use your custom chain and the Initia Privy wallet connector
 - **Style Injection**: Use `injectStyles()` to ensure proper styling within Initia Wallet's shadow DOM
 - **Provider Hierarchy**: Wrap your app with QueryClient, WagmiProvider, and InterwovenKitProvider
+- **Default Chain ID**: Set to your target rollup chain ID (e.g., `"minievm-2"` for Minievm testnet)
+
+<Info>
+  **Chain ID Configuration**: The `defaultChainId` parameter sets the primary blockchain for Initia Wallet operations. For EVM rollups, use your rollup's chain ID (like `"minievm-2"`), not the EVM chain ID. This ensures proper balance display and bridging functionality. See [InterwovenKitProvider reference](/interwovenkit/references/interwovenkit-provider) for more details.
+</Info>
 
 </Step>
 <Step title="Install Dependencies">

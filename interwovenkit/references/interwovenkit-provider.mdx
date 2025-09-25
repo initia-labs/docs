@@ -13,18 +13,44 @@ The `InterwovenKitProvider` is the root component that enables wallet connectivi
 ### Chain Connection
 
 <ParamField path="defaultChainId" type="string" default="interwoven-1">
-  The default chain ID for wallet connection. Must be registered in the [initia-registry](https://github.com/initia-labs/initia-registry/).
+  Sets the primary blockchain network that InterwovenKit uses as its default throughout the application. This chain is used for transactions, balance queries, appears first in asset displays, and serves as a fallback when no specific chain is provided.
 </ParamField>
 
+The `defaultChainId` parameter accepts **chain ID strings** that correspond to chains in the [Initia registry](https://registry.initia.xyz). Common values include:
+
+**Mainnet:**
+- `"interwoven-1"` - The main Initia network (default for mainnet)
+
+**Testnet:**
+- `"initiation-2"` - The Initia testnet (default for testnet)
+
+<Info>
+  When no `defaultChainId` is provided, the system automatically defaults to `"interwoven-1"` (mainnet). For testnet development, use the `TESTNET` configuration which includes `defaultChainId: "initiation-2"`.
+</Info>
+
 ```tsx
+// Explicitly set to mainnet
 export default function Providers() {
   return (
-    <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+    <InterwovenKitProvider defaultChainId="interwoven-1">
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+
+// Use testnet configuration (includes defaultChainId: "initiation-2")
+export default function Providers() {
+  return (
+    <InterwovenKitProvider {...TESTNET}>
       {children}
     </InterwovenKitProvider>
   )
 }
 ```
+
+<Tip>
+  The `defaultChainId` affects transaction defaults, portfolio sorting, balance queries, and bridge operations. Assets from the default chain will appear first in lists, and all operations will use this chain unless explicitly overridden.
+</Tip>
 
 ### Custom Chain Support
 
