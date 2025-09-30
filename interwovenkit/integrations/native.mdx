@@ -222,6 +222,81 @@ Follow these steps to set up InterwovenKit in your application:
     )
   }
   ```
+ </Step>
+ <Step title="Custom Fee Handling (Optional)">
+  The custom fee handling feature allows you to bypass the "Confirm tx" modal and provide pre-calculated fees directly, giving you more control over transaction speed and UX. The requestTx functions are still available, so you can choose the workflow that fits your app best.
 
+  You can provide fees in two ways:
+
+  - `Pre-calculated`: Provide a fixed fee if you are confident.
+  - `Estimated`: Use estimateGas to simulate the required fee.
+
+  <Note>
+  Since this skips the standard fee selection UI, ensure the fee is displayed somewhere else in your app to maintain transparency for users.
+  </Note>
+
+  ```tsx components/TransactionExampleWithFee.tsx
+   "use client"
+
+  import { useState } from "react"
+  import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+  import { calculateFee, GasPrice } from "@cosmjs/stargate"
+  import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+  export default function TransactionExample() {
+    const { address, estimateGas, submitTxBlock } = useInterwovenKit()
+    const [isLoading, setIsLoading] = useState(false)
+    const [lastTxHash, setLastTxHash] = useState<string>("")
+
+    const sendTransaction = async () => {
+      if (!address) return
+
+      setIsLoading(true)
+      try {
+        // Create a simple send transaction to yourself
+        const messages = [{
+          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+          value: MsgSend.fromPartial({
+            fromAddress: address,
+            toAddress: address,
+            amount: [{ amount: "1000000", denom: "uinit" }], // 1 INIT
+          }),
+        }]
+
+        // Estimate gas and calculate fee
+        const gas = await estimateGas({ messages })
+        const fee = calculateFee(gas, GasPrice.fromString("0.015uinit"))
+        const { transactionHash } = await submitTxBlock({ messages, fee })
+        setLastTxHash(transactionHash)
+        console.log("Transaction successful:", transactionHash)
+      } catch (error) {
+        console.error("Transaction failed:", error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    if (!address) {
+      return <p>Please connect your wallet first</p>
+    }
+
+    return (
+      <div>
+        <h3>Send Transaction</h3>
+        <button
+          onClick={sendTransaction}
+          disabled={isLoading}
+        >
+          {isLoading ? "Sending..." : "Send 1 INIT to Self"}
+        </button>
+        {lastTxHash && (
+          <p>Last transaction: {lastTxHash}</p>
+        )}
+      </div>
+    )
+  }
+
+  ```
  </Step>
 </Steps>
+
