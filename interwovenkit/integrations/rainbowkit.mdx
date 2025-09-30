@@ -164,4 +164,57 @@ RainbowKit integration with InterwovenKit provides:
     }
     ```
   </Step>
+  <Step title="Custom Fee Handling (Optional)">
+    ```tsx
+    // page.tsx
+    "use client"
+
+    import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+    import { ConnectButton } from "@rainbow-me/rainbowkit"
+    import { truncate } from "@initia/utils"
+    import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+    export default function Home() {
+      const { address, username, openWallet, openBridge, estimateGas, submitTxBlock } = useInterwovenKit()
+
+      const send = async () => {
+        const messages = [
+          {
+            typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+            value: MsgSend.fromPartial({
+              fromAddress: address,
+              toAddress: address,
+              amount: [{ amount: "1000000", denom: "uinit" }],
+            }),
+          },
+        ]
+
+        // Estimate gas and calculate fee
+        const gas = await estimateGas({ messages })
+        const fee = calculateFee(gas, GasPrice.fromString("0.015uinit"))
+        const { transactionHash } = await submitTxBlock({ messages, fee })
+        console.log("Transaction sent:", transactionHash)
+      }
+
+      const bridgeTransferDetails = {
+        srcChainId: "SOURCE_CHAIN_ID",
+        srcDenom: "SOURCE_ASSET_DENOM",
+        dstChainId: "DESTINATION_CHAIN_ID",
+        dstDenom: "DESTINATION_ASSET_DENOM",
+      }
+
+      if (!address) {
+        return <ConnectButton />
+      }
+
+      return (
+        <>
+          <button onClick={send}>Send</button>
+          <button onClick={() => openBridge(bridgeTransferDetails)}>Bridge</button>
+          <button onClick={openWallet}>{truncate(username ?? address)}</button>
+        </>
+      )
+    }
+    ```
+  </Step>
 </Steps>
