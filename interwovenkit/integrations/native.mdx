@@ -240,6 +240,7 @@ Follow these steps to set up InterwovenKit in your application:
 
   import { useState } from "react"
   import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+  import { calculateFee, GasPrice } from "@cosmjs/stargate"
   import { useInterwovenKit } from "@initia/interwovenkit-react"
 
   export default function TransactionExample() {
