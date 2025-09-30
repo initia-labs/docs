@@ -132,6 +132,14 @@ The hook provides utilities for estimating, signing, and sending transactions on
   Signs and broadcasts a transaction, returning the transaction hash immediately without waiting for block inclusion.
 </ParamField>
 
+<ParamField path="submitTxBlock" type="(txParams: TxParams) => Promise<DeliverTxResponse>">
+  Signs, broadcasts, and waits for block inclusion with pre-calculated fee, returning the complete transaction response.
+</ParamField>
+
+<ParamField path="submitTxSync" type="(txParams: TxParams) => Promise<string>">
+  Signs and broadcasts a transaction with pre-calculated fee, returning the transaction hash immediately without waiting for block inclusion.
+</ParamField>
+
 <ParamField path="waitForTxConfirmation" type="(params: TxQuery) => Promise<IndexedTx>">
   Polls for transaction confirmation on-chain using a transaction hash.
 </ParamField>
