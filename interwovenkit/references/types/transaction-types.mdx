@@ -1,0 +1,566 @@
+---
+title: Transaction Types
+---
+
+InterwovenKit provides comprehensive TypeScript interfaces for transaction operations, including request parameters, query options, and response types.
+
+<Info>
+  These types ensure type safety when working with blockchain transactions and provide clear documentation of expected parameters and return values.
+</Info>
+
+## Request Types
+
+### TxRequest
+
+The primary interface for transaction requests used with `requestTxBlock`, `requestTxSync`, and `estimateGas`.
+
+```tsx
+interface TxRequest {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string
+  gasAdjustment?: number
+  gas?: number
+  fee?: StdFee | null
+}
+```
+
+<ParamField path="messages" type="EncodeObject[]" required>
+  Array of encoded transaction messages to include in the transaction. Each message represents a specific blockchain operation.
+</ParamField>
+
+<ParamField path="memo" type="string" optional>
+  Optional memo text to attach to the transaction. Useful for transaction identification or notes.
+</ParamField>
+
+<ParamField path="chainId" type="string" optional>
+  Target chain ID for the transaction. If not provided, uses the provider's `defaultChainId`.
+</ParamField>
+
+<ParamField path="gasAdjustment" type="number" optional default="1.4">
+  Multiplier applied to the estimated gas amount for safety margin. Higher values reduce the risk of out-of-gas failures.
+</ParamField>
+
+<ParamField path="gas" type="number" optional>
+  Explicit gas limit for the transaction. If provided, skips automatic gas estimation.
+</ParamField>
+
+<ParamField path="fee" type="StdFee | null" optional>
+  Explicit fee structure for the transaction. If provided, skips the fee denomination selection UI.
+</ParamField>
+
+### TxParams
+
+The interface for direct transaction submission used with `submitTxBlock` and `submitTxSync`.
+
+```tsx
+interface TxParams {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string
+  fee: StdFee
+}
+```
+
+<ParamField path="messages" type="EncodeObject[]" required>
+  Array of encoded transaction messages to include in the transaction.
+</ParamField>
+
+<ParamField path="memo" type="string" optional>
+  Optional memo text to attach to the transaction.
+</ParamField>
+
+<ParamField path="chainId" type="string" optional>
+  Target chain ID for the transaction. If not provided, uses the provider's `defaultChainId`.
+</ParamField>
+
+<ParamField path="fee" type="StdFee" required>
+  **Required** fee structure for the transaction. Submit functions require explicit fees and bypass the UI fee selection.
+</ParamField>
+
+### Key Differences: TxRequest vs TxParams
+
+| Field | TxRequest | TxParams | Purpose |
+|-------|-----------|----------|---------|
+| **fee** | Optional | **Required** | TxParams requires explicit fee specification |
+| **gasAdjustment** | ✅ Available | ❌ Not available | UI-based methods handle gas adjustment |
+| **gas** | ✅ Available | ❌ Not available | Must be pre-calculated for TxParams |
+| **gasPrices** | ✅ Available | ❌ Not available | Submit functions bypass price selection |
+| **Usage** | `requestTx*` methods | `submitTx*` methods | Different interaction patterns |
+
+### Usage Examples
+
+#### TxRequest Examples
+
+```tsx
+import type { TxRequest } from "@initia/interwovenkit-react"
+
+// Basic transaction request (for requestTx methods)
+const basicRequest: TxRequest = {
+  messages: [
+    {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: "init1...",
+        toAddress: "init1...", 
+        amount: [{ denom: "uinit", amount: "1000000" }],
+      },
+    },
+  ],
+}
+
+// Advanced transaction request
+const advancedRequest: TxRequest = {
+  messages: [sendMessage, delegateMessage],
+  memo: "Batch operation: send + delegate",
+  chainId: "interwoven-1",
+  gasAdjustment: 1.5, // 50% buffer
+  fee: {
+    amount: [{ denom: "uinit", amount: "5000" }],
+    gas: "200000",
+  },
+}
+```
+
+#### TxParams Examples
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import type { TxParams } from "@initia/interwovenkit-react"
+
+// Basic transaction params (for submitTx methods)
+const gasLimit = 200000 // Pre-calculated gas limit
+const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+const basicParams: TxParams = {
+  messages: [
+    {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: "init1...",
+        toAddress: "init1...",
+        amount: [{ denom: "uinit", amount: "1000000" }],
+      },
+    },
+  ],
+  fee, // Required - explicit fee
+}
+
+// Advanced transaction params with custom fee
+const advancedParams: TxParams = {
+  messages: [sendMessage, delegateMessage],
+  memo: "Direct batch operation",
+  chainId: "interwoven-1",
+  fee: {
+    amount: [
+      { denom: "uinit", amount: "5000" },
+      { denom: "uusdc", amount: "2000" },
+    ],
+    gas: "300000",
+  },
+}
+
+// Multi-chain transaction params
+const multiChainParams: TxParams = {
+  messages: [ibcTransferMessage],
+  chainId: "rollup-chain-1",
+  fee: calculateFee(180000, GasPrice.fromString("0.020uinit")),
+  memo: "Cross-chain transfer",
+}
+```
+
+<Info>
+  **Key difference**: `TxParams` always requires an explicit `fee` field, while `TxRequest` makes it optional and can rely on UI-based fee selection.
+</Info>
+
+## Query Types
+
+### TxQuery
+
+Interface for transaction confirmation queries used with `waitForTxConfirmation`.
+
+```tsx
+interface TxQuery {
+  txHash: string
+  chainId?: string
+  timeoutSeconds?: number
+  intervalSeconds?: number
+}
+```
+
+<ParamField path="txHash" type="string" required>
+  Hash of the transaction to track for confirmation. Obtained from `requestTxSync` or transaction broadcast.
+</ParamField>
+
+<ParamField path="chainId" type="string" optional>
+  Chain ID where the transaction was broadcast. If not provided, uses the default chain.
+</ParamField>
+
+<ParamField path="timeoutSeconds" type="number" optional default="30">
+  Maximum time to wait for transaction confirmation before timing out.
+</ParamField>
+
+<ParamField path="intervalSeconds" type="number" optional default="1">
+  Polling interval in seconds for checking transaction status.
+</ParamField>
+
+### Usage Examples
+
+```tsx
+import type { TxQuery } from "@initia/interwovenkit-react"
+
+// Basic query
+const basicQuery: TxQuery = {
+  txHash: "A1B2C3D4...",
+}
+
+// Advanced query with custom settings
+const advancedQuery: TxQuery = {
+  txHash: "A1B2C3D4...",
+  chainId: "interwoven-1",
+  timeoutSeconds: 60, // Wait up to 1 minute
+  intervalSeconds: 2, // Check every 2 seconds
+}
+```
+
+## Response Types
+
+### DeliverTxResponse
+
+Complete transaction response returned by `requestTxBlock`.
+
+```tsx
+interface DeliverTxResponse {
+  height: number
+  txIndex: number
+  hash: string
+  code: number
+  events: readonly Event[]
+  rawLog: string
+  tx: Uint8Array
+  msgResponses: Array<{ typeUrl: string; value: Uint8Array }>
+  gasUsed: bigint
+  gasWanted: bigint
+}
+```
+
+<ParamField path="height" type="number">
+  Block height at which the transaction was included.
+</ParamField>
+
+<ParamField path="hash" type="string">
+  Transaction hash identifier.
+</ParamField>
+
+<ParamField path="code" type="number">
+  Execution result code. 0 indicates success, non-zero indicates failure.
+</ParamField>
+
+<ParamField path="events" type="readonly Event[]">
+  Array of events emitted during transaction execution.
+</ParamField>
+
+<ParamField path="gasUsed" type="bigint">
+  Actual amount of gas consumed by the transaction.
+</ParamField>
+
+<ParamField path="gasWanted" type="bigint">
+  Gas limit that was set for the transaction.
+</ParamField>
+
+### IndexedTx
+
+Transaction information returned by `waitForTxConfirmation`.
+
+```tsx
+interface IndexedTx {
+  height: number
+  hash: string
+  code: number
+  events: readonly Event[]
+  rawLog: string
+  tx: Uint8Array
+  gasUsed: bigint
+  gasWanted: bigint
+}
+```
+
+Similar to `DeliverTxResponse` but focused on confirmation data rather than broadcast response.
+
+## Message Types
+
+### EncodeObject
+
+Standard interface for encoded transaction messages.
+
+```tsx
+interface EncodeObject {
+  readonly typeUrl: string
+  readonly value: any
+}
+```
+
+<ParamField path="typeUrl" type="string">
+  Protobuf type URL identifying the message type (e.g., "/cosmos.bank.v1beta1.MsgSend").
+</ParamField>
+
+<ParamField path="value" type="any">
+  The message content in the appropriate format for the message type.
+</ParamField>
+
+### Common Message Examples
+
+```tsx
+// Bank send message
+const sendMessage: EncodeObject = {
+  typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+  value: {
+    fromAddress: "init1...",
+    toAddress: "init1...",
+    amount: [{ denom: "uinit", amount: "1000000" }],
+  },
+}
+
+// Staking delegate message  
+const delegateMessage: EncodeObject = {
+  typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+  value: {
+    delegatorAddress: "init1...",
+    validatorAddress: "initvaloper1...",
+    amount: { denom: "uinit", amount: "10000000" },
+  },
+}
+
+// IBC transfer message
+const ibcTransferMessage: EncodeObject = {
+  typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+  value: {
+    sourcePort: "transfer",
+    sourceChannel: "channel-0", 
+    token: { denom: "uinit", amount: "1000000" },
+    sender: "init1...",
+    receiver: "init1...",
+    timeoutHeight: {},
+    timeoutTimestamp: "1234567890000000000",
+  },
+}
+```
+
+## Fee Types
+
+### StdFee
+
+Standard fee structure for transactions.
+
+```tsx
+interface StdFee {
+  readonly amount: readonly Coin[]
+  readonly gas: string
+}
+```
+
+<ParamField path="amount" type="readonly Coin[]">
+  Array of fee amounts in different denominations.
+</ParamField>
+
+<ParamField path="gas" type="string">
+  Gas limit as a string.
+</ParamField>
+
+### Coin
+
+Basic coin type representing an amount and denomination.
+
+```tsx
+interface Coin {
+  readonly denom: string
+  readonly amount: string
+}
+```
+
+<ParamField path="denom" type="string">
+  Token denomination (e.g., "uinit", "uusdc").
+</ParamField>
+
+<ParamField path="amount" type="string">
+  Token amount in base units as a string.
+</ParamField>
+
+### Fee Examples
+
+```tsx
+// Simple fee in INIT
+const simpleFee: StdFee = {
+  amount: [{ denom: "uinit", amount: "5000" }],
+  gas: "200000",
+}
+
+// Multi-denom fee
+const multiFee: StdFee = {
+  amount: [
+    { denom: "uinit", amount: "3000" },
+    { denom: "uusdc", amount: "2000" },
+  ],
+  gas: "300000",
+}
+
+// Calculated fee using CosmJS utilities
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+
+const calculatedFee: StdFee = calculateFee(
+  200000, // gas limit
+  GasPrice.fromString("0.015uinit")
+)
+```
+
+<Tip>
+  For dynamic fee calculation based on gas estimates and prices, use the `calculateFee` utility from `@cosmjs/stargate`. See the [Fee Calculation Utilities](/interwovenkit/references/utilities/fee-calculation) guide for comprehensive examples and patterns.
+</Tip>
+
+## Transaction Workflows
+
+### Complete Transaction Example
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject } from "@initia/interwovenkit-react"
+
+function TransferTokens() {
+  const { requestTxBlock, estimateGas } = useInterwovenKit()
+
+  const sendTokens = async (to: string, amount: string) => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: to,
+        amount: [{ denom: "uinit", amount }],
+      },
+    }
+
+    const txRequest: TxRequest = {
+      messages: [message],
+      memo: `Transfer ${amount} INIT to ${to}`,
+    }
+
+    try {
+      // Optional: estimate gas first
+      const estimatedGas = await estimateGas(txRequest)
+      console.log(`Estimated gas: ${estimatedGas}`)
+
+      // Send transaction and wait for confirmation
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log(`Transaction successful: ${response.transactionHash}`)
+        console.log(`Block height: ${response.height}`)
+        console.log(`Gas used: ${response.gasUsed}/${response.gasWanted}`)
+      } else {
+        console.error(`Transaction failed: ${response.rawLog}`)
+      }
+    } catch (error) {
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <button onClick={() => sendTokens("init1...", "1000000")}>
+      Send 1 INIT
+    </button>
+  )
+}
+```
+
+### Async Transaction Pattern
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, TxQuery } from "@initia/interwovenkit-react"
+
+function AsyncTransaction() {
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+
+  const sendAsyncTransaction = async (messages: EncodeObject[]) => {
+    const txRequest: TxRequest = { messages }
+
+    try {
+      // Send transaction without waiting for confirmation
+      const txHash = await requestTxSync(txRequest)
+      console.log(`Transaction broadcasted: ${txHash}`)
+
+      // Wait for confirmation separately
+      const query: TxQuery = {
+        txHash,
+        timeoutSeconds: 60,
+        intervalSeconds: 2,
+      }
+
+      const result = await waitForTxConfirmation(query)
+      
+      if (result.code === 0) {
+        console.log(`Transaction confirmed: ${result.hash}`)
+      } else {
+        console.error(`Transaction failed: ${result.rawLog}`)
+      }
+    } catch (error) {
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <button onClick={() => sendAsyncTransaction([/* messages */])}>
+      Send Async Transaction
+    </button>
+  )
+}
+```
+
+<Tip>
+  Use `requestTxBlock` when you need immediate confirmation results. Use `requestTxSync` + `waitForTxConfirmation` when you want to show progress or handle other operations while waiting for confirmation.
+</Tip>
+
+<Warning>
+  Always handle transaction errors appropriately. Check the `code` field in responses - 0 indicates success, while non-zero values indicate various failure modes.
+</Warning>
+
+## Type Utilities
+
+### Type Guards
+
+```tsx
+// Check if a transaction was successful
+function isSuccessfulTx(
+  response: DeliverTxResponse | IndexedTx
+): boolean {
+  return response.code === 0
+}
+
+// Extract specific message response
+function getMessageResponse<T>(
+  response: DeliverTxResponse,
+  typeUrl: string
+): T | undefined {
+  return response.msgResponses.find(
+    (msg) => msg.typeUrl === typeUrl
+  )?.value as T
+}
+```
+
+### Helper Functions
+
+```tsx
+// Create basic fee structure
+function createFee(gasDenom: string, gasAmount: string, gasLimit: string): StdFee {
+  return {
+    amount: [{ denom: gasDenom, amount: gasAmount }],
+    gas: gasLimit,
+  }
+}
+
+// Convert human-readable amount to base units
+function toBaseUnits(amount: string, decimals: number): string {
+  return (parseFloat(amount) * Math.pow(10, decimals)).toString()
+}
+```
+
+These type definitions provide complete type safety for all transaction operations in InterwovenKit, ensuring correct parameter passing and response handling throughout your application.

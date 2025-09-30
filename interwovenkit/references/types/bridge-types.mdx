@@ -1,0 +1,470 @@
+---
+title: Bridge Types
+---
+
+InterwovenKit provides TypeScript interfaces for cross-chain bridge operations, enabling type-safe configuration of bridge transactions and form pre-population.
+
+<Info>
+  These types ensure proper configuration of cross-chain asset transfers and provide structure for bridge UI state management.
+</Info>
+
+## Core Bridge Types
+
+### BridgeFormValues
+
+Interface for pre-populating the bridge form when opening the bridge drawer.
+
+```tsx
+interface BridgeFormValues {
+  srcChainId?: string
+  srcDenom?: string
+  dstChainId?: string
+  dstDenom?: string
+  quantity?: string
+}
+```
+
+<ParamField path="srcChainId" type="string" optional>
+  Source chain ID where assets will be bridged from (e.g., "interwoven-1", "ethereum-1").
+</ParamField>
+
+<ParamField path="srcDenom" type="string" optional>
+  Source token denomination to bridge from (e.g., "uinit", "uusdc").
+</ParamField>
+
+<ParamField path="dstChainId" type="string" optional>
+  Destination chain ID where assets will be bridged to.
+</ParamField>
+
+<ParamField path="dstDenom" type="string" optional>
+  Destination token denomination to bridge to.
+</ParamField>
+
+<ParamField path="quantity" type="string" optional>
+  Initial bridge amount in human-readable format (e.g., "1.5" for 1.5 tokens, not base units).
+</ParamField>
+
+### Usage with openBridge
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+function BridgeButton() {
+  const { openBridge } = useInterwovenKit()
+
+  const handleBridgeClick = () => {
+    const defaultValues: BridgeFormValues = {
+      srcChainId: "ethereum-1",
+      srcDenom: "usdc",
+      dstChainId: "interwoven-1", 
+      dstDenom: "uusdc",
+      quantity: "100"
+    }
+    
+    openBridge(defaultValues)
+  }
+
+  return (
+    <button onClick={handleBridgeClick}>
+      Bridge 100 USDC to Initia
+    </button>
+  )
+}
+```
+
+## Bridge Configuration Examples
+
+### Simple Bridge Setup
+
+Pre-populate just the essential fields:
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+const simpleBridge: BridgeFormValues = {
+  srcChainId: "ethereum-1",
+  dstChainId: "interwoven-1"
+}
+
+// User will select token and amount
+openBridge(simpleBridge)
+```
+
+### Complete Bridge Configuration
+
+Pre-populate all bridge parameters:
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+const completeBridge: BridgeFormValues = {
+  srcChainId: "ethereum-1",
+  srcDenom: "usdc",
+  dstChainId: "interwoven-1",
+  dstDenom: "uusdc",
+  quantity: "1000"
+}
+
+// Bridge form opens with all fields populated
+openBridge(completeBridge)
+```
+
+### Token-Specific Bridge
+
+Set up bridges for specific tokens:
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+// Bridge INIT from mainnet to rollup
+const bridgeInit: BridgeFormValues = {
+  srcChainId: "interwoven-1",
+  srcDenom: "uinit", 
+  dstChainId: "my-rollup-1",
+  dstDenom: "uinit"
+}
+
+// Bridge ETH from Ethereum to MiniEVM rollup  
+const bridgeEth: BridgeFormValues = {
+  srcChainId: "ethereum-1",
+  srcDenom: "eth",
+  dstChainId: "minievm-rollup-1",
+  dstDenom: "eth"
+}
+```
+
+## Dynamic Bridge Configuration
+
+### Chain-Aware Bridge Setup
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+function ChainAwareBridge() {
+  const { address, defaultChain } = useInterwovenKit()
+
+  const openL1Bridge = () => {
+    const bridgeConfig: BridgeFormValues = {
+      srcChainId: defaultChain.chainId,
+      dstChainId: "interwoven-1", // Always bridge to L1
+      srcDenom: "uinit"
+    }
+    
+    openBridge(bridgeConfig)
+  }
+
+  const openRollupBridge = (rollupChainId: string) => {
+    const bridgeConfig: BridgeFormValues = {
+      srcChainId: "interwoven-1", // From L1
+      dstChainId: rollupChainId,
+      srcDenom: "uinit"
+    }
+    
+    openBridge(bridgeConfig)
+  }
+
+  return (
+    <div>
+      <button onClick={openL1Bridge}>
+        Bridge to L1
+      </button>
+      <button onClick={() => openRollupBridge("my-rollup-1")}>
+        Bridge to Rollup
+      </button>
+    </div>
+  )
+}
+```
+
+
+
+## Bridge State Management
+
+### Bridge Form State
+
+```tsx
+import { useState } from "react"
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+function useBridgeForm(initialValues?: Partial<BridgeFormValues>) {
+  const [formValues, setFormValues] = useState<BridgeFormValues>({
+    srcChainId: initialValues?.srcChainId || "",
+    srcDenom: initialValues?.srcDenom || "",
+    dstChainId: initialValues?.dstChainId || "",
+    dstDenom: initialValues?.dstDenom || "",
+    quantity: initialValues?.quantity || "",
+  })
+
+  const updateField = <K extends keyof BridgeFormValues>(
+    field: K,
+    value: BridgeFormValues[K]
+  ) => {
+    setFormValues(prev => ({ ...prev, [field]: value }))
+  }
+
+  const resetForm = () => {
+    setFormValues({
+      srcChainId: "",
+      srcDenom: "",
+      dstChainId: "",
+      dstDenom: "",
+      quantity: "",
+    })
+  }
+
+  const isComplete = () => {
+    return !!(
+      formValues.srcChainId &&
+      formValues.srcDenom &&
+      formValues.dstChainId &&
+      formValues.dstDenom &&
+      formValues.quantity
+    )
+  }
+
+  return {
+    formValues,
+    updateField,
+    resetForm,
+    isComplete: isComplete(),
+  }
+}
+```
+
+### Bridge History Tracking
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+interface BridgeTransaction extends BridgeFormValues {
+  timestamp: number
+  txHash?: string
+  status: 'pending' | 'completed' | 'failed'
+}
+
+function useBridgeHistory() {
+  const [history, setHistory] = useState<BridgeTransaction[]>([])
+
+  const addBridgeTransaction = (
+    bridge: BridgeFormValues,
+    txHash?: string
+  ) => {
+    const transaction: BridgeTransaction = {
+      ...bridge,
+      timestamp: Date.now(),
+      txHash,
+      status: 'pending'
+    }
+
+    setHistory(prev => [transaction, ...prev])
+    return transaction
+  }
+
+  const updateTransactionStatus = (
+    timestamp: number,
+    status: BridgeTransaction['status'],
+    txHash?: string
+  ) => {
+    setHistory(prev => 
+      prev.map(tx => 
+        tx.timestamp === timestamp 
+          ? { ...tx, status, txHash: txHash || tx.txHash }
+          : tx
+      )
+    )
+  }
+
+  const getRecentBridges = (limit: number = 5) => {
+    return history
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, limit)
+  }
+
+  return {
+    history,
+    addBridgeTransaction,
+    updateTransactionStatus,
+    getRecentBridges,
+  }
+}
+```
+
+## Validation and Type Guards
+
+### Bridge Form Validation
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+interface BridgeValidationError {
+  field: keyof BridgeFormValues
+  message: string
+}
+
+function validateBridgeForm(
+  values: BridgeFormValues
+): BridgeValidationError[] {
+  const errors: BridgeValidationError[] = []
+
+  // Check if source and destination chains are different
+  if (values.srcChainId && values.dstChainId && 
+      values.srcChainId === values.dstChainId) {
+    errors.push({
+      field: 'dstChainId',
+      message: 'Destination chain must be different from source chain'
+    })
+  }
+
+  // Validate quantity format
+  if (values.quantity) {
+    const amount = parseFloat(values.quantity)
+    if (isNaN(amount) || amount <= 0) {
+      errors.push({
+        field: 'quantity',
+        message: 'Quantity must be a positive number'
+      })
+    }
+  }
+
+  // Check for required fields
+  const requiredFields: Array<keyof BridgeFormValues> = [
+    'srcChainId', 'srcDenom', 'dstChainId', 'dstDenom'
+  ]
+
+  for (const field of requiredFields) {
+    if (!values[field]) {
+      errors.push({
+        field,
+        message: `${field} is required`
+      })
+    }
+  }
+
+  return errors
+}
+
+function isValidBridgeForm(values: BridgeFormValues): boolean {
+  return validateBridgeForm(values).length === 0
+}
+```
+
+### Type Guards
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+function hasSourceConfig(
+  values: Partial<BridgeFormValues>
+): values is BridgeFormValues & { srcChainId: string; srcDenom: string } {
+  return !!(values.srcChainId && values.srcDenom)
+}
+
+function hasDestinationConfig(
+  values: Partial<BridgeFormValues>  
+): values is BridgeFormValues & { dstChainId: string; dstDenom: string } {
+  return !!(values.dstChainId && values.dstDenom)
+}
+
+function hasQuantity(
+  values: Partial<BridgeFormValues>
+): values is BridgeFormValues & { quantity: string } {
+  return !!(values.quantity && parseFloat(values.quantity) > 0)
+}
+
+function isCompleteBridgeConfig(
+  values: Partial<BridgeFormValues>
+): values is Required<BridgeFormValues> {
+  return !!(
+    values.srcChainId &&
+    values.srcDenom &&
+    values.dstChainId &&
+    values.dstDenom &&
+    values.quantity
+  )
+}
+
+// Usage
+if (hasSourceConfig(bridgeForm)) {
+  console.log(`Bridging from ${bridgeForm.srcChainId}`)
+}
+
+if (isCompleteBridgeConfig(bridgeForm)) {
+  // All fields are guaranteed to be present
+  openBridge(bridgeForm)
+}
+```
+
+## Integration Examples
+
+### Quick Bridge Buttons
+
+```tsx
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+const QUICK_BRIDGE_CONFIGS: Array<{
+  label: string
+  config: BridgeFormValues
+}> = [
+  {
+    label: "ETH → Initia",
+    config: {
+      srcChainId: "ethereum-1",
+      srcDenom: "eth",
+      dstChainId: "interwoven-1",
+      dstDenom: "eth"
+    }
+  },
+  {
+    label: "USDC → Initia", 
+    config: {
+      srcChainId: "ethereum-1",
+      srcDenom: "usdc",
+      dstChainId: "interwoven-1", 
+      dstDenom: "uusdc"
+    }
+  },
+  {
+    label: "INIT → Rollup",
+    config: {
+      srcChainId: "interwoven-1",
+      srcDenom: "uinit",
+      dstChainId: "my-rollup-1",
+      dstDenom: "uinit"
+    }
+  }
+]
+
+function QuickBridgeButtons() {
+  const { openBridge } = useInterwovenKit()
+
+  return (
+    <div className="quick-bridge-buttons">
+      {QUICK_BRIDGE_CONFIGS.map(({ label, config }) => (
+        <button
+          key={label}
+          onClick={() => openBridge(config)}
+          className="quick-bridge-btn"
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  )
+}
+```
+
+<Tip>
+  Use partial bridge configurations to guide users while still allowing flexibility. Pre-populate the chain selection but let users choose the token and amount.
+</Tip>
+
+<Warning>
+  Always validate bridge configurations before opening the bridge drawer. Invalid configurations may cause the bridge UI to behave unexpectedly.
+</Warning>
+
+<Info>
+  The `quantity` field should be in human-readable format (e.g., "1.5" for 1.5 tokens), not in base units. The bridge UI will handle the conversion to base units internally.
+</Info>
+
+These bridge types provide complete type safety for cross-chain asset transfer operations, ensuring proper configuration and seamless integration with InterwovenKit's bridge functionality.

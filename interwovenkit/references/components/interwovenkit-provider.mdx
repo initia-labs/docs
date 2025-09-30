@@ -92,16 +92,6 @@ export default function Providers() {
   Controls the visual theme of wallet modals and components.
 </ParamField>
 
-```tsx
-export default function Providers() {
-  return (
-    <InterwovenKitProvider theme="light">
-      {children}
-    </InterwovenKitProvider>
-  )
-}
-```
-
 ## Advanced Configuration
 
 ### Custom Message Types
@@ -161,28 +151,9 @@ export default function Providers() {
 
 ## Testnet Configuration
 
-### Infrastructure Endpoints
-
-The following props are automatically configured for Initia's mainnet infrastructure and typically don't need to be set for rollup configurations:
-
-<ParamField path="registryUrl" type="string">
-  URL for the chain registry service
-</ParamField>
-
-<ParamField path="routerApiUrl" type="string">
-  URL for the router API service
-</ParamField>
-
-<ParamField path="usernamesModuleAddress" type="string">
-  Contract address for the usernames module
-</ParamField>
-
-### Testnet Setup
-
-For testnet development, use the exported `TESTNET` constant which automatically configures all required endpoints:
+For testnet development, use the exported `TESTNET` constant:
 
 ```tsx
-// providers.tsx
 import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
 
 export default function Providers() {
@@ -193,11 +164,3 @@ export default function Providers() {
   )
 }
 ```
-
-<Tip>
-  The `TESTNET` constant automatically sets the correct `registryUrl`, `routerApiUrl`, and `usernamesModuleAddress` for Initia's testnet environment.
-</Tip>
-
-<Warning>
-  When switching between testnet and mainnet environments, clear your browser's `localStorage` to avoid conflicts. InterwovenKit stores chain information locally, and cached values from different networks can cause connection errors.
-</Warning>

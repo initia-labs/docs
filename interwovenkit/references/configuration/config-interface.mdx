@@ -1,0 +1,326 @@
+---
+title: Config Interface
+---
+
+The `Config` interface defines all configuration options available for `InterwovenKitProvider`, providing type-safe access to customization and infrastructure settings.
+
+<Info>
+  Understanding the Config interface helps you customize InterwovenKit's behavior, connect to different networks, and integrate with custom infrastructure.
+</Info>
+
+## Core Configuration
+
+### Network Settings
+
+<ParamField path="defaultChainId" type="string" required>
+  The primary chain ID that InterwovenKit uses throughout the application. This affects transaction defaults, balance queries, and asset display ordering.
+</ParamField>
+
+<ParamField path="registryUrl" type="string" required>
+  URL for the chain registry service that provides chain metadata, asset information, and network configurations.
+</ParamField>
+
+<ParamField path="routerApiUrl" type="string" required>
+  URL for the router API service that handles cross-chain bridge operations and routing calculations.
+</ParamField>
+
+### UI Configuration
+
+<ParamField path="theme" type='"light" | "dark"' default='"dark"'>
+  Visual theme for wallet modals and UI components.
+</ParamField>
+
+<ParamField path="container" type="HTMLElement" optional>
+  Custom DOM container for rendering InterwovenKit components. If not provided, uses Shadow DOM isolation.
+</ParamField>
+
+### Feature Configuration
+
+<ParamField path="usernamesModuleAddress" type="string" required>
+  Contract address for the usernames module that handles username resolution and registration.
+</ParamField>
+
+<ParamField path="disableAnalytics" type="boolean" optional>
+  When true, disables usage analytics collection. Automatically set to true in testnet configurations.
+</ParamField>
+
+## Advanced Configuration
+
+### Custom Chain Support
+
+<ParamField path="customChain" type="Chain" optional>
+  Custom chain configuration for chains not in the standard registry. Use for private networks or development chains.
+</ParamField>
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+import { ChainSchema } from "@initia/initia-registry-types/zod"
+
+const config: Config = {
+  defaultChainId: "my-custom-chain",
+  customChain: ChainSchema.parse({
+    chain_id: "my-custom-chain",
+    chain_name: "My Custom Chain",
+    apis: {
+      rpc: [{ address: "https://rpc.mycustomchain.com" }],
+      rest: [{ address: "https://lcd.mycustomchain.com" }],
+    },
+    fees: {
+      fee_tokens: [{ denom: "utoken", fixed_min_gas_price: 0.015 }],
+    },
+    bech32_prefix: "init",
+    network_type: "mainnet",
+  }),
+  registryUrl: "https://registry.initia.xyz",
+  routerApiUrl: "https://router-api.initia.xyz",
+  usernamesModuleAddress: "0x...",
+  theme: "dark",
+}
+```
+
+### Transaction Type Extensions
+
+<ParamField path="protoTypes" type="Iterable<[string, GeneratedType]>" optional>
+  Additional protobuf message types for custom transaction messages not included in default modules.
+</ParamField>
+
+```tsx
+import type { GeneratedType } from "@cosmjs/proto-signing"
+import { MsgCustomAction } from "./codec/custom/tx"
+
+const config: Config = {
+  // ... other settings
+  protoTypes: [
+    ["/custom.v1.MsgCustomAction", MsgCustomAction],
+  ] as const,
+}
+```
+
+<ParamField path="aminoConverters" type="AminoConverters" optional>
+  Amino converters for encoding/decoding custom message types for compatibility with Amino signing.
+</ParamField>
+
+```tsx
+import type { AminoConverters } from "@cosmjs/stargate"
+
+const config: Config = {
+  // ... other settings
+  aminoConverters: {
+    "/custom.v1.MsgCustomAction": {
+      aminoType: "custom/MsgCustomAction",
+      toAmino: (msg) => ({
+        creator: msg.creator,
+        data: msg.data,
+      }),
+      fromAmino: (amino) => ({
+        creator: amino.creator,
+        data: amino.data,
+      }),
+    },
+  },
+}
+```
+
+## Complete Interface Definition
+
+```tsx
+import type { GeneratedType } from "@cosmjs/proto-signing"
+import type { AminoConverters } from "@cosmjs/stargate"
+import type { Chain } from "@initia/initia-registry-types"
+
+interface Config {
+  // Network configuration
+  defaultChainId: string
+  registryUrl: string  
+  routerApiUrl: string
+  
+  // Feature settings
+  usernamesModuleAddress: string
+  disableAnalytics?: boolean
+  
+  // UI configuration
+  theme?: 'light' | 'dark'
+  container?: HTMLElement
+  
+  // Advanced configuration
+  customChain?: Chain
+  protoTypes?: Iterable<[string, GeneratedType]>
+  aminoConverters?: AminoConverters
+}
+```
+
+## Configuration Examples
+
+### Production Configuration
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+
+const productionConfig: Config = {
+  defaultChainId: "interwoven-1",
+  registryUrl: "https://registry.initia.xyz",
+  routerApiUrl: "https://router-api.initia.xyz", 
+  usernamesModuleAddress: "0x72ed9b26ecdcd6a21d304df50f19abfdbe31d2c02f60c84627844620a45940ef",
+  theme: "dark",
+  disableAnalytics: false,
+}
+```
+
+### Testnet Configuration
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+
+const testnetConfig: Config = {
+  defaultChainId: "initiation-2",
+  registryUrl: "https://registry.testnet.initia.xyz",
+  routerApiUrl: "https://router-api.initiation-2.initia.xyz",
+  usernamesModuleAddress: "0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a",
+  theme: "dark", 
+  disableAnalytics: true,
+}
+```
+
+### Development Configuration
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+
+const devConfig: Config = {
+  defaultChainId: "local-1",
+  registryUrl: "http://localhost:3001",
+  routerApiUrl: "http://localhost:3002", 
+  usernamesModuleAddress: "0x1",
+  theme: "light",
+  disableAnalytics: true,
+  customChain: {
+    chain_id: "local-1",
+    chain_name: "Local Development",
+    apis: {
+      rpc: [{ address: "http://localhost:26657" }],
+      rest: [{ address: "http://localhost:1317" }],
+    },
+    fees: {
+      fee_tokens: [{ denom: "uinit", fixed_min_gas_price: 0.015 }],
+    },
+    bech32_prefix: "init",
+    network_type: "mainnet",
+  },
+}
+```
+
+## Configuration Helpers
+
+### Environment-Based Configuration
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+import { MAINNET, TESTNET } from "@initia/interwovenkit-react"
+
+function getEnvironmentConfig(): Config {
+  const env = process.env.NODE_ENV
+  const network = process.env.VITE_NETWORK || 'testnet'
+  
+  const baseConfig = network === 'mainnet' ? MAINNET : TESTNET
+  
+  return {
+    ...baseConfig,
+    theme: env === 'development' ? 'light' : 'dark',
+    disableAnalytics: env !== 'production',
+  }
+}
+```
+
+### Configuration Validation
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+
+function validateConfig(config: Partial<Config>): Config {
+  const requiredFields = [
+    'defaultChainId', 
+    'registryUrl', 
+    'routerApiUrl', 
+    'usernamesModuleAddress'
+  ] as const
+
+  for (const field of requiredFields) {
+    if (!config[field]) {
+      throw new Error(`Missing required config field: ${field}`)
+    }
+  }
+
+  return config as Config
+}
+
+// Usage
+const config = validateConfig({
+  defaultChainId: process.env.VITE_CHAIN_ID,
+  registryUrl: process.env.VITE_REGISTRY_URL,
+  // ... other fields
+})
+```
+
+### Dynamic Configuration Loading
+
+```tsx
+import type { Config } from "@initia/interwovenkit-react"
+
+async function loadConfigFromApi(): Promise<Config> {
+  const response = await fetch('/api/config')
+  const config = await response.json()
+  
+  return {
+    defaultChainId: config.chainId,
+    registryUrl: config.registry,
+    routerApiUrl: config.router,
+    usernamesModuleAddress: config.usernames,
+    theme: config.theme || 'dark',
+    disableAnalytics: config.analytics === false,
+  }
+}
+
+// Usage with React
+function App() {
+  const [config, setConfig] = useState<Config | null>(null)
+
+  useEffect(() => {
+    loadConfigFromApi().then(setConfig)
+  }, [])
+
+  if (!config) {
+    return <div>Loading configuration...</div>
+  }
+
+  return (
+    <InterwovenKitProvider {...config}>
+      <YourApp />
+    </InterwovenKitProvider>
+  )
+}
+```
+
+
+<Tip>
+  Use TypeScript's strict mode to ensure all required configuration fields are provided. The Config interface will help catch missing configuration at compile time.
+</Tip>
+
+<Warning>
+  Always validate configuration values, especially when loading from external sources like environment variables or APIs. Invalid configuration can cause runtime errors or unexpected behavior.
+</Warning>
+
+## Related Types
+
+```tsx
+// Related types you might need
+import type { Chain } from "@initia/initia-registry-types"
+import type { GeneratedType } from "@cosmjs/proto-signing"  
+import type { AminoConverters } from "@cosmjs/stargate"
+
+// Helper type for partial configuration
+type PartialConfig = Partial<Config>
+
+// Configuration with defaults applied
+type ConfigWithDefaults = Required<Pick<Config, 'defaultChainId' | 'theme'>> & 
+  Partial<Omit<Config, 'defaultChainId' | 'theme'>>
+```

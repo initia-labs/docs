@@ -1,0 +1,93 @@
+---
+title: openBridge
+---
+
+The `openBridge` function opens the cross-chain bridge drawer, enabling users to transfer assets between different chains in the Initia ecosystem with optional form pre-population.
+
+<Info>
+  This function provides the primary interface for cross-chain asset transfers, supporting bridges between Ethereum, Initia L1, and various rollup chains.
+</Info>
+
+## Function Signature
+
+```tsx
+function openBridge(defaultValues?: Partial<BridgeFormValues>): void
+```
+
+<ParamField path="defaultValues" type="Partial<BridgeFormValues>" optional>
+  Optional configuration to pre-populate the bridge form with specific source/destination chains, tokens, and amounts.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function BridgeButton() {
+  const { openBridge, isConnected } = useInterwovenKit()
+
+  const handleBridgeClick = () => {
+    openBridge()
+  }
+
+  return (
+    <button onClick={handleBridgeClick} disabled={!isConnected}>
+      Open Bridge
+    </button>
+  )
+}
+```
+
+## Bridge Form Configuration
+
+### Simple Bridge Setup
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { BridgeFormValues } from "@initia/interwovenkit-react"
+
+function SimpleEthBridge() {
+  const { openBridge } = useInterwovenKit()
+
+  const handleEthereumBridge = () => {
+    const bridgeConfig: Partial<BridgeFormValues> = {
+      srcChainId: "initiation-2",
+      dstChainId: "wasm-1"
+    }
+    
+    openBridge(bridgeConfig)
+  }
+
+  return (
+    <button onClick={handleEthereumBridge}>
+      Bridge from Ethereum
+    </button>
+  )
+}
+```
+
+### Complete Bridge Pre-population
+
+```tsx
+function PrefilledBridge() {
+  const { openBridge } = useInterwovenKit()
+
+  const handleINITBridge = () => {
+    const bridgeConfig: BridgeFormValues = {
+      srcChainId: "initiation-2",
+      srcDenom: "uinit",
+      dstChainId: "wasm-1", 
+      dstDenom: "uinit",
+      quantity: "100"
+    }
+    
+    openBridge(bridgeConfig)
+  }
+
+  return (
+    <button onClick={handleINITBridge} className="usdc-bridge">
+      Bridge 100 INIT to Wasm
+    </button>
+  )
+}
+```

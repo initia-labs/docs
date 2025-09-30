@@ -1,0 +1,379 @@
+---
+title: Advanced Hooks
+---
+
+InterwovenKit provides several advanced hooks for specialized use cases, including username resolution, chain information access, and low-level wallet operations.
+
+<Warning>
+  These hooks are intended for advanced use cases. Most applications should use `useInterwovenKit()` which provides access to all common functionality.
+</Warning>
+
+## Username Hooks
+
+### useUsernameQuery
+
+Queries the username associated with the currently connected wallet address.
+
+<ParamField path="Returns" type="UseQueryResult<string | null>">
+  React Query result object containing the username data, loading state, and error information.
+</ParamField>
+
+```tsx
+function UsernameDisplay() {
+  const { data: username, isLoading, error } = useUsernameQuery()
+
+  if (isLoading) return <div>Loading username...</div>
+  if (error) return <div>Error loading username</div>
+  
+  return (
+    <div>
+      {username ? `Username: @${username}` : 'No username set'}
+    </div>
+  )
+}
+```
+
+<Info>
+  The username query is automatically enabled when a wallet is connected and caches results for 1 minute to reduce API calls.
+</Info>
+
+## Chain Information Hooks
+
+### useDefaultChain
+
+Returns information about the default chain configured in the provider.
+
+<ParamField path="Returns" type="NormalizedChain">
+  Complete chain information including metadata, endpoints, and configuration.
+</ParamField>
+
+```tsx
+function DefaultChainInfo() {
+  const defaultChain = useDefaultChain()
+
+  return (
+    <div>
+      <h3>{defaultChain.chainName}</h3>
+      <p>Chain ID: {defaultChain.chainId}</p>
+      <p>Network: {defaultChain.networkType}</p>
+    </div>
+  )
+}
+```
+
+### useChain
+
+Retrieves information for a specific chain by ID.
+
+<ParamField path="chainId" type="string" required>
+  The chain ID to lookup information for.
+</ParamField>
+
+<ParamField path="Returns" type="NormalizedChain | undefined">
+  Chain information if found, undefined if the chain is not in the registry.
+</ParamField>
+
+```tsx
+function ChainSelector({ chainId }: { chainId: string }) {
+  const chain = useChain(chainId)
+
+  if (!chain) {
+    return <div>Chain {chainId} not found</div>
+  }
+
+  return (
+    <div>
+      <span>{chain.chainName}</span>
+    </div>
+  )
+}
+```
+
+### useLayer1
+
+Returns information about the Initia L1 chain.
+
+<ParamField path="Returns" type="NormalizedChain">
+  The Initia L1 chain information.
+</ParamField>
+
+```tsx
+function Layer1Info() {
+  const layer1 = useLayer1()
+
+  return (
+    <div>
+      <h3>Initia L1</h3>
+      <p>Chain ID: {layer1.chainId}</p>
+      <p>RPC: {layer1.apis.rpc[0]?.address}</p>
+    </div>
+  )
+}
+```
+
+### useFindChain
+
+Returns a function to search for chains by various criteria.
+
+<ParamField path="Returns" type="(predicate: (chain: NormalizedChain) => boolean) => NormalizedChain | undefined">
+  Function that finds the first chain matching the provided predicate function.
+</ParamField>
+
+```tsx
+function FindEvmChains() {
+  const findChain = useFindChain()
+
+  const evmChains = useInitiaRegistry().filter(chain => 
+    chain.metadata?.minitia?.type === 'minievm'
+  )
+
+  const firstEvmChain = findChain(chain => 
+    chain.metadata?.minitia?.type === 'minievm'
+  )
+
+  return (
+    <div>
+      <h3>EVM Chains</h3>
+      <div>Total EVM chains: {evmChains.length}</div>
+      {firstEvmChain && (
+        <div>First EVM chain: {firstEvmChain.chainName}</div>
+      )}
+    </div>
+  )
+}
+```
+
+## Registry and Configuration Hooks
+
+### useInitiaRegistry
+
+Access the complete chain registry data.
+
+<ParamField path="Returns" type="NormalizedChain[]">
+  Array of all chains in the Initia registry.
+</ParamField>
+
+```tsx
+function ChainList() {
+  const chains = useInitiaRegistry()
+
+  return (
+    <div>
+      <h3>Available Chains ({chains.length})</h3>
+      {chains.map(chain => (
+        <div key={chain.chainId}>
+          <span>{chain.chainName}</span>
+          <span>({chain.chainId})</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### useConfig
+
+Access the current InterwovenKit configuration.
+
+<ParamField path="Returns" type="Config">
+  The complete configuration object passed to InterwovenKitProvider.
+</ParamField>
+
+```tsx
+function ConfigDisplay() {
+  const config = useConfig()
+
+  return (
+    <div>
+      <div>Theme: {config.theme}</div>
+      <div>Default Chain: {config.defaultChainId}</div>
+      <div>Registry URL: {config.registryUrl}</div>
+      <div>Router API: {config.routerApiUrl}</div>
+    </div>
+  )
+}
+```
+
+## Asset Information Hooks
+
+### useAssets
+
+Get asset information for a specific chain.
+
+<ParamField path="chain" type="NormalizedChain" optional>
+  Chain to get assets for. Defaults to the default chain if not provided.
+</ParamField>
+
+<ParamField path="Returns" type="UseQueryResult<NormalizedAsset[]>">
+  React Query result containing asset information for the chain.
+</ParamField>
+
+```tsx
+function ChainAssets({ chainId }: { chainId: string }) {
+  const chain = useChain(chainId)
+  const { data: assets, isLoading } = useAssets(chain)
+
+  if (isLoading) return <div>Loading assets...</div>
+  if (!assets) return <div>No assets found</div>
+
+  return (
+    <div>
+      <h3>Assets on {chain?.chainName}</h3>
+      {assets.map(asset => (
+        <div key={asset.denom}>
+          <span>{asset.symbol}</span>
+          <span>{asset.name}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### useFindAsset
+
+Returns a function to find assets by denomination on a specific chain.
+
+<ParamField path="chain" type="NormalizedChain" required>
+  Chain to search for assets on.
+</ParamField>
+
+<ParamField path="Returns" type="(denom: string) => NormalizedAsset | undefined">
+  Function that finds an asset by denomination.
+</ParamField>
+
+```tsx
+function AssetLookup() {
+  const defaultChain = useDefaultChain()
+  const findAsset = useFindAsset(defaultChain)
+
+  const initAsset = findAsset('uinit')
+  const usdcAsset = findAsset('uusdc')
+
+  return (
+    <div>
+      {initAsset && (
+        <div>INIT: {initAsset.name} ({initAsset.decimals} decimals)</div>
+      )}
+      {usdcAsset && (
+        <div>USDC: {usdcAsset.name} ({usdcAsset.decimals} decimals)</div>
+      )}
+    </div>
+  )
+}
+```
+
+## Balance Hooks
+
+### useBalances
+
+Get balance information for a specific chain.
+
+<ParamField path="chain" type="NormalizedChain" required>
+  Chain to get balances for.
+</ParamField>
+
+<ParamField path="Returns" type="UseQueryResult<Coin[]>">
+  React Query result containing balance information.
+</ParamField>
+
+```tsx
+function ChainBalances({ chainId }: { chainId: string }) {
+  const chain = useChain(chainId)
+  const { data: balances, isLoading } = useBalances(chain!)
+
+  if (isLoading) return <div>Loading balances...</div>
+  if (!balances?.length) return <div>No balances found</div>
+
+  return (
+    <div>
+      <h3>Balances on {chain?.chainName}</h3>
+      {balances.map(balance => (
+        <div key={balance.denom}>
+          <span>{balance.denom}: {balance.amount}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+## Low-Level Wallet Hooks
+
+### useOfflineSigner
+
+Access the wallet's offline signer for direct transaction operations.
+
+<ParamField path="Returns" type="OfflineSigner | undefined">
+  Offline signer instance for transaction signing, or undefined if no wallet is connected.
+</ParamField>
+
+```tsx
+function DirectSigning() {
+  const offlineSigner = useOfflineSigner()
+  const { address } = useInterwovenKit()
+
+  const signDirect = async () => {
+    if (!offlineSigner || !address) return
+
+    // Direct signing operations
+    const signerAddress = await offlineSigner.getAccounts()
+    console.log('Signer addresses:', signerAddress)
+  }
+
+  return (
+    <button onClick={signDirect} disabled={!offlineSigner}>
+      Access Direct Signer
+    </button>
+  )
+}
+```
+
+<Warning>
+  Using `useOfflineSigner` directly bypasses InterwovenKit's transaction handling, including gas estimation, fee selection UI, and error formatting. Use with caution.
+</Warning>
+
+## Data Type Definitions
+
+```tsx
+interface NormalizedChain {
+  chainId: string
+  chainName: string
+  logoUrl: string
+  networkType: 'mainnet' | 'testnet'
+  apis: {
+    rpc: Array<{ address: string }>
+    rest: Array<{ address: string }>
+  }
+  metadata?: {
+    minitia?: {
+      type: 'minievm' | 'minimove' | 'miniwasm'
+    }
+    is_l1?: boolean
+  }
+}
+
+interface NormalizedAsset {
+  denom: string
+  symbol: string
+  name: string
+  decimals: number
+  logoUrl: string
+  address?: string
+}
+
+interface Config {
+  defaultChainId: string
+  registryUrl: string
+  routerApiUrl: string
+  usernamesModuleAddress: string
+  theme: 'light' | 'dark'
+  customChain?: Chain
+  protoTypes?: Iterable<[string, GeneratedType]>
+  aminoConverters?: AminoConverters
+}
+```
+
+<Tip>
+  These advanced hooks are particularly useful when building custom wallet interfaces, chain explorers, or applications that need fine-grained control over specific aspects of the InterwovenKit functionality.
+</Tip>

@@ -1,0 +1,349 @@
+---
+title: Fee Calculation Utilities
+---
+
+InterwovenKit integrates with CosmJS utilities for calculating transaction fees programmatically, giving you precise control over fee amounts and gas prices.
+
+<Info>
+  These utilities are imported from `@cosmjs/stargate` and are commonly used with InterwovenKit transaction methods for custom fee handling.
+</Info>
+
+## calculateFee Function
+
+Calculates the total fee for a transaction based on gas limit and gas price.
+
+### Function Signature
+
+```tsx
+function calculateFee(gasLimit: number, gasPrice: GasPrice): StdFee
+```
+
+<ParamField path="gasLimit" type="number" required>
+  The gas limit for the transaction (usually obtained from `estimateGas`).
+</ParamField>
+
+<ParamField path="gasPrice" type="GasPrice" required>
+  Gas price object created with `GasPrice.fromString()`.
+</ParamField>
+
+<ParamField path="Returns" type="StdFee">
+  Complete fee structure with amount and gas limit.
+</ParamField>
+
+### Basic Usage
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject } from "@initia/interwovenkit-react"
+
+function PreciseFeeTransaction() {
+  const { requestTxBlock, estimateGas, address } = useInterwovenKit()
+
+  const sendWithCalculatedFee = async () => {
+    const messages: EncodeObject[] = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas needed for the transaction
+      const gasLimit = await estimateGas({ messages })
+      
+      // Calculate fee with specific gas price
+      const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+      const txRequest: TxRequest = {
+        messages,
+        fee, // Use calculated fee
+        memo: "Transaction with precise fee calculation"
+      }
+
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Precise fee transaction successful!")
+        console.log("Actual fee paid:", response.gasUsed)
+      }
+    } catch (error) {
+      console.error("Fee calculation error:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendWithCalculatedFee}>
+      Send with Calculated Fee
+    </button>
+  )
+}
+```
+
+## GasPrice Class
+
+Represents gas prices for different token denominations.
+
+### GasPrice.fromString()
+
+Creates a GasPrice instance from a string representation.
+
+#### Function Signature
+
+```tsx
+static fromString(gasPrice: string): GasPrice
+```
+
+<ParamField path="gasPrice" type="string" required>
+  Gas price as a string with amount and denomination (e.g., "0.015uinit", "0.025uusdc").
+</ParamField>
+
+<ParamField path="Returns" type="GasPrice">
+  GasPrice instance for use with `calculateFee`.
+</ParamField>
+
+### Usage Examples
+
+```tsx
+import { GasPrice, calculateFee } from "@cosmjs/stargate"
+
+// Create gas prices for different denominations
+const initGasPrice = GasPrice.fromString("0.015uinit")
+const usdcGasPrice = GasPrice.fromString("0.025uusdc")
+
+// Calculate fees with different gas prices
+const gasLimit = 200000
+
+const initFee = calculateFee(gasLimit, initGasPrice)
+const usdcFee = calculateFee(gasLimit, usdcGasPrice)
+
+console.log("INIT fee:", initFee)
+// { amount: [{ denom: "uinit", amount: "3000" }], gas: "200000" }
+
+console.log("USDC fee:", usdcFee)  
+// { amount: [{ denom: "uusdc", amount: "5000" }], gas: "200000" }
+```
+
+## Advanced Fee Calculations
+
+### Dynamic Gas Price Selection
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function DynamicFeeTransaction() {
+  const { requestTxBlock, estimateGas, address } = useInterwovenKit()
+
+  const getOptimalFee = async (messages: EncodeObject[], priority: 'low' | 'standard' | 'high') => {
+    const gasLimit = await estimateGas({ messages })
+    
+    // Define gas prices by priority
+    const gasPrices = {
+      low: "0.010uinit",
+      standard: "0.015uinit", 
+      high: "0.025uinit"
+    }
+
+    return calculateFee(gasLimit, GasPrice.fromString(gasPrices[priority]))
+  }
+
+  const sendWithPriority = async (priority: 'low' | 'standard' | 'high') => {
+    const messages: EncodeObject[] = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      const fee = await getOptimalFee(messages, priority)
+
+      const response = await requestTxBlock({
+        messages,
+        fee,
+        memo: `Transaction with ${priority} priority fee`
+      })
+
+      console.log(`${priority} priority transaction sent:`, response.transactionHash)
+    } catch (error) {
+      console.error(`${priority} priority transaction failed:`, error)
+    }
+  }
+
+  return (
+    <div className="priority-controls">
+      <button onClick={() => sendWithPriority('low')}>
+        Send (Low Fee)
+      </button>
+      <button onClick={() => sendWithPriority('standard')}>
+        Send (Standard Fee)
+      </button>
+      <button onClick={() => sendWithPriority('high')}>
+        Send (High Fee)
+      </button>
+    </div>
+  )
+}
+```
+
+### Gas Adjustment with Fee Calculation
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function AdjustedFeeTransaction() {
+  const { requestTxBlock, estimateGas } = useInterwovenKit()
+
+  const sendWithGasAdjustment = async (messages: EncodeObject[], adjustment = 1.5) => {
+    try {
+      const estimatedGas = await estimateGas({ messages })
+      
+      // Apply gas adjustment for safety margin
+      const adjustedGasLimit = Math.ceil(estimatedGas * adjustment)
+      
+      // Calculate fee with adjusted gas limit
+      const fee = calculateFee(adjustedGasLimit, GasPrice.fromString("0.015uinit"))
+
+      const response = await requestTxBlock({
+        messages,
+        fee,
+        memo: `Transaction with ${adjustment}x gas adjustment`
+      })
+
+      console.log("Adjusted fee transaction successful!")
+      console.log("Gas estimated:", estimatedGas)
+      console.log("Gas used:", response.gasUsed)
+      console.log("Gas limit set:", adjustedGasLimit)
+    } catch (error) {
+      console.error("Adjusted fee transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={() => sendWithGasAdjustment([/* messages */], 1.8)}>
+      Send with 1.8x Gas Adjustment
+    </button>
+  )
+}
+```
+
+## Multi-Denomination Fee Support
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+
+function MultiDenomFeeComparison() {
+  const compareFeeCosts = async (gasLimit: number) => {
+    // Calculate fees in different denominations
+    const fees = [
+      { denom: "uinit", fee: calculateFee(gasLimit, GasPrice.fromString("0.015uinit")) },
+      { denom: "uusdc", fee: calculateFee(gasLimit, GasPrice.fromString("0.025uusdc")) },
+      { denom: "uatom", fee: calculateFee(gasLimit, GasPrice.fromString("0.020uatom")) }
+    ]
+
+    fees.forEach(({ denom, fee }) => {
+      console.log(`${denom} fee:`, fee.amount[0])
+    })
+
+    return fees
+  }
+
+  return compareFeeCosts
+}
+```
+
+## Integration with Transaction Methods
+
+### With requestTxBlock
+
+```tsx
+const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+const response = await requestTxBlock({
+  messages,
+  fee, // Calculated fee
+  memo: "Transaction with calculated fee"
+})
+```
+
+### With requestTxSync
+
+```tsx
+const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+const txHash = await requestTxSync({
+  messages,
+  fee, // Calculated fee
+  memo: "Async transaction with calculated fee"
+})
+```
+
+### With estimateGas
+
+```tsx
+// Get gas estimate first
+const gasLimit = await estimateGas({ messages })
+
+// Then calculate precise fee
+const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+```
+
+<Tip>
+  Always use `estimateGas` to get accurate gas limits before calculating fees. Apply gas adjustments (usually 1.4-1.8x) to provide safety margins for complex transactions.
+</Tip>
+
+<Warning>
+  Gas prices should match the network's accepted denominations. Check the chain configuration or use the gas prices returned by `useGasPrices` hook for dynamic pricing.
+</Warning>
+
+## Common Patterns
+
+### Fee Calculation with Error Handling
+
+```tsx
+async function safeCalculateFee(messages: EncodeObject[], gasPrice: string) {
+  try {
+    const gasLimit = await estimateGas({ messages })
+    return calculateFee(gasLimit, GasPrice.fromString(gasPrice))
+  } catch (error) {
+    console.error("Fee calculation failed:", error)
+    
+    // Fallback to default fee
+    return {
+      amount: [{ denom: "uinit", amount: "5000" }],
+      gas: "200000"
+    }
+  }
+}
+```
+
+### Optimal Fee Selection
+
+```tsx
+async function selectOptimalFee(messages: EncodeObject[], balances: Coin[]) {
+  const gasLimit = await estimateGas({ messages })
+  
+  const availableFees = [
+    calculateFee(gasLimit, GasPrice.fromString("0.015uinit")),
+    calculateFee(gasLimit, GasPrice.fromString("0.025uusdc"))
+  ]
+
+  // Select fee based on available balance
+  for (const fee of availableFees) {
+    const feeDenom = fee.amount[0].denom
+    const balance = balances.find(b => b.denom === feeDenom)?.amount ?? "0"
+    
+    if (BigInt(balance) >= BigInt(fee.amount[0].amount)) {
+      return fee
+    }
+  }
+
+  throw new Error("Insufficient balance for any fee option")
+}
+```
+
+The fee calculation utilities provide precise control over transaction costs by allowing you to calculate exact fees based on gas limits and prices. Use these utilities when you need custom fee handling beyond the automatic fee selection provided by InterwovenKit's default behavior.

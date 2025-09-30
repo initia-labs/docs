@@ -1,0 +1,184 @@
+---
+title: Address Helper Hooks
+---
+
+InterwovenKit provides several hooks for working with different address formats across the Initia ecosystem. These hooks handle the conversion between Bech32 (Cosmos-style) and hex (Ethereum-style) addresses.
+
+<Info>
+  These hooks must be used within a component wrapped by `InterwovenKitProvider` and require an active wallet connection to return address values.
+</Info>
+
+## Available Hooks
+
+### useAddress
+
+The primary hook that returns the appropriate address format based on the default chain configuration.
+
+<ParamField path="Returns" type="string">
+  Current address in the format appropriate for the default chain:
+  - **Hex format** for MiniEVM chains 
+  - **Bech32 format** for other chain types (MiniMove, MiniWasm, Initia L1)
+</ParamField>
+
+```tsx
+function AddressDisplay() {
+  const address = useAddress()
+  
+  return <div>Current Address: {address}</div>
+}
+```
+
+### useInitiaAddress
+
+Returns the Bech32-formatted address compatible with Cosmos-based chains.
+
+<ParamField path="Returns" type="string">
+  Bech32-encoded address with the `init` prefix (e.g., `init1abc...xyz`). Returns empty string if no wallet is connected.
+</ParamField>
+
+```tsx
+function InitiaAddress() {
+  const initiaAddress = useInitiaAddress()
+  
+  return <div>Initia Address: {initiaAddress}</div>
+}
+```
+
+### useHexAddress
+
+Returns the hex-formatted address compatible with Ethereum-based chains.
+
+<ParamField path="Returns" type="string">
+  Hex-encoded address with `0x` prefix (e.g., `0x1234...abcd`). Returns empty string if no wallet is connected.
+</ParamField>
+
+```tsx
+function HexAddress() {
+  const hexAddress = useHexAddress()
+  
+  return <div>Hex Address: {hexAddress}</div>
+}
+```
+
+## Usage Patterns
+
+### Dynamic Address Display
+
+Display the appropriate address format based on the current chain context:
+
+```tsx
+function DynamicAddressDisplay() {
+  const address = useAddress()
+  const initiaAddress = useInitiaAddress()
+  const hexAddress = useHexAddress()
+  const { defaultChainId } = useInterwovenKit()
+
+  return (
+    <div>
+      <div>Current Address: <code>{address}</code></div>
+      
+      <details>
+        <summary>All Address Formats</summary>
+        <div>Bech32: <code>{initiaAddress}</code></div>
+        <div>Hex: <code>{hexAddress}</code></div>
+        <div>Chain: {defaultChainId}</div>
+      </details>
+    </div>
+  )
+}
+```
+
+### Chain-Specific Address Usage
+
+Use specific address formats when interacting with different chain types:
+
+```tsx
+function ChainSpecificOperations() {
+  const initiaAddress = useInitiaAddress()
+  const hexAddress = useHexAddress()
+
+  const handleCosmosTransaction = () => {
+    // Use Bech32 address for Cosmos-based operations
+    console.log("Sending from:", initiaAddress)
+  }
+
+  const handleEvmTransaction = () => {
+    // Use hex address for EVM-based operations  
+    console.log("Sending from:", hexAddress)
+  }
+
+  return (
+    <div>
+      <button onClick={handleCosmosTransaction}>
+        Send Cosmos Transaction
+      </button>
+      <button onClick={handleEvmTransaction}>
+        Send EVM Transaction
+      </button>
+    </div>
+  )
+}
+```
+
+
+## Address Format Details
+
+### Bech32 Format (Cosmos)
+- **Prefix**: `init` for all Initia ecosystem addresses
+- **Length**: 44 characters total
+- **Example**: `init1abc123...xyz789`
+- **Use Case**: Cosmos transactions, IBC transfers, native module interactions
+
+### Hex Format (Ethereum)
+- **Prefix**: `0x`
+- **Length**: 42 characters total (40 hex characters + prefix)
+- **Example**: `0x1234abcd...5678efgh`
+- **Use Case**: EVM transactions, smart contract interactions, ERC-20 transfers
+
+## Integration Examples
+
+### Multi-Chain Asset Transfer
+
+```tsx
+function AssetTransfer() {
+  const { defaultChain } = useInterwovenKit()
+  const address = useAddress()
+  const initiaAddress = useInitiaAddress()
+  const hexAddress = useHexAddress()
+
+  const getRecipientAddress = (targetChain: string) => {
+    // Return appropriate format based on target chain
+    if (targetChain.includes('minievm')) {
+      return hexAddress
+    }
+    return initiaAddress
+  }
+
+  return (
+    <div>
+      <h3>Transfer Assets</h3>
+      <div>From: {address} ({defaultChain.chainName})</div>
+      <div>
+        To MiniEVM Chain: {getRecipientAddress('minievm-1')}
+      </div>
+      <div>
+        To MiniMove Chain: {getRecipientAddress('minimove-1')}
+      </div>
+    </div>
+  )
+}
+```
+
+
+## Address Conversion
+
+InterwovenKit automatically handles address conversion between formats. The same private key generates both address formats, ensuring they represent the same account across different chain types.
+
+## Common Patterns
+
+1. **Use `useAddress()`** for most cases - it automatically selects the right format
+2. **Use `useInitiaAddress()`** when specifically working with Cosmos-based chains
+3. **Use `useHexAddress()`** when specifically working with EVM-based chains
+4. **Store both formats** if your application needs to support multi-chain operations
+
+All hooks return empty strings when no wallet is connected.

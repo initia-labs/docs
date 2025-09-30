@@ -1,0 +1,200 @@
+---
+title: usePortfolio
+---
+
+The `usePortfolio` hook provides comprehensive portfolio management functionality, including asset balances, valuations, and chain-organized data for connected wallets.
+
+<Info>
+  This hook must be used within a component wrapped by `InterwovenKitProvider` to access portfolio data across all supported chains.
+</Info>
+
+## Overview
+
+The `usePortfolio` hook aggregates balance and asset information from all chains in the Initia ecosystem, providing organized views of:
+
+- **Chain-based portfolio breakdown** with total values
+- **Asset groupings** across multiple chains by symbol
+- **Price information** and total portfolio valuation
+- **Unlisted assets** that don't have registry entries
+
+## Return Values
+
+<ParamField path="chainsByValue" type="PortfolioChainItem[]">
+  Array of chains ordered by total portfolio value, with the default chain appearing first.
+</ParamField>
+
+<ParamField path="assetGroups" type="PortfolioAssetGroup[]">
+  Asset groups organized by symbol, combining the same asset across different chains.
+</ParamField>
+
+<ParamField path="unlistedAssets" type="PortfolioAssetItem[]">
+  Assets that exist in the wallet but are not registered in the chain registry.
+</ParamField>
+
+<ParamField path="totalValue" type="number">
+  Total USD value of all assets across all chains in the portfolio.
+</ParamField>
+
+<ParamField path="isLoading" type="boolean">
+  Loading state that is true when any balance, asset, or price queries are in progress.
+</ParamField>
+
+<ParamField path="refetch" type="() => void">
+  Function to refetch all balance, asset, and price data across all chains.
+</ParamField>
+
+## Data Structures
+
+### PortfolioChainItem
+
+```tsx
+interface PortfolioChainItem {
+  chainId: string
+  chainName: string
+  logoUrl: string
+  value: number // Total USD value of assets on this chain
+}
+```
+
+### PortfolioAssetGroup
+
+```tsx
+interface PortfolioAssetGroup {
+  symbol: string
+  logoUrl: string
+  assets: PortfolioAssetItem[] // Same asset across different chains
+}
+```
+
+### PortfolioAssetItem
+
+```tsx
+interface PortfolioAssetItem {
+  // Asset identification
+  symbol: string
+  name: string
+  logoUrl: string
+  denom: string
+  
+  // Balance information
+  amount: string // Raw amount in base units
+  decimals: number
+  quantity: string // Human-readable amount
+  
+  // Valuation
+  price?: number // USD price per token
+  value?: number // Total USD value (quantity * price)
+  
+  // Chain context
+  chain: {
+    chainId: string
+    chainName: string
+    logoUrl: string
+  }
+  
+  // Asset metadata
+  address?: string // Contract address for token contracts
+  unlisted: boolean // true if not in chain registry
+}
+```
+
+## Usage Examples
+
+### Basic Portfolio Display
+
+```tsx
+function Portfolio() {
+  const { chainsByValue, totalValue, isLoading } = usePortfolio()
+
+  if (isLoading) return <div>Loading portfolio...</div>
+
+  return (
+    <div>
+      <h2>Total Portfolio Value: ${totalValue.toLocaleString()}</h2>
+      
+      {chainsByValue.map((chain) => (
+        <div key={chain.chainId}>
+          <img src={chain.logoUrl} alt={chain.chainName} />
+          <span>{chain.chainName}</span>
+          <span>${chain.value.toLocaleString()}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Asset Groups with Cross-Chain Balances
+
+```tsx
+function AssetGroups() {
+  const { assetGroups } = usePortfolio()
+
+  return (
+    <div>
+      {assetGroups.map((group) => (
+        <div key={group.symbol}>
+          <div className="header">
+            <img src={group.logoUrl} alt={group.symbol} />
+            <h3>{group.symbol}</h3>
+          </div>
+          
+          {group.assets.map((asset) => (
+            <div key={`${asset.chain.chainId}-${asset.denom}`}>
+              <span>{asset.chain.chainName}</span>
+              <span>{asset.quantity}</span>
+              {asset.value && <span>${asset.value.toLocaleString()}</span>}
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Handling Unlisted Assets
+
+```tsx
+function UnlistedAssets() {
+  const { unlistedAssets } = usePortfolio()
+
+  if (unlistedAssets.length === 0) return null
+
+  return (
+    <div>
+      <h3>Unlisted Assets</h3>
+      <Warning>
+        These assets are not verified in the chain registry and may not have accurate price information.
+      </Warning>
+      
+      {unlistedAssets.map((asset) => (
+        <div key={`${asset.chain.chainId}-${asset.denom}`}>
+          <span>{asset.denom}</span>
+          <span>{asset.quantity}</span>
+          <span>{asset.chain.chainName}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+```
+
+### Refreshing Portfolio Data
+
+```tsx
+function PortfolioWithRefresh() {
+  const { totalValue, isLoading, refetch } = usePortfolio()
+
+  return (
+    <div>
+      <div>
+        <span>Portfolio Value: ${totalValue.toLocaleString()}</span>
+        <button onClick={refetch} disabled={isLoading}>
+          {isLoading ? 'Refreshing...' : 'Refresh'}
+        </button>
+      </div>
+    </div>
+  )
+}
+```

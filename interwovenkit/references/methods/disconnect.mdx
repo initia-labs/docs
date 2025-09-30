@@ -1,0 +1,49 @@
+---
+title: disconnect
+---
+
+The `disconnect` function terminates the connection to the currently connected wallet, clearing all wallet-related state and returning the application to an unauthenticated state.
+
+<Info>
+  This function provides a clean way for users to disconnect their wallet, ensuring all sensitive data is cleared from the application state.
+</Info>
+
+## Function Signature
+
+```tsx
+function disconnect(): Promise<void>
+```
+
+The function takes no parameters and returns a promise that resolves when the disconnection is complete.
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function DisconnectButton() {
+  const { disconnect, isConnected, address } = useInterwovenKit()
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnect()
+      console.log("Successfully disconnected")
+    } catch (error) {
+      console.error("Failed to disconnect:", error)
+    }
+  }
+
+  if (!isConnected) {
+    return <span>Not connected</span>
+  }
+
+  return (
+    <div className="disconnect-section">
+      <span>Connected: {address?.slice(0, 6)}...{address?.slice(-4)}</span>
+      <button onClick={handleDisconnect}>
+        Disconnect
+      </button>
+    </div>
+  )
+}
+```

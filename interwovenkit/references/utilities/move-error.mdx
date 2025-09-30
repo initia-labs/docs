@@ -1,0 +1,184 @@
+---
+title: MoveError Utilities
+---
+
+InterwovenKit provides utilities for parsing and formatting Move VM errors, making blockchain error handling more developer and user-friendly.
+
+<Info>
+  These utilities automatically convert cryptic Move VM error codes into human-readable messages using the Initia error registry.
+</Info>
+
+## MoveError Class
+
+The `MoveError` class extends the standard JavaScript `Error` with additional context about Move VM execution failures.
+
+### Properties
+
+<ParamField path="originalError" type="Error">
+  The original error object that triggered the Move error parsing.
+</ParamField>
+
+<ParamField path="moduleAddress" type="string">
+  The contract address where the error occurred (e.g., `0x1`, `0x42cd8467...`).
+</ParamField>
+
+<ParamField path="moduleName" type="string">
+  The name of the Move module that threw the error.
+</ParamField>
+
+<ParamField path="errorCode" type="string">
+  The numeric error code as a string.
+</ParamField>
+
+<ParamField path="errorCodeHex" type="string">
+  The error code in hexadecimal format with `0x` prefix.
+</ParamField>
+
+<ParamField path="isFromRegistry" type="boolean">
+  Whether the error message was found in the error registry (`true`) or is a generic fallback (`false`).
+</ParamField>
+
+### Basic Usage
+
+```tsx
+import { MoveError } from "@initia/interwovenkit-react"
+
+function handleTransactionError(error: unknown) {
+  if (error instanceof MoveError) {
+    console.log(`Move Error in ${error.moduleName}:`)
+    console.log(`  Address: ${error.moduleAddress}`)
+    console.log(`  Code: ${error.errorCode} (${error.errorCodeHex})`)
+    console.log(`  Message: ${error.message}`)
+    console.log(`  From Registry: ${error.isFromRegistry}`)
+  }
+}
+```
+
+## Utility Functions
+
+### parseMoveError
+
+Parses Move VM error messages to extract structured error information.
+
+<ParamField path="error" type="string" required>
+  The error message string to parse.
+</ParamField>
+
+<ParamField path="Returns" type="ParsedMoveError | null">
+  Parsed error information or null if the string doesn't match Move error format.
+</ParamField>
+
+```tsx
+import { parseMoveError } from "@initia/interwovenkit-react"
+
+const errorMessage = "VM aborted: location=0000000000000001::dex, code=5"
+const parsed = parseMoveError(errorMessage)
+
+if (parsed) {
+  console.log(parsed.moduleAddress) // "0x1"
+  console.log(parsed.moduleName)    // "dex" 
+  console.log(parsed.errorCode)     // "5"
+}
+```
+
+### formatMoveError
+
+Formats Move VM errors with human-readable messages from the error registry.
+
+<ParamField path="error" type="Error" required>
+  The error object to format.
+</ParamField>
+
+<ParamField path="chain" type="Chain" required>
+  The chain where the error occurred.
+</ParamField>
+
+<ParamField path="registryUrl" type="string" required>
+  URL of the error registry service.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<Error>">
+  Promise that resolves to either a MoveError with formatted message or the original error.
+</ParamField>
+
+```tsx
+import { formatMoveError } from "@initia/interwovenkit-react"
+
+async function handleError(error: Error, chain: Chain) {
+  const formattedError = await formatMoveError(
+    error, 
+    chain, 
+    "https://registry.initia.xyz"
+  )
+  
+  if (formattedError instanceof MoveError) {
+    // Display user-friendly error message
+    alert(formattedError.message)
+  } else {
+    // Handle non-Move errors normally  
+    alert(error.message)
+  }
+}
+```
+
+### clearErrorCache
+
+Clears the internal error registry cache.
+
+```tsx
+import { clearErrorCache } from "@initia/interwovenkit-react"
+
+// Clear cache when switching networks or for debugging
+clearErrorCache()
+```
+
+## Data Types
+
+### ParsedMoveError Interface
+
+```tsx
+interface ParsedMoveError {
+  moduleAddress: string  // Contract address (normalized)
+  moduleName: string     // Module name
+  errorCode: string      // Error code as string
+}
+```
+
+## Basic Error Handling
+
+```tsx
+import { MoveError } from "@initia/interwovenkit-react"
+
+function handleTransactionError(error: unknown) {
+  if (error instanceof MoveError) {
+    console.log('Move Error in', error.moduleName)
+    console.log('Code:', error.errorCodeHex)
+    console.log('Message:', error.message)
+  } else {
+    console.log('Other error:', error)
+  }
+}
+```
+
+### Using with Transactions
+
+```tsx
+import { useInterwovenKit, MoveError } from "@initia/interwovenkit-react"
+
+async function handleTransaction() {
+  const { requestTxBlock } = useInterwovenKit()
+  
+  try {
+    await requestTxBlock({ messages: [/* ... */] })
+  } catch (err) {
+    if (err instanceof MoveError) {
+      console.log('Move VM error:', err.message)
+      console.log('Module:', err.moduleName, 'Code:', err.errorCodeHex)
+    } else {
+      console.error('Transaction failed:', err)
+    }
+  }
+}
+```
+
+The Move error utilities provide parsing and formatting for Move VM errors, converting cryptic error codes into human-readable messages using the Initia error registry. Use `MoveError` instances to access structured error information including module names, error codes, and registry-based error messages.

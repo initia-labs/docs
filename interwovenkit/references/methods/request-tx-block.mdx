@@ -1,0 +1,365 @@
+---
+title: requestTxBlock
+---
+
+The `requestTxBlock` function signs, broadcasts, and waits for a transaction to be included in a block, returning the complete transaction response with execution results.
+
+<Info>
+  This is the primary method for sending transactions when you need immediate confirmation and complete transaction results. It combines signing, broadcasting, and confirmation into a single operation.
+</Info>
+
+## Function Signature
+
+```tsx
+function requestTxBlock(txRequest: TxRequest): Promise<DeliverTxResponse>
+```
+
+<ParamField path="txRequest" type="TxRequest" required>
+  Transaction request configuration including messages, gas settings, and optional parameters.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<DeliverTxResponse>">
+  Promise that resolves to the complete transaction response including execution results, events, and gas usage.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject } from "@initia/interwovenkit-react"
+
+function SendTransaction() {
+  const { requestTxBlock, address } = useInterwovenKit()
+
+  const sendTokens = async () => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    const txRequest: TxRequest = {
+      messages: [message],
+      memo: "Sending 1 INIT token"
+    }
+
+    try {
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Transaction successful!")
+        console.log("Hash:", response.transactionHash)
+        console.log("Block height:", response.height)
+        console.log("Gas used:", response.gasUsed)
+      } else {
+        console.error("Transaction failed:", response.rawLog)
+      }
+    } catch (error) {
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendTokens}>
+      Send 1 INIT
+    </button>
+  )
+}
+```
+
+## Transaction Response Handling
+
+### Success Response Analysis
+
+```tsx
+function TransactionWithDetailedHandling() {
+  const { requestTxBlock, address } = useInterwovenKit()
+  const [txResult, setTxResult] = useState<DeliverTxResponse | null>(null)
+
+  const handleTransaction = async (messages: EncodeObject[]) => {
+    try {
+      const response = await requestTxBlock({ messages })
+      setTxResult(response)
+
+      // Check transaction success
+      if (response.code === 0) {
+        console.log("✅ Transaction Success")
+        console.log(`📦 Block: ${response.height}`)
+        console.log(`🔗 Hash: ${response.transactionHash}`)
+        console.log(`⛽ Gas: ${response.gasUsed}/${response.gasWanted}`)
+        
+        // Analyze events
+        response.events.forEach((event, index) => {
+          console.log(`Event ${index}:`, event.type)
+          event.attributes.forEach(attr => {
+            console.log(`  ${attr.key}: ${attr.value}`)
+          })
+        })
+
+        // Check message responses
+        response.msgResponses.forEach((msgResponse, index) => {
+          console.log(`Message ${index} response:`, msgResponse.typeUrl)
+        })
+      } else {
+        console.error("❌ Transaction Failed")
+        console.error("Code:", response.code)
+        console.error("Log:", response.rawLog)
+      }
+    } catch (error) {
+      console.error("💥 Transaction Error:", error)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={() => handleTransaction([/* messages */])}>
+        Send Transaction
+      </button>
+      
+      {txResult && (
+        <div className="tx-result">
+          <h3>Transaction Result</h3>
+          <div>Status: {txResult.code === 0 ? "✅ Success" : "❌ Failed"}</div>
+          <div>Hash: {txResult.transactionHash}</div>
+          <div>Block: {txResult.height}</div>
+          <div>Gas: {txResult.gasUsed}/{txResult.gasWanted}</div>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Error Handling Patterns
+
+```tsx
+import { MoveError } from "@initia/interwovenkit-react"
+
+function RobustTransactionHandler() {
+  const { requestTxBlock } = useInterwovenKit()
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  const executeTransaction = async (txRequest: TxRequest) => {
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Transaction successful:", response.transactionHash)
+        // Handle success - update UI, show notification, etc.
+      } else {
+        // Transaction was included but failed execution
+        setError(`Transaction failed: ${response.rawLog}`)
+      }
+    } catch (err) {
+      // Handle different error types
+      if (err instanceof MoveError) {
+        setError(`Move VM Error: ${err.message}`)
+        console.log("Module:", err.moduleName)
+        console.log("Error code:", err.errorCodeHex)
+      } else if (err instanceof Error) {
+        setError(`Transaction error: ${err.message}`)
+      } else {
+        setError("Unknown transaction error occurred")
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div className="robust-transaction">
+      <button 
+        onClick={() => executeTransaction(/* txRequest */)}
+        disabled={isLoading}
+      >
+        {isLoading ? "Processing..." : "Send Transaction"}
+      </button>
+      
+      {error && (
+        <div className="error-message" role="alert">
+          {error}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Advanced Transaction Patterns
+
+### Multi-Message Transactions
+
+```tsx
+function BatchTransaction() {
+  const { requestTxBlock, address } = useInterwovenKit()
+
+  const executeBatchTx = async () => {
+    // Create multiple messages for atomic execution
+    const messages: EncodeObject[] = [
+      // Send tokens
+      {
+        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+        value: {
+          fromAddress: address,
+          toAddress: "init1recipient1...",
+          amount: [{ denom: "uinit", amount: "500000" }]
+        }
+      },
+      // Delegate to validator
+      {
+        typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+        value: {
+          delegatorAddress: address,
+          validatorAddress: "initvaloper1...",
+          amount: { denom: "uinit", amount: "1000000" }
+        }
+      },
+      // IBC transfer
+      {
+        typeUrl: "/ibc.applications.transfer.v1.MsgTransfer",
+        value: {
+          sourcePort: "transfer",
+          sourceChannel: "channel-0",
+          token: { denom: "uusdc", amount: "100000000" },
+          sender: address,
+          receiver: "init1recipient2...",
+          timeoutHeight: {},
+          timeoutTimestamp: (Date.now() + 300000) * 1_000_000 // 5 min timeout
+        }
+      }
+    ]
+
+    const txRequest: TxRequest = {
+      messages,
+      memo: "Batch transaction: send + delegate + IBC transfer",
+      gasAdjustment: 1.5 // Higher adjustment for complex transactions
+    }
+
+    try {
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Batch transaction successful!")
+        console.log(`Executed ${messages.length} messages in tx ${response.transactionHash}`)
+      }
+    } catch (error) {
+      console.error("Batch transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={executeBatchTx}>
+      Execute Batch Transaction
+    </button>
+  )
+}
+```
+
+### Custom Fee Management
+
+```tsx
+import type { StdFee } from "@initia/interwovenkit-react"
+
+function CustomFeeTransaction() {
+  const { requestTxBlock } = useInterwovenKit()
+  
+  const executeWithCustomFee = async (messages: EncodeObject[]) => {
+    const customFee: StdFee = {
+      amount: [
+        { denom: "uinit", amount: "5000" },
+      ],
+      gas: "200000"
+    }
+
+    const txRequest: TxRequest = {
+      messages,
+      fee: customFee,
+      memo: "Transaction with custom multi-denom fee"
+    }
+
+    try {
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Custom fee transaction successful!")
+      }
+    } catch (error) {
+      console.error("Custom fee transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={() => executeWithCustomFee([/* messages */])}>
+      Send with Custom Fee
+    </button>
+  )
+}
+```
+
+### Calculated Fee Management
+
+For more precise fee control, use the `calculateFee` utility from CosmJS:
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function CalculatedFeeTransaction() {
+  const { requestTxBlock, estimateGas, address } = useInterwovenKit()
+
+  const sendWithCalculatedFee = async () => {
+    const messages: EncodeObject[] = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas for the transaction
+      const gasLimit = await estimateGas({ messages })
+      
+      // Calculate fee using specific gas price
+      const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+      const txRequest: TxRequest = {
+        messages,
+        fee, // Use calculated fee
+        memo: "Transaction with calculated fee"
+      }
+
+      const response = await requestTxBlock(txRequest)
+      
+      if (response.code === 0) {
+        console.log("Calculated fee transaction successful!")
+        console.log("Gas used:", response.gasUsed)
+      }
+    } catch (error) {
+      console.error("Calculated fee transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendWithCalculatedFee}>
+      Send with Calculated Fee
+    </button>
+  )
+}
+```
+
+<Tip>
+  For advanced fee calculation patterns, including dynamic gas pricing and multi-denomination fee support, see the [Fee Calculation Utilities](/interwovenkit/references/utilities/fee-calculation) guide.
+</Tip>
+
+<Info>
+  **Need programmatic control without UI?** Consider using [`submitTxBlock`](/interwovenkit/references/methods/submit-tx-block) for direct transaction submission. See our [Transaction Methods Guide](/interwovenkit/sending-transactions) to understand when to use each approach.
+</Info>

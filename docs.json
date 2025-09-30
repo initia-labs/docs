@@ -378,10 +378,79 @@
             ]
           },
           {
+            "group": "Guides",
+            "pages": [
+              "interwovenkit/sending-transactions"
+            ]
+          },
+          {
             "group": "References",
             "pages": [
-              "interwovenkit/references/interwovenkit-provider",
-              "interwovenkit/references/useinterwovenkit"
+              {
+                "group": "Components",
+                "pages": [
+                  "interwovenkit/references/components/interwovenkit-provider",
+                  "interwovenkit/references/components/interwovenkit"
+                ]
+              },
+              {
+                "group": "Hooks",
+                "pages": [
+                  "interwovenkit/references/hooks/useinterwovenkit",
+                  "interwovenkit/references/hooks/useportfolio",
+                  "interwovenkit/references/hooks/useaddress-helpers",
+                  "interwovenkit/references/hooks/advanced-hooks"
+                ]
+              },
+              {
+                "group": "Methods",
+                "pages": [
+                  {
+                    "group": "Wallet Controls",
+                    "pages": [
+                      "interwovenkit/references/methods/open-connect",
+                      "interwovenkit/references/methods/open-wallet",
+                      "interwovenkit/references/methods/open-bridge",
+                      "interwovenkit/references/methods/disconnect"
+                    ]
+                  },
+                  {
+                    "group": "Transactions",
+                    "pages": [
+                      "interwovenkit/references/methods/request-tx-block",
+                      "interwovenkit/references/methods/request-tx-sync",
+                      "interwovenkit/references/methods/submit-tx-block",
+                      "interwovenkit/references/methods/submit-tx-sync",
+                      "interwovenkit/references/methods/wait-for-tx-confirmation",
+                      "interwovenkit/references/methods/estimate-gas"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Utilities",
+                "pages": [
+                  "interwovenkit/references/utilities/fee-calculation",
+                  "interwovenkit/references/utilities/move-error",
+                  "interwovenkit/references/utilities/connectors",
+                  "interwovenkit/references/utilities/inject-styles"
+                ]
+              },
+              {
+                "group": "Configuration",
+                "pages": [
+                  "interwovenkit/references/configuration/constants",
+                  "interwovenkit/references/configuration/config-interface"
+                ]
+              },
+              {
+                "group": "Types",
+                "pages": [
+                  "interwovenkit/references/types/transaction-types",
+                  "interwovenkit/references/types/portfolio-types",
+                  "interwovenkit/references/types/bridge-types"
+                ]
+              }
             ]
           }
         ]

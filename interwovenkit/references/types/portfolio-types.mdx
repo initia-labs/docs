@@ -1,0 +1,360 @@
+---
+title: Portfolio Types
+---
+
+InterwovenKit provides comprehensive TypeScript interfaces for portfolio data structures, enabling type-safe access to wallet balances, asset information, and cross-chain portfolio analytics.
+
+<Info>
+  These types structure wallet data across multiple chains, providing organized views of assets, balances, and valuations throughout the Initia ecosystem.
+</Info>
+
+## Core Portfolio Types
+
+### PortfolioAssetItem
+
+Represents a single asset holding in the portfolio with complete balance and valuation information.
+
+```tsx
+interface PortfolioAssetItem {
+  // Asset identification
+  symbol: string
+  name: string  
+  logoUrl: string
+  denom: string
+  
+  // Balance information
+  amount: string
+  decimals: number
+  quantity: string
+  
+  // Valuation
+  price?: number
+  value?: number
+  
+  // Chain context
+  chain: PortfolioChainInfo
+  
+  // Asset metadata
+  address?: string
+  unlisted: boolean
+}
+```
+
+<ParamField path="symbol" type="string">
+  Token symbol (e.g., "INIT", "USDC", "ETH").
+</ParamField>
+
+<ParamField path="name" type="string">
+  Full asset name (e.g., "Initia Token", "USD Coin").
+</ParamField>
+
+<ParamField path="logoUrl" type="string">
+  URL to the asset's logo image.
+</ParamField>
+
+<ParamField path="denom" type="string">
+  On-chain denomination identifier (e.g., "uinit", "uusdc").
+</ParamField>
+
+<ParamField path="amount" type="string">
+  Raw balance amount in base units (smallest denomination).
+</ParamField>
+
+<ParamField path="decimals" type="number">
+  Number of decimal places for the asset.
+</ParamField>
+
+<ParamField path="quantity" type="string">
+  Human-readable balance amount (accounting for decimals).
+</ParamField>
+
+<ParamField path="price" type="number | undefined">
+  Current USD price per token unit. Undefined if price data is unavailable.
+</ParamField>
+
+<ParamField path="value" type="number | undefined">
+  Total USD value of the holding (quantity × price). Undefined if price is unavailable.
+</ParamField>
+
+<ParamField path="chain" type="PortfolioChainInfo">
+  Information about the chain where this asset is held.
+</ParamField>
+
+<ParamField path="address" type="string | undefined">
+  Contract address for token contracts. Undefined for native tokens.
+</ParamField>
+
+<ParamField path="unlisted" type="boolean">
+  True if the asset is not registered in the chain registry.
+</ParamField>
+
+### PortfolioAssetGroup
+
+Groups the same asset across multiple chains for aggregated display.
+
+```tsx
+interface PortfolioAssetGroup {
+  symbol: string
+  logoUrl: string
+  assets: PortfolioAssetItem[]
+}
+```
+
+<ParamField path="symbol" type="string">
+  Common symbol shared by all assets in the group.
+</ParamField>
+
+<ParamField path="logoUrl" type="string">
+  Representative logo URL for the asset group.
+</ParamField>
+
+<ParamField path="assets" type="PortfolioAssetItem[]">
+  Array of individual asset holdings across different chains with the same symbol.
+</ParamField>
+
+### PortfolioChainItem
+
+Represents a chain's total portfolio value and metadata.
+
+```tsx
+interface PortfolioChainItem {
+  chainId: string
+  chainName: string
+  logoUrl: string
+  value: number
+}
+```
+
+<ParamField path="chainId" type="string">
+  Unique chain identifier.
+</ParamField>
+
+<ParamField path="chainName" type="string">
+  Human-readable chain name.
+</ParamField>
+
+<ParamField path="logoUrl" type="string">
+  URL to the chain's logo image.
+</ParamField>
+
+<ParamField path="value" type="number">
+  Total USD value of all assets held on this chain.
+</ParamField>
+
+## Supporting Types
+
+### PortfolioChainInfo
+
+Basic chain information embedded in asset items.
+
+```tsx
+interface PortfolioChainInfo {
+  chainId: string
+  chainName: string
+  logoUrl: string
+}
+```
+
+### PortfolioAssetGroupInfo
+
+Minimal asset group metadata.
+
+```tsx
+interface PortfolioAssetGroupInfo {
+  symbol: string
+  logoUrl: string
+}
+```
+
+## Usage Examples
+
+
+### Type Usage Example
+
+```tsx
+import type { PortfolioAssetGroup } from "@initia/interwovenkit-react"
+
+function calculateGroupValue(group: PortfolioAssetGroup): number {
+  return group.assets.reduce((sum, asset) => sum + (asset.value || 0), 0)
+}
+
+function getAssetsByChain(group: PortfolioAssetGroup): Record<string, PortfolioAssetItem[]> {
+  return group.assets.reduce((acc, asset) => {
+    const chainId = asset.chain.chainId
+    if (!acc[chainId]) acc[chainId] = []
+    acc[chainId].push(asset)
+    return acc
+  }, {} as Record<string, PortfolioAssetItem[]>)
+}
+```
+
+## Utility Functions
+
+```tsx
+import type { PortfolioAssetItem, PortfolioAssetGroup } from "@initia/interwovenkit-react"
+
+function getTotalValue(assets: PortfolioAssetItem[]): number {
+  return assets.reduce((sum, asset) => sum + (asset.value || 0), 0)
+}
+
+function sortAssetsByValue(groups: PortfolioAssetGroup[]): PortfolioAssetGroup[] {
+  return groups.sort((a, b) => {
+    const aValue = getTotalValue(a.assets)
+    const bValue = getTotalValue(b.assets)
+    return bValue - aValue
+  })
+}
+```
+
+### Asset Filtering
+
+```tsx
+import type { PortfolioAssetItem } from "@initia/interwovenkit-react"
+
+class AssetFilters {
+  static hasValue(asset: PortfolioAssetItem): boolean {
+    return asset.value !== undefined && asset.value > 0
+  }
+
+  static isListed(asset: PortfolioAssetItem): boolean {
+    return !asset.unlisted
+  }
+
+  static byChain(chainId: string) {
+    return (asset: PortfolioAssetItem): boolean => 
+      asset.chain.chainId === chainId
+  }
+
+  static bySymbol(symbol: string) {
+    return (asset: PortfolioAssetItem): boolean =>
+      asset.symbol.toLowerCase() === symbol.toLowerCase()
+  }
+
+  static byMinimumValue(minValue: number) {
+    return (asset: PortfolioAssetItem): boolean =>
+      (asset.value || 0) >= minValue
+  }
+
+  static byMinimumBalance(minBalance: string) {
+    return (asset: PortfolioAssetItem): boolean =>
+      parseFloat(asset.quantity) >= parseFloat(minBalance)
+  }
+}
+
+// Usage examples
+const valuedAssets = assets.filter(AssetFilters.hasValue)
+const listedAssets = assets.filter(AssetFilters.isListed)
+const mainnetAssets = assets.filter(AssetFilters.byChain('interwoven-1'))
+const initAssets = assets.filter(AssetFilters.bySymbol('INIT'))
+const significantHoldings = assets.filter(AssetFilters.byMinimumValue(100))
+```
+
+## Type Guards and Utilities
+
+### Type Guards
+
+```tsx
+import type { PortfolioAssetItem } from "@initia/interwovenkit-react"
+
+function hasPrice(asset: PortfolioAssetItem): asset is PortfolioAssetItem & { 
+  price: number; 
+  value: number 
+} {
+  return asset.price !== undefined && asset.value !== undefined
+}
+
+function isTokenContract(asset: PortfolioAssetItem): asset is PortfolioAssetItem & { 
+  address: string 
+} {
+  return asset.address !== undefined
+}
+
+function isListedAsset(asset: PortfolioAssetItem): boolean {
+  return !asset.unlisted
+}
+
+// Usage
+if (hasPrice(asset)) {
+  console.log(`${asset.symbol}: $${asset.price} = $${asset.value}`)
+}
+
+if (isTokenContract(asset)) {
+  console.log(`Contract: ${asset.address}`)
+}
+```
+
+### Conversion Utilities
+
+```tsx
+import type { PortfolioAssetItem } from "@initia/interwovenkit-react"
+
+function toBaseUnits(asset: PortfolioAssetItem, humanAmount: string): string {
+  const multiplier = Math.pow(10, asset.decimals)
+  return (parseFloat(humanAmount) * multiplier).toString()
+}
+
+function fromBaseUnits(asset: PortfolioAssetItem, baseAmount: string): string {
+  const divisor = Math.pow(10, asset.decimals)
+  return (parseInt(baseAmount) / divisor).toString()
+}
+
+function formatAssetAmount(asset: PortfolioAssetItem, precision: number = 6): string {
+  const amount = parseFloat(asset.quantity)
+  return amount.toLocaleString(undefined, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: precision
+  })
+}
+
+function formatAssetValue(asset: PortfolioAssetItem): string | null {
+  if (!asset.value) return null
+  
+  return asset.value.toLocaleString(undefined, {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  })
+}
+```
+
+<Tip>
+  Use type guards to safely access optional properties like `price` and `value`. This ensures your components handle both priced and unpriced assets gracefully.
+</Tip>
+
+<Warning>
+  Be aware that `unlisted` assets may not have accurate price information or may represent test tokens. Always check the `unlisted` flag when displaying asset values to users.
+</Warning>
+
+## Portfolio Composition Patterns
+
+### Custom Portfolio Hook
+
+```tsx
+import { usePortfolio } from "@initia/interwovenkit-react"
+import type { PortfolioAssetItem } from "@initia/interwovenkit-react"
+
+function usePortfolioSummary() {
+  const portfolio = usePortfolio()
+
+  const summary = useMemo(() => {
+    const allAssets = portfolio.assetGroups.flatMap(group => group.assets)
+    const valuedAssets = allAssets.filter(asset => asset.value !== undefined)
+    
+    return {
+      totalAssets: allAssets.length,
+      totalValue: portfolio.totalValue,
+      valuedAssets: valuedAssets.length,
+      unlistedAssets: portfolio.unlistedAssets.length,
+      chainCount: portfolio.chainsByValue.length,
+      topAsset: allAssets.reduce((top, current) => 
+        (current.value || 0) > (top.value || 0) ? current : top
+      ),
+    }
+  }, [portfolio])
+
+  return { ...portfolio, summary }
+}
+```
+
+These type definitions provide complete type safety for all portfolio operations, ensuring proper handling of asset data, chain information, and valuation throughout your application.

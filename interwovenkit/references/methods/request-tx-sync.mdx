@@ -1,0 +1,247 @@
+---
+title: requestTxSync
+---
+
+The `requestTxSync` function signs and broadcasts a transaction to the network, returning the transaction hash immediately without waiting for block inclusion or execution results.
+
+<Info>
+  This method provides faster response times by returning immediately after broadcast. Use this when you want to show progress to users or handle other operations while waiting for confirmation separately.
+</Info>
+
+## Function Signature
+
+```tsx
+function requestTxSync(txRequest: TxRequest): Promise<string>
+```
+
+<ParamField path="txRequest" type="TxRequest" required>
+  Transaction request configuration including messages, gas settings, and optional parameters.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<string>">
+  Promise that resolves to the transaction hash immediately after successful broadcast.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject } from "@initia/interwovenkit-react"
+
+function AsyncTransaction() {
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+  const [txHash, setTxHash] = useState<string | null>(null)
+  const [isConfirmed, setIsConfirmed] = useState(false)
+
+  const sendTransaction = async () => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    const txRequest: TxRequest = {
+      messages: [message],
+      memo: "Async transaction example"
+    }
+
+    try {
+      // Get transaction hash immediately
+      const hash = await requestTxSync(txRequest)
+      setTxHash(hash)
+      console.log("Transaction broadcasted:", hash)
+
+      // Wait for confirmation in background
+      const result = await waitForTxConfirmation({ txHash: hash })
+      setIsConfirmed(result.code === 0)
+      
+      if (result.code === 0) {
+        console.log("Transaction confirmed!")
+      } else {
+        console.error("Transaction failed:", result.rawLog)
+      }
+    } catch (error) {
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={sendTransaction}>
+        Send Async Transaction
+      </button>
+      
+      {txHash && (
+        <div className="tx-status">
+          <p>Transaction Hash: {txHash}</p>
+          <p>Status: {isConfirmed ? "✅ Confirmed" : "⏳ Pending..."}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Basic Async Pattern
+
+```tsx
+async function sendAsyncTransaction(requestTxSync, waitForTxConfirmation, messages) {
+  try {
+    // Broadcast immediately
+    const hash = await requestTxSync({ messages })
+    console.log("Transaction broadcasted:", hash)
+
+    // Wait for confirmation separately  
+    const result = await waitForTxConfirmation({ 
+      txHash: hash,
+      timeoutSeconds: 60
+    })
+    
+    if (result.code === 0) {
+      console.log("Transaction confirmed!")
+    } else {
+      console.error("Transaction failed:", result.rawLog)
+    }
+  } catch (error) {
+    console.error("Transaction error:", error)
+  }
+}
+```
+
+
+
+## Advanced Transaction Patterns
+
+### Custom Fee Management
+
+Just like `requestTxBlock`, `requestTxSync` supports custom fee handling for precise control over transaction costs.
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject, StdFee } from "@initia/interwovenkit-react"
+
+function CustomFeeAsyncTransaction() {
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+  const [txHash, setTxHash] = useState<string | null>(null)
+
+  const sendWithCustomFee = async () => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    const customFee: StdFee = {
+      amount: [
+        { denom: "uinit", amount: "5000" },
+      ],
+      gas: "200000"
+    }
+
+    const txRequest: TxRequest = {
+      messages: [message],
+      fee: customFee,
+      memo: "Async transaction with custom fee"
+    }
+
+    try {
+      // Get transaction hash immediately with custom fee
+      const hash = await requestTxSync(txRequest)
+      setTxHash(hash)
+      console.log("Transaction broadcasted with custom fee:", hash)
+
+      // Wait for confirmation in background
+      const result = await waitForTxConfirmation({ txHash: hash })
+      
+      if (result.code === 0) {
+        console.log("Custom fee transaction confirmed!")
+      } else {
+        console.error("Custom fee transaction failed:", result.rawLog)
+      }
+    } catch (error) {
+      console.error("Custom fee transaction error:", error)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={sendWithCustomFee}>
+        Send with Custom Fee (Async)
+      </button>
+      
+      {txHash && (
+        <div className="tx-status">
+          <p>Transaction Hash: {txHash}</p>
+          <p>Status: Waiting for confirmation...</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+### Calculated Fee Management
+
+You can also calculate fees programmatically using CosmJS utilities:
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function CalculatedFeeTransaction() {
+  const { requestTxSync, estimateGas, address } = useInterwovenKit()
+
+  const sendWithCalculatedFee = async () => {
+    const messages: EncodeObject[] = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas for the transaction
+      const gas = await estimateGas({ messages })
+      
+      // Calculate fee using specific gas price
+      const fee = calculateFee(gas, GasPrice.fromString("0.015uinit"))
+
+      const txRequest: TxRequest = {
+        messages,
+        fee,
+        memo: "Transaction with calculated fee"
+      }
+
+      const hash = await requestTxSync(txRequest)
+      console.log("Transaction with calculated fee broadcasted:", hash)
+      
+    } catch (error) {
+      console.error("Calculated fee transaction error:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendWithCalculatedFee}>
+      Send with Calculated Fee
+    </button>
+  )
+}
+```
+
+<Tip>
+  For custom fee handling, you can either provide a complete `StdFee` object or use `calculateFee` with `GasPrice.fromString` for more dynamic fee calculation. See the [Fee Calculation Utilities](/interwovenkit/references/utilities/fee-calculation) guide for more details.
+</Tip>
+
+<Info>
+  **Need programmatic control without UI?** Consider using [`submitTxSync`](/interwovenkit/references/methods/submit-tx-sync) for direct transaction submission. See our [Transaction Methods Guide](/interwovenkit/sending-transactions) to understand when to use each approach.
+</Info>
+
+The `requestTxSync` function signs and broadcasts a transaction to the network, returning the transaction hash immediately without waiting for block inclusion. Use this when you want to show progress and handle confirmation separately with `waitForTxConfirmation`.

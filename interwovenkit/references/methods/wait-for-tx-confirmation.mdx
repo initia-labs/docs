@@ -1,0 +1,174 @@
+---
+title: waitForTxConfirmation
+---
+
+The `waitForTxConfirmation` function polls the blockchain for transaction confirmation using a transaction hash, returning the final transaction result once it's included in a block.
+
+<Info>
+  This function is typically used in combination with `requestTxSync` to separate transaction broadcasting from confirmation waiting, enabling better user experience with immediate feedback and background polling.
+</Info>
+
+## Function Signature
+
+```tsx
+function waitForTxConfirmation(params: TxQuery): Promise<IndexedTx>
+```
+
+<ParamField path="params" type="TxQuery" required>
+  Query parameters including transaction hash, chain ID, and polling configuration.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<IndexedTx>">
+  Promise that resolves to the confirmed transaction data including execution results and events.
+</ParamField>
+
+## TxQuery Parameters
+
+<ParamField path="txHash" type="string" required>
+  Hash of the transaction to track for confirmation.
+</ParamField>
+
+<ParamField path="chainId" type="string" optional>
+  Chain ID where the transaction was broadcast. Defaults to the provider's default chain.
+</ParamField>
+
+<ParamField path="timeoutSeconds" type="number" optional default="30">
+  Maximum time to wait for confirmation before timing out.
+</ParamField>
+
+<ParamField path="intervalSeconds" type="number" optional default="1">
+  Polling interval in seconds for checking transaction status.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxQuery } from "@initia/interwovenkit-react"
+
+function TransactionConfirmation() {
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+  const [txHash, setTxHash] = useState<string | null>(null)
+  const [isConfirmed, setIsConfirmed] = useState(false)
+  const [confirmationResult, setConfirmationResult] = useState<string>("")
+
+  const sendAndConfirm = async () => {
+    try {
+      // Send transaction
+      const hash = await requestTxSync({
+        messages: [/* your messages */],
+        memo: "Transaction with separate confirmation"
+      })
+      
+      setTxHash(hash)
+      console.log("Transaction broadcasted:", hash)
+
+      // Wait for confirmation
+      const query: TxQuery = {
+        txHash: hash,
+        timeoutSeconds: 60,
+        intervalSeconds: 2
+      }
+
+      const result = await waitForTxConfirmation(query)
+      
+      if (result.code === 0) {
+        setConfirmationResult("✅ Transaction successful!")
+        setIsConfirmed(true)
+        console.log("Transaction confirmed at block:", result.height)
+      } else {
+        setConfirmationResult(`❌ Transaction failed: ${result.rawLog}`)
+      }
+    } catch (error) {
+      setConfirmationResult(`🚫 Error: ${error.message}`)
+    }
+  }
+
+  return (
+    <div className="transaction-confirmation">
+      <button onClick={sendAndConfirm}>
+        Send Transaction
+      </button>
+      
+      {txHash && (
+        <div className="tx-status">
+          <p>Transaction Hash: <code>{txHash}</code></p>
+          <p>Status: {isConfirmed ? "Confirmed" : "Waiting for confirmation..."}</p>
+          {confirmationResult && <p>{confirmationResult}</p>}
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Advanced Confirmation Patterns
+
+### Custom Polling Configuration
+
+```tsx
+function CustomPollingConfirmation() {
+  const { requestTxSync, waitForTxConfirmation } = useInterwovenKit()
+  
+  const confirmWithCustomSettings = async (txHash: string) => {
+    // High-frequency polling for critical transactions
+    const criticalQuery: TxQuery = {
+      txHash,
+      timeoutSeconds: 120, // 2 minutes timeout
+      intervalSeconds: 0.5 // Poll every 500ms
+    }
+
+    try {
+      console.log("Starting high-frequency confirmation polling...")
+      const result = await waitForTxConfirmation(criticalQuery)
+      
+      if (result.code === 0) {
+        console.log("Critical transaction confirmed quickly!")
+      }
+    } catch (error) {
+      console.error("Critical transaction confirmation failed:", error)
+      
+      // Fallback to standard polling
+      const standardQuery: TxQuery = {
+        txHash,
+        timeoutSeconds: 300, // 5 minutes
+        intervalSeconds: 3   // Poll every 3 seconds
+      }
+      
+      const fallbackResult = await waitForTxConfirmation(standardQuery)
+      console.log("Transaction confirmed via fallback polling")
+    }
+  }
+
+  return (
+    <button onClick={() => confirmWithCustomSettings("0x...")}>
+      Confirm with Custom Polling
+    </button>
+  )
+}
+```
+
+
+## Basic Usage
+
+```tsx
+async function confirmTransaction(waitForTxConfirmation, txHash) {
+  try {
+    const result = await waitForTxConfirmation({
+      txHash,
+      timeoutSeconds: 60,
+      intervalSeconds: 3
+    })
+    
+    if (result.code === 0) {
+      console.log("Transaction confirmed successfully")
+    } else {
+      console.error("Transaction failed:", result.rawLog)
+    }
+  } catch (error) {
+    console.error("Confirmation timeout:", error)
+  }
+}
+```
+
+The `waitForTxConfirmation` function polls the blockchain for transaction confirmation using a transaction hash, returning the final transaction result once it's included in a block. This is typically used with `requestTxSync` to separate broadcasting from confirmation.

@@ -1,0 +1,81 @@
+---
+title: submitTxSync
+---
+
+The `submitTxSync` function signs and broadcasts a transaction by skipping the InterwovenKit UI modal and going directly to the user's browser wallet confirmation, returning the transaction hash immediately after broadcast. This provides custom transaction UX with explicit fee control.
+
+<Info>
+  This method skips the InterwovenKit fee selection modal and requires explicit fee specification. Use this when building custom transaction confirmation UI that goes directly to the user's wallet.
+</Info>
+
+## Function Signature
+
+```tsx
+function submitTxSync(txParams: TxParams): Promise<string>
+```
+
+<ParamField path="txParams" type="TxParams" required>
+  Transaction parameters including messages, explicit fee, and optional parameters.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<string>">
+  Promise that resolves to the transaction hash immediately after successful broadcast.
+</ParamField>
+
+## Key Differences from requestTxSync
+
+| Feature | `submitTxSync` | `requestTxSync` |
+|---------|----------------|-----------------|
+| **InterwovenKit Modal** | ❌ Skipped | ✅ Shows fee selection UI |
+| **Fee Required** | ✅ Must provide `StdFee` | ❌ Optional (UI handles fee) |
+| **User Confirmation** | Browser wallet | InterwovenKit UI |
+| **Parameter Type** | `TxParams` | `TxRequest` |
+
+## Basic Usage
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxParams, EncodeObject } from "@initia/interwovenkit-react"
+
+function CustomTransactionFlow() {
+  const { submitTxSync, estimateGas, address } = useInterwovenKit()
+
+  const sendWithCustomFlow = async () => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    try {
+      // Calculate fee programmatically
+      const gasLimit = await estimateGas({ messages: [message] })
+      const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+      const txParams: TxParams = {
+        messages: [message],
+        fee, // Required - explicit fee
+        memo: "Direct transaction without UI"
+      }
+
+      // Skip InterwovenKit modal, go to browser wallet
+      const txHash = await submitTxSync(txParams)
+      console.log("Transaction submitted:", txHash)
+      
+      return txHash
+    } catch (error) {
+      console.error("Direct transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendTokensDirectly}>
+      Send Tokens (Custom Flow)
+    </button>
+  )
+}
+```

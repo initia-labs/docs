@@ -1,0 +1,55 @@
+---
+title: openConnect
+---
+
+The `openConnect` function opens the wallet connection drawer, allowing users to connect external wallets including MetaMask, WalletConnect, and social login options.
+
+<Info>
+  This function provides the primary interface for new users to connect their wallets and existing users to switch between different wallet connections.
+</Info>
+
+## Function Signature
+
+```tsx
+function openConnect(): void
+```
+
+The function takes no parameters and immediately opens the wallet connection interface.
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function ConnectButton() {
+  const { openConnect, isConnected } = useInterwovenKit()
+
+  if (isConnected) {
+    return <span>Wallet connected</span>
+  }
+
+  return (
+    <button onClick={openConnect}>
+      Connect Wallet
+    </button>
+  )
+}
+```
+
+
+## Example Usage
+
+
+```tsx
+function ConnectButton() {
+  const { openConnect, isConnected } = useInterwovenKit()
+
+  if (isConnected) return <span>Connected</span>
+
+  return (
+    <button onClick={openConnect}>
+      Connect Wallet
+    </button>
+  )
+}
+```

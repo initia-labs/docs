@@ -1,0 +1,242 @@
+---
+title: estimateGas
+---
+
+The `estimateGas` function calculates the amount of gas required to execute a transaction without actually sending it to the blockchain, helping optimize transaction costs and prevent out-of-gas failures.
+
+<Info>
+  Gas estimation helps you set appropriate gas limits and fees before broadcasting transactions. It's especially useful for complex transactions with unknown gas requirements.
+</Info>
+
+## Function Signature
+
+```tsx
+function estimateGas(txRequest: TxRequest): Promise<number>
+```
+
+<ParamField path="txRequest" type="TxRequest" required>
+  Transaction request configuration including messages and optional parameters. The `gas` field is ignored for estimation.
+</ParamField>
+
+<ParamField path="Returns" type="Promise<number>">
+  Promise that resolves to the estimated gas units required for the transaction.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { TxRequest, EncodeObject } from "@initia/interwovenkit-react"
+
+function GasEstimationExample() {
+  const { estimateGas, requestTxBlock, address } = useInterwovenKit()
+  const [gasEstimate, setGasEstimate] = useState<number | null>(null)
+  const [isEstimating, setIsEstimating] = useState(false)
+
+  const estimateTransactionGas = async () => {
+    setIsEstimating(true)
+
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    const txRequest: TxRequest = {
+      messages: [message],
+      memo: "Gas estimation test"
+    }
+
+    try {
+      const estimate = await estimateGas(txRequest)
+      setGasEstimate(estimate)
+      console.log("Estimated gas:", estimate)
+    } catch (error) {
+      console.error("Gas estimation failed:", error)
+    } finally {
+      setIsEstimating(false)
+    }
+  }
+
+  const sendWithEstimatedGas = async () => {
+    if (!gasEstimate) return
+
+    const txRequest: TxRequest = {
+      messages: [/* same messages */],
+      gas: Math.floor(gasEstimate * 1.2), // 20% buffer
+      memo: "Transaction with estimated gas"
+    }
+
+    await requestTxBlock(txRequest)
+  }
+
+  return (
+    <div className="gas-estimation-example">
+      <button onClick={estimateTransactionGas} disabled={isEstimating}>
+        {isEstimating ? "Estimating..." : "Estimate Gas"}
+      </button>
+      
+      {gasEstimate && (
+        <div className="gas-info">
+          <p>Estimated Gas: {gasEstimate.toLocaleString()} units</p>
+          <p>With 20% buffer: {Math.floor(gasEstimate * 1.2).toLocaleString()} units</p>
+          <button onClick={sendWithEstimatedGas}>
+            Send with Estimated Gas
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+## Gas Estimation for Multiple Messages
+
+```tsx
+async function estimateBatchGas(estimateGas, messages) {
+  try {
+    const gasEstimate = await estimateGas({ messages })
+    console.log("Estimated gas for batch:", gasEstimate)
+    return gasEstimate
+  } catch (error) {
+    console.error("Gas estimation failed:", error)
+    throw error
+  }
+}
+```
+
+
+### Using Gas Estimates
+
+```tsx
+async function sendWithEstimatedGas(estimateGas, requestTxBlock, messages) {
+  try {
+    const baseEstimate = await estimateGas({ messages })
+    const gasLimit = Math.floor(baseEstimate * 1.3) // 30% buffer
+    
+    const response = await requestTxBlock({
+      messages,
+      gas: gasLimit
+    })
+
+    console.log("Transaction successful")
+    return response
+  } catch (error) {
+    console.error("Transaction failed:", error)
+    throw error
+  }
+}
+```
+
+## Error Handling
+
+Handle gas estimation failures gracefully:
+
+```tsx
+async function estimateGasWithFallback(estimateGas, messages) {
+  try {
+    return await estimateGas({ messages })
+  } catch (error) {
+    console.warn("Gas estimation failed:", error.message)
+    // Fallback to conservative estimate
+    return messages.length * 50000
+  }
+}
+```
+
+## Fee Calculation with Gas Estimates
+
+Combine gas estimation with fee calculation for precise transaction cost control:
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function PreciseCostTransaction() {
+  const { estimateGas, requestTxBlock, address } = useInterwovenKit()
+
+  const sendWithPreciseFee = async () => {
+    const messages: EncodeObject[] = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas requirement
+      const gasEstimate = await estimateGas({ messages })
+      
+      // Apply safety margin
+      const gasLimit = Math.ceil(gasEstimate * 1.5)
+      
+      // Calculate precise fee
+      const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+      console.log("Gas estimate:", gasEstimate)
+      console.log("Gas limit with buffer:", gasLimit)
+      console.log("Calculated fee:", fee)
+
+      const response = await requestTxBlock({
+        messages,
+        fee, // Use calculated fee
+        memo: "Transaction with precise cost calculation"
+      })
+
+      if (response.code === 0) {
+        console.log("Precise cost transaction successful!")
+        console.log("Actual gas used:", response.gasUsed)
+        console.log("Gas efficiency:", `${(Number(response.gasUsed) / gasLimit * 100).toFixed(1)}%`)
+      }
+    } catch (error) {
+      console.error("Precise cost transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendWithPreciseFee}>
+      Send with Precise Cost
+    </button>
+  )
+}
+```
+
+## Cost Comparison Analysis
+
+```tsx
+function GasCostAnalysis() {
+  const { estimateGas } = useInterwovenKit()
+
+  const analyzeCosts = async (messages: EncodeObject[]) => {
+    const gasEstimate = await estimateGas({ messages })
+    
+    // Compare costs with different gas prices
+    const gasPrices = ["0.010uinit", "0.015uinit", "0.025uinit"]
+    const adjustments = [1.2, 1.5, 1.8]
+
+    console.log("Gas Cost Analysis:")
+    console.log("Base gas estimate:", gasEstimate)
+    
+    gasPrices.forEach(priceStr => {
+      adjustments.forEach(adj => {
+        const gasLimit = Math.ceil(gasEstimate * adj)
+        const fee = calculateFee(gasLimit, GasPrice.fromString(priceStr))
+        console.log(`${priceStr} @ ${adj}x: ${fee.amount[0].amount} units`)
+      })
+    })
+  }
+
+  return analyzeCosts
+}
+```
+
+<Tip>
+  Use `estimateGas` with `calculateFee` for optimal transaction cost control. For comprehensive fee calculation examples and patterns, see the [Fee Calculation Utilities](/interwovenkit/references/utilities/fee-calculation) guide.
+</Tip>
+
+The `estimateGas` function calculates the gas required for transaction execution before broadcasting, allowing for accurate cost estimation and gas limit setting.

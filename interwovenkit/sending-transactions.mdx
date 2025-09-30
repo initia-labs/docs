@@ -1,0 +1,435 @@
+---
+title: Sending Transactions
+icon: paper-plane
+---
+
+InterwovenKit provides multiple ways to send transactions, each designed for different use cases and user experience patterns.
+
+
+<Tip>
+  For most applications, start with `requestTxBlock` for its simplicity. Upgrade to custom transaction sending methods as your application's needs changes.
+</Tip>
+
+## Methods
+
+### Transaction Methods
+
+InterwovenKit offers two main approaches for sending transactions:
+- using the built-in modal UI with `requestTx*` methods which handles fee selection for users or
+- bypassing the modal with `submitTx*` methods for custom fee management and direct wallet interaction
+
+Each approach also offers synchronous and blocking variants to suit different transaction confirmation needs.
+
+
+#### Using InterwovenKit Modal
+- [`requestTxBlock`](/interwovenkit/references/methods/request-tx-block) - Shows fee selection modal, waits for confirmation
+- [`requestTxSync`](/interwovenkit/references/methods/request-tx-sync) - Shows fee selection modal, returns hash immediately
+
+#### Skips InterwovenKit Modal
+- [`submitTxBlock`](/interwovenkit/references/methods/submit-tx-block) - Direct to wallet, waits for confirmation  
+- [`submitTxSync`](/interwovenkit/references/methods/submit-tx-sync) - Direct to wallet, returns hash immediately
+
+| Method | UI Modal | Fee Required | Response | Use Case |
+|--------|----------|--------------|----------|----------|
+| **requestTxBlock** | ✅ Yes | ❌ Optional | `DeliverTxResponse` | Standard UX, need full results |
+| **requestTxSync** | ✅ Yes | ❌ Optional | `string` (hash) | Standard UX, immediate feedback |
+| **submitTxBlock** | ❌ Skipped | ✅ Required | `DeliverTxResponse` | Custom UX, need full results |
+| **submitTxSync** | ❌ Skipped | ✅ Required | `string` (hash) | Custom UX, immediate feedback |
+
+
+### Utility Methods
+- [`estimateGas`](/interwovenkit/references/methods/estimate-gas) - Calculate gas requirements
+- [`waitForTxConfirmation`](/interwovenkit/references/methods/wait-for-tx-confirmation) - Poll for transaction confirmation
+
+## Examples
+
+### Sending Transactions
+
+Here are complete examples showing how to send transactions using each method:
+
+<CodeGroup>
+
+```tsx requestTxBlock
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import type { EncodeObject } from "@initia/interwovenkit-react"
+
+function SendWithRequestTxBlock() {
+  const { requestTxBlock, address } = useInterwovenKit()
+
+  const sendTokens = async () => {
+    const message: EncodeObject = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    try {
+      const response = await requestTxBlock({
+        messages: [message],
+        memo: "Sending 1 INIT token"
+      })
+      
+      if (response.code === 0) {
+        console.log("✅ Transaction successful!")
+        console.log("Hash:", response.transactionHash)
+        console.log("Block height:", response.height)
+        console.log("Gas used:", response.gasUsed)
+      } else {
+        console.error("❌ Transaction failed:", response.rawLog)
+      }
+    } catch (error) {
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendTokens}>
+      Send 1 INIT
+    </button>
+  )
+}
+```
+
+```tsx requestTxSync
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useState } from "react"
+
+function SendWithRequestTxSync() {
+  const { requestTxSync, waitForTxConfirmation, address } = useInterwovenKit()
+  const [txHash, setTxHash] = useState<string | null>(null)
+  const [status, setStatus] = useState<string>("ready")
+
+  const sendTokens = async () => {
+    const message = {
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }
+
+    try {
+      setStatus("broadcasting...")
+      
+      // Get transaction hash immediately
+      const hash = await requestTxSync({
+        messages: [message],
+        memo: "Async transaction"
+      })
+      
+      setTxHash(hash)
+      setStatus("confirming...")
+      console.log("📡 Transaction broadcasted:", hash)
+
+      // Wait for confirmation in background
+      const result = await waitForTxConfirmation({ 
+        txHash: hash,
+        timeoutSeconds: 60 
+      })
+      
+      if (result.code === 0) {
+        setStatus("✅ confirmed")
+        console.log("Transaction confirmed!")
+      } else {
+        setStatus("❌ failed")
+        console.error("Transaction failed:", result.rawLog)
+      }
+    } catch (error) {
+      setStatus("❌ error")
+      console.error("Transaction error:", error)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={sendTokens} disabled={status !== "ready"}>
+        Send Async Transaction
+      </button>
+      
+      {txHash && (
+        <div>
+          <p>Hash: <code>{txHash}</code></p>
+          <p>Status: {status}</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+```tsx submitTxBlock
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+
+function SendWithSubmitTxBlock() {
+  const { submitTxBlock, estimateGas, address } = useInterwovenKit()
+
+  const sendWithCustomFee = async () => {
+    const messages = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas first
+      const gasEstimate = await estimateGas({ messages })
+      
+      // Calculate custom fee
+      const fee = calculateFee(
+        Math.ceil(gasEstimate * 1.5), // 50% buffer
+        GasPrice.fromString("0.015uinit")
+      )
+
+      console.log("Gas estimate:", gasEstimate)
+      console.log("Calculated fee:", fee)
+
+      // Submit directly to wallet with custom fee
+      const response = await submitTxBlock({
+        messages,
+        fee,
+        memo: "Custom fee transaction"
+      })
+
+      if (response.code === 0) {
+        console.log("✅ Custom fee transaction successful!")
+        console.log("Actual gas used:", response.gasUsed)
+        console.log("Gas efficiency:", `${(Number(response.gasUsed) / Number(fee.gas) * 100).toFixed(1)}%`)
+      }
+    } catch (error) {
+      console.error("Custom fee transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendWithCustomFee}>
+      Send with Custom Fee
+    </button>
+  )
+}
+```
+
+```tsx submitTxSync
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+
+function SendWithSubmitTxSync() {
+  const { submitTxSync, waitForTxConfirmation, estimateGas, address } = useInterwovenKit()
+
+  const sendDirect = async () => {
+    const messages = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      // Estimate gas and calculate fee
+      const gasLimit = await estimateGas({ messages })
+      const fee = calculateFee(gasLimit, GasPrice.fromString("0.015uinit"))
+
+      // Submit directly to wallet - returns hash immediately
+      const hash = await submitTxSync({
+        messages,
+        fee,
+        memo: "Direct wallet transaction"
+      })
+
+      console.log("📡 Direct transaction broadcasted:", hash)
+
+      // Optional: Wait for confirmation
+      const result = await waitForTxConfirmation({ 
+        txHash: hash,
+        timeoutSeconds: 30 
+      })
+      
+      if (result.code === 0) {
+        console.log("✅ Direct transaction confirmed!")
+      }
+    } catch (error) {
+      console.error("Direct transaction failed:", error)
+    }
+  }
+
+  return (
+    <button onClick={sendDirect}>
+      Send Direct to Wallet
+    </button>
+  )
+}
+```
+
+</CodeGroup>
+
+### Utility Methods
+
+These utility methods help with gas estimation and transaction confirmation:
+
+<CodeGroup>
+
+```tsx estimateGas
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useState } from "react"
+
+function GasEstimationExample() {
+  const { estimateGas, address } = useInterwovenKit()
+  const [gasEstimate, setGasEstimate] = useState<number | null>(null)
+  const [isEstimating, setIsEstimating] = useState(false)
+
+  const estimateTransactionGas = async () => {
+    setIsEstimating(true)
+
+    const messages = [{
+      typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+      value: {
+        fromAddress: address,
+        toAddress: "init1recipient...",
+        amount: [{ denom: "uinit", amount: "1000000" }]
+      }
+    }]
+
+    try {
+      const estimate = await estimateGas({
+        messages,
+        memo: "Gas estimation test"
+      })
+      
+      setGasEstimate(estimate)
+      console.log("⛽ Estimated gas:", estimate)
+      console.log("With 20% buffer:", Math.floor(estimate * 1.2))
+      console.log("With 50% buffer:", Math.floor(estimate * 1.5))
+    } catch (error) {
+      console.error("Gas estimation failed:", error)
+    } finally {
+      setIsEstimating(false)
+    }
+  }
+
+  return (
+    <div>
+      <button onClick={estimateTransactionGas} disabled={isEstimating}>
+        {isEstimating ? "Estimating..." : "Estimate Gas"}
+      </button>
+      
+      {gasEstimate && (
+        <div>
+          <p>Estimated Gas: {gasEstimate.toLocaleString()} units</p>
+          <p>With 20% buffer: {Math.floor(gasEstimate * 1.2).toLocaleString()} units</p>
+          <p>With 50% buffer: {Math.floor(gasEstimate * 1.5).toLocaleString()} units</p>
+        </div>
+      )}
+    </div>
+  )
+}
+```
+
+```tsx waitForTxConfirmation
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useState } from "react"
+
+function TransactionConfirmation() {
+  const { waitForTxConfirmation } = useInterwovenKit()
+  const [txHash, setTxHash] = useState("")
+  const [result, setResult] = useState<string>("")
+  const [isWaiting, setIsWaiting] = useState(false)
+
+  const waitForConfirmation = async () => {
+    if (!txHash) return
+    
+    setIsWaiting(true)
+    setResult("")
+
+    try {
+      const confirmation = await waitForTxConfirmation({
+        txHash,
+        timeoutSeconds: 120,  // 2 minutes timeout
+        intervalSeconds: 2    // Poll every 2 seconds
+      })
+      
+      if (confirmation.code === 0) {
+        setResult(`✅ Transaction confirmed at block ${confirmation.height}`)
+        console.log("Transaction events:", confirmation.events)
+      } else {
+        setResult(`❌ Transaction failed: ${confirmation.rawLog}`)
+      }
+    } catch (error) {
+      if (error.message.includes("timeout")) {
+        setResult("⏰ Confirmation timeout - transaction may still be pending")
+      } else {
+        setResult(`🚫 Error: ${error.message}`)
+      }
+    } finally {
+      setIsWaiting(false)
+    }
+  }
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Enter transaction hash"
+        value={txHash}
+        onChange={(e) => setTxHash(e.target.value)}
+      />
+      
+      <button onClick={waitForConfirmation} disabled={!txHash || isWaiting}>
+        {isWaiting ? "Waiting for confirmation..." : "Wait for Confirmation"}
+      </button>
+      
+      {result && <p>{result}</p>}
+    </div>
+  )
+}
+```
+
+</CodeGroup>
+
+## Choosing How to Send Transactions
+
+### Using requestTx* Methods
+- Building standard applications with InterwovenKit's built-in UI
+- You want users to select transaction fees through the modal
+- You don't need custom fee calculation logic
+
+### Using submitTx* Methods
+- You want to skip InterwovenKit's fee selection modal  
+- Implementing programmatic fee management
+
+### Sync vs Block Methods
+
+**Choose Sync (`*TxSync`) when:**
+- You need immediate response for UI updates
+- Planning to handle confirmation separately
+- Building progress indicators or loading states
+- Sending multiple transactions in sequence
+
+**Choose Block (`*TxBlock`) when:**
+- You need complete transaction results immediately
+- Processing transaction events or outcomes
+- Building single-step transaction flows
+- Error handling requires transaction details
+
+## Transaction Parameters
+
+Different transaction sending methods use different parameter types:
+
+- **UI Methods** (`requestTx*`) use [`TxRequest`](/interwovenkit/references/types/transaction-types#txrequest) - fee optional
+- **Direct Methods** (`submitTx*`) use [`TxParams`](/interwovenkit/references/types/transaction-types#txparams) - fee required
+
+See [Transaction Types](/interwovenkit/references/types/transaction-types) for complete parameter documentation.
+
+## Related Documentation
+
+- [Transaction Types](/interwovenkit/references/types/transaction-types) - Parameter and response types
+- [Fee Calculation](/interwovenkit/references/utilities/fee-calculation) - Fee calculation utilities
+- [useInterwovenKit](/interwovenkit/references/hooks/useinterwovenkit) - Hook providing all transaction sending methods

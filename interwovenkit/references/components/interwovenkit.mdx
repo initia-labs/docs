@@ -1,0 +1,73 @@
+---
+title: InterwovenKit Component
+---
+
+The `InterwovenKit` component is the internal wallet UI component that renders the actual wallet interface with balances, transaction history, and asset management features.
+
+<Warning>
+  This component is primarily used internally by `InterwovenKitProvider`. Most applications should use the provider and `useInterwovenKit` hook instead of rendering this component directly.
+</Warning>
+
+## Component Signature
+
+```tsx
+function InterwovenKit({ bridge }: { bridge?: Partial<BridgeFormValues> }): JSX.Element
+```
+
+<ParamField path="bridge" type="Partial<BridgeFormValues>" optional>
+  Optional bridge configuration for opening the component directly to the bridge interface.
+</ParamField>
+
+## Internal Usage
+
+The `InterwovenKit` component is automatically rendered by the provider when wallet drawers are opened. It handles:
+
+- **Wallet connection interface** - Connect and disconnect wallets
+- **Portfolio display** - Asset balances across all chains
+- **Bridge interface** - Cross-chain asset transfers
+- **Transaction history** - Recent transaction activity
+- **Settings and preferences** - Theme and configuration options
+
+
+## Component Architecture
+
+The `InterwovenKit` component uses:
+
+- **MemoryRouter** for internal navigation between different views
+- **AsyncBoundary** for error handling and loading states  
+- **Routes** component for handling different wallet screens
+- **Fullscreen context** for bridge-specific layouts
+
+
+## Integration with Provider
+
+```tsx
+// Typical usage through provider
+function App() {
+  const { openWallet, openBridge } = useInterwovenKit()
+
+  return (
+    <div>
+      {/* InterwovenKit component is rendered internally when these are called */}
+      <button onClick={openWallet}>Open Wallet</button>
+      <button onClick={() => openBridge({ srcChainId: "ethereum-1" })}>
+        Open Bridge
+      </button>
+    </div>
+  )
+}
+```
+
+
+<Tip>
+  Use `openWallet` and `openBridge` from `useInterwovenKit` instead of rendering this component directly. The provider handles all the necessary context and state management.
+</Tip>
+
+
+## Related Components
+
+- **InterwovenKitProvider** - The main provider that sets up the context
+- **useInterwovenKit** - Hook for controlling the wallet interface
+- **injectStyles** - Utility for customizing the component's appearance
+
+Most developers should focus on the provider and hook rather than this internal component.

@@ -1,0 +1,38 @@
+---
+title: injectStyles
+---
+
+The `injectStyles` utility function allows manual injection of CSS styles into InterwovenKit's Shadow DOM for custom styling scenarios.
+
+<Info>
+  InterwovenKit uses Shadow DOM to isolate its styles from the host page. Use this utility when you need to customize the widget's appearance beyond the built-in theme options.
+</Info>
+
+## Function Signature
+
+```tsx
+function injectStyles(css: string): void
+```
+
+<ParamField path="css" type="string" required>
+  CSS string to inject into the Shadow DOM. Can include any valid CSS rules.
+</ParamField>
+
+## Basic Usage
+
+```tsx
+import { injectStyles } from "@initia/interwovenkit-react"
+
+useEffect(() => {
+  injectStyles(`
+    .body button {
+      background: #4ECDC4 !important;
+      border-radius: 8px !important;
+    }
+  `)
+}, [])
+```
+
+<Info>
+  The `injectStyles` utility allows manual injection of CSS styles into InterwovenKit's Shadow DOM for custom styling. Use `!important` declarations to override default styles.
+</Info>

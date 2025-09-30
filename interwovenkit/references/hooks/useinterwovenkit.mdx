@@ -129,7 +129,15 @@ The hook provides utilities for estimating, signing, and sending transactions on
 </ParamField>
 
 <ParamField path="requestTxSync" type="(txRequest: TxRequest) => Promise<string>">
-  Signs and broadcasts a transaction, returning the transaction hash immediately without waiting for block inclusion.
+  Signs and broadcasts a transaction with UI modal, returning the transaction hash immediately without waiting for block inclusion.
+</ParamField>
+
+<ParamField path="submitTxSync" type="(txParams: TxParams) => Promise<string>">
+  Signs and broadcasts a transaction directly without UI modal, returning the transaction hash immediately. Requires explicit fee.
+</ParamField>
+
+<ParamField path="submitTxBlock" type="(txParams: TxParams) => Promise<DeliverTxResponse>">
+  Signs, broadcasts, and waits for transaction block inclusion directly without UI modal. Returns complete transaction response. Requires explicit fee.
 </ParamField>
 
 <ParamField path="waitForTxConfirmation" type="(params: TxQuery) => Promise<IndexedTx>">
@@ -137,8 +145,32 @@ The hook provides utilities for estimating, signing, and sending transactions on
 </ParamField>
 
 <Tip>
-  Use `requestTxSync` for better UX when you want to show immediate feedback, then use `waitForTxConfirmation` to track the final transaction status. Use `requestTxBlock` when you need the complete transaction result immediately.
+  **InterwovenKit UI methods**: Use `requestTxSync` and `requestTxBlock` for applications using InterwovenKit's fee selection modal.
+  **Direct wallet methods**: Use `submitTxSync` and `submitTxBlock` for custom transaction UX that skips InterwovenKit's modal and goes directly to browser wallet confirmation.
 </Tip>
+
+### Transaction Method Comparison
+
+| Method | InterwovenKit UI | Fee Required | Use Case |
+|--------|----------|--------------|----------|
+| **requestTxSync** | ✅ Yes | ❌ Optional | Standard UX, get hash |
+| **requestTxBlock** | ✅ Yes | ❌ Optional | Standard UX, need full results |
+| **submitTxSync** | ❌ Skipped | ✅ Required | Custom UX, get hash |
+| **submitTxBlock** | ❌ Skipped | ✅ Required | Custom UX, need full results |
+
+#### When to Use Each Method
+
+**Use `requestTx*` methods when:**
+- Building standard applications with InterwovenKit UI
+- You want InterwovenKit's built-in fee selection UI
+- Users should choose fees through InterwovenKit modal
+
+**Use `submitTx*` methods when:**
+- You want to skip InterwovenKit's modal
+- Building custom transaction confirmation UI
+- You need control over fee calculation and display
+- Want direct browser wallet confirmation
+
 
 ### Transaction Request Interface
 
@@ -188,7 +220,7 @@ The `TxQuery` interface defines parameters for tracking transaction confirmation
   Polling interval in seconds for checking transaction status.
 </ParamField>
 
-### Type Definitions
+## Type Definitions
 
 ```tsx
 import type { EncodeObject } from '@cosmjs/proto-signing'

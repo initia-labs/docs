@@ -1,0 +1,357 @@
+---
+title: Wallet Connectors
+---
+
+InterwovenKit provides pre-configured wallet connectors for seamless integration with popular wallet connection libraries, including built-in support for Privy social login.
+
+<Info>
+  These connectors enable social login and cross-app wallet functionality through Privy's infrastructure, allowing users to connect with email, social accounts, and traditional crypto wallets.
+</Info>
+
+## Privy Integration
+
+### initiaPrivyWalletOptions
+
+Pre-configured options for Initia's Privy wallet integration.
+
+<ParamField path="id" type="string">
+  Privy app ID for the Initia ecosystem integration.
+</ParamField>
+
+<ParamField path="name" type="string">
+  Display name for the social login option ("Socials").
+</ParamField>
+
+<ParamField path="iconUrl" type="string">
+  URL to the Privy wallet icon.
+</ParamField>
+
+<ParamField path="iconBackground" type="string">
+  Background color for the wallet icon display.
+</ParamField>
+
+```tsx
+import { initiaPrivyWalletOptions } from "@initia/interwovenkit-react"
+
+console.log(initiaPrivyWalletOptions)
+// {
+//   id: "cmbq1ozyc006al70lx4uciz0q",
+//   name: "Socials", 
+//   iconUrl: "https://assets.initia.xyz/images/wallets/Privy.webp",
+//   iconBackground: "#ffffff"
+// }
+```
+
+### initiaPrivyWalletConnector
+
+Wagmi-compatible connector for Privy wallet integration.
+
+```tsx
+import { initiaPrivyWalletConnector } from "@initia/interwovenkit-react"
+import { createConfig, http } from "wagmi"
+
+const config = createConfig({
+  connectors: [
+    initiaPrivyWalletConnector,
+    // ... other connectors
+  ],
+  transports: {
+    // ... chain transports
+  },
+})
+```
+
+### initiaPrivyWallet
+
+RainbowKit-compatible wallet configuration for Privy integration.
+
+```tsx
+import { initiaPrivyWallet } from "@initia/interwovenkit-react"
+import { connectorsForWallets } from "@rainbow-me/rainbowkit"
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Social Login",
+      wallets: [initiaPrivyWallet],
+    },
+    // ... other wallet groups
+  ],
+  {
+    appName: "My Initia App",
+    projectId: "YOUR_PROJECT_ID",
+  }
+)
+```
+
+## Integration Examples
+
+### Wagmi Configuration
+
+```tsx
+import { initiaPrivyWalletConnector } from "@initia/interwovenkit-react"
+import { createConfig, http } from "wagmi"
+import { mainnet, sepolia } from "wagmi/chains"
+import { injected, metaMask, walletConnect } from "wagmi/connectors"
+
+export const wagmiConfig = createConfig({
+  connectors: [
+    initiaPrivyWalletConnector,
+    injected(),
+    metaMask(),
+    walletConnect({ projectId: "YOUR_PROJECT_ID" }),
+  ],
+  chains: [mainnet, sepolia],
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
+  },
+})
+```
+
+### RainbowKit Integration
+
+```tsx
+import { initiaPrivyWallet } from "@initia/interwovenkit-react"
+import { connectorsForWallets } from "@rainbow-me/rainbowkit"
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+  rainbowWallet,
+  coinbaseWallet,
+} from "@rainbow-me/rainbowkit/wallets"
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Social Login",
+      wallets: [initiaPrivyWallet],
+    },
+    {
+      groupName: "Popular",
+      wallets: [
+        metaMaskWallet,
+        walletConnectWallet,
+        coinbaseWallet,
+        rainbowWallet,
+      ],
+    },
+  ],
+  {
+    appName: "Initia dApp",
+    projectId: "YOUR_WALLETCONNECT_PROJECT_ID",
+  }
+)
+```
+
+### Complete Setup with InterwovenKit
+
+```tsx
+import { initiaPrivyWalletConnector } from "@initia/interwovenkit-react"
+import { InterwovenKitProvider } from "@initia/interwovenkit-react"
+import { WagmiProvider, createConfig, http } from "wagmi"
+import { mainnet } from "viem/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+
+// Configure Wagmi with Privy connector
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(),
+  },
+})
+
+const queryClient = new QueryClient()
+
+function App() {
+  return (
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider defaultChainId="interwoven-1">
+          <YourApp />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  )
+}
+```
+
+## Advanced Configuration
+
+### Custom Privy Configuration
+
+If you need to use your own Privy app configuration:
+
+```tsx
+import { toPrivyWallet, toPrivyWalletConnector } from "@privy-io/cross-app-connect/rainbow-kit"
+
+const customPrivyOptions = {
+  id: "your-privy-app-id",
+  name: "Custom Social Login",
+  iconUrl: "https://your-domain.com/privy-icon.png",
+  iconBackground: "#your-color",
+}
+
+// Create custom connectors
+export const customPrivyWalletConnector = toPrivyWalletConnector(customPrivyOptions)
+export const customPrivyWallet = toPrivyWallet(customPrivyOptions)
+```
+
+### Multi-App Privy Setup
+
+For applications that need multiple Privy configurations:
+
+```tsx
+import { toPrivyWallet, toPrivyWalletConnector } from "@privy-io/cross-app-connect/rainbow-kit"
+
+const prodPrivyOptions = {
+  id: "production-privy-app-id",
+  name: "Social Login",
+  iconUrl: "https://assets.yourapp.com/privy-prod.png",
+  iconBackground: "#000000",
+}
+
+const devPrivyOptions = {
+  id: "development-privy-app-id", 
+  name: "Social Login (Dev)",
+  iconUrl: "https://assets.yourapp.com/privy-dev.png",
+  iconBackground: "#ff0000",
+}
+
+const privyOptions = process.env.NODE_ENV === 'production' 
+  ? prodPrivyOptions 
+  : devPrivyOptions
+
+export const privyConnector = toPrivyWalletConnector(privyOptions)
+export const privyWallet = toPrivyWallet(privyOptions)
+```
+
+## Connector Features
+
+### Social Login Methods
+
+The Privy connector supports multiple social login methods:
+
+- **Email**: Passwordless email authentication
+- **Google**: Google OAuth integration
+- **Twitter**: Twitter OAuth integration  
+- **Discord**: Discord OAuth integration
+- **Apple**: Apple Sign-In integration
+- **GitHub**: GitHub OAuth integration
+
+### Cross-App Connectivity
+
+Privy enables wallet state sharing across different applications:
+
+```tsx
+// Users can connect once and use the same wallet across multiple dApps
+// that use the same Privy app configuration
+
+function usePrivyWalletState() {
+  const { address, isConnected } = useAccount()
+  
+  // Wallet state persists across app sessions and different dApps
+  return { address, isConnected }
+}
+```
+
+### Smart Account Integration
+
+Privy connectors support smart account features:
+
+- **Account Abstraction**: Gasless transactions and batched operations
+- **Recovery Mechanisms**: Social recovery for lost access
+- **Multi-Factor Authentication**: Enhanced security options
+
+## Best Practices
+
+### Production Deployment
+
+<Warning>
+  Always use your own Privy app ID in production. The default `initiaPrivyWalletOptions` is configured for Initia's ecosystem and may not be suitable for all applications.
+</Warning>
+
+```tsx
+// Production setup
+const PRIVY_APP_ID = process.env.VITE_PRIVY_APP_ID
+
+if (!PRIVY_APP_ID) {
+  throw new Error("VITE_PRIVY_APP_ID environment variable is required")
+}
+
+const privyOptions = {
+  id: PRIVY_APP_ID,
+  name: "Social Login",
+  iconUrl: "/privy-icon.png",
+  iconBackground: "#ffffff",
+}
+```
+
+### Error Handling
+
+```tsx
+import { useAccount } from "wagmi"
+
+function WalletConnection() {
+  const { address, isConnected, isConnecting, error } = useAccount()
+
+  if (error) {
+    return <div>Connection error: {error.message}</div>
+  }
+
+  if (isConnecting) {
+    return <div>Connecting to wallet...</div>
+  }
+
+  return (
+    <div>
+      {isConnected ? `Connected: ${address}` : "Not connected"}
+    </div>
+  )
+}
+```
+
+### Fallback Connectors
+
+Always provide fallback wallet options:
+
+```tsx
+const connectors = connectorsForWallets([
+  {
+    groupName: "Social Login",
+    wallets: [initiaPrivyWallet],
+  },
+  {
+    groupName: "Traditional Wallets", 
+    wallets: [
+      metaMaskWallet,
+      walletConnectWallet,
+      coinbaseWallet,
+    ],
+  },
+])
+```
+
+## TypeScript Types
+
+```tsx
+interface PrivyWalletOptions {
+  id: string
+  name: string  
+  iconUrl: string
+  iconBackground: string
+}
+
+// Connector types from external packages
+type PrivyWalletConnector = ReturnType<typeof toPrivyWalletConnector>
+type PrivyWallet = ReturnType<typeof toPrivyWallet>
+```
+
+<Tip>
+  The Privy integration handles wallet state persistence automatically. Users who connect once will remain connected across browser sessions and different applications using the same Privy app configuration.
+</Tip>
+
+<Info>
+  For more advanced Privy configuration options, refer to the [Privy documentation](https://docs.privy.io) and the [@privy-io/cross-app-connect](https://www.npmjs.com/package/@privy-io/cross-app-connect) package documentation.
+</Info>

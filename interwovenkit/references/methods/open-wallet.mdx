@@ -1,0 +1,79 @@
+---
+title: openWallet
+---
+
+The `openWallet` function opens the main wallet drawer, displaying portfolio balances, transaction history, and asset management features for the connected wallet.
+
+<Info>
+  This function is available from the `useInterwovenKit` hook and provides the primary interface for users to view and manage their wallet assets.
+</Info>
+
+## Function Signature
+
+```tsx
+function openWallet(): void
+```
+
+The function takes no parameters and immediately opens the wallet interface.
+
+## Basic Usage
+
+```tsx
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function WalletButton() {
+  const { openWallet, isConnected } = useInterwovenKit()
+
+  if (!isConnected) {
+    return <span>Connect wallet first</span>
+  }
+
+  return (
+    <button onClick={openWallet}>
+      Open Wallet
+    </button>
+  )
+}
+```
+
+## Wallet Interface Features
+
+When `openWallet` is called, users can access:
+
+### Portfolio Overview
+- **Total portfolio value** across all supported chains
+- **Asset balances** with real-time pricing
+- **Chain breakdown** showing holdings per network
+- **Asset grouping** for multi-chain tokens
+
+### Transaction History
+- **Recent transactions** across all chains
+- **Transaction status** and confirmation details
+- **Transaction details** with gas costs and fees
+
+### Asset Management
+- **Send tokens** to other addresses
+- **Bridge assets** between chains
+
+### Account Information
+- **Connected address** in multiple formats
+- **Username display** if registered
+- **Connection status** and wallet type
+
+## Basic Usage
+
+```tsx
+function WalletButton() {
+  const { openWallet, isConnected } = useInterwovenKit()
+
+  if (!isConnected) return null
+
+  return (
+    <button onClick={openWallet}>
+      View Wallet
+    </button>
+  )
+}
+```
+
+The `openWallet` function opens the main wallet interface, displaying portfolio balances, transaction history, and asset management features for the connected wallet.

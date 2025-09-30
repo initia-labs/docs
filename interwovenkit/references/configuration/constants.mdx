@@ -1,0 +1,247 @@
+---
+title: Configuration Constants
+---
+
+InterwovenKit provides pre-configured constants for quick setup across different network environments and common configuration values.
+
+<Info>
+  Use these constants to quickly configure InterwovenKit for mainnet, testnet, or custom setups without manually specifying each configuration parameter.
+</Info>
+
+## Network Configurations
+
+### MAINNET
+
+Pre-configured settings for Initia's production mainnet environment.
+
+<ParamField path="defaultChainId" type="string" default="interwoven-1">
+  The Initia mainnet chain ID.
+</ParamField>
+
+<ParamField path="registryUrl" type="string" default="https://registry.initia.xyz">
+  Production chain registry service URL.
+</ParamField>
+
+<ParamField path="routerApiUrl" type="string" default="https://router-api.initia.xyz">
+  Production router API service URL for bridge operations.
+</ParamField>
+
+<ParamField path="usernamesModuleAddress" type="string" default="0x72ed9b26...">
+  Mainnet usernames module contract address.
+</ParamField>
+
+<ParamField path="theme" type="string" default="dark">
+  Default UI theme for mainnet deployments.
+</ParamField>
+
+```tsx
+import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+
+function App() {
+  return (
+    <InterwovenKitProvider {...MAINNET}>
+      <YourApp />
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### TESTNET
+
+Pre-configured settings for Initia's testnet environment with development-friendly defaults.
+
+<ParamField path="defaultChainId" type="string" default="initiation-2">
+  The Initia testnet chain ID.
+</ParamField>
+
+<ParamField path="registryUrl" type="string" default="https://registry.testnet.initia.xyz">
+  Testnet chain registry service URL.
+</ParamField>
+
+<ParamField path="routerApiUrl" type="string" default="https://router-api.initiation-2.initia.xyz">
+  Testnet router API service URL.
+</ParamField>
+
+<ParamField path="usernamesModuleAddress" type="string" default="0x42cd8467...">
+  Testnet usernames module contract address.
+</ParamField>
+
+<ParamField path="theme" type="string" default="dark">
+  Default UI theme for testnet deployments.
+</ParamField>
+
+<ParamField path="disableAnalytics" type="boolean" default="true">
+  Analytics are disabled by default for testnet to avoid polluting production metrics.
+</ParamField>
+
+```tsx
+import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
+
+function TestApp() {
+  return (
+    <InterwovenKitProvider {...TESTNET}>
+      <YourApp />
+    </InterwovenKitProvider>
+  )
+}
+```
+
+## Transaction Constants
+
+### DEFAULT_GAS_ADJUSTMENT
+
+Default multiplier applied to estimated gas amounts for safety margin.
+
+<ParamField path="Value" type="number" default="1.4">
+  40% safety margin above estimated gas usage.
+</ParamField>
+
+```tsx
+import { DEFAULT_GAS_ADJUSTMENT } from "@initia/interwovenkit-react"
+
+// Use in custom transaction functions
+const gasLimit = estimatedGas * DEFAULT_GAS_ADJUSTMENT
+```
+
+### DEFAULT_GAS_PRICE_MULTIPLIER
+
+Default multiplier for gas price calculations.
+
+<ParamField path="Value" type="number" default="1.05">
+  5% buffer above minimum gas price for faster inclusion.
+</ParamField>
+
+```tsx
+import { DEFAULT_GAS_PRICE_MULTIPLIER } from "@initia/interwovenkit-react"
+
+// Calculate competitive gas price
+const gasPrice = minimumGasPrice * DEFAULT_GAS_PRICE_MULTIPLIER
+```
+
+## Usage Patterns
+
+### Environment-Based Configuration
+
+```tsx
+import { 
+  InterwovenKitProvider, 
+  MAINNET, 
+  TESTNET 
+} from "@initia/interwovenkit-react"
+
+function App() {
+  const config = process.env.NODE_ENV === 'production' ? MAINNET : TESTNET
+
+  return (
+    <InterwovenKitProvider {...config}>
+      <YourApp />
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### Extended Configuration
+
+Combine constants with custom settings:
+
+```tsx
+import { 
+  InterwovenKitProvider, 
+  MAINNET, 
+  TESTNET 
+} from "@initia/interwovenkit-react"
+
+function App() {
+  const baseConfig = process.env.NODE_ENV === 'production' ? MAINNET : TESTNET
+
+  const config = {
+    ...baseConfig,
+    theme: 'light', // Override default theme
+    customChain: myPrivateChain, // Add custom chain
+  }
+
+  return (
+    <InterwovenKitProvider {...config}>
+      <YourApp />
+    </InterwovenKitProvider>
+  )
+}
+```
+
+### Gas Configuration
+
+```tsx
+import { 
+  useInterwovenKit, 
+  DEFAULT_GAS_ADJUSTMENT,
+  DEFAULT_GAS_PRICE_MULTIPLIER 
+} from "@initia/interwovenkit-react"
+
+function CustomTransaction() {
+  const { requestTxBlock, estimateGas } = useInterwovenKit()
+
+  const sendTransaction = async (messages: EncodeObject[]) => {
+    // Use default gas settings
+    const estimatedGas = await estimateGas({ messages })
+    
+    await requestTxBlock({
+      messages,
+      gas: Math.floor(estimatedGas * DEFAULT_GAS_ADJUSTMENT),
+      gasAdjustment: DEFAULT_GAS_ADJUSTMENT, // Alternative approach
+    })
+  }
+
+  return (
+    <button onClick={() => sendTransaction(/* messages */)}>
+      Send Transaction
+    </button>
+  )
+}
+```
+
+
+
+## Usage
+
+Use the pre-configured constants as your starting point:
+
+```tsx
+import { InterwovenKitProvider, MAINNET, TESTNET } from "@initia/interwovenkit-react"
+
+// Production
+<InterwovenKitProvider {...MAINNET}>
+  <YourApp />
+</InterwovenKitProvider>
+
+// Development
+<InterwovenKitProvider {...TESTNET}>
+  <YourApp />
+</InterwovenKitProvider>
+```
+
+## Constant Values Reference
+
+```tsx
+// MAINNET configuration
+{
+  defaultChainId: "interwoven-1",
+  registryUrl: "https://registry.initia.xyz", 
+  routerApiUrl: "https://router-api.initia.xyz",
+  usernamesModuleAddress: "0x72ed9b26ecdcd6a21d304df50f19abfdbe31d2c02f60c84627844620a45940ef",
+  theme: "dark"
+}
+
+// TESTNET configuration  
+{
+  defaultChainId: "initiation-2",
+  registryUrl: "https://registry.testnet.initia.xyz",
+  routerApiUrl: "https://router-api.initiation-2.initia.xyz", 
+  usernamesModuleAddress: "0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a",
+  theme: "dark",
+  disableAnalytics: true
+}
+
+// Gas constants
+DEFAULT_GAS_ADJUSTMENT = 1.4
+DEFAULT_GAS_PRICE_MULTIPLIER = 1.05
+```
