@@ -159,6 +159,51 @@ export default function Providers() {
 }
 ```
 
+### Custom Fee Handling
+
+This feature allows you to bypass the "Confirm tx" modal and provide pre-calculated fees directly, giving you more control over transaction speed and UX. The old requestTx functions are still available, so you can choose the workflow that fits your app best.
+
+You can provide fees in two ways:
+
+- `Pre-calculated`: Provide a fixed fee if you are confident.
+- `Estimated`: Use estimateGas to simulate the required fee.
+
+<Note>
+Since this skips the standard fee selection UI, ensure the fee is displayed somewhere else in your app to maintain transparency for users.
+</Note>
+
+```tsx
+// page.tsx
+"use client"
+
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+export default function Home() {
+  const { address, estimateGas, submitTxBlock } = useInterwovenKit()
+
+  const send = async () => {
+    const messages = [
+      {
+        typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+        value: {
+          fromAddress: address,
+          toAddress: address,
+          amount: [{ amount: "1000000", denom: "uinit" }],
+        },
+      },
+    ]
+
+    const gas = await estimateGas({ messages })
+    const fee = calculateFee(gas, GasPrice.fromString("0.015uinit"))
+    const { transactionHash } = await submitTxBlock({ messages, fee })
+    console.log("Transaction sent:", transactionHash)
+  }
+
+  return <button onClick={send}>Send</button>
+}
+```
+
 ## Testnet Configuration
 
 ### Infrastructure Endpoints
