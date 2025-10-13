@@ -33,7 +33,7 @@ For this tutorial, we will assume that we have an ERC20 token address `0x5E5f1a9
 First, we initialize the variable for the chain's REST endpoint and the ERC20 token address.
 
 ```js src/index.js
-const restUrl = `https://rest.minievm-2.initia.xyz`;
+const restUrl = `https://rest-evm-1.anvil.asia-southeast.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 ```
 
@@ -78,7 +78,7 @@ If the denom is a valid Cosmos coin denom, the response just returns the token's
 The full code for the script, including the section to actually call the function is as follows:
 
 ```js src/index.js
-const restUrl = `https://rest.minievm-2.initia.xyz`;
+const restUrl = `https://rest-evm-1.anvil.asia-southeast.initia.xyz`;
 const erc20Address = "0x5E5f1a92eECA58053E8364630b66763aa6265Ab0"
 
 async function erc20ToCoinDenom(contractAddress) {

@@ -59,7 +59,7 @@ We then need to define the constructor for our contract. This will be used to in
 <Note>
 The ConnectOracle contract is on MiniEVM precompiles. You can get its address by querying `${REST_URL}/minievm/evm/v1/connect_oracle` where `${REST_URL}` refers to the REST endpoint URL of the rollup.
 ```sh
-curl https://rest.minievm-2.initia.xyz/minievm/evm/v1/connect_oracle
+curl https://rest-evm-1.anvil.asia-southeast.initia.xyz/minievm/evm/v1/connect_oracle
 ```
 The output will look like this:
 ```json
@@ -212,7 +212,7 @@ Set your environment variables and run the deployment. Be sure to replace `PRIVA
 
 ```sh
 export PRIVATE_KEY=0x...
-export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz
+export JSON_RPC_URL=https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz
 
 forge script script/Oracle.s.sol:OracleScript \
   --rpc-url $JSON_RPC_URL \

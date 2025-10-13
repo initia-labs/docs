@@ -160,7 +160,7 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
         To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
 
         ```bash
-        export JSON_RPC_URL=https://json-rpc.minievm-2.initia.xyz  # Replace with your rollup's JSON_RPC endpoint
+        export JSON_RPC_URL=https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz  # Replace with your rollup's JSON_RPC endpoint
         export PRIVATE_KEY=0xabcd1234...                           # Replace with your deployer's private key
         export INIT_STAGE=1                                        # Replace with the starting stage number for scoring.
 
@@ -201,8 +201,8 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
 
         ```bash
         export GAS_PRICES=0.015l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd # Replace with your roll gas prices
-        export RPC_NODE_URL=https://rpc.minimove-2.initia.xyz                                      # Replace with your rollup's RPC endpoint       
-        export CHAIN_ID=minimove-2                                                                 # Replace with your rollup's chain ID
+        export RPC_NODE_URL=https://rpc-move-1.anvil.asia-southeast.initia.xyz                     # Replace with your rollup's RPC endpoint       
+        export CHAIN_ID=move-1                                                                     # Replace with your rollup's chain ID
 
         minitiad move deploy \
           --from $DEPLOYER_KEY_NAME \
@@ -230,8 +230,8 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
 
         ```bash
         export GAS_PRICES=0.015l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0 # Replace with your rollup gas prices
-        export RPC_NODE_URL=https://rpc.miniwasm-2.initia.xyz                                      # Replace with your rollup's RPC endpoint
-        export CHAIN_ID=miniwasm-2                                                                 # Replace with your rollup's chain ID
+        export RPC_NODE_URL=https://rpc-wasm-1.anvil.asia-southeast.initia.xyz                     # Replace with your rollup's RPC endpoint
+        export CHAIN_ID=wasm-1                                                                     # Replace with your rollup's chain ID
 
         minitiad tx wasm store ./target/wasm32-unknown-unknown/release/vip_score.wasm \
           --from $DEPLOYER_KEY_NAME \
@@ -305,7 +305,7 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
          *  Environment variables                                   *
          * -------------------------------------------------------- */
 
-        const JSON_RPC_URL     =  process.env.JSON_RPC_URL   || 'https://json-rpc.minievm-2.initia.xyz'; // Your rollup's JSON RPC endpoint
+        const JSON_RPC_URL     =  process.env.JSON_RPC_URL   || 'https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz'; // Your rollup's JSON RPC endpoint
         const PRIVATE_KEY      =  process.env.PRIVATE_KEY    || '0xabcd1234...';                         // Your contract deployer's private key. Do not hardcode it in production
         const SCORE_CONTRACT   =  process.env.SCORE_CONTRACT || '0x12345...';                            // The deployed VIP scoring contract address  
         const EVM_CHAIN_ID     =  process.env.EVM_CHAIN_ID   || '1982194020580198';                      // Your rollup's chain ID
@@ -383,7 +383,7 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
         <Note>
         To get the EVM chain ID, call the `eth_chainId` JSON-RPC method. For example, using `curl`:
         ```bash
-        curl -X POST https://json-rpc.minievm-2.initia.xyz/ \
+        curl -X POST https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz/ \
           -H "Content-Type: application/json" \
           -d '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}'
         ```
@@ -404,7 +404,7 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
          *  Environment variables                                   *
          * -------------------------------------------------------- */
 
-        const REST_URL       = process.env.REST_URL       || 'https://rest.minimove-2.initia.xyz';  // Your rollup's REST endpoint
+        const REST_URL       = process.env.REST_URL       || 'https://rest-move-1.anvil.asia-southeast.initia.xyz';  // Your rollup's REST endpoint
         const MNEMONIC_KEY   = process.env.MNEMONIC_KEY   || 'castle lung ...';                     // Your contract deployer's mnemonic key. Do not hardcode it in production
         const SCORE_CONTRACT = process.env.SCORE_CONTRACT || '0x12345...';                          // The deployed VIP scoring contract address
         const TARGET_STAGE   = process.env.TARGET_STAGE   || '1';                                   // The stage number you want to update scores for
@@ -528,7 +528,7 @@ This guide explains how a rollup can prepare for and integrate Initia's [VIP](/h
          *  Environment variables                                   *
          * -------------------------------------------------------- */
 
-        const RPC_URL        = process.env.REST_URL       || 'https://rest.miniwasm-2.initia.xyz';   // Your rollup's REST endpoint
+        const RPC_URL        = process.env.REST_URL       || 'https://rest-wasm-1.anvil.asia-southeast.initia.xyz';   // Your rollup's REST endpoint
         const MNEMONIC_KEY   = process.env.MNEMONIC_KEY   || 'castle ping ...';                      // Your contract deployer's mnemonic key. Do not hardcode it in production
         const SCORE_CONTRACT = process.env.SCORE_CONTRACT || 'init1ga1g...';                         // The deployed VIP scoring contract address
         const TARGET_STAGE   = process.env.TARGET_STAGE   || '1';                                    // The stage number you want to update scores for
