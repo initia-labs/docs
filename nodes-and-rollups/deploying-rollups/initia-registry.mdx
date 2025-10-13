@@ -227,13 +227,13 @@ These fields should be empty for all rollups.
 ```json
 {
   "$schema": "../../assetlist.schema.json",
-  "chain_name": "minimove",
+  "chain_name": "move",
   "assets": [
     {
       "description": "The native token of Initia",
       "denom_units": [
         {
-          "denom": "l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd",
+          "denom": "l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145",
           "exponent": 0
         },
         {
@@ -241,7 +241,7 @@ These fields should be empty for all rollups.
           "exponent": 6
         }
       ],
-      "base": "l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd",
+      "base": "l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145",
       "display": "INIT",
       "traces": [
         {
@@ -389,7 +389,7 @@ async function main() {
   const bridge_id = 1
 
   const l1_denom = 'uinit'
-  const l2_denom = 'l2/771d639f30fbe45e3fbca954ffbe2fcc26f915f5513c67a4a2d0bc1d635bdefd'
+  const l2_denom = 'l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145'
 
   const l2_denom_for_l1_denom = await opDenomByL1Denom(uri, bridge_id, l1_denom)
   console.log(`L2 denom for L1 denom "${l1_denom}":`, l2_denom_for_l1_denom)
