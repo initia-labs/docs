@@ -239,22 +239,17 @@ await proposer.rest.tx.broadcast(signedTx).then(res => console.log(res))
 ```
 
 ```bash
-curl -X GET "https://rest.miniwasm-2.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
+curl -X GET "https://rest-wasm-1.anvil.asia-southeast.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
 ```
 
 Response:
 
 ```json
 {
-  "acls": [
-    {
-      "address": "init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8",
-      "allowed": true
-    }
-  ],
+  "acls": [],
   "pagination": {
     "next_key": null,
-    "total": "1"
+    "total": "0"
   }
 }
 ```
@@ -292,9 +287,8 @@ async function main() {
     )
 
     const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
-    const tokenPair = await l1RestClient.ophost.tokenPairByL1Denom(2, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/2588fd87a8e081f6a557f43ff14f05dddf5e34cb27afcefd6eaf81f1daea30d0' }
-
-    const denom = ibcDenom("channel-0", tokenPair.l1_denom) // use IBC channel on MiniWasm side
+    const tokenPair = await l1RestClient.ophost.tokenPairByL1Denom(1457, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/8b3e1fc559b327a35335e3f26ff657eaee5ff8486ccd3c1bc59007a93cf23156' }
+    const denom = ibcDenom("channel-0", tokenPair.l1_denom)                       // use IBC channel on MiniWasm side
     const amount = "1000"
 
     const msgs = [
@@ -303,7 +297,7 @@ async function main() {
             'channel-2',
             new Coin(tokenPair.l1_denom, amount),
             sender.key.accAddress,
-            "init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8", // IBC hook receiver = `ModuleAddress::ModuleName::FunctionName`
+            "init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8",    // IBC hook receiver = `ModuleAddress::ModuleName::FunctionName`
             new Height(0, 0),
             ((new Date().valueOf() + 100000) * 1000000).toString(),
             createHook({
