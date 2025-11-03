@@ -1,0 +1,64 @@
+---
+title: "New file"
+description: "Description of your new file."
+---
+
+### **Integration Steps**
+
+#### **1. Define Authorization Scope**
+
+Specify which modules and actions your app will request permission for:
+
+const authorizations = [
+
+  { module: "game_module", functions: ["move_character", "trade_assets"] },
+
+  { module: "bank_module", functions: ["spend_currency", "buy_item"] },
+
+];
+
+#### **2. Initialize the Provider**
+
+Wrap your app in the Initia SDK’s provider component:
+
+\<InterwovenKitProvider
+
+  defaultChainId="CHAIN_ID"
+
+  authorizations={authorizations}
+
+\>
+
+  {/\* App Components \*/}
+
+\</InterwovenKitProvider\>
+
+#### **3. Handle User Connection**
+
+When users connect their wallet, they’ll see:
+
+- Authorization summary
+- Session duration selector
+- One-time signing approval
+
+After that, all matching function calls execute automatically.
+
+---
+
+### **3.4 Fee Delegation Setup**
+
+To cover gas fees for Ghost Wallet actions:
+
+await feeGrantModule.createAllowance({
+
+  granter: mainWalletAddress,
+
+  grantee: ghostWalletAddress,
+
+  spend_limit: "1000000uinit",
+
+  expiration: "2025-12-31T00:00:00Z"
+
+});
+
+This ensures Ghost Wallets can operate without holding tokens themselves.
