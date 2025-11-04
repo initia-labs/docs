@@ -1,0 +1,89 @@
+---
+title: Introduction
+description: Learn about autosign and ghost wallets for seamless transaction signing
+icon: robot
+---
+
+## Overview
+
+Autosign enables your application to send transactions automatically without requiring user confirmation for each transaction. This feature uses embedded wallet (also known as a "ghost wallet") to sign transactions on behalf of users, providing a seamless user experience while maintaining security through granular permission controls.
+
+<Info>
+  Autosign is built on Cosmos SDK's `authz` and `feegrant` modules, allowing fine-grained control over which transaction types can be automatically signed and when permissions expire.
+</Info>
+
+## What Are Ghost Wallets?
+
+Ghost wallets are Privy-managed embedded wallets that act as authorized signers for your application. When autosign is enabled, Privy creates a ghost wallet that receives permission from the user's main wallet to sign specific transaction types automatically.
+
+Key characteristics of ghost wallets:
+
+- **Separate Address**: Each ghost wallet has its own blockchain address
+- **Managed by Privy**: Privy handles key management and wallet lifecycle
+- **Scoped Permissions**: Can only sign transactions you've explicitly authorized
+- **Time-Limited**: Permissions expire after a set duration
+- **Revocable**: Users can revoke permissions at any time
+
+## How Autosign Works
+
+When autosign is enabled, the following process occurs:
+
+<Steps>
+<Step title="Permission Request">
+
+Your application requests permission to automatically sign specific transaction types on specific chains. This is configured through the `enableAutoSign` prop in `InterwovenKitProvider`.
+
+</Step>
+<Step title="Ghost Wallet Creation">
+
+Privy creates an embedded wallet (ghost wallet) that will sign transactions on the user's behalf. This wallet is created automatically when the user enables autosign.
+
+</Step>
+<Step title="Grant Authorization">
+
+The user's main wallet grants permission to the ghost wallet via Cosmos SDK's `authz` and `feegrant` modules:
+- **Authz grants**: Authorize the ghost wallet to execute specific message types
+- **Feegrant**: Allows the ghost wallet to pay transaction fees on behalf of the user
+
+The user signs a single transaction to create these grants.
+
+</Step>
+<Step title="Automatic Signing">
+
+When transactions match the granted permissions:
+1. InterwovenKit validates the transaction message types match the grants
+2. The system checks that permissions haven't expired
+3. The ghost wallet automatically signs the transaction
+4. The transaction is broadcast without user interaction
+
+</Step>
+</Steps>
+
+## Benefits
+
+Autosign provides several key benefits for both users and developers:
+
+For users:
+
+- **Seamless Experience**: No need to approve every transaction manually
+- **Reduced Friction**: Faster interactions, especially for frequent operations
+- **Security**: Permissions are scoped, time-limited, and revocable
+- **Control**: Users can see and manage all autosign permissions
+
+For developers:
+
+- **Better UX**: Reduce transaction approval fatigue
+- **Flexible Permissions**: Configure exactly which transaction types can be auto-signed
+- **Multi-Chain Support**: Configure different permissions per chain
+- **Trust Indicators**: Works with domain trust verification
+
+
+
+## Security
+
+Autosign maintains security through several mechanisms:
+
+- **Scoped Permissions**: Only specific message types can be auto-signed. For example, you might grant permission for `/minievm.evm.v1.MsgCall` but not for `/cosmos.bank.v1beta1.MsgSend`, ensuring the ghost wallet can only execute the exact operations you've authorized.
+- **Time-Limited Grants**: All autosign permissions have expiration dates. Users can set expiration times when enabling autosign, and permissions automatically expire, requiring re-authorization. 
+- **Domain Trust**: InterwovenKit shows security warnings for untrusted domains. Applications listed in the Initia registry are automatically trusted, while others show warnings that users can acknowledge or dismiss.
+- **Revocable Permissions**: Users can revoke autosign permissions at any time through their wallet settings. When revoked, all grants are immediately invalidated.

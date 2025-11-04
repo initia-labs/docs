@@ -1,0 +1,217 @@
+---
+title: Configuration
+icon: gear
+---
+
+## Overview
+
+Configuring autosign requires two main steps: setting up Privy for embedded wallet management and configuring autosign permissions in your `InterwovenKitProvider`. This guide walks you through both processes.
+
+## Prerequisites
+
+Before configuring autosign, ensure you have:
+
+- A Privy account and application ID
+- InterwovenKit already integrated in your application
+- Understanding of which transaction types you need to auto-sign
+
+## Setting Up Privy
+
+Autosign requires Privy to manage embedded wallets. Privy provides secure key management and wallet creation for ghost wallets.
+
+<Steps>
+<Step title="Create a Privy Account">
+
+1. Visit [Privy's website](https://privy.io) and create an account
+2. Create a new application in the Privy dashboard
+3. Copy your application ID from the dashboard
+
+</Step>
+
+<Step title="Install Privy Dependencies">
+
+Install the required Privy packages in your application. The app should already have InterwovenKit installed::
+
+<CodeGroup>
+```bash npm
+npm install @privy-io/react-auth
+```
+
+```bash yarn
+yarn add @privy-io/react-auth
+```
+
+```bash pnpm
+pnpm add @privy-io/react-auth
+```
+
+```bash bun
+bun add @privy-io/react-auth
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Configure Allowed Domains">
+
+Before configuring your application, set up allowed domains in the Privy Dashboard to ensure security and proper functionality:
+
+1. **Access Privy Dashboard**: Log in to your Privy account
+2. **Navigate to Configuration**: Go to **Configuration > App settings**
+3. **Add Domains**: In the **Allowed Domains** field, add:
+   - Your production domain (e.g., `app.example.com`)
+   - Your development domain (e.g., `localhost:3000`)
+   - Any staging domains you use
+
+<Warning>
+  Privy services will only work on domains you've explicitly allowed. Add all domains where your application will run, including localhost for development.
+</Warning>
+
+</Step>
+
+<Step title="Configure Privy Provider">
+
+Wrap your application with `PrivyProvider` and configure it for embedded wallets:
+
+```tsx App.tsx
+import { PrivyProvider } from "@privy-io/react-auth"
+import { InterwovenKitProvider } from "@initia/interwovenkit-react"
+
+export default function App({ children }) {
+  return (
+    <PrivyProvider
+      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
+      config={{
+        embeddedWallets: {
+          createOnLogin: "all-users",
+        },
+      }}
+    >
+      {/* Your app */}
+    </PrivyProvider>
+  )
+}
+```
+
+**Basic Configuration Options:**
+
+- `appId`: Your Privy application ID (required)
+- `embeddedWallets.createOnLogin`: Create embedded wallets for all users (required)
+
+</Step>
+
+<Step title="Integrate Privy Context with InterwovenKit">
+
+Pass Privy hooks to `InterwovenKitProvider` using the `privyContext` prop:
+
+```tsx providers.tsx
+import { PrivyProvider, usePrivy, useCrossAppAccounts, useCreateWallet, useWallets } from "@privy-io/react-auth"
+import { InterwovenKitProvider, PRIVY_APP_ID } from "@initia/interwovenkit-react"
+
+function InterwovenKitWrapper({ children }) {
+  const privy = usePrivy()
+  const crossAppAccounts = useCrossAppAccounts()
+  const { createWallet } = useCreateWallet()
+  const { wallets } = useWallets()
+
+  return (
+    <InterwovenKitProvider
+      privyContext={{ privy, crossAppAccounts, createWallet, wallets }}
+      enableAutoSign
+    >
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+
+export default function Providers() {
+  return (
+    <PrivyProvider
+      appId="YOUR_PRIVY_APP_ID"
+      config={{
+        appearance: {
+          theme: "dark",
+        },
+        embeddedWallets: {
+          ethereum: { createOnLogin: "all-users" },
+          showWalletUIs: false,
+        },
+        loginMethodsAndOrder: {
+          primary: [`privy:${PRIVY_APP_ID}`, "detected_ethereum_wallets"],
+        },
+      }}
+    >
+      <InterwovenKitWrapper>
+        {/* Your app */}
+      </InterwovenKitWrapper>
+    </PrivyProvider>
+  )
+}
+```
+
+</Step>
+</Steps>
+
+## Configuring Autosign Permissions
+
+Once Privy is set up, configure autosign permissions using the `enableAutoSign` prop in `InterwovenKitProvider`. You can use either a simple boolean configuration or a detailed per-chain configuration.
+
+### Simple Configuration
+
+For single-chain applications using the default chain, enable autosign with a boolean:
+
+```tsx
+<InterwovenKitProvider
+  privyContext={{ privy, crossAppAccounts, createWallet, wallets }}
+  enableAutoSign
+  // ... other config
+>
+  {children}
+</InterwovenKitProvider>
+```
+
+When using boolean configuration, InterwovenKit automatically:
+
+- Detects your chain's VM type
+- Grants permission for the appropriate message type:
+  - **MiniEVM**: `/minievm.evm.v1.MsgCall`
+  - **MiniWasm**: `/cosmwasm.wasm.v1.MsgExecuteContract`
+  - **MiniMove**: `/initia.move.v1.MsgExecute`
+
+### Per-Chain Permissions
+
+For multi-chain applications or when you need custom message types, specify permissions per chain:
+
+```tsx
+<InterwovenKitProvider
+  enableAutoSign={{
+    "evm-1": ["/minievm.evm.v1.MsgCall"],
+    "wasm-1": ["/cosmwasm.wasm.v1.MsgExecuteContract"],
+    "move-1": [
+      "/initia.move.v1.MsgExecute",
+      "/cosmos.bank.v1beta1.MsgSend",
+    ],
+  }}
+  // ... other config
+>
+  {children}
+</InterwovenKitProvider>
+```
+
+**Configuration Format:**
+
+The `enableAutoSign` prop accepts an object where:
+- **Keys**: Chain IDs (strings)
+- **Values**: Arrays of message type URLs (strings)
+
+**Common Message Types:**
+
+- **EVM Chains**: `/minievm.evm.v1.MsgCall`
+- **Wasm Chains**: `/cosmwasm.wasm.v1.MsgExecuteContract`
+- **Move Chains**: `/initia.move.v1.MsgExecute`
+- **Bank Module**: `/cosmos.bank.v1beta1.MsgSend`
+- **Staking**: `/cosmos.staking.v1beta1.MsgDelegate`
+
+<Warning>
+  Only grant permissions for message types that your application actually needs. Granting overly broad permissions increases security risk.
+</Warning>
