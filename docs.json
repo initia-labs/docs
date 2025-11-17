@@ -141,12 +141,12 @@
               "group": "Initia Wallet",
               "pages": [
                 {
-                  "group": "Autosign",
+                  "group": "Auto-signing",
                   "pages": [
-                    "user-guides/wallet/autosign/introduction",
-                    "user-guides/wallet/autosign/getting-started",
-                    "user-guides/wallet/autosign/using-autosign/enabling-autosign",
-                    "user-guides/wallet/autosign/using-autosign/revoking-autosign"
+                    "user-guides/wallet/auto-signing/introduction",
+                    "user-guides/wallet/auto-signing/getting-started",
+                    "user-guides/wallet/auto-signing/using-auto-signing/enabling-auto-signing",
+                    "user-guides/wallet/auto-signing/using-auto-signing/revoking-auto-signing"
                   ]
                 }
               ]
