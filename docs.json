@@ -134,6 +134,26 @@
         ]
       },
       {
+        "tab":"User Guides",
+          "group": "User Guides",
+          "pages": [
+            {
+              "group": "Initia Wallet",
+              "pages": [
+                {
+                  "group": "Auto-signing",
+                  "pages": [
+                    "user-guides/wallet/auto-signing/introduction",
+                    "user-guides/wallet/auto-signing/getting-started",
+                    "user-guides/wallet/auto-signing/using-auto-signing/enabling-auto-signing",
+                    "user-guides/wallet/auto-signing/using-auto-signing/revoking-auto-signing"
+                  ]
+                }
+              ]
+            }
+          ]
+      },
+      {
         "tab": "Nodes and Rollups",
         "groups": [
           {
