@@ -112,7 +112,7 @@ Your private key is generated during initialization and stored in `${HOME}/.init
 
 #### Endpoints
 
-An Initia node comes with multiple endpoint that you can either enable or disable.
+An Initia node provides multiple endpoints that you can enable or disable.
 
 | Endpoint | Description | Configuration File |
 |----------|-------------|-------------------|
@@ -169,7 +169,7 @@ sed -i -e 's/external_address = \"\"/external_address = \"'$(curl httpbin.org/ip
 
 ## Connecting to Initia Network
 
-To fully connect to the network, you first need to first download the genesis file and configure your peers, and sync the node.
+To fully connect to the network, you first need to download the genesis file and configure your peers, and sync the node.
 
 <Note>
 You can find information on the genesis file, peers, and state sync for the network you want to join in the [networks page](/resources/developer/initia-l1)
@@ -195,11 +195,11 @@ Replace `peer1@ip1:port1,peer2@ip2:port2` with the list of peers for the network
 
 ### State Sync & Snapshots
 
-To then sync the node, you can use the [state sync](https://github.com/tendermint/tendermint/blob/v0.34.x/spec/p2p/messages/state-sync.md) feature.
+To sync the node, you can use the [state sync](https://github.com/tendermint/tendermint/blob/v0.34.x/spec/p2p/messages/state-sync.md) feature.
 
 ## Running as a Service (Optional)
 
-To run Initia as a system service, create a `initiad.service` file in `/etc/systemd/system`:
+To run Initia as a system service, create an `initiad.service` file in `/etc/systemd/system`:
 
 ```ini
 [Unit]
