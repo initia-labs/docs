@@ -36,18 +36,18 @@ make install
 
 <Step title="Configure Weave and Gas Station Account">
 
-With Weave installed, you need to set up and fund your [gas station account](/developers/developer-guides/tools/clis/weave-cli/gas-station). This account will be used to fund the various bots and processes that is involved in the rollup's operations
+With Weave installed, you need to set up and fund your [gas station account](/developers/developer-guides/tools/clis/weave-cli/gas-station). This account will be used to fund the various bots and processes involved in the rollup's operations.
 
 ```sh
 weave init
 ```
 
-This will prompt you to either generate a new account to use as your gas station account or import and existing account's mnemonic. Once you have created your account, you then need to fund it with some INIT tokens (for OPinit Bots bridging transactions) and TIA (for submitting data to Celestia).
+This will prompt you to either generate a new account to use as your gas station account or import an existing account's mnemonic. Once you have created your account, you then need to fund it with some INIT tokens (for OPinit bots bridging transactions) and TIA (for submitting data to Celestia).
 
 </Step>
 <Step title="Deploy the Rollup">
 
-Now that you have configured your gas station account, you can proceed to deploying your rollup.
+Now that you have configured your gas station account, you can proceed to deploy your rollup.
 
 ```sh
 weave rollup launch
@@ -56,15 +56,15 @@ weave rollup launch
 From the provided options, you can:
 
 - Select your VM
-- Choose your Chain ID and (default) gas token denomination
-- Choosing DA Layer
-- Enable Price Oracle
-- Setting Genesis Accounts
+- Choose your Chain ID and default gas token denomination
+- Choose your DA layer
+- Enable the price oracle
+- Set genesis accounts
 
 If you want more information about a specific option, access the tooltip by pressing `ctrl+T`. And if you want to go back to the previous step, press `ctrl+Z`.
 
 <Warning>
-To make sure that you have tokens to later send transactions on your rollup, you should add at least 1 address you control to the list of genesis accounts when prompted.
+To ensure that you have tokens available to send transactions on your rollup, you should add at least 1 address you control to the list of genesis accounts when prompted.
 </Warning>
 
 Once you have selected all the options, Weave will automatically start the rollup. When everything is complete, you will see the rollup's endpoint information, which includes the REST, RPC, and, for EVM rollups, JSON-RPC endpoints. The CLI will also create a magic link that you can use to add your rollup to InitiaScan.
@@ -81,13 +81,13 @@ Rollup Endpoints:
 https://scan.testnet.initia.xyz/custom-network/add/link?config=eyJ2bSI6Im1vdmUiLCJjaGFpbklkIjoiZGVtby0zMTQiLCJtaW5HYXNQcmljZSI6MCwiZGVub20iOiJ1bWluIiwibGNkIjoiaHR0cDovL2xvY2FsaG9zdDoxMzE3IiwicnBjIjoiaHR0cDovL2xvY2FsaG9zdDoyNjY1NyJ9
 
 i Important
-Open this in Chrome is recommended because some browsers may not support localhost access from a different host, or edit your browser's settings to allow it if necessary.
+We recommend opening this in Chrome because some browsers may not support localhost access from a different host, or you can edit your browser's settings to allow it if necessary.
 ```
 
-At this point, you can now interact with your rollup, send transactions, and deploy contracts on the rollup. However, for full functionality, you will need to also run the OPinit Executor and Challenger Bots as well as the IBC Relayer.
+At this point, you can now interact with your rollup, send transactions, and deploy contracts on the rollup. However, for full functionality, you will also need to run the OPinit Executor and Challenger bots as well as the IBC Relayer.
 
 <Note>
-At this stage, you can interact with your rollup and deploy contracts, as well as send transactions. However, to enable bridging INIT and other tokens from L1, setting up DA, and more, you will also need to run the OPinit Executor, Challenger Bots, and the IBC Relayer. To do this, follow the steps below.
+At this stage, you can interact with your rollup and deploy contracts, as well as send transactions. However, to enable bridging INIT and other tokens from L1, setting up DA, and more, you will also need to run the OPinit Executor, Challenger bots, and the IBC Relayer. To do this, follow the steps below.
 </Note>
 
 </Step>
@@ -155,7 +155,7 @@ Streaming logs from launchd com.opinitd.executor.daemon
 For production use, we recommend setting up the Challenger bot on a separate machine from the Executor bot. 
 </Warning>
 
-The OPinit Challenger Bot is responsible for monitoring the Executor bot's output proposal and ensuring its validity. To start the bot, run
+The OPinit Challenger bot is responsible for monitoring the Executor bot's output proposal and ensuring its validity. To start the bot, run
 
 ```sh
 weave opinit init
@@ -207,13 +207,13 @@ If everything is working correctly, you will now have both the Executor and Chal
 
 </Step>
 <Step title="Start the IBC Relayer">
-Finally, you need to set up the IBC Relayer Bot. This bot relays IBC messages between the Initia L1 and your rollup. It is essential for oracle price updates and managing IBC bridging transactions, including compatibility with Minitswap.
+Finally, you need to set up the IBC Relayer bot. This bot relays IBC messages between the Initia L1 and your rollup. It is essential for oracle price updates and managing IBC bridging transactions, including compatibility with Minitswap.
 
 ```sh
 weave relayer init
 ```
 
-By default, Weave also allows you to setup the relayer for any whitelisted rollup. But in this case, we will be setting up the relayer for your local rollup.
+By default, Weave also allows you to set up the relayer for any whitelisted rollup. But in this case, we will be setting up the relayer for your local rollup.
 
 ```sh
 ✓ Select the type of Interwoven rollup you want to relay > Local Rollup (demo-314)
@@ -240,7 +240,7 @@ You should see the bot running in the terminal.
 Updating IBC client: 07-tendermint-1 of network: demo-314
 Successfully updated IBC client: 07-tendermint-1 of network: demo-314
 Updating IBC client: 07-tendermint-0 of network: demo-314
-wSuccessfully updated IBC client: 07-tendermint-0 of network: demo-314
+Successfully updated IBC client: 07-tendermint-0 of network: demo-314
 Streaming logs from launchd com.hermes.daemon
 2025-02-11T10:36:06.546411Z  INFO ThreadId(01) using default configuration from '/Users/tansawit/.hermes/config.toml'
 2025-02-11T10:36:06.547351Z  INFO ThreadId(01) running Hermes v1.10.4+542e14f
