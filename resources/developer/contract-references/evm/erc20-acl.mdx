@@ -22,7 +22,7 @@ address constant CHAIN_ADDRESS = 0x0000000000000000000000000000000000000001;
 
 ### `onlyChain`
 
-Restricts the function to be called only by the chain signer.
+Restricts the function so it can be called only by the chain signer.
 
 ```solidity
 modifier onlyChain() {
@@ -44,9 +44,9 @@ modifier burnable(address from) {
 
 #### Parameters
 
-| Name    | Type      | Description                      |
-| ------- | --------- | -------------------------------- |
-| `from`  | `address` | The address to check             |
+| Name    | Type      | Description           |
+| ------- | --------- | --------------------- |
+| `from`  | `address` | The address to check. |
 
 ### `mintable`
 
@@ -61,9 +61,9 @@ modifier mintable(address to) {
 
 #### Parameters
 
-| Name    | Type      | Description                      |
-| ------- | --------- | -------------------------------- |
-| `to`    | `address` | The address to check             |
+| Name    | Type      | Description           |
+| ------- | --------- | --------------------- |
+| `to`    | `address` | The address to check. |
 
 ### `transferable`
 
@@ -78,6 +78,6 @@ modifier transferable(address to) {
 
 #### Parameters
 
-| Name    | Type      | Description                      |
-| ------- | --------- | -------------------------------- |
-| `to`    | `address` | The address to check             |
+| Name    | Type      | Description           |
+| ------- | --------- | --------------------- |
+| `to`    | `address` | The address to check. |

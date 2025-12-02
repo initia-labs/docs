@@ -57,11 +57,11 @@ constructor(string memory _name, string memory _symbol, uint8 _decimals) {
 
 #### Parameters
 
-| Name       | Type             | Description                      |
-| ---------- | ---------------- | -------------------------------- |
-| `_name`    | `string memory`  | The name of the token            |
-| `_symbol`  | `string memory`  | The symbol of the token          |
-| `_decimals`| `uint8`          | The number of decimals the token uses |
+| Name       | Type             | Description                            |
+| ---------- | ---------------- | -------------------------------------- |
+| `_name`    | `string memory`  | The name of the token.                 |
+| `_symbol`  | `string memory`  | The symbol of the token.               |
+| `_decimals`| `uint8`          | The number of decimals the token uses. |
 
 ## Functions
 
@@ -75,15 +75,15 @@ function supportsInterface(bytes4 interfaceId) public view virtual override(IERC
 
 #### Parameters
 
-| Name         | Type       | Description                      |
-| ------------ | ---------- | -------------------------------- |
-| `interfaceId`| `bytes4`   | The interface identifier         |
+| Name         | Type       | Description               |
+| ------------ | ---------- | ------------------------- |
+| `interfaceId`| `bytes4`   | The interface identifier. |
 
 #### Returns
 
 | Type        | Description                          |
 | ----------- | ------------------------------------ |
-| `bool`      | `true` if the interface is supported, `false` otherwise |
+| `bool`      | `true` if the interface is supported, `false` otherwise. |
 
 ### `_transfer`
 
@@ -95,11 +95,11 @@ function _transfer(address sender, address recipient, uint256 amount) internal r
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `sender`   | `address`  | The address sending the tokens.   |
+| `recipient`| `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to transfer. |
 
 ### `_mint`
 
@@ -111,10 +111,10 @@ function _mint(address to, uint256 amount) internal register_erc20_store(to)
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `to`       | `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to mint.     |
 
 ### `_burn`
 
@@ -126,10 +126,10 @@ function _burn(address from, uint256 amount) internal
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name       | Type       | Description                              |
+| ---------- | ---------- | ---------------------------------------- |
+| `from`     | `address`  | The address whose tokens will be burned. |
+| `amount`   | `uint256`  | The amount of tokens to burn.            |
 
 ### `transfer`
 
@@ -141,16 +141,16 @@ function transfer(address recipient, uint256 amount) external transferable(recip
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `recipient`| `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to transfer. |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the transfer was successful |
+| Type        | Description                            |
+| ----------- | -------------------------------------- |
+| `bool`      | `true` if the transfer was successful. |
 
 ### `approve`
 
@@ -162,16 +162,16 @@ function approve(address spender, uint256 amount) external returns (bool)
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `spender`  | `address`  | The address allowed to spend the tokens |
-| `amount`   | `uint256`  | The amount of tokens to approve  |
+| Name       | Type       | Description                              |
+| ---------- | ---------- | ---------------------------------------- |
+| `spender`  | `address`  | The address allowed to spend the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to approve.         |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the approval was successful |
+| Type        | Description                            |
+| ----------- | -------------------------------------- |
+| `bool`      | `true` if the approval was successful. |
 
 ### `transferFrom`
 
@@ -183,17 +183,17 @@ function transferFrom(address sender, address recipient, uint256 amount) externa
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `sender`   | `address`  | The address sending the tokens.   |
+| `recipient`| `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to transfer. |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the transfer was successful |
+| Type        | Description                            |
+| ----------- | -------------------------------------- |
+| `bool`      | `true` if the transfer was successful. |
 
 ### `mint`
 
@@ -205,10 +205,10 @@ function mint(address to, uint256 amount) external mintable(to) onlyOwner
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `to`       | `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to mint.     |
 
 ### `burn`
 
@@ -220,10 +220,10 @@ function burn(address from, uint256 amount) external burnable(from) onlyOwner
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name       | Type       | Description                          |
+| ---------- | ---------- | ------------------------------------ |
+| `from`     | `address`  | The address whose tokens are burned. |
+| `amount`   | `uint256`  | The amount of tokens to burn.        |
 
 ### `sudoTransfer`
 
@@ -235,11 +235,11 @@ function sudoTransfer(address sender, address recipient, uint256 amount) externa
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `sender`   | `address`  | The address sending the tokens.   |
+| `recipient`| `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to transfer. |
 
 ### `sudoMint`
 
@@ -251,10 +251,10 @@ function sudoMint(address to, uint256 amount) external onlyChain
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name       | Type       | Description                       |
+| ---------- | ---------- | --------------------------------- |
+| `to`       | `address`  | The address receiving the tokens. |
+| `amount`   | `uint256`  | The amount of tokens to mint.     |
 
 ### `sudoBurn`
 
@@ -266,7 +266,7 @@ function sudoBurn(address from, uint256 amount) external onlyChain
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name       | Type       | Description                          |
+| ---------- | ---------- | ------------------------------------ |
+| `from`     | `address`  | The address whose tokens are burned. |
+| `amount`   | `uint256`  | The amount of tokens to burn.        |
