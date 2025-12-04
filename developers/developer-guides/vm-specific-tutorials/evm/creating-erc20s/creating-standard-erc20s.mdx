@@ -6,53 +6,66 @@ title: Creating Standard ERC20s via ERC20Factory
 
 For developers looking to create standard ERC20 tokens on EVM rollups, we recommend using the [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory) contract.
 
-## Prerequisites
-
-For this tutorial, we will be using [Viem](https://viem.sh/) to interact with the MiniEVM and ERC20Factory contract. If you do not have Viem installed, follow the [installation instructions](https://viem.sh/docs/installation).
-
 ## Project Setup
 
-First, we need to create a new directory for our project.
+First, create a new project directory:
 
 ```sh
 mkdir erc20-factory
 cd erc20-factory
 ```
 
-Next, we will initialize the project and install the Viem package.
+Initialize the project and install the required dependencies:
 
 ```sh
 npm init
 npm install viem
+npm install dotenv
 ```
 
-We then create two directories:
+Create two directories:
 
-- `src`: For our contract source code
-- `abis`: For our contract [ABIs](https://docs.alchemy.com/docs/smart-contract-abi)
+- `src`: For our script files.
+- `abis`: For our contract [ABIs](https://www.alchemy.com/docs/smart-contract-abi).
 
 ```sh
 mkdir src
 mkdir abis
 ```
 
-Once the two directories are created, we then add the ABI for the ERC20Factory and ERC20 contracts to the `abis` directory.
+Download the ERC20 and ERC20Factory ABIs into the `abis` directory:
 
-## Predeployed contract
+```sh
+curl -o abis/erc20Abi.json \
+  https://raw.githubusercontent.com/initia-labs/examples/main/evm/erc20-factory/abis/erc20Abi.json
 
-The `ERC20Factory` contract is automatically deployed on all MiniEVM rollup as part of the chain's bootstrapping process
+curl -o abis/erc20FactoryAbi.json \
+  https://raw.githubusercontent.com/initia-labs/examples/main/evm/erc20-factory/abis/erc20FactoryAbi.json
+```
 
-To obtain the address of the factory contract, query `{ROLLUP_REST_URL}/minievm/evm/v1/contracts/erc20_factory`. 
+## Setting up Environment Variables
 
-`{ROLLUP_REST_URL}` refers to the REST endpoint URL of the rollup from which you want to retrieve the address. 
+Create a `.env` file in your project root:
 
-For example, you can use the following curl command:
+```sh
+touch .env
+```
+
+This file will store your private environment variables, such as your wallet's private key and the deployed ERC20Factory contract address. These values are required for signing transactions and interacting with the MiniEVM.
+
+The `ERC20Factory` contract is automatically deployed on all MiniEVM rollups as part of the chain’s bootstrapping process.
+
+To retrieve the deployed factory address, query `{ROLLUP_REST_URL}/minievm/evm/v1/contracts/erc20_factory`.
+
+`{ROLLUP_REST_URL}` refers to the REST endpoint of the rollup you are interacting with.
+
+Example:
 
 ```bash
 curl -X GET "https://rest-evm-1.anvil.asia-southeast.initia.xyz/minievm/evm/v1/contracts/erc20_factory" -H "accept: application/json"
 ```
 
-The address field in the response body will contain the contract address:
+Example response:
 
 ```json
 {
@@ -60,21 +73,37 @@ The address field in the response body will contain the contract address:
 }
 ```
 
+Store this address in your `.env` file as `ERC20_FACTORY_ADDRESS`.
+
+Next, export an EVM-compatible private key from your Ethereum wallet. This private key will be used to sign and send transactions to the MiniEVM.
+
+Your `.env` file should look like this:
+
+```
+PRIVATE_KEY={{ETHEREUM_PRIVATE_KEY}}
+ERC20_FACTORY_ADDRESS={{FACTORY_CONTRACT_ADDRESS}}
+```
+
+<Warning>
+  Never share your `.env` file or private key. Anyone with this key can control your account. Keep it local and **add `.env` to your `.gitignore`** so it is never committed to Git.
+</Warning>
+
+
 ## Development
 
 ### Creating the Chain Configuration File
 
-To be able to interact with the MiniEVM via Viem, we need to create a chain configuration file. This file will contain various information about the chain, including the chain ID, name, native currency, and RPC URLs.
+To interact with the MiniEVM using Viem, we need a chain configuration file. This file contains essential details about the chain, including the chain ID, name, native currency, and RPC URLs.
 
-Let's create a new file called `chain.js` in the `src` directory.
+Create a `chain.js` file in the `src` directory:
 
 ```sh
 touch src/chain.js
 ```
 
-Next, we will add the following code to the file:
+Add the following configuration:
 
-```js src/chain.js
+```js
 const { defineChain } = require('viem');
 
 const miniEVM = defineChain({
@@ -90,193 +119,220 @@ const miniEVM = defineChain({
       http: ['https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz'],
     },
   },
-})
+});
 
 module.exports = miniEVM;
 ```
 
 ### Interacting with the ERC20Factory Contract
 
-Now that we have our chain configuration file, we can start writing the script to interact ERC20Factory contract. We will create a `index.js` in the `src` directory.
+Next, create a script to interact with the ERC20Factory contract:
 
 ```sh
 touch src/index.js
 ```
 
-First, we make the necessary imports:
+Start with the imports:
 
-```js src/index.js
+```js
 const { createPublicClient, createWalletClient, decodeEventLog, getContract, http } = require('viem');
 const { privateKeyToAccount } = require('viem/accounts');
-const erc20Abi = require('./abis/erc20Abi.json');
-const erc20FactoryAbi = require('./abis/erc20factoryabi.json');
+const erc20Abi = require('../abis/erc20Abi.json');
+const erc20FactoryAbi = require('../abis/erc20FactoryAbi.json');
 const miniEVM = require('./chain');
 ```
 
-We then defined the constant variables
-
-- `privateKey`: The private key of the account we will use to interact with the MiniEVM
-- `erc20FactoryAddress`: The address of the ERC20Factory contract on the MiniEVM
+Load the environment variables:
 
 <Note>
-You can find the address of the ERC20Factory contract on the different in the [Networks](/resources/developer/initia-l1) page, or by calling the `/minievm/evm/v1/contracts/erc20_factory` endpoint of any MiniEVM rollups node.
+You can also find factory addresses on the [Networks](/resources/developer/initia-l1) page or by calling the `/minievm/evm/v1/contracts/erc20_factory` endpoint on any MiniEVM rollup.
 </Note>
 
-```js src/index.js
-// imports
+```js
+require('dotenv').config();
 
-const privateKey = process.env.PRIVATE_KEY;
+const privateKey = process.env.PRIVATE_KEY?.startsWith('0x') ? process.env.PRIVATE_KEY : `0x${process.env.PRIVATE_KEY}`;
+if (!privateKey) {
+  throw new Error('PRIVATE_KEY environment variable is not set.');
+}
+
 const erc20FactoryAddress = process.env.ERC20_FACTORY_ADDRESS;
+if (!erc20FactoryAddress) {
+  throw new Error('ERC20_FACTORY_ADDRESS environment variable is not set.');
+}
 ```
 
-To be able to interact and call methods to the chain and contract, we then need to create a public client and a wallet client.
+To interact with the chain and contracts, create a wallet client and a public client:
 
-```js src/index.js
-// Create a wallet client
+```js
+// Create an account from the private key.
+const account = privateKeyToAccount(privateKey);
+
+// Create a wallet client.
 const client = createWalletClient({
   account,
   chain: miniEVM,
   transport: http(),
 });
 
-// create a public client
+// Create a public client.
 const publicClient = createPublicClient({
   chain: miniEVM,
   transport: http(),
 });
 ```
 
-Finally, we can now create a new ERC20 token using the `createERC20` method of the ERC20Factory contract.
+Now you can create a new ERC20 token using the `createERC20` method of the ERC20Factory contract.
 
-```js src/index.js
-// Send the transaction
+Implement the `createERC20` function:
+
+```js
+// Send the transaction.
 async function createERC20() {
   try {
-    // call createERC20 function on the factory contract to create a new ERC20 token
+    // Call createERC20 function on the factory contract to create a new ERC20 token.
     const hash = await client.writeContract({
-      address: erc20FactoryAddress, // Factory address
+      address: erc20FactoryAddress,
       abi: erc20FactoryAbi,
       functionName: 'createERC20',
       args: ['Test', 'TST', 18],
-    })
+    });
+
     console.log('Transaction sent. Hash:', hash);
 
-    // Wait for the transaction to be confirmed
+    // Wait briefly for the transaction to be processed.
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Get the transaction receipt and parse the logs for the ERC20Created event
-    const receipt = await publicClient.getTransactionReceipt({
-      hash: hash
-    });
-    const erc20CreatedLog = receipt.logs.find(log => 
-      log.address.toLowerCase() === erc20FactoryAddress.toLowerCase() // Check if the log is from the factory address
+    // Get the transaction receipt and parse the logs for the ERC20Created event.
+    const receipt = await publicClient.getTransactionReceipt({ hash });
+
+    const erc20CreatedLog = receipt.logs.find(
+      // Check if the log is from the factory address.
+      log => log.address.toLowerCase() === erc20FactoryAddress.toLowerCase()
     );
 
-    // Check if the ERC20Created event was found in the logs and decode the created ERC20 address
+    // Check whether the ERC20Created event exists in the logs, then decode the created ERC20 address.
     if (erc20CreatedLog) {
       const decodedLog = decodeEventLog({
         abi: erc20FactoryAbi,
         data: erc20CreatedLog.data,
         topics: erc20CreatedLog.topics,
       });
+
       console.log('New ERC20 address:', decodedLog.args.erc20);
 
-      // Try reading the new ERC20 contract
+      // Try reading data from the new ERC20 contract.
       const erc20 = await getContract({
         address: decodedLog.args.erc20,
         abi: erc20Abi,
         client: {
           public: publicClient,
-          wallet: client
-        }
+          wallet: client,
+        },
       });
+
       console.log('ERC20 name:', await erc20.read.name());
       console.log('ERC20 symbol:', await erc20.read.symbol());
       console.log('ERC20 decimals:', await erc20.read.decimals());
     } else {
-      console.log('ERC20Created event not found in the logs');
+      console.log('ERC20Created event not found in logs');
     }
 
   } catch (error) {
     console.error('Error sending transaction:', error);
   }
 }
+
+createERC20();
 ```
 
-The final code for the script is as follows:
+### Full Script Reference
 
-```js src/index.js
+Here is the entire script for reference:
+```js
 const { createPublicClient, createWalletClient, decodeEventLog, getContract, http } = require('viem');
 const { privateKeyToAccount } = require('viem/accounts');
-const erc20Abi = require('./abis/erc20Abi.json');
-const erc20FactoryAbi = require('./abis/erc20factoryabi.json');
+const erc20Abi = require('../abis/erc20Abi.json');
+const erc20FactoryAbi = require('../abis/erc20FactoryAbi.json');
 const miniEVM = require('./chain');
 
-const privateKey = process.env.PRIVATE_KEY; // Load from environment variable
-const erc20FactoryAddress = process.env.ERC20_FACTORY_ADDRESS; // Load from environment variable
+require('dotenv').config();
 
-// Create an account from the private key
+const privateKey = process.env.PRIVATE_KEY?.startsWith('0x') ? process.env.PRIVATE_KEY : `0x${process.env.PRIVATE_KEY}`;
+if (!privateKey) {
+  throw new Error('PRIVATE_KEY environment variable is not set.');
+}
+
+const erc20FactoryAddress = process.env.ERC20_FACTORY_ADDRESS;
+if (!erc20FactoryAddress) {
+  throw new Error('ERC20_FACTORY_ADDRESS environment variable is not set.');
+}
+
+// Create an account from the private key.
 const account = privateKeyToAccount(privateKey);
 
-// Create a wallet client
+// Create a wallet client.
 const client = createWalletClient({
   account,
   chain: miniEVM,
   transport: http(),
 });
 
-// create a public client
+// Create a public client.
 const publicClient = createPublicClient({
   chain: miniEVM,
   transport: http(),
 });
 
-// Send the transaction
+// Send the transaction.
 async function createERC20() {
   try {
-    // call createERC20 function on the factory contract to create a new ERC20 token
+    // Call createERC20 function on the factory contract to create a new ERC20 token.
     const hash = await client.writeContract({
-      address: erc20FactoryAddress, // Factory address
+      address: erc20FactoryAddress,
       abi: erc20FactoryAbi,
       functionName: 'createERC20',
       args: ['Test', 'TST', 18],
-    })
+    });
+
     console.log('Transaction sent. Hash:', hash);
 
-    // Wait for the transaction to be confirmed
+    // Wait briefly for the transaction to be processed.
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Get the transaction receipt and parse the logs for the ERC20Created event
-    const receipt = await publicClient.getTransactionReceipt({
-      hash: hash
-    });
-    const erc20CreatedLog = receipt.logs.find(log => 
-      log.address.toLowerCase() === erc20FactoryAddress.toLowerCase() // Check if the log is from the factory address
+    // Get the transaction receipt and parse the logs for the ERC20Created event.
+    const receipt = await publicClient.getTransactionReceipt({ hash });
+
+    const erc20CreatedLog = receipt.logs.find(
+      // Check if the log is from the factory address.
+      log => log.address.toLowerCase() === erc20FactoryAddress.toLowerCase()
     );
 
-    // Check if the ERC20Created event was found in the logs and decode the created ERC20 address
+    // Check whether the ERC20Created event exists in the logs, then decode the created ERC20 address.
     if (erc20CreatedLog) {
       const decodedLog = decodeEventLog({
         abi: erc20FactoryAbi,
         data: erc20CreatedLog.data,
         topics: erc20CreatedLog.topics,
       });
+
       console.log('New ERC20 address:', decodedLog.args.erc20);
 
-      // Try reading the new ERC20 contract
+      // Try reading data from the new ERC20 contract.
       const erc20 = await getContract({
         address: decodedLog.args.erc20,
         abi: erc20Abi,
         client: {
           public: publicClient,
-          wallet: client
-        }
+          wallet: client,
+        },
       });
+
       console.log('ERC20 name:', await erc20.read.name());
       console.log('ERC20 symbol:', await erc20.read.symbol());
       console.log('ERC20 decimals:', await erc20.read.decimals());
     } else {
-      console.log('ERC20Created event not found in the logs');
+      console.log('ERC20Created event not found in logs');
     }
 
   } catch (error) {
@@ -289,13 +345,13 @@ createERC20();
 
 ### Running the Script
 
-Finally, we can run the script to create a new ERC20 token.
+Run the script to create a new ERC20 token:
 
 ```sh
 node src/index.js
 ```
 
-If everything went well, you should see an output similar of the following:
+A successful run outputs something like this:
 
 ```sh
 Transaction sent. Hash: 0x58b0b9326e9c877c0b966db112b3df8db710f986ba309345601ac222ddcb4c77
@@ -305,4 +361,4 @@ ERC20 symbol: TST
 ERC20 decimals: 18
 ```
 
-And that's it! We have successfully created a new ERC20 token on the MiniEVM.
+You have now successfully created a new ERC20 token on the MiniEVM!
