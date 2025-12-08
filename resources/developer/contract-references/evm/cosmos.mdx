@@ -20,7 +20,7 @@ address constant COSMOS_ADDRESS = 0x00000000000000000000000000000000000000f1;
 
 ### `COSMOS_CONTRACT`
 
-The instance of the ICosmos contract.
+The instance of the `ICosmos` contract.
 
 ```solidity
 ICosmos constant COSMOS_CONTRACT = ICosmos(COSMOS_ADDRESS);
@@ -90,7 +90,7 @@ function to_cosmos_address(address evm_address) external returns (string memory 
 
 ### `to_evm_address`
 
-Convert a Cosmos bech32 format address to an EVM hex format address.
+Converts a Cosmos bech32 format address to an EVM hex format address.
 
 ```solidity
 function to_evm_address(string memory cosmos_address) external returns (address evm_address);
@@ -150,7 +150,7 @@ function to_erc20(string memory denom) external returns (address erc20_address);
 
 ### `execute_cosmos`
 
-Records a Cosmos message to be executed after the current message execution. The message should be in JSON string format.
+Records a Cosmos message to be executed after the current message execution. The message must be in JSON string format.
 
 ```solidity
 function execute_cosmos(string memory msg) external returns (bool dummy);
@@ -170,7 +170,7 @@ function execute_cosmos(string memory msg) external returns (bool dummy);
 
 ### `query_cosmos`
 
-Queries a whitelisted Cosmos SDK query.
+Executes a whitelisted Cosmos SDK query.
 
 ```solidity
 function query_cosmos(string memory path, string memory req) external returns (string memory result);
