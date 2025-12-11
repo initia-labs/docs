@@ -2,18 +2,23 @@
 title: useInterwovenKit
 ---
 
-The `useInterwovenKit` hook provides access to wallet connection state, account information, UI controls, and transaction utilities for interacting with the Initia blockchain.
+The `useInterwovenKit` hook provides access to wallet connection state, account
+information, UI controls, and transaction utilities for interacting with the
+Initia blockchain.
 
 <Info>
-  This hook must be used within a component wrapped by `InterwovenKitProvider` to access wallet functionality.
+  This hook must be used within a component wrapped by `InterwovenKitProvider`
+  to access wallet functionality.
 </Info>
 
 ## Account Information
 
-The hook provides multiple address formats and account details for the currently connected wallet:
+The hook provides multiple address formats and account details for the currently
+connected wallet:
 
 <ParamField path="address" type="string">
-  Current address in either Bech32 or hex format, depending on the configured `minitia` type.
+  Current address in either Bech32 or hex format, depending on the configured
+  `minitia` type.
 </ParamField>
 
 <ParamField path="initiaAddress" type="string">
@@ -25,9 +30,9 @@ The hook provides multiple address formats and account details for the currently
 </ParamField>
 
 <ParamField path="username" type="string | null">
-  Optional username linked to the account. Returns `null` if no username is associated.
+  Optional username linked to the account. Returns `null` if no username is
+  associated.
 </ParamField>
-
 
 ```tsx
 export default function Home() {
@@ -56,13 +61,17 @@ The hook provides methods for controlling wallet-related UI components:
   Opens the main wallet drawer showing balances for the connected account.
 </ParamField>
 
-<ParamField path="openBridge" type="(defaultValues?: Partial<BridgeFormValues>) => void">
+<ParamField
+  path="openBridge"
+  type="(defaultValues?: Partial<BridgeFormValues>) => void"
+>
   Opens the bridge drawer to onboard assets with optional pre-populated values.
 </ParamField>
 
 ### Bridge Form Interface
 
-The `BridgeFormValues` interface defines the optional parameters for pre-populating the bridge form:
+The `BridgeFormValues` interface defines the optional parameters for
+pre-populating the bridge form:
 
 <ParamField path="srcChainId" type="string">
   Source chain ID for the bridge transaction.
@@ -81,11 +90,13 @@ The `BridgeFormValues` interface defines the optional parameters for pre-populat
 </ParamField>
 
 <ParamField path="quantity" type="string">
-  Initial bridge amount as entered by the user. Use human-readable values (e.g., "1" for 1 INIT, not "1000000").
+  Initial bridge amount as entered by the user. Use human-readable values (e.g.,
+  "1" for 1 INIT, not "1000000").
 </ParamField>
 
 <Tip>
-  All bridge form values are optional. You can pre-populate any subset of fields to improve the user experience.
+  All bridge form values are optional. You can pre-populate any subset of fields
+  to improve the user experience.
 </Tip>
 
 ```tsx
@@ -98,7 +109,7 @@ interface BridgeFormValues {
 }
 ```
 
-### Example Usage 
+### Example Usage
 
 ```tsx
 export default function Home() {
@@ -108,7 +119,17 @@ export default function Home() {
     <>
       <button onClick={openConnect}>Connect</button>
       <button onClick={openWallet}>Wallet</button>
-      <button onClick={() => openBridge({ srcChainId: 'chain-id', srcDenom: 'denom', dstChainId: 'chain-id', dstDenom: 'denom', quantity: '100' })}>
+      <button
+        onClick={() =>
+          openBridge({
+            srcChainId: 'chain-id',
+            srcDenom: 'denom',
+            dstChainId: 'chain-id',
+            dstDenom: 'denom',
+            quantity: '100',
+          })
+        }
+      >
         Bridge
       </button>
     </>
@@ -118,34 +139,53 @@ export default function Home() {
 
 ## Transaction Methods
 
-The hook provides utilities for estimating, signing, and sending transactions on the blockchain:
+The hook provides utilities for estimating, signing, and sending transactions on
+the blockchain:
 
 <ParamField path="estimateGas" type="(txRequest: TxRequest) => Promise<number>">
   Estimates the gas required for a transaction before execution.
 </ParamField>
 
-<ParamField path="requestTxBlock" type="(txRequest: TxRequest) => Promise<DeliverTxResponse>">
-  Signs, broadcasts, and waits for block inclusion, returning the complete transaction response.
+<ParamField
+  path="requestTxBlock"
+  type="(txRequest: TxRequest) => Promise<DeliverTxResponse>"
+>
+  Signs, broadcasts, and waits for block inclusion, returning the complete
+  transaction response.
 </ParamField>
 
-<ParamField path="requestTxSync" type="(txRequest: TxRequest) => Promise<string>">
-  Signs and broadcasts a transaction, returning the transaction hash immediately without waiting for block inclusion.
+<ParamField
+  path="requestTxSync"
+  type="(txRequest: TxRequest) => Promise<string>"
+>
+  Signs and broadcasts a transaction, returning the transaction hash immediately
+  without waiting for block inclusion.
 </ParamField>
 
-<ParamField path="submitTxBlock" type="(txParams: TxParams) => Promise<DeliverTxResponse>">
-  Signs, broadcasts, and waits for block inclusion with pre-calculated fee, returning the complete transaction response.
+<ParamField
+  path="submitTxBlock"
+  type="(txParams: TxParams) => Promise<DeliverTxResponse>"
+>
+  Signs, broadcasts, and waits for block inclusion with pre-calculated fee,
+  returning the complete transaction response.
 </ParamField>
 
 <ParamField path="submitTxSync" type="(txParams: TxParams) => Promise<string>">
-  Signs and broadcasts a transaction with pre-calculated fee, returning the transaction hash immediately without waiting for block inclusion.
+  Signs and broadcasts a transaction with pre-calculated fee, returning the
+  transaction hash immediately without waiting for block inclusion.
 </ParamField>
 
-<ParamField path="waitForTxConfirmation" type="(params: TxQuery) => Promise<IndexedTx>">
+<ParamField
+  path="waitForTxConfirmation"
+  type="(params: TxQuery) => Promise<IndexedTx>"
+>
   Polls for transaction confirmation on-chain using a transaction hash.
 </ParamField>
 
 <Tip>
-  Use `requestTxSync` for better UX when you want to show immediate feedback, then use `waitForTxConfirmation` to track the final transaction status. Use `requestTxBlock` when you need the complete transaction result immediately.
+  Use `requestTxSync` for better UX when you want to show immediate feedback,
+  then use `waitForTxConfirmation` to track the final transaction status. Use
+  `requestTxBlock` when you need the complete transaction result immediately.
 </Tip>
 
 ### Transaction Request Interface
@@ -161,7 +201,8 @@ The `TxRequest` interface defines the parameters for transaction operations:
 </ParamField>
 
 <ParamField path="chainId" type="string">
-  Target chain ID for the transaction. Defaults to the provider's `defaultChainId`.
+  Target chain ID for the transaction. Defaults to the provider's
+  `defaultChainId`.
 </ParamField>
 
 <ParamField path="gasAdjustment" type="number" default="1.4">
@@ -173,12 +214,14 @@ The `TxRequest` interface defines the parameters for transaction operations:
 </ParamField>
 
 <ParamField path="fee" type="StdFee | null">
-  Explicit fee for the transaction. If provided, skips the fee denomination selection UI.
+  Explicit fee for the transaction. If provided, skips the fee denomination
+  selection UI.
 </ParamField>
 
 ### Transaction Query Interface
 
-The `TxQuery` interface defines parameters for tracking transaction confirmation:
+The `TxQuery` interface defines parameters for tracking transaction
+confirmation:
 
 <ParamField path="txHash" type="string" required>
   Hash of the transaction to track for confirmation.

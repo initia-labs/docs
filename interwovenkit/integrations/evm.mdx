@@ -5,14 +5,18 @@ icon: ethereum
 
 ## Overview
 
-When working with EVM-based chains, you can configure [wagmi](https://wagmi.sh/) to connect directly to your custom EVM network instead of Ethereum mainnet. This approach allows you to:
+When working with EVM-based chains, you can configure [wagmi](https://wagmi.sh/)
+to connect directly to your custom EVM network instead of Ethereum mainnet. This
+approach allows you to:
 
 - Use wagmi for direct interaction with your EVM chain
 - Leverage Initia Wallet for interwoven rollup balance viewing and bridging
 - Maintain seamless connectivity between different blockchain environments
 
 <Info>
-  **Non-EVM chains**: If your chain is not EVM-based, you can leave the default chain set to mainnet. Initia Wallet won't actually connect to Ethereum—it only uses an arbitrary signer to sign amino messages.
+  **Non-EVM chains**: If your chain is not EVM-based, you can leave the default
+  chain set to mainnet. Initia Wallet won't actually connect to Ethereum—it only
+  uses an arbitrary signer to sign amino messages.
 </Info>
 
 ## Setup Guide
@@ -20,23 +24,34 @@ When working with EVM-based chains, you can configure [wagmi](https://wagmi.sh/)
 <Steps>
 <Step title="Configure Providers">
 
-Set up your providers to connect wagmi to your custom EVM chain. This configuration includes your chain details, wagmi config, and the InterwovenKit provider.
+Set up your providers to connect wagmi to your custom EVM chain. This
+configuration includes your chain details, wagmi config, and the InterwovenKit
+provider.
 
 ```tsx
 // providers.tsx
-"use client"
+'use client'
 
-import { PropsWithChildren, useEffect } from "react"
-import { createConfig, http, WagmiProvider } from "wagmi"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
-import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+import { PropsWithChildren, useEffect } from 'react'
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  TESTNET,
+} from '@initia/interwovenkit-react'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const minievm = {
   id: 4303131403034904,
-  name: "Minievm",
-  nativeCurrency: { name: "GAS", symbol: "GAS", decimals: 18 },
-  rpcUrls: { default: { http: ["https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz"] } },
+  name: 'Minievm',
+  nativeCurrency: { name: 'GAS', symbol: 'GAS', decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ['https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz'],
+    },
+  },
 }
 const wagmiConfig = createConfig({
   connectors: [initiaPrivyWalletConnector],
@@ -65,14 +80,23 @@ export default function Providers({ children }: PropsWithChildren) {
 
 **Key Configuration Elements:**
 
-- **Chain Definition**: Define your custom EVM chain with its ID, name, native currency, and RPC endpoints
-- **Wagmi Config**: Set up wagmi to use your custom chain and the Initia Privy wallet connector
-- **Style Injection**: Use `injectStyles()` to ensure proper styling within Initia Wallet's shadow DOM
-- **Provider Hierarchy**: Wrap your app with QueryClient, WagmiProvider, and InterwovenKitProvider
-- **Default Chain ID**: Set to your target rollup chain ID (e.g., `"minievm-2"` for Minievm testnet)
+- **Chain Definition**: Define your custom EVM chain with its ID, name, native
+  currency, and RPC endpoints
+- **Wagmi Config**: Set up wagmi to use your custom chain and the Initia Privy
+  wallet connector
+- **Style Injection**: Use `injectStyles()` to ensure proper styling within
+  Initia Wallet's shadow DOM
+- **Provider Hierarchy**: Wrap your app with QueryClient, WagmiProvider, and
+  InterwovenKitProvider
+- **Default Chain ID**: Set to your target rollup chain ID (e.g., `"minievm-2"`
+  for Minievm testnet)
 
 <Info>
-  **Chain ID Configuration**: The `defaultChainId` parameter sets the primary blockchain for Initia Wallet operations. For EVM rollups, use your rollup's chain ID (like `"minievm-2"`), not the EVM chain ID. This ensures proper balance display and bridging functionality. See [InterwovenKitProvider reference](/interwovenkit/references/interwovenkit-provider) for more details.
+  **Chain ID Configuration**: The `defaultChainId` parameter sets the primary
+  blockchain for Initia Wallet operations. For EVM rollups, use your rollup's
+  chain ID (like `"minievm-2"`), not the EVM chain ID. This ensures proper
+  balance display and bridging functionality. See [InterwovenKitProvider
+  reference](/interwovenkit/references/interwovenkit-provider) for more details.
 </Info>
 
 </Step>
@@ -80,34 +104,19 @@ export default function Providers({ children }: PropsWithChildren) {
 
 To follow the implementation example, install `viem` for Ethereum utilities:
 
-
 <Tabs>
-  <Tab title="npm">
-  ```sh npm
-  npm install viem
-  ```
-  </Tab>
-  <Tab title="yarn">
-  ```sh yarn
-  yarn add viem
-  ```
-  </Tab>
-  <Tab title="pnpm">
-  ```sh pnpm
-  pnpm add viem
-  ```
-  </Tab>
-  <Tab title="bun">
-  ```sh bun
-  bun add viem
-  ```
-  </Tab>
+  <Tab title="npm">```sh npm npm install viem ```</Tab>
+  <Tab title="yarn">```sh yarn yarn add viem ```</Tab>
+  <Tab title="pnpm">```sh pnpm pnpm add viem ```</Tab>
+  <Tab title="bun">```sh bun bun add viem ```</Tab>
 </Tabs>
 
 </Step>
 <Step title="Implementation Example">
 
-The following React component demonstrates a complete integration that combines wagmi's EVM functionality with InterwovenKit features. This example shows how to:
+The following React component demonstrates a complete integration that combines
+wagmi's EVM functionality with InterwovenKit features. This example shows how
+to:
 
 - Send transactions on your custom EVM chain using wagmi
 - Access Initia Wallet features for bridging and account management
@@ -115,12 +124,17 @@ The following React component demonstrates a complete integration that combines 
 
 ```tsx
 // page.tsx
-"use client"
+'use client'
 
-import { parseEther } from "viem"
-import { useAccount, useChainId, useSendTransaction, useSwitchChain } from "wagmi"
-import { truncate } from "@initia/utils"
-import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { parseEther } from 'viem'
+import {
+  useAccount,
+  useChainId,
+  useSendTransaction,
+  useSwitchChain,
+} from 'wagmi'
+import { truncate } from '@initia/utils'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 export default function Home() {
   const chainId = useChainId()
@@ -131,15 +145,19 @@ export default function Home() {
 
   const send = async () => {
     await switchChainAsync({ chainId })
-    const transactionHash = await sendTransactionAsync({ to: address, value: parseEther("0.01"), chainId: chainId })
-    console.log("Transaction sent:", transactionHash)
+    const transactionHash = await sendTransactionAsync({
+      to: address,
+      value: parseEther('0.01'),
+      chainId: chainId,
+    })
+    console.log('Transaction sent:', transactionHash)
   }
 
   const bridgeTransferDetails = {
-    srcChainId: "SOURCE_CHAIN_ID",
-    srcDenom: "SOURCE_ASSET_DENOM",
-    dstChainId: "DESTINATION_CHAIN_ID",
-    dstDenom: "DESTINATION_ASSET_DENOM",
+    srcChainId: 'SOURCE_CHAIN_ID',
+    srcDenom: 'SOURCE_ASSET_DENOM',
+    dstChainId: 'DESTINATION_CHAIN_ID',
+    dstDenom: 'DESTINATION_ASSET_DENOM',
   }
 
   if (!address) {
@@ -158,10 +176,15 @@ export default function Home() {
 
 **Component Features:**
 
-- **Transaction Handling**: The `send()` function switches to the correct chain and sends a value transfer using wagmi's `useSendTransaction`
-- **Bridge Integration**: The `bridgeTransferDetails` object defines parameters for cross-chain bridging operations
-- **Wallet Management**: Conditional rendering based on connection status, with buttons for connecting, sending transactions, bridging, and accessing the wallet interface
-- **User Experience**: Displays truncated usernames or addresses for connected users
+- **Transaction Handling**: The `send()` function switches to the correct chain
+  and sends a value transfer using wagmi's `useSendTransaction`
+- **Bridge Integration**: The `bridgeTransferDetails` object defines parameters
+  for cross-chain bridging operations
+- **Wallet Management**: Conditional rendering based on connection status, with
+  buttons for connecting, sending transactions, bridging, and accessing the
+  wallet interface
+- **User Experience**: Displays truncated usernames or addresses for connected
+  users
 
 </Step>
 </Steps>

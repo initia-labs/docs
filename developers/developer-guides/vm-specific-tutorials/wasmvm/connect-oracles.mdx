@@ -2,7 +2,10 @@
 title: Using Connect Oracle
 ---
 
-To query prices from Connect oracle on WasmVM, you need to utilize the queries provided by the [wasm-connect-query](https://github.com/initia-labs/wasm-connect-query) contract. Specifically, the contract provides 3 queries:
+To query prices from Connect oracle on WasmVM, you need to utilize the queries
+provided by the
+[wasm-connect-query](https://github.com/initia-labs/wasm-connect-query)
+contract. Specifically, the contract provides 3 queries:
 
 1. `GetAllCurrencyPairs`: Returns all of the currently supported asset pairs
 2. `GetPrice`: Returns the price of a single asset pair
@@ -10,16 +13,21 @@ To query prices from Connect oracle on WasmVM, you need to utilize the queries p
 
 ## Integrating the Queries into Your Contract
 
-To make the queries from your own contracts, you can copy the `packages` folder found in the wasm-connect-query contract repository into your own project. This folder contains the necessary files and definitions to make the queries from your own contracts.
+To make the queries from your own contracts, you can copy the `packages` folder
+found in the wasm-connect-query contract repository into your own project. This
+folder contains the necessary files and definitions to make the queries from
+your own contracts.
 
+See [here](https://github.com/initia-labs/examples/tree/main/wasmvm/examples)
+for an example contract that integrated the queries.
 
-See [here](https://github.com/initia-labs/examples/tree/main/wasmvm/examples) for an example contract that integrated the queries.
-
-The way that you use each query and the response structure returned from each is then outlined below.
+The way that you use each query and the response structure returned from each is
+then outlined below.
 
 ### GetAllCurrencyPairs
 
-This query takes no arguments and returns the list of all of the currently supported asset pairs.
+This query takes no arguments and returns the list of all of the currently
+supported asset pairs.
 
 **Example Usage (Simplified)**
 
@@ -46,7 +54,8 @@ pub fn example_get_all_curreny_pairs(deps: Deps) -> StdResult<GetAllCurrencyPair
 }
 ```
 
-The response is of type `GetAllCurrencyPairsResponse` and is in the following form:
+The response is of type `GetAllCurrencyPairsResponse` and is in the following
+form:
 
 **Example Response**
 
@@ -69,7 +78,11 @@ The response is of type `GetAllCurrencyPairsResponse` and is in the following fo
 
 ## GetPrice
 
-This query takes two arguments: `base` and `quote`, which represent the base and quote asset symbol strings of the asset pair you want to query. Note that the `base` and `quote` pair must be supported by Connect and be included in the `GetAllCurrencyPairsResponse`. For example, "BTC" and "USD" is a valid pair, but "BTC" and "AAVE" is not.
+This query takes two arguments: `base` and `quote`, which represent the base and
+quote asset symbol strings of the asset pair you want to query. Note that the
+`base` and `quote` pair must be supported by Connect and be included in the
+`GetAllCurrencyPairsResponse`. For example, "BTC" and "USD" is a valid pair, but
+"BTC" and "AAVE" is not.
 
 **Example Usage (Simplified)**
 
@@ -125,7 +138,10 @@ pub fn example_get_price(deps: Deps) -> StdResult<GetPriceResponse> {
 
 ## GetPrices
 
-This query takes a list of asset pair IDs and returns the prices of the asset pairs. Unlike for `GetPrice`, the pair IDs are not an object symbol, but instead a single string in the format `{base}/{quote}`. For example, `BTC/USD` or `ETH/USD`.
+This query takes a list of asset pair IDs and returns the prices of the asset
+pairs. Unlike for `GetPrice`, the pair IDs are not an object symbol, but instead
+a single string in the format `{base}/{quote}`. For example, `BTC/USD` or
+`ETH/USD`.
 
 **Example Usage (Simplified)**
 

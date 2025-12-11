@@ -2,11 +2,15 @@
 title: Creating Move Coin
 ---
 
-This tutorial guides you through the process of creating and minting your own coin using the `0x1::managed_coin` module on the Initia blockchain. It includes initializing your coin, obtaining metadata, minting coins, and checking the balances.
+This tutorial guides you through the process of creating and minting your own
+coin using the `0x1::managed_coin` module on the Initia blockchain. It includes
+initializing your coin, obtaining metadata, minting coins, and checking the
+balances.
 
 # Step 1: Initialize Your Coin
 
-To initialize your coin, you must call the `0x1::managed_coin::initialize` function. 
+To initialize your coin, you must call the `0x1::managed_coin::initialize`
+function.
 
 ```move
 public entry fun initialize(
@@ -85,6 +89,7 @@ public entry fun initialize(
     createCoin();
     ```
     </Tab>
+
 </Tabs>
 
 # Step 2: Mint Coin
@@ -100,7 +105,9 @@ public entry fun mint(
 )
 ```
 
-Before minting, you need to obtain the metadata for your coin, which can be done through the `0x1::coin::metadata` view function or by using `sha3_256(creator+symbol+0xFE)`.
+Before minting, you need to obtain the metadata for your coin, which can be done
+through the `0x1::coin::metadata` view function or by using
+`sha3_256(creator+symbol+0xFE)`.
 
 ## Obtaining Metadata
 
@@ -162,8 +169,8 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     }
     ```
     </Tab>
-</Tabs>
 
+</Tabs>
 
 ## Minting Coins
 
@@ -241,6 +248,7 @@ Before minting, you need to obtain the metadata for your coin, which can be done
     }
     ```
     </Tab>
+
 </Tabs>
 
 After minting, you can check the balances to verify the minting process.

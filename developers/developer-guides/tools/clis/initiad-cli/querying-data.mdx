@@ -6,7 +6,8 @@ The initiad CLI offers a range of commands for querying data from Initia L1.
 
 This guide walks you through using these commands to retrieve blockchain data.
 
-`initiad query` command enables you to query data from the blockchain. Each module provides a client-facing query interface. 
+`initiad query` command enables you to query data from the blockchain. Each
+module provides a client-facing query interface.
 
 The general syntax for querying data is:
 
@@ -16,7 +17,8 @@ initiad query [module-name] [query-name] [args] [flags]
 
 ## Querying Account Balance
 
-After receiving tokens to your address, you can view your account's balance like:
+After receiving tokens to your address, you can view your account's balance
+like:
 
 ```bash
 export ADDRESS=init1x7jl4cx6pq4urdppmnhwtyzfdtn5w7ssw4hjfm
@@ -90,7 +92,8 @@ initiad query move params --node $NODE_URL
 
 ## Querying Oracle
 
-If node has oracle module enabled, you can query the currency pairs and price using the following commands:
+If node has oracle module enabled, you can query the currency pairs and price
+using the following commands:
 
 ```bash
 initiad query oracle currency-pairs --node $NODE_URL

@@ -2,29 +2,43 @@
 title: Launching your Rollup
 ---
 
-Weave simplifies [this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups) into a single command.
+Weave simplifies
+[this lengthy complex rollup deployment process](/nodes-and-rollups/deploying-rollups)
+into a single command.
 
 <Note>
-  Weave will send some funds from Gas Station to the OPinit Bot accounts during this process. Please make sure that your Gas Station account has enough funds to cover the total amount of funds to be sent (this amount will be shown to you before sending the funds).
+  Weave will send some funds from Gas Station to the OPinit Bot accounts during
+  this process. Please make sure that your Gas Station account has enough funds
+  to cover the total amount of funds to be sent (this amount will be shown to
+  you before sending the funds).
 </Note>
 <Warning>
-  Haven't set up the Gas Station yet? Please [Check out this guide](/developers/developer-guides/tools/clis/weave-cli/gas-station) first.
+  Haven't set up the Gas Station yet? Please [Check out this
+  guide](/developers/developer-guides/tools/clis/weave-cli/gas-station) first.
 </Warning>
 
 ```bash
 weave rollup launch
 ```
 
-Once the process completes, your rollup node will be running and ready to process queries and transactions.
-The command also provides an [InitiaScan](https://scan.testnet.initia.xyz/) magic link that automatically adds your local rollup to the explorer, allowing you to instantly view your rollup's transactions and state.
+Once the process completes, your rollup node will be running and ready to
+process queries and transactions. The command also provides an
+[InitiaScan](https://scan.testnet.initia.xyz/) magic link that automatically
+adds your local rollup to the explorer, allowing you to instantly view your
+rollup's transactions and state.
 
 <Note>
 This command only sets up the bot addresses but does not start the OPinit Bots (executor and challenger).
 
-To complete the setup, proceed to the [OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots) section to configure and run the OPinit Bots.
+To complete the setup, proceed to the
+[OPinit Bots setup](/developers/developer-guides/tools/clis/weave-cli/rollup/opinit-bots)
+section to configure and run the OPinit Bots.
+
 </Note>
 
-To launch from the config file without going through the interactive setup process, use the `--with-config` and `--vm` flags.
+To launch from the config file without going through the interactive setup
+process, use the `--with-config` and `--vm` flags.
+
 ```bash
 weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
 ```
@@ -35,7 +49,8 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
   The directory to store the rollup node data and configuration files.
 </ParamField>
 <ParamField path="--with-config" type="string">
-  Path to the rollup config file. Use this flag to launch from a config file without going through the interactive setup process.
+  Path to the rollup config file. Use this flag to launch from a config file
+  without going through the interactive setup process.
 </ParamField>
 <ParamField path="--vm" type="string">
   The VM to use for the rollup node. The available options are `move`, `wasm`,
@@ -50,9 +65,7 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
 
 <Tabs>
   <Tab title="Start">
-    ```bash
-    weave rollup start
-    ```
+    ```bash weave rollup start ```
     <Note>
       Note that `launch` command already starts the rollup node for you. This
       command is only needed if you have stopped the node and want to start it
@@ -63,21 +76,10 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
       Whether to run the rollup node in the background.
     </ParamField>
   </Tab>
-  <Tab title="Stop">
-    ```bash
-    weave rollup stop
-    ```
-  </Tab>
-  <Tab title="Restart">
-    ```bash
-    weave rollup restart
-    ```
-  </Tab>
+  <Tab title="Stop">```bash weave rollup stop ```</Tab>
+  <Tab title="Restart">```bash weave rollup restart ```</Tab>
   <Tab title="View logs">
-    ```bash
-    weave rollup log
-    ```
-    **Available Flags**
+    ```bash weave rollup log ``` **Available Flags**
     <ParamField path="-n" type="number" default="100">
       The number of lines to display from the end of the logs.
     </ParamField>

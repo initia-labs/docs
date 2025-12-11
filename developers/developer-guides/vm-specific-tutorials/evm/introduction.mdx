@@ -4,7 +4,12 @@ title: MiniEVM Introduction
 
 ## Compatibility
 
-The MiniEVM framework is compatible with all standard EVM developer workflows, tooling, and libraries that developers are already familiar. This includes popular tools like [Foundry](https://github.com/foundry-rs/foundry), [Hardhat](https://hardhat.org/), and [Remix IDE](https://remix.ethereum.org/). However, there are minor differences in the way the MiniEVM operates that may require some adjustments to your existing development workflows.
+The MiniEVM framework is compatible with all standard EVM developer workflows,
+tooling, and libraries that developers are already familiar. This includes
+popular tools like [Foundry](https://github.com/foundry-rs/foundry),
+[Hardhat](https://hardhat.org/), and [Remix IDE](https://remix.ethereum.org/).
+However, there are minor differences in the way the MiniEVM operates that may
+require some adjustments to your existing development workflows.
 
 ## Changes
 
@@ -12,14 +17,22 @@ The MiniEVM framework is compatible with all standard EVM developer workflows, t
 
 **EIP-1559 Transactions**
 
-MiniEVM currently does not support EIP-1559 transactions. This means that when using tools like Foundry to deploy or interact with contracts, or to generally send transactions, you will need to use the legacy transaction type.
+MiniEVM currently does not support EIP-1559 transactions. This means that when
+using tools like Foundry to deploy or interact with contracts, or to generally
+send transactions, you will need to use the legacy transaction type.
 
 ### Foundry
 
 **EIP 1559 Transactions**
 
-When using Foundry to deploy or interact with contracts, or to generally send transactions, you will need to use the legacy transaction type. This can be done by using the `--legacy` flag.
+When using Foundry to deploy or interact with contracts, or to generally send
+transactions, you will need to use the legacy transaction type. This can be done
+by using the `--legacy` flag.
 
 **Precompiles and Foundry Scripts**
 
-Foundry's forge script feature always simulates all script transactions on a local standard EVM (without precompiles), and there is currently [no way to skip this simulation](https://github.com/foundry-rs/foundry/issues/5776). Consequently, any contract deployment or transaction that relies on MiniEVM precompiles will fail.
+Foundry's forge script feature always simulates all script transactions on a
+local standard EVM (without precompiles), and there is currently
+[no way to skip this simulation](https://github.com/foundry-rs/foundry/issues/5776).
+Consequently, any contract deployment or transaction that relies on MiniEVM
+precompiles will fail.

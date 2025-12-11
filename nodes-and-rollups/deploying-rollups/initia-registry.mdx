@@ -2,7 +2,11 @@
 title: Initia Registry
 ---
 
-For a rollup to be supported by the the core Initia apps such as Initia Wallet, Initia Scan, and Initia App, it must be registered on the [Initia Registry](https://github.com/initia-labs/initia-registry). This is a public GitHub repository that contains the metadata for all rollups that are currently live on the various Initia networks.
+For a rollup to be supported by the the core Initia apps such as Initia Wallet,
+Initia Scan, and Initia App, it must be registered on the
+[Initia Registry](https://github.com/initia-labs/initia-registry). This is a
+public GitHub repository that contains the metadata for all rollups that are
+currently live on the various Initia networks.
 
 ## Adding a Rollup to the Registry
 
@@ -10,14 +14,20 @@ To add a rollup to the registry, follow these steps:
 
 ### Fork the Initia Registry Repository
 
-To make changes to the registry, you will need to fork the [Initia Registry](https://github.com/initia-labs/initia-registry) repository. This will create a copy of the repository in your own GitHub account.
+To make changes to the registry, you will need to fork the
+[Initia Registry](https://github.com/initia-labs/initia-registry) repository.
+This will create a copy of the repository in your own GitHub account.
 
 ### Add the Rollup to the Registry
 
-Once you have forked the repository, you can add the rollup to the registry by following these steps:
+Once you have forked the repository, you can add the rollup to the registry by
+following these steps:
 
-1. Add a new folder with your rollup's name in the `testnets` or `mainnets` folder, depending on whether your rollup is currently live on the testnet or mainnet.
-2. Add a `chain.json` file to the folder. This file will contain the metadata for your rollup to be used by the apps.
+1. Add a new folder with your rollup's name in the `testnets` or `mainnets`
+   folder, depending on whether your rollup is currently live on the testnet or
+   mainnet.
+2. Add a `chain.json` file to the folder. This file will contain the metadata
+   for your rollup to be used by the apps.
 
 <Accordion title="Example Chain Schema and Description" icon="link">
 ```json
@@ -123,64 +133,64 @@ Once you have forked the repository, you can add the rollup to the registry by f
 | Field           | Description                                                                                                   | Optional |
 | --------------- | ------------------------------------------------------------------------------------------------------------- | -------- |
 | `$schema`       | The schema definition file. (should always be `../../chain.schema.json`)                                      | No       |
-| `chain_name`    | The name of the rollup.                                                                                      | No       |
-| `chain_id`      | The chain ID of the rollup.                                                                                  | No       |
-| `website`       | The website of the rollup.                                                                                   | No       |
-| `pretty_name`   | A human-readable name for your rollup.                                                                       | No       |
-| `status`        | The current status of the rollup (e.g., live).                                                               | No       |
+| `chain_name`    | The name of the rollup.                                                                                       | No       |
+| `chain_id`      | The chain ID of the rollup.                                                                                   | No       |
+| `website`       | The website of the rollup.                                                                                    | No       |
+| `pretty_name`   | A human-readable name for your rollup.                                                                        | No       |
+| `status`        | The current status of the rollup (e.g., live).                                                                | No       |
 | `network_type`  | The type of network (one of `mainnet`, `testnet`, `devnet`).                                                  | No       |
 | `bech32_prefix` | The Bech32 prefix used for addresses on the blockchain.                                                       | No       |
 | `daemon_name`   | The name of the daemon process for the blockchain (e.g., minitiad).                                           | No       |
 | `node_home`     | The default home directory for the blockchain node.                                                           | No       |
 | `key_algos`     | The cryptographic algorithms supported for keys.                                                              | No       |
 | `slip44`        | The [SLIP-0044](https://github.com/satoshilabs/slips/blob/master/slip-0044.md) identifier for the blockchain. | No       |
-| `description`   | A brief description of the rollup.                                                                           | No       |
+| `description`   | A brief description of the rollup.                                                                            | No       |
 
 **Fees**
 
 | Field        | Description                                                         | Optional |
 | ------------ | ------------------------------------------------------------------- | -------- |
-| `fees`       | Details about the fee and fee tokens on the rollup.                | No       |
+| `fees`       | Details about the fee and fee tokens on the rollup.                 | No       |
 | `fee_tokens` | Tokens used for fees, including their denominations and gas prices. | No       |
 
 **Staking**
 
 These fields should be empty for all rollups.
 
-| Field            | Description                               | Optional |
-| ---------------- | ----------------------------------------- | -------- |
+| Field            | Description                              | Optional |
+| ---------------- | ---------------------------------------- | -------- |
 | `staking`        | Information about staking on the rollup. | No       |
-| `staking_tokens` | Tokens used for staking.                  | No       |
+| `staking_tokens` | Tokens used for staking.                 | No       |
 
 **Codebase**
 
-| Field                 | Description                                                                                                       | Optional |
-| --------------------- | ----------------------------------------------------------------------------------------------------------------- | -------- |
-| `codebase`            | Information about the blockchain's codebase.                                                                      | No       |
+| Field                 | Description                                                                                                      | Optional |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------- | -------- |
+| `codebase`            | Information about the blockchain's codebase.                                                                     | No       |
 | `git_repo`            | The URL of the Git repository for the rollup.                                                                    | No       |
 | `recommended_version` | The recommended version of the rollup software. This should in most cases be the latest version of the software. | No       |
 | `compatible_versions` | Versions of the rollup software that are compatible.                                                             | No       |
-| `binaries`            | URLs for downloading binary files for different platforms.                                                        | No       |
+| `binaries`            | URLs for downloading binary files for different platforms.                                                       | No       |
 | `genesis`             | Information about the genesis block of the rollup.                                                               | No       |
 | `genesis_url`         | The URL to download the rollup genesis file.                                                                     | No       |
 | `versions`            | List of versions of the rollup software.                                                                         | No       |
 
 **Peers**
 
-| Field              | Description                                   | Optional |
-| ------------------ | --------------------------------------------- | -------- |
-| `peers`            | Information about network peers.              | No       |
+| Field              | Description                                  | Optional |
+| ------------------ | -------------------------------------------- | -------- |
+| `peers`            | Information about network peers.             | No       |
 | `seeds`            | The list of seed nodes for the rollup.       | No       |
 | `persistent_peers` | The list of persistent peers for the rollup. | No       |
 
 **APIs**
 
-| Field  | Description                                                | Optional |
-| ------ | ---------------------------------------------------------- | -------- |
+| Field  | Description                                               | Optional |
+| ------ | --------------------------------------------------------- | -------- |
 | `apis` | Information about the different endpoints for the rollup. | No       |
-| `rpc`  | RPC endpoints and their providers.                         | No       |
-| `rest` | REST endpoints and their providers.                        | No       |
-| `grpc` | gRPC endpoints and their providers.                        | No       |
+| `rpc`  | RPC endpoints and their providers.                        | No       |
+| `rest` | REST endpoints and their providers.                       | No       |
+| `grpc` | gRPC endpoints and their providers.                       | No       |
 
 **Explorers**
 
@@ -215,13 +225,14 @@ These fields should be empty for all rollups.
 | `channel_id`   | The channel ID for the IBC channel.                              | No       |
 | `version`      | The version of the IBC protocol used.                            | No       |
 | `assetlist`    | URL for the asset list JSON file.                                | Yes      |
-| `minitia`      | Specific metadata for the rollup.                               | No       |
+| `minitia`      | Specific metadata for the rollup.                                | No       |
 | `type`         | The type of chain (one of `minimove`, `minievm`, or `miniwasm`). | No       |
-| `version`      | The version of the rollup.                                      | No       |
+| `version`      | The version of the rollup.                                       | No       |
 
 </Accordion>
 
-3. Create an `assetlist.json` file in the folder. This file will contain the metadata for the assets on your rollup to be used by the apps.
+3. Create an `assetlist.json` file in the folder. This file will contain the
+   metadata for the assets on your rollup to be used by the apps.
 
 <Accordion title="Example Assetlist Schema and Description" icon="coin-front">
 ```json
@@ -327,11 +338,14 @@ These fields should be empty for all rollups.
 | logo_URIs     | Object containing logo URIs for the token | No       |
 | logo_URIs.png | The PNG logo URI for the token            | No       |
 | logo_URIs.svg | The SVG logo URI for the token            | No       |
+
 </Accordion>
 
 <Accordion title="How to Derive a Bridged Token Denom" icon="coin-front">
 
-For tokens bridged from L1, the denom can vary depending on the type of bridge used. In order for token bridging to work correctly, you must add the appropriate denom to your assetlist.
+For tokens bridged from L1, the denom can vary depending on the type of bridge
+used. In order for token bridging to work correctly, you must add the
+appropriate denom to your assetlist.
 
 We have two scenarios for calculating the denom:
 
@@ -356,10 +370,13 @@ import { RESTClient } from '@initia/initia.js'
 export async function opDenomByL1Denom(
   uri: string,
   bridge_id: number,
-  l1_denom: string
+  l1_denom: string,
 ): Promise<string> {
   const restClient = new RESTClient(uri)
-  const tokenPair = await restClient.ophost.tokenPairByL1Denom(bridge_id, l1_denom)
+  const tokenPair = await restClient.ophost.tokenPairByL1Denom(
+    bridge_id,
+    l1_denom,
+  )
   return tokenPair.l2_denom
 }
 
@@ -376,10 +393,13 @@ export async function opDenomByL1Denom(
 export async function opDenomByL2Denom(
   uri: string,
   bridge_id: number,
-  l2_denom: string
+  l2_denom: string,
 ): Promise<string> {
   const restClient = new RESTClient(uri)
-  const tokenPair = await restClient.ophost.tokenPairByL2Denom(bridge_id, l2_denom)
+  const tokenPair = await restClient.ophost.tokenPairByL2Denom(
+    bridge_id,
+    l2_denom,
+  )
   return tokenPair.l1_denom
 }
 
@@ -389,7 +409,8 @@ async function main() {
   const bridge_id = 1
 
   const l1_denom = 'uinit'
-  const l2_denom = 'l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145'
+  const l2_denom =
+    'l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145'
 
   const l2_denom_for_l1_denom = await opDenomByL1Denom(uri, bridge_id, l1_denom)
   console.log(`L2 denom for L1 denom "${l1_denom}":`, l2_denom_for_l1_denom)
@@ -439,13 +460,16 @@ function makeIBCHash(fullTrace: string): string {
  * @param {string} denom - The IBC denom (must start with "ibc/").
  * @returns {Promise<string>} - The combined path and base denom (e.g., "transfer/channel-0/uinit").
  */
-async function getFullTrace(restClient: RESTClient, denom: string): Promise<string> {
+async function getFullTrace(
+  restClient: RESTClient,
+  denom: string,
+): Promise<string> {
   if (!denom.startsWith('ibc/')) {
     throw Error('Not an IBC denom')
   }
 
   const trace = await restClient.apiRequester.get<DenomTrace>(
-    `/ibc/apps/transfer/v1/denom_traces/${denom}`
+    `/ibc/apps/transfer/v1/denom_traces/${denom}`,
   )
   return `${trace.denom_trace.path}/${trace.denom_trace.base_denom}`
 }
@@ -473,7 +497,7 @@ export async function ibcDenom(
   restClient: RESTClient,
   denom: string,
   chainAChannel: string,
-  chainBChannel: string
+  chainBChannel: string,
 ): Promise<string> {
   let wind = true
   let fullTrace = denom
@@ -511,9 +535,14 @@ async function main() {
   const denom = 'uinit' // or "ibc/..."
   const restClientChainA = new RESTClient('https://rest.testnet.initia.xyz')
   const channelA = 'channel-132' // Example channel ID for chain A
-  const channelB = 'channel-0'   // Example channel ID for chain B
+  const channelB = 'channel-0' // Example channel ID for chain B
 
-  const ibcDenomStr = await ibcDenom(restClientChainA, denom, channelA, channelB)
+  const ibcDenomStr = await ibcDenom(
+    restClientChainA,
+    denom,
+    channelA,
+    channelB,
+  )
   console.log('Calculated IBC Denom:', ibcDenomStr)
 }
 
@@ -521,10 +550,16 @@ main().catch((error) => {
   console.error('Error in main:', error)
 })
 ```
+
 </Accordion>
 
-4. (Optional) create an `images` folder to store the images for your rollup logo and token logos to link to in the two JSON files above.
+4. (Optional) create an `images` folder to store the images for your rollup logo
+   and token logos to link to in the two JSON files above.
 
 ### Submit a Pull Request
 
-Once you have completed the above steps, you can submit a pull request to the [Registry repository](https://github.com/initia-labs/initia-registry) to add your rollup to the registry. Once your pull request is reviewed & merged by a member of the Initia team, your rollup will be supported by the core Initia apps shortly after.
+Once you have completed the above steps, you can submit a pull request to the
+[Registry repository](https://github.com/initia-labs/initia-registry) to add
+your rollup to the registry. Once your pull request is reviewed & merged by a
+member of the Initia team, your rollup will be supported by the core Initia apps
+shortly after.

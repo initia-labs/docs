@@ -2,14 +2,20 @@
 title: Bootstrapping Initia Node
 ---
 
-Setting up a node for a Cosmos SDK chain has traditionally been a complex process requiring multiple steps:
-- Locating the correct repository and version of the node binary compatible with your target network
-- Either cloning and building the source code or downloading a pre-built binary from the release page
-- Configuring the node with appropriate `config.toml` and `app.toml` files, which involves:
-    - Setting correct values for `seeds`, `persistent_peers`, and `pruning`
-    - Navigating through numerous other parameters that rarely need modification
+Setting up a node for a Cosmos SDK chain has traditionally been a complex
+process requiring multiple steps:
+
+- Locating the correct repository and version of the node binary compatible with
+  your target network
+- Either cloning and building the source code or downloading a pre-built binary
+  from the release page
+- Configuring the node with appropriate `config.toml` and `app.toml` files,
+  which involves:
+  - Setting correct values for `seeds`, `persistent_peers`, and `pruning`
+  - Navigating through numerous other parameters that rarely need modification
 - Finding and implementing the correct genesis file to sync with the network
-- Setting up cosmovisor for automatic updates or manually maintaining the node binary
+- Setting up cosmovisor for automatic updates or manually maintaining the node
+  binary
 
 Weave streamlines this entire process into a simple command.
 
@@ -18,14 +24,16 @@ Weave streamlines this entire process into a simple command.
 ```bash
 weave initia init
 ```
-This command guides you through the node setup process, taking you from an empty directory to a fully synced node ready for operation.
-Once complete, you can run the node using `weave initia start`.
+
+This command guides you through the node setup process, taking you from an empty
+directory to a fully synced node ready for operation. Once complete, you can run
+the node using `weave initia start`.
 
 **Available Flags**
+
 <ParamField path="--initia-dir" type="string" default="~/.initia">
   The directory to store the node's data and configuration files.
 </ParamField>
-
 
 ## Running your node
 
@@ -40,17 +48,9 @@ Once complete, you can run the node using `weave initia start`.
     </ParamField>
   </Tab>
 
-  <Tab title="Stop">
-    ```bash
-    weave initia stop
-    ```
-  </Tab>
+<Tab title="Stop">```bash weave initia stop ```</Tab>
 
-  <Tab title="Restart">
-    ```bash
-    weave initia restart
-    ```
-  </Tab>
+<Tab title="Restart">```bash weave initia restart ```</Tab>
 
   <Tab title="View logs">
     ```bash
@@ -65,7 +65,8 @@ Once complete, you can run the node using `weave initia start`.
 
 ## Help
 
-To see all the available commands: 
+To see all the available commands:
+
 ```bash
 weave initia --help
 ```

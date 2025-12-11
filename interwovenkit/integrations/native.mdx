@@ -3,7 +3,9 @@ title: Native Integration
 icon: I
 ---
 
-InterwovenKit provides a native React integration for connecting and interacting with Initia wallets. This guide covers everything from basic setup to advanced features like transaction handling and cross-chain bridging.
+InterwovenKit provides a native React integration for connecting and interacting
+with Initia wallets. This guide covers everything from basic setup to advanced
+features like transaction handling and cross-chain bridging.
 
 ## Prerequisites
 
@@ -37,266 +39,266 @@ Follow these steps to set up InterwovenKit in your application:
     ```bash bun
     bun add @initia/interwovenkit-react wagmi viem @tanstack/react-query
     ```
+
   </CodeGroup>
 
-  These packages provide:
-  - **@initia/interwovenkit-react**: React hooks and components for Initia wallet integration
-  - **wagmi**: Ethereum wallet infrastructure (required for cross-chain compatibility)
-  - **viem**: Low-level Ethereum interaction library
-  - **@tanstack/react-query**: Data fetching and state management
+These packages provide:
+
+- **@initia/interwovenkit-react**: React hooks and components for Initia wallet
+  integration
+- **wagmi**: Ethereum wallet infrastructure (required for cross-chain
+  compatibility)
+- **viem**: Low-level Ethereum interaction library
+- **@tanstack/react-query**: Data fetching and state management
 
  </Step>
 
  <Step title="Configure Providers">
   Create a providers component to set up the required React contexts. This component wraps your app with the necessary providers for wallet functionality:
 
-  ```tsx providers.tsx
-  "use client"
+```tsx providers.tsx
+'use client'
 
-  import { PropsWithChildren, useEffect } from "react"
-  import { createConfig, http, WagmiProvider } from "wagmi"
-  import { mainnet } from "wagmi/chains"
-  import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-  import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
-  import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+import { PropsWithChildren, useEffect } from 'react'
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+} from '@initia/interwovenkit-react'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
-  const wagmiConfig = createConfig({
-    connectors: [initiaPrivyWalletConnector],
-    chains: [mainnet],
-    transports: { [mainnet.id]: http() },
-  })
-  const queryClient = new QueryClient()
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+const queryClient = new QueryClient()
 
-  export default function Providers({ children }: PropsWithChildren) {
-    useEffect(() => {
-      // Inject styles into the shadow DOM used by Initia Wallet
-      injectStyles(InterwovenKitStyles)
-    }, [])
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    // Inject styles into the shadow DOM used by Initia Wallet
+    injectStyles(InterwovenKitStyles)
+  }, [])
 
-    return (
-      <QueryClientProvider client={queryClient}>
-        <WagmiProvider config={wagmiConfig}>
-            <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">{children}</InterwovenKitProvider>
-        </WagmiProvider>
-      </QueryClientProvider>
-    )
-  }
-  ```
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
+          {children}
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
 
-  <Info>
-    **Chain Configuration**: Replace `YOUR_CHAIN_ID` with your target blockchain network:
-    - `"interwoven-1"` for Initia mainnet (default)
-    - `"initiation-2"` for Initia testnet
-    - Or any valid chain ID from the [initia-registry](https://registry.initia.xyz)
-    
-    This sets the primary network for transactions, balance queries, and serves as the default for all operations. See the [InterwovenKitProvider reference](/interwovenkit/references/interwovenkit-provider) for details.
-  </Info>
+<Info>
+  **Chain Configuration**: Replace `YOUR_CHAIN_ID` with your target blockchain
+  network: - `"interwoven-1"` for Initia mainnet (default) - `"initiation-2"`
+  for Initia testnet - Or any valid chain ID from the
+  [initia-registry](https://registry.initia.xyz) This sets the primary network
+  for transactions, balance queries, and serves as the default for all
+  operations. See the [InterwovenKitProvider
+  reference](/interwovenkit/references/interwovenkit-provider) for details.
+</Info>
 
  </Step>
 
  <Step title="Wrap Your Application">
   Import and use the providers in your application root:
 
-  ```tsx layout.tsx
-  import Providers from "./providers"
+```tsx layout.tsx
+import Providers from './providers'
 
-  export default function RootLayout({
-    children
-  }: Readonly<{
-    children: React.ReactNode
-  }>) {
-    return (
-      <html lang="en">
-        <body>
-          <Providers>{children}</Providers>
-        </body>
-      </html>
-    )
-  }
-  ```
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
 
-  For other React frameworks, wrap your app component with the `Providers` component at the highest level possible.
+For other React frameworks, wrap your app component with the `Providers`
+component at the highest level possible.
 
  </Step>
 
  <Step title="Implement Wallet Connection">
   Create a basic component that demonstrates wallet connection. This component showcases the core wallet connection functionality using InterwovenKit's hooks:
 
-  ```tsx components/WalletConnection.tsx
-  "use client"
+```tsx components/WalletConnection.tsx
+'use client'
 
-  import { truncate } from "@initia/utils"
-  import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { truncate } from '@initia/utils'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
-  export default function WalletConnection() {
-    const {
-      address,
-      username,
-      isConnected,
-      openConnect,
-      openWallet
-    } = useInterwovenKit()
+export default function WalletConnection() {
+  const { address, username, isConnected, openConnect, openWallet } =
+    useInterwovenKit()
 
-    if (!isConnected) {
-      return (
-        <div>
-          <h2>Connect Your Wallet</h2>
-          <p>Connect your Initia wallet to get started</p>
-          <button onClick={openConnect}>Connect Wallet</button>
-        </div>
-      )
-    }
-
+  if (!isConnected) {
     return (
       <div>
-        <h2>Wallet Connected</h2>
-        <p>Address: {address}</p>
-        {username && <p>Username: {username}</p>}
-        <button onClick={openWallet}>
-          {truncate(username ?? address)}
-        </button>
+        <h2>Connect Your Wallet</h2>
+        <p>Connect your Initia wallet to get started</p>
+        <button onClick={openConnect}>Connect Wallet</button>
       </div>
     )
   }
-  ```
+
+  return (
+    <div>
+      <h2>Wallet Connected</h2>
+      <p>Address: {address}</p>
+      {username && <p>Username: {username}</p>}
+      <button onClick={openWallet}>{truncate(username ?? address)}</button>
+    </div>
+  )
+}
+```
 
  </Step>
 
  <Step title="Add Transaction Functionality">
   Extend your component to handle transactions. This example demonstrates how to send a basic token transfer:
 
-  ```tsx components/TransactionExample.tsx
-  "use client"
+```tsx components/TransactionExample.tsx
+'use client'
 
-  import { useState } from "react"
-  import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-  import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useState } from 'react'
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
-  export default function TransactionExample() {
-    const { address, requestTxBlock } = useInterwovenKit()
-    const [isLoading, setIsLoading] = useState(false)
-    const [lastTxHash, setLastTxHash] = useState<string>("")
+export default function TransactionExample() {
+  const { address, requestTxBlock } = useInterwovenKit()
+  const [isLoading, setIsLoading] = useState(false)
+  const [lastTxHash, setLastTxHash] = useState<string>('')
 
-    const sendTransaction = async () => {
-      if (!address) return
+  const sendTransaction = async () => {
+    if (!address) return
 
-      setIsLoading(true)
-      try {
-        // Create a simple send transaction to yourself
-        const messages = [{
-          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+    setIsLoading(true)
+    try {
+      // Create a simple send transaction to yourself
+      const messages = [
+        {
+          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
           value: MsgSend.fromPartial({
             fromAddress: address,
             toAddress: address,
-            amount: [{ amount: "1000000", denom: "uinit" }], // 1 INIT
+            amount: [{ amount: '1000000', denom: 'uinit' }], // 1 INIT
           }),
-        }]
+        },
+      ]
 
-        const { transactionHash } = await requestTxBlock({ messages })
-        setLastTxHash(transactionHash)
-        console.log("Transaction successful:", transactionHash)
-      } catch (error) {
-        console.error("Transaction failed:", error)
-      } finally {
-        setIsLoading(false)
-      }
+      const { transactionHash } = await requestTxBlock({ messages })
+      setLastTxHash(transactionHash)
+      console.log('Transaction successful:', transactionHash)
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    } finally {
+      setIsLoading(false)
     }
-
-    if (!address) {
-      return <p>Please connect your wallet first</p>
-    }
-
-    return (
-      <div>
-        <h3>Send Transaction</h3>
-        <button
-          onClick={sendTransaction}
-          disabled={isLoading}
-        >
-          {isLoading ? "Sending..." : "Send 1 INIT to Self"}
-        </button>
-        {lastTxHash && (
-          <p>Last transaction: {lastTxHash}</p>
-        )}
-      </div>
-    )
   }
-  ```
+
+  if (!address) {
+    return <p>Please connect your wallet first</p>
+  }
+
+  return (
+    <div>
+      <h3>Send Transaction</h3>
+      <button onClick={sendTransaction} disabled={isLoading}>
+        {isLoading ? 'Sending...' : 'Send 1 INIT to Self'}
+      </button>
+      {lastTxHash && <p>Last transaction: {lastTxHash}</p>}
+    </div>
+  )
+}
+```
+
  </Step>
  <Step title="Custom Fee Handling (Optional)">
   The custom fee handling feature allows you to bypass the "Confirm tx" modal and provide pre-calculated fees directly, giving you more control over transaction speed and UX. The requestTx functions are still available, so you can choose the workflow that fits your app best.
 
-  You can provide fees in two ways:
+You can provide fees in two ways:
 
-  - `Pre-calculated`: Provide a fixed fee if you are confident.
-  - `Estimated`: Use estimateGas to simulate the required fee.
+- `Pre-calculated`: Provide a fixed fee if you are confident.
+- `Estimated`: Use estimateGas to simulate the required fee.
 
-  <Note>
-  Since this skips the standard fee selection UI, ensure the fee is displayed somewhere else in your app to maintain transparency for users.
-  </Note>
+<Note>
+  Since this skips the standard fee selection UI, ensure the fee is displayed
+  somewhere else in your app to maintain transparency for users.
+</Note>
 
-  ```tsx components/TransactionExampleWithFee.tsx
-   "use client"
+```tsx components/TransactionExampleWithFee.tsx
+'use client'
 
-  import { useState } from "react"
-  import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-  import { calculateFee, GasPrice } from "@cosmjs/stargate"
-  import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useState } from 'react'
+import { MsgSend } from 'cosmjs-types/cosmos/bank/v1beta1/tx'
+import { calculateFee, GasPrice } from '@cosmjs/stargate'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
-  export default function TransactionExample() {
-    const { address, estimateGas, submitTxBlock } = useInterwovenKit()
-    const [isLoading, setIsLoading] = useState(false)
-    const [lastTxHash, setLastTxHash] = useState<string>("")
+export default function TransactionExample() {
+  const { address, estimateGas, submitTxBlock } = useInterwovenKit()
+  const [isLoading, setIsLoading] = useState(false)
+  const [lastTxHash, setLastTxHash] = useState<string>('')
 
-    const sendTransaction = async () => {
-      if (!address) return
+  const sendTransaction = async () => {
+    if (!address) return
 
-      setIsLoading(true)
-      try {
-        // Create a simple send transaction to yourself
-        const messages = [{
-          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+    setIsLoading(true)
+    try {
+      // Create a simple send transaction to yourself
+      const messages = [
+        {
+          typeUrl: '/cosmos.bank.v1beta1.MsgSend',
           value: MsgSend.fromPartial({
             fromAddress: address,
             toAddress: address,
-            amount: [{ amount: "1000000", denom: "uinit" }], // 1 INIT
+            amount: [{ amount: '1000000', denom: 'uinit' }], // 1 INIT
           }),
-        }]
+        },
+      ]
 
-        // Estimate gas and calculate fee
-        const gas = await estimateGas({ messages })
-        const fee = calculateFee(gas, GasPrice.fromString("0.015uinit"))
-        const { transactionHash } = await submitTxBlock({ messages, fee })
-        setLastTxHash(transactionHash)
-        console.log("Transaction successful:", transactionHash)
-      } catch (error) {
-        console.error("Transaction failed:", error)
-      } finally {
-        setIsLoading(false)
-      }
+      // Estimate gas and calculate fee
+      const gas = await estimateGas({ messages })
+      const fee = calculateFee(gas, GasPrice.fromString('0.015uinit'))
+      const { transactionHash } = await submitTxBlock({ messages, fee })
+      setLastTxHash(transactionHash)
+      console.log('Transaction successful:', transactionHash)
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    } finally {
+      setIsLoading(false)
     }
-
-    if (!address) {
-      return <p>Please connect your wallet first</p>
-    }
-
-    return (
-      <div>
-        <h3>Send Transaction</h3>
-        <button
-          onClick={sendTransaction}
-          disabled={isLoading}
-        >
-          {isLoading ? "Sending..." : "Send 1 INIT to Self"}
-        </button>
-        {lastTxHash && (
-          <p>Last transaction: {lastTxHash}</p>
-        )}
-      </div>
-    )
   }
 
-  ```
+  if (!address) {
+    return <p>Please connect your wallet first</p>
+  }
+
+  return (
+    <div>
+      <h3>Send Transaction</h3>
+      <button onClick={sendTransaction} disabled={isLoading}>
+        {isLoading ? 'Sending...' : 'Send 1 INIT to Self'}
+      </button>
+      {lastTxHash && <p>Last transaction: {lastTxHash}</p>}
+    </div>
+  )
+}
+```
+
  </Step>
 </Steps>
-

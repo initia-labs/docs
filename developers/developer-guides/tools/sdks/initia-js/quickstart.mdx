@@ -2,7 +2,9 @@
 title: Quickstart
 ---
 
-For most of the following examples in this section, we will be assuming that the guides on each page are implemented as separate functions and files under a single project directory. To set up your project, follow the steps below.
+For most of the following examples in this section, we will be assuming that the
+guides on each page are implemented as separate functions and files under a
+single project directory. To set up your project, follow the steps below.
 
 <Steps>
   <Step title="Create Directory">
@@ -28,18 +30,18 @@ For most of the following examples in this section, we will be assuming that the
   ```ts
   import { RESTClient, Coin } from '@initia/initia.js';
 
-  const restClient = new RESTClient('https://rest.testnet.initia.xyz');
+const restClient = new RESTClient('https://rest.testnet.initia.xyz');
 
-  (async () => {
-    const chainId = await restClient.tendermint.chainId();
-    console.log(chainId);
-  })();
-  ```
-  Next, we will run the script.
-  ```bash
-  npx ts-node src/quickstart.ts
-  ```
+(async () => { const chainId = await restClient.tendermint.chainId();
+console.log(chainId); })();
 
-  If you get `initiation-2` as the output, then your installation was successful!
+````
+Next, we will run the script.
+```bash
+npx ts-node src/quickstart.ts
+````
+
+If you get `initiation-2` as the output, then your installation was successful!
+
   </Step>
 </Steps>

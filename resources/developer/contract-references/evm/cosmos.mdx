@@ -2,11 +2,15 @@
 title: Cosmos
 ---
 
-GitHub: [ICosmos](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/interfaces/ICosmos.sol)
+GitHub:
+[ICosmos](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/interfaces/ICosmos.sol)
 
 ## Overview
 
-The `ICosmos` interface defines a set of functions for interacting with the Cosmos blockchain from an Ethereum Virtual Machine (EVM) environment. It includes functions for address conversion, querying, and executing Cosmos messages.
+The `ICosmos` interface defines a set of functions for interacting with the
+Cosmos blockchain from an Ethereum Virtual Machine (EVM) environment. It
+includes functions for address conversion, querying, and executing Cosmos
+messages.
 
 ## Constants
 
@@ -38,15 +42,15 @@ function is_blocked_address(address account) external view returns (bool blocked
 
 #### Parameters
 
-| Name      | Type             | Description                    |
-| --------- | ---------------- | ------------------------------ |
-| `account` | `address`        | The address to check           |
+| Name      | Type      | Description          |
+| --------- | --------- | -------------------- |
+| `account` | `address` | The address to check |
 
 #### Returns
 
-| Type       | Description                          |
-| ---------- | ------------------------------------ |
-| `bool`     | `true` if the address is blocked, `false` otherwise |
+| Type   | Description                                         |
+| ------ | --------------------------------------------------- |
+| `bool` | `true` if the address is blocked, `false` otherwise |
 
 ### `is_module_address`
 
@@ -58,15 +62,15 @@ function is_module_address(address account) external view returns (bool module);
 
 #### Parameters
 
-| Name      | Type             | Description                    |
-| --------- | ---------------- | ------------------------------ |
-| `account` | `address`        | The address to check           |
+| Name      | Type      | Description          |
+| --------- | --------- | -------------------- |
+| `account` | `address` | The address to check |
 
 #### Returns
 
-| Type       | Description                          |
-| ---------- | ------------------------------------ |
-| `bool`     | `true` if the address is a module account, `false` otherwise |
+| Type   | Description                                                  |
+| ------ | ------------------------------------------------------------ |
+| `bool` | `true` if the address is a module account, `false` otherwise |
 
 ### `to_cosmos_address`
 
@@ -78,15 +82,15 @@ function to_cosmos_address(address evm_address) external returns (string memory 
 
 #### Parameters
 
-| Name         | Type             | Description                    |
-| ------------ | ---------------- | ------------------------------ |
-| `evm_address`| `address`        | The EVM address to convert     |
+| Name          | Type      | Description                |
+| ------------- | --------- | -------------------------- |
+| `evm_address` | `address` | The EVM address to convert |
 
 #### Returns
 
-| Type              | Description                          |
-| ----------------- | ------------------------------------ |
-| `string memory`   | The corresponding Cosmos address     |
+| Type            | Description                      |
+| --------------- | -------------------------------- |
+| `string memory` | The corresponding Cosmos address |
 
 ### `to_evm_address`
 
@@ -98,15 +102,15 @@ function to_evm_address(string memory cosmos_address) external returns (address 
 
 #### Parameters
 
-| Name             | Type             | Description                    |
-| ---------------- | ---------------- | ------------------------------ |
-| `cosmos_address` | `string memory`  | The Cosmos address to convert  |
+| Name             | Type            | Description                   |
+| ---------------- | --------------- | ----------------------------- |
+| `cosmos_address` | `string memory` | The Cosmos address to convert |
 
 #### Returns
 
-| Type       | Description                          |
-| ---------- | ------------------------------------ |
-| `address`  | The corresponding EVM address        |
+| Type      | Description                   |
+| --------- | ----------------------------- |
+| `address` | The corresponding EVM address |
 
 ### `to_denom`
 
@@ -118,15 +122,15 @@ function to_denom(address erc20_address) external returns (string memory denom);
 
 #### Parameters
 
-| Name             | Type             | Description                    |
-| ---------------- | ---------------- | ------------------------------ |
-| `erc20_address`  | `address`        | The ERC20 address to convert   |
+| Name            | Type      | Description                  |
+| --------------- | --------- | ---------------------------- |
+| `erc20_address` | `address` | The ERC20 address to convert |
 
 #### Returns
 
-| Type              | Description                          |
-| ----------------- | ------------------------------------ |
-| `string memory`   | The corresponding Cosmos denom       |
+| Type            | Description                    |
+| --------------- | ------------------------------ |
+| `string memory` | The corresponding Cosmos denom |
 
 ### `to_erc20`
 
@@ -138,19 +142,20 @@ function to_erc20(string memory denom) external returns (address erc20_address);
 
 #### Parameters
 
-| Name        | Type             | Description                    |
-| ----------- | ---------------- | ------------------------------ |
-| `denom`     | `string memory`  | The Cosmos denom to convert    |
+| Name    | Type            | Description                 |
+| ------- | --------------- | --------------------------- |
+| `denom` | `string memory` | The Cosmos denom to convert |
 
 #### Returns
 
-| Type       | Description                          |
-| ---------- | ------------------------------------ |
-| `address`  | The corresponding ERC20 address      |
+| Type      | Description                     |
+| --------- | ------------------------------- |
+| `address` | The corresponding ERC20 address |
 
 ### `execute_cosmos`
 
-Records a Cosmos message to be executed after the current message execution. The message must be in JSON string format.
+Records a Cosmos message to be executed after the current message execution. The
+message must be in JSON string format.
 
 ```solidity
 function execute_cosmos(string memory msg) external returns (bool dummy);
@@ -158,15 +163,15 @@ function execute_cosmos(string memory msg) external returns (bool dummy);
 
 #### Parameters
 
-| Name  | Type             | Description                    |
-| ----- | ---------------- | ------------------------------ |
-| `msg` | `string memory`  | The Cosmos message in JSON format |
+| Name  | Type            | Description                       |
+| ----- | --------------- | --------------------------------- |
+| `msg` | `string memory` | The Cosmos message in JSON format |
 
 #### Returns
 
-| Type   | Description                          |
-| ------ | ------------------------------------ |
-| `bool` | Dummy return value                   |
+| Type   | Description        |
+| ------ | ------------------ |
+| `bool` | Dummy return value |
 
 ### `query_cosmos`
 
@@ -178,13 +183,13 @@ function query_cosmos(string memory path, string memory req) external returns (s
 
 #### Parameters
 
-| Name  | Type             | Description                    |
-| ----- | ---------------- | ------------------------------ |
-| `path`| `string memory`  | The query path                 |
-| `req` | `string memory`  | The query request in JSON format |
+| Name   | Type            | Description                      |
+| ------ | --------------- | -------------------------------- |
+| `path` | `string memory` | The query path                   |
+| `req`  | `string memory` | The query request in JSON format |
 
 #### Returns
 
-| Type              | Description                          |
-| ----------------- | ------------------------------------ |
-| `string memory`   | The query result in JSON format      |
+| Type            | Description                     |
+| --------------- | ------------------------------- |
+| `string memory` | The query result in JSON format |
