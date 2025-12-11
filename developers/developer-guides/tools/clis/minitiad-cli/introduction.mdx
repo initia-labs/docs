@@ -1,35 +1,51 @@
 ---
 title: Introduction
-description: Learn how to install and get started with the minitiad command-line interface for interacting with Initia rollups
+description:
+  Learn how to install and get started with the minitiad command-line interface
+  for interacting with Initia rollups
 ---
 
-The minitiad CLI is a command-line interface for interacting with appchains built on the Interwoven Stack. This tool provides comprehensive functionality for developers and users to manage accounts, query blockchain data, submit transactions, and perform various other operations.
+The minitiad CLI is a command-line interface for interacting with appchains
+built on the Interwoven Stack. This tool provides comprehensive functionality
+for developers and users to manage accounts, query blockchain data, submit
+transactions, and perform various other operations.
 
 ## Overview
 
 With minitiad, you can:
 
 - **Account Management**: Create, import, and manage blockchain accounts
-- **Transaction Operations**: Send transactions, delegate tokens, and interact with smart contracts  
-- **Data Queries**: Query blockchain state, account balances, and transaction history
-- **Validator Operations**: Create validators, delegate stakes, and manage governance proposals
-- **Multi-Chain Support**: Connect to different Initia rollup chains using configurable endpoints
-- **VM-Specific Builds**: Different implementations for Move, Wasm, and EVM rollup chains
+- **Transaction Operations**: Send transactions, delegate tokens, and interact
+  with smart contracts
+- **Data Queries**: Query blockchain state, account balances, and transaction
+  history
+- **Validator Operations**: Create validators, delegate stakes, and manage
+  governance proposals
+- **Multi-Chain Support**: Connect to different Initia rollup chains using
+  configurable endpoints
+- **VM-Specific Builds**: Different implementations for Move, Wasm, and EVM
+  rollup chains
 
 <Info>
-minitiad is built using the Cosmos SDK and provides a familiar interface for users of other Cosmos-based chains, specifically optimized for Initia rollups.
+  minitiad is built using the Cosmos SDK and provides a familiar interface for
+  users of other Cosmos-based chains, specifically optimized for Initia rollups.
 </Info>
 
 ## VM Types and Repositories
 
-Different Initia rollup chains use different Virtual Machines (VMs), and each requires a specific minitiad implementation:
+Different Initia rollup chains use different Virtual Machines (VMs), and each
+requires a specific minitiad implementation:
 
-- **Move**: [minimove](https://github.com/initia-labs/minimove) - For rollups running Move smart contracts
-- **Wasm**: [miniwasm](https://github.com/initia-labs/miniwasm) - For rollups running WebAssembly smart contracts  
-- **EVM**: [minievm](https://github.com/initia-labs/minievm) - For rollups running Ethereum Virtual Machine smart contracts
+- **Move**: [minimove](https://github.com/initia-labs/minimove) - For rollups
+  running Move smart contracts
+- **Wasm**: [miniwasm](https://github.com/initia-labs/miniwasm) - For rollups
+  running WebAssembly smart contracts
+- **EVM**: [minievm](https://github.com/initia-labs/minievm) - For rollups
+  running Ethereum Virtual Machine smart contracts
 
 <Tip>
-Check your rollup chain's documentation to determine which VM type it uses before installation.
+  Check your rollup chain's documentation to determine which VM type it uses
+  before installation.
 </Tip>
 
 ## Prerequisites
@@ -41,7 +57,7 @@ Before installing minitiad, ensure you have the following requirements:
 - **Make**: For building the binary
 
 <Tip>
-You can verify your Go installation by running `go version` in your terminal.
+  You can verify your Go installation by running `go version` in your terminal.
 </Tip>
 
 ## Installation
@@ -59,10 +75,7 @@ cd minimove
 </Tab>
 
 <Tab title="Wasm">
-```bash
-git clone https://github.com/initia-labs/miniwasm.git
-cd miniwasm
-```
+  ```bash git clone https://github.com/initia-labs/miniwasm.git cd miniwasm ```
 </Tab>
 
 <Tab title="EVM">
@@ -89,6 +102,7 @@ export CHAIN_REST_ENDPOINT="https://rest.your-rollup-chain.com"
 export CHAIN_RPC_ENDPOINT="https://rpc.your-rollup-chain.com"
 
 # Get the current rollup version and checkout
+
 export VERSION=$(curl -s $CHAIN_REST_ENDPOINT/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
 echo "Checking out version: $VERSION"
 git checkout $VERSION
@@ -106,7 +120,8 @@ git checkout $VERSION
 </Tabs>
 
 <Warning>
-Always use a specific version tag rather than the main branch for production environments to ensure stability.
+  Always use a specific version tag rather than the main branch for production
+  environments to ensure stability.
 </Warning>
 
 <Note>
@@ -122,6 +137,7 @@ make install
 ```
 
 This will build the binary and install it to your `$GOPATH/bin` directory.
+
 </Step>
 </Steps>
 
@@ -130,7 +146,8 @@ This will build the binary and install it to your `$GOPATH/bin` directory.
 After installation, verify that minitiad is correctly installed and accessible:
 
 <Note>
-The CLI binary is always named `minitiad` regardless of which VM-specific repository you cloned.
+  The CLI binary is always named `minitiad` regardless of which VM-specific
+  repository you cloned.
 </Note>
 
 ### Check CLI Version
@@ -155,7 +172,8 @@ minitiad --help
 
 ## Network Configuration
 
-Configure the CLI to connect to your specific rollup chain by setting the appropriate endpoints:
+Configure the CLI to connect to your specific rollup chain by setting the
+appropriate endpoints:
 
 ### Setting Chain Endpoints
 
@@ -171,13 +189,17 @@ minitiad config node $CHAIN_RPC_ENDPOINT
 ```
 
 <Warning>
-Make sure to use the correct endpoints for your specific rollup chain. Each Initia rollup has its own unique endpoints and chain ID.
+  Make sure to use the correct endpoints for your specific rollup chain. Each
+  Initia rollup has its own unique endpoints and chain ID.
 </Warning>
 
 ## Next Steps
 
-Now that you have minitiad installed and configured, you can start building and deploying applications on Initia rollup chains. The specific workflow will depend on your rollup's VM type (Move, Wasm, or EVM).
+Now that you have minitiad installed and configured, you can start building and
+deploying applications on Initia rollup chains. The specific workflow will
+depend on your rollup's VM type (Move, Wasm, or EVM).
 
 <Info>
-Additional minitiad CLI documentation pages are currently being developed and will be available soon.
+  Additional minitiad CLI documentation pages are currently being developed and
+  will be available soon.
 </Info>

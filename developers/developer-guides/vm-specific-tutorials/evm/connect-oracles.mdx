@@ -5,12 +5,20 @@ title: Using Connect Oracle
 [Tutorial GitHub Repository](https://github.com/initia-labs/guides/tree/main/rollups/evm/connect-oracle)
 
 <Warning>
-Compiling contracts that use [ConnectOracle.sol](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/connect_oracle/ConnectOracle.sol) requires the [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir) feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The relevant methods for other tools may vary.
+  Compiling contracts that use
+  [ConnectOracle.sol](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/connect_oracle/ConnectOracle.sol)
+  requires the
+  [viaIR](https://soliditylang.org/blog/2024/07/12/a-closer-look-at-via-ir)
+  feature. For Foundry/Forge, this can be done by using the `--via-ir` flag. The
+  relevant methods for other tools may vary.
 </Warning>
 
 ### Foundry
 
-For this tutorial, we will be using [Foundry](https://github.com/foundry-rs/foundry) toolkit to develop, compile, and deploy our contracts. If you do not have Foundry installed, follow the [Foundry installation instructions](https://getfoundry.sh/).
+For this tutorial, we will be using
+[Foundry](https://github.com/foundry-rs/foundry) toolkit to develop, compile,
+and deploy our contracts. If you do not have Foundry installed, follow the
+[Foundry installation instructions](https://getfoundry.sh/).
 
 ## Setup
 
@@ -24,13 +32,16 @@ forge init
 
 ## Implementing the Contract
 
-Before writing our contract, we first need to rename the template contract to `Oracle.sol`
+Before writing our contract, we first need to rename the template contract to
+`Oracle.sol`
 
 ```sh
 mv src/Counter.sol src/Oracle.sol
 ```
 
-We then update the contract from the template to be our oracle contract. We declare the `IConnectOracle` interface, which will be used to interact with the ConnectOracle contract.
+We then update the contract from the template to be our oracle contract. We
+declare the `IConnectOracle` interface, which will be used to interact with the
+ConnectOracle contract.
 
 ```solidity src/Oracle.sol
 // SPDX-License-Identifier: MIT
@@ -54,7 +65,8 @@ contract Oracle {
     IConnectOracle public connect;
 ```
 
-We then need to define the constructor for our contract. This will be used to initialize the contract with the ConnectOracle contract address.
+We then need to define the constructor for our contract. This will be used to
+initialize the contract with the ConnectOracle contract address.
 
 <Note>
 The ConnectOracle contract is on MiniEVM precompiles. You can get its address by querying `${REST_URL}/minievm/evm/v1/connect_oracle` where `${REST_URL}` refers to the REST endpoint URL of the rollup.
@@ -75,10 +87,12 @@ The output will look like this:
     }
 ```
 
-Once the constructor is implemented, we move on to defining the different functions that our contract will have
+Once the constructor is implemented, we move on to defining the different
+functions that our contract will have
 
 - `oracle_get_price`: This function will return the price of a single asset pair
-- `oracle_get_prices`: This function will return the price of multiple asset pairs
+- `oracle_get_prices`: This function will return the price of multiple asset
+  pairs
 
 ```solidity src/Oracle.sol
     function oracle_get_price() external view returns (uint256 price, uint256 timestamp) {
@@ -149,7 +163,10 @@ contract Oracle {
 }
 ```
 
-Running `forge compile` will fail unless we provide a test file that matches the `Oracle.sol` contract. Foundry expects a test file like `Oracle.t.sol` to exist and import the contract under test. To resolve this, we will rename the existing test file `Counter.t.sol` to `Oracle.t.sol`.
+Running `forge compile` will fail unless we provide a test file that matches the
+`Oracle.sol` contract. Foundry expects a test file like `Oracle.t.sol` to exist
+and import the contract under test. To resolve this, we will rename the existing
+test file `Counter.t.sol` to `Oracle.t.sol`.
 
 ```sh
 mv test/Counter.t.sol test/Oracle.t.sol
@@ -182,7 +199,10 @@ forge compile;
 
 ## Deploying the Contract
 
-Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge script` command.  First, we need to create a script file to handle the deployment. Create a new file named `Oracle.s.sol` in the `script` directory.
+Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To
+accomplish this, we will use Foundry's `forge script` command. First, we need to
+create a script file to handle the deployment. Create a new file named
+`Oracle.s.sol` in the `script` directory.
 
 ```solidity script/Oracle.s.sol
     // SPDX-License-Identifier: UNLICENSED
@@ -197,7 +217,7 @@ Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To
         function setUp() public {}
 
         function run() public {
-            address oracleAddress = 0x031ECb63480983FD216D17BB6e1d393f3816b72F; 
+            address oracleAddress = 0x031ECb63480983FD216D17BB6e1d393f3816b72F;
 
             vm.startBroadcast();
 
@@ -208,7 +228,9 @@ Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To
     }
 ```
 
-Set your environment variables and run the deployment. Be sure to replace `PRIVATE_KEY` with the deployer's private key, and `JSON_RPC_URL` with your rollup's JSON-RPC endpoint.
+Set your environment variables and run the deployment. Be sure to replace
+`PRIVATE_KEY` with the deployer's private key, and `JSON_RPC_URL` with your
+rollup's JSON-RPC endpoint.
 
 ```sh
 export PRIVATE_KEY=0x...
@@ -255,9 +277,11 @@ Output should look like this:
 0x00000000000000000000000000000000000000000000000000000002c3cd0d430000000000000000000000000000000000000000000000001856610b4b695788
 ```
 
-The output is an ABI-encoded hexadecimal result containing the price and timestamp. The first 32 bytes represent the price, and the next 32 bytes represent the timestamp.
+The output is an ABI-encoded hexadecimal result containing the price and
+timestamp. The first 32 bytes represent the price, and the next 32 bytes
+represent the timestamp.
 
-| Field     | ABI-Encoded Value | Decoded Value |
-|-----------|-------------------|---------------|
-| Price     | 0x2c3cd0d43       | 11874929987   |
-| Timestamp | 0x1856610b4b695788| 1753695806045116296 |
+| Field     | ABI-Encoded Value  | Decoded Value       |
+| --------- | ------------------ | ------------------- |
+| Price     | 0x2c3cd0d43        | 11874929987         |
+| Timestamp | 0x1856610b4b695788 | 1753695806045116296 |

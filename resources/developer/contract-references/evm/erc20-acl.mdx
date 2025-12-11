@@ -2,11 +2,14 @@
 title: ERC20ACL
 ---
 
-GitHub: [ERC20ACL](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20ACL.sol)
+GitHub:
+[ERC20ACL](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20ACL.sol)
 
 ## Overview
 
-The `ERC20ACL` contract provides access control mechanisms for ERC20 token operations. It includes modifiers to restrict certain actions based on conditions such as whether an address is a module address or a blocked address.
+The `ERC20ACL` contract provides access control mechanisms for ERC20 token
+operations. It includes modifiers to restrict certain actions based on
+conditions such as whether an address is a module address or a blocked address.
 
 ## Constants
 
@@ -44,9 +47,9 @@ modifier burnable(address from) {
 
 #### Parameters
 
-| Name    | Type      | Description           |
-| ------- | --------- | --------------------- |
-| `from`  | `address` | The address to check. |
+| Name   | Type      | Description           |
+| ------ | --------- | --------------------- |
+| `from` | `address` | The address to check. |
 
 ### `mintable`
 
@@ -61,9 +64,9 @@ modifier mintable(address to) {
 
 #### Parameters
 
-| Name    | Type      | Description           |
-| ------- | --------- | --------------------- |
-| `to`    | `address` | The address to check. |
+| Name | Type      | Description           |
+| ---- | --------- | --------------------- |
+| `to` | `address` | The address to check. |
 
 ### `transferable`
 
@@ -78,6 +81,6 @@ modifier transferable(address to) {
 
 #### Parameters
 
-| Name    | Type      | Description           |
-| ------- | --------- | --------------------- |
-| `to`    | `address` | The address to check. |
+| Name | Type      | Description           |
+| ---- | --------- | --------------------- |
+| `to` | `address` | The address to check. |

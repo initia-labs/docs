@@ -6,32 +6,53 @@ title: VIP Timelines
 
 ### Gauge Voting Cycles
 
-The Vested Interest Program always begins with a [gauge voting](/home/core-concepts/vip/gauges) cycle. During this cycle, Initia L1 stakers vote on the gauge weights that will determine the VIP [Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards distribution for the next rewards stage.
+The Vested Interest Program always begins with a
+[gauge voting](/home/core-concepts/vip/gauges) cycle. During this cycle, Initia
+L1 stakers vote on the gauge weights that will determine the VIP
+[Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards
+distribution for the next rewards stage.
 
 ### Reward Distribution Stages
 
 ![Reward Distribution Stages](/images/vip/vip_rewards_distribution_timeline.png)
 
-After the first gauge voting cycle concludes, the first reward distribution stage begins. During a stage, the individual rollup teams will begin to keep track of scores for all of their users based on their scoring criteria.
+After the first gauge voting cycle concludes, the first reward distribution
+stage begins. During a stage, the individual rollup teams will begin to keep
+track of scores for all of their users based on their scoring criteria.
 
-During a stage, the snapshot of each rollup's INIT balance will also be taken and used to determine the VIP [Balance Pool] rewards. There are two ways the snapshot is done:
+During a stage, the snapshot of each rollup's INIT balance will also be taken
+and used to determine the VIP [Balance Pool] rewards. There are two ways the
+snapshot is done:
 
-1.  **For Stage 1**: Two snapshots are taken: a single snapshot at the beginning of the stage to determine the VIP Balance Pool rewards for Stage 1, and multiple snapshots throughout the stage to determine the VIP Balance Pool rewards for Stage 2+.
-2.  **For Stage 2+**: Multiple snapshots are taken throughout the stage to determine the VIP Balance Pool rewards for the next stage.
+1.  **For Stage 1**: Two snapshots are taken: a single snapshot at the beginning
+    of the stage to determine the VIP Balance Pool rewards for Stage 1, and
+    multiple snapshots throughout the stage to determine the VIP Balance Pool
+    rewards for Stage 2+.
+2.  **For Stage 2+**: Multiple snapshots are taken throughout the stage to
+    determine the VIP Balance Pool rewards for the next stage.
 
-At the end of the stage, the scores for each user on each rollup are finalized, and the final rewards are distributed to the users.
+At the end of the stage, the scores for each user on each rollup are finalized,
+and the final rewards are distributed to the users.
 
-The combined timelines of the the gauge voting cycle and rewards distribution stage then as follows:
+The combined timelines of the the gauge voting cycle and rewards distribution
+stage then as follows:
 
 ![Gauge Voting and Rewards Distribution Timelines](/images/vip/vip_timelines.png)
 
 ### Challenge Period
 
-When a rollup finalizes its scores, it enters a **challenge period**. This period allows users and other parties to audit the scores submitted by the rollup, ensuring their accuracy and compliance with both the VIP scoring policy and the rollup's own scoring criteria. If someone finds an incorrect scoring, they can submit a challenge through an expedited or emergency governance proposal on Initia L1.
+When a rollup finalizes its scores, it enters a **challenge period**. This
+period allows users and other parties to audit the scores submitted by the
+rollup, ensuring their accuracy and compliance with both the VIP scoring policy
+and the rollup's own scoring criteria. If someone finds an incorrect scoring,
+they can submit a challenge through an expedited or emergency governance
+proposal on Initia L1.
 
 If a challenge succeeds, the following changes occur:
 
-1. The system replaces the VIP scoring agent and transfers authority to a new agent.
+1. The system replaces the VIP scoring agent and transfers authority to a new
+   agent.
 2. The system recalculates rewards for the stage.
 
-Note that the challenge period happens alongside the start of the next stage and does not delay its commencement, as seen in the timeline above.
+Note that the challenge period happens alongside the start of the next stage and
+does not delay its commencement, as seen in the timeline above.

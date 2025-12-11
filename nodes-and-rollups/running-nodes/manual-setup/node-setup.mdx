@@ -12,7 +12,8 @@ sudo apt-get install -y build-essential curl wget jq
 
 ## Install the Initia Daemon
 
-Then, we need to clone the Initia repository and checkout the latest or desired version.
+Then, we need to clone the Initia repository and checkout the latest or desired
+version.
 
 ```sh
 git clone https://github.com/initia-labs/initia
@@ -20,14 +21,14 @@ cd initia
 git checkout [version]
 ```
 
-Once we have the correct version, we can build the binary. This will install the `initiad` executable to your `GOPATH` environment variable.
+Once we have the correct version, we can build the binary. This will install the
+`initiad` executable to your `GOPATH` environment variable.
 
 ```sh
 make install
 ```
 
 To verify that the installation was successful, run the following command:
-
 
 ```sh
 initiad version --long
@@ -53,16 +54,19 @@ If you get a `initiad: command not found` message from running `initiad`, you ma
 ```sh
 export PATH=$PATH:$(go env GOPATH)/bin
 ```
+
 </Tip>
 
 ## Increases File Descriptors Limit
 
-Linux systems by default set the maximum number of file descriptors that can be opened by a process to 1024. It is recomemneded that you increase this amount.
+Linux systems by default set the maximum number of file descriptors that can be
+opened by a process to 1024. It is recomemneded that you increase this amount.
 
-To do so, modify `/etc/security/limits.conf` to increase the amount. The `nofile` is the number of files a process may open at a time.
+To do so, modify `/etc/security/limits.conf` to increase the amount. The
+`nofile` is the number of files a process may open at a time.
 
 <Tip>
-If you are using a non-root user, replace `*` with the username of the user.
+  If you are using a non-root user, replace `*` with the username of the user.
 </Tip>
 
 ```sh limits.conf
@@ -72,9 +76,12 @@ If you are using a non-root user, replace `*` with the username of the user.
 
 ## Register Initia as a Service
 
-While you can run your initia node manually, it is recomemnded that you register it as a Linux service. This will allow you to more easily manage your node and also to run it as a background process.
+While you can run your initia node manually, it is recomemnded that you register
+it as a Linux service. This will allow you to more easily manage your node and
+also to run it as a background process.
 
-To do so, create a file at `/etc/systemd/system/initiad.service` with the contents below. replace
+To do so, create a file at `/etc/systemd/system/initiad.service` with the
+contents below. replace
 
 - **User:** with the account name that you will be running `initiad` from
 - **ExecStart:** with the full path to the `initiad` binary + `start` command
@@ -97,7 +104,8 @@ LimitNOFILE=65535
 WantedBy=multi-user.target
 ```
 
-Once the file is created, run the following command to enable the service and start it:
+Once the file is created, run the following command to enable the service and
+start it:
 
 ```sh
 sudo systemctl enable initiad
@@ -110,4 +118,5 @@ Whenever you modify the `initiad.service` file after you enabled it, you need to
 systemctl daemon-reload
 systemctl restart initiad
 ```
+
 </Note>
