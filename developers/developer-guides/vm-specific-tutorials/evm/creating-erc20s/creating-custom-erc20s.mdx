@@ -137,16 +137,28 @@ Compiler run successful!
 
 ## Deploying the Contract
 
-Now that Our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge create` command
+Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To accomplish this, we will use Foundry's `forge create` command
+
+<Warning>
+**Security Note:**  
+In this tutorial we export a private key directly in the terminal for simplicity. This is fine for *testnet* or *throwaway* accounts. Do **not** use this method for accounts holding real funds. For production usage, place sensitive keys in a `.env` file (ignored by git) or use a secure key manager.
+</Warning>
+
 
 ```sh
 export PRIVATE_KEY=0x...
-export RPC_URL=http://...
-forge create src/NewInitiaERC20.sol:NewInitiaERC20 --private-key $PRIVATE_KEY --rpc-url $RPC_URL --constructor-args "MyToken" "MTK" 18 100 --legacy
+export RPC_URL='https://jsonrpc-evm-1.anvil.asia-southeast.initia.xyz'
+forge create src/NewInitiaERC20.sol:NewInitiaERC20 \
+  --rpc-url $RPC_URL \
+  --private-key $PRIVATE_KEY \
+  --legacy \
+  --broadcast \
+  --constructor-args "MyToken" "MTK" 18 100
 ```
 
 ### Expected Output:
 ```sh
+[⠊] Compiling...
 No files changed, compilation skipped
 Deployer: 0xc5D26D0281e28599c7790aacc810226BBDf0E431
 Deployed to: 0x3cc54047D191eeeBDcde081D8708490F6df49Be8
