@@ -4,9 +4,12 @@ title: Integrating Initia Minitswap
 
 ## Provide
 
-To provide INIT liquidity to Minitswap, you would need to use the `provide` function. 
+To provide INIT liquidity to Minitswap, you would need to use the `provide`
+function.
 
-By adding liquidity, you will help facilitate swaps between L1 and L2 INIT tokens. In return, you'll earn swap fees and arbitrage fees generated from the transactions that occur on Minitswap.
+By adding liquidity, you will help facilitate swaps between L1 and L2 INIT
+tokens. In return, you'll earn swap fees and arbitrage fees generated from the
+transactions that occur on Minitswap.
 
 **Move Function Interface:**
 
@@ -19,7 +22,9 @@ public entry fun provide(
 ```
 
 - `amount`: The amount of L1 INIT to provide.
-- `min_return_amount`: The minimum acceptable amount of LP tokens to be returned from the provide action. If the actual amount returned is less than this, the transaction will be reverted.
+- `min_return_amount`: The minimum acceptable amount of LP tokens to be returned
+  from the provide action. If the actual amount returned is less than this, the
+  transaction will be reverted.
 
 **Example Usage:**
 
@@ -82,13 +87,16 @@ public entry fun provide(
     main();
     ```
     </Tab>
+
 </Tabs>
 
 ## Unbond
 
-Before withdrawing your liquidity, you must first unbond your LP tokens. This process takes 7 days to complete.
+Before withdrawing your liquidity, you must first unbond your LP tokens. This
+process takes 7 days to complete.
 
-Minitswap depositors take risk of L2 fraud. By having 7-day unbonding period, all depositors will share the responsibility of L2 fraud equally.
+Minitswap depositors take risk of L2 fraud. By having 7-day unbonding period,
+all depositors will share the responsibility of L2 fraud equally.
 
 **Move Function Interface:**
 
@@ -159,13 +167,16 @@ public entry fun unbond(
     main();
     ```
     </Tab>
+
 </Tabs>
 
 ## Withdraw Unbond
 
-After the 7-day unbonding period, you can withdraw your LP tokens using the `withdraw_unbond` function.
+After the 7-day unbonding period, you can withdraw your LP tokens using the
+`withdraw_unbond` function.
 
-This allows you to freely exit your position whenever you'd like and reclaim your provided liquidity plus any fees you’ve earned along the way.
+This allows you to freely exit your position whenever you'd like and reclaim
+your provided liquidity plus any fees you’ve earned along the way.
 
 **Move Function Interface:**
 
@@ -248,6 +259,7 @@ public fun get_unbond_list(
     main();
     ```
     </Tab>
+
 </Tabs>
 
 ## Swap
@@ -269,9 +281,11 @@ public entry fun swap(
 - `offer_asset_metadata`: Metadata for the provided coin.
 - `return_asset_metadata`: Metadata for the coin to be returned.
 - `amount`: Coin amount provided.
-- `min_return_amount`: The minimum amount of coin to be returned. If the actual amount returned is less than this, the transaction will be reverted.
+- `min_return_amount`: The minimum amount of coin to be returned. If the actual
+  amount returned is less than this, the transaction will be reverted.
 
-For more information on metadata, please refer to [obtaining metadata](/developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin#obtaining-metadata).
+For more information on metadata, please refer to
+[obtaining metadata](/developers/developer-guides/vm-specific-tutorials/movevm/creating-move-coin#obtaining-metadata).
 
 **Example Usage:**
 
@@ -336,9 +350,10 @@ For more information on metadata, please refer to [obtaining metadata](/develope
     main();
     ```
     </Tab>
+
 </Tabs>
 
-`swap_simulation` is a view function to estimate the return value of said swap. 
+`swap_simulation` is a view function to estimate the return value of said swap.
 
 ```move
 #[view]
@@ -348,6 +363,7 @@ public fun swap_simulation(
     offer_amount: u64,
 ): (u64, u64) // (return amount, fee amount)
 ```
+
 - `offer_asset_metadata`: Metadata of the provided coin.
 - `return_asset_metadata`: Metadata of the coin that will be returned.
 - `amount`: Coin amount provided.
@@ -406,18 +422,21 @@ public fun swap_simulation(
     // { data: '["100","0"]', events: [], gas_used: '21371' }
     ```
     </Tab>
-</Tabs>
 
+</Tabs>
 
 ## Arbitrage
 
-Arbitrage on Minitswap helps balance L1 INIT and L2 INIT prices. 
+Arbitrage on Minitswap helps balance L1 INIT and L2 INIT prices.
 
-Use the `finalize_arb` function to complete arbitrage transactions after the L2 INIT challenge period. 
+Use the `finalize_arb` function to complete arbitrage transactions after the L2
+INIT challenge period.
 
-Arbitrage profits are shared between the `function caller` and the `LP provider`. 
+Arbitrage profits are shared between the `function caller` and the
+`LP provider`.
 
-Required arguments for `finalize_arb` can be obtained from the `OPinit Executor` and Minitswap view function
+Required arguments for `finalize_arb` can be obtained from the `OPinit Executor`
+and Minitswap view function
 
 **Move Function Interface:**
 
@@ -436,17 +455,21 @@ public entry fun finalize_arb(
 )
 ```
 
-- `arb_index`: Unique identifier for the arbitrage operation. It is used to track the specific arbitrage transaction being finalized.
+- `arb_index`: Unique identifier for the arbitrage operation. It is used to
+  track the specific arbitrage transaction being finalized.
 - `output_index`: Index of the output related to the arbitrage.
-- `withdrawal_proofs`: A set of proofs required to validate the withdrawal action. These proofs ensure the legitimacy of the funds being withdrawn.
+- `withdrawal_proofs`: A set of proofs required to validate the withdrawal
+  action. These proofs ensure the legitimacy of the funds being withdrawn.
 - `sender`: Address of the account that initiated the withdrawal process.
 - `sequence`: Sequence number to ensure the correct order of transactions.
-- `version`: Version identifier for the output root being used. Currently, the version is set to `0`.
-- `state_root`: The state root of the L2 blockchain at the time of the withdrawal.
+- `version`: Version identifier for the output root being used. Currently, the
+  version is set to `0`.
+- `state_root`: The state root of the L2 blockchain at the time of the
+  withdrawal.
 - `storage_root`: Root hash representing the storage related to the withdrawal.
 - `latest_block_hash`: The hash of the latest L2 block to ensure consistency.
 
-To obtain the required arguments, you should 
+To obtain the required arguments, you should
 
 **Example Usage:**
 
@@ -490,7 +513,7 @@ To obtain the required arguments, you should
     function be(num: bigint): number[] {
         return num ? be(num >> 8n).concat([Number(num % 256n)]) : []
     }
-    
+
     function u64BE(num: bigint) {
         const b = be(num)
         return Buffer.from(
@@ -499,7 +522,7 @@ To obtain the required arguments, you should
             .concat(b)
         )
     }
-    
+
     function intToUint8Array(value: number): Uint8Array {
         let hex = value.toString(16);
         if (hex.length % 2 !== 0) {
@@ -513,10 +536,10 @@ To obtain the required arguments, you should
         .create()
         .update(Buffer.from([...u64BE(id), ...Buffer.from(l1Denom)]))
         .digest()
-    
+
         return `l2/${Buffer.from(sum).toString('hex')}`
     }
-    
+
     function coinMetadata(creator: string, symbol: string) {
         const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
         const addrBytes = bcs.address().serialize(creator).toBytes()
@@ -532,18 +555,18 @@ To obtain the required arguments, you should
         gasAdjustment: '2.0',
     });
     const moduleAddr = '0x1';
-    
+
     const key = new MnemonicKey({
         mnemonic: '', // Put your mnemonic here
     });
-    
+
     const wallet = new Wallet(restClient, key);
-    
+
     async function main() {
         listUp();
     }
     main();
-    
+
     async function listUp() {
         const pools = await getPools();
         console.log(pools.map(p => p.virtual_pool ? p.virtual_pool.inner : null));
@@ -570,7 +593,7 @@ To obtain the required arguments, you should
                         bcs.u64().serialize(100).toBase64(),
                     ]
                 );
-        
+
                 for (const info of infos) {
                     arbCount++;
                     const msg = await checkCanFinalize(chains, info, pool);
@@ -581,12 +604,12 @@ To obtain the required arguments, you should
             }
         }
         console.log(`${msgs.length} / ${arbCount}`);
-    
+
         if (msgs.length === 0) return;
         const signedTx = await wallet.createAndSignTx({ msgs });
         console.log(await restClient..broadcastSync(signedTx));
     }
-    
+
     async function getPools(): Promise<Pools[]> {
         const moduleStore = await restClient.move.resource<ModuleStore>(
             moduleAddr,
@@ -598,7 +621,7 @@ To obtain the required arguments, you should
         const pools = poolsTable.map(entity => JSON.parse(entity.value) as Pools);
         return pools;
     }
-    
+
     async function checkCanFinalize(
         chains: Chain[],
         arbInfo: ArbInfo,
@@ -608,34 +631,34 @@ To obtain the required arguments, you should
             chain => chain.metadata.op_bridge_id == pools.op_bridge_id
         );
         if (!chain) return false;
-    
+
         if (!chain.metadata.executor_uri) return false;
-    
+
         const executorClient = new APIRequester(chain.metadata.executor_uri);
         const withdrawals = await executorClient.get<Withdrawal>('tx/withdrawal', {
             address: pools.virtual_pool ? AccAddress.fromHex(pools.virtual_pool.inner) : '',
         });
-    
+
         const withdraw = withdrawals.withdrawalTxList.find(
             w => w.l1Denom === 'uinit' && w.amount === arbInfo.ibc_op_init_sent
         );
-    
+
         if (!withdraw || withdraw.merkleRoot === '') return false;
-    
+
         const lastFinalizedOutput = await restClient.ophost.lastFinalizedOutput(
             Number(pools.op_bridge_id)
         );
-    
+
         if (lastFinalizedOutput.output_index < withdraw.outputIndex) return false;
-    
+
         const outputRes = await executorClient.get<Output>('output', {
             output_index: withdraw.outputIndex,
         });
-    
+
         if (outputRes.outputList.length === 0) return false;
-    
+
         const output = outputRes.outputList[0];
-    
+
         return new MsgExecute(
             key.accAddress,
             moduleAddr,
@@ -660,7 +683,7 @@ To obtain the required arguments, you should
             ].map(v => v.toBase64())
         );
     }
-    
+
     interface ModuleStore {
         admin: string;
         arb_batch_index: string;
@@ -704,7 +727,7 @@ To obtain the required arguments, you should
             length: string;
         };
     }
-    
+
     interface Pools {
         ibc_channel: string;
         op_bridge_id: string;
@@ -715,14 +738,14 @@ To obtain the required arguments, you should
             inner: string;
         } | null;
     }
-    
+
     interface Chain {
         chain_id: string;
         chain_name: string;
         pretty_name: string;
         description: string;
         website: string;
-    
+
         metadata: {
             op_bridge_id: string;
             executor_uri: string;
@@ -735,7 +758,7 @@ To obtain the required arguments, you should
         bech32_prefix: string;
         network_type: string;
     }
-    
+
     interface ArbInfo {
         executed_time: string;
         ibc_op_init_metadata: string;
@@ -744,7 +767,7 @@ To obtain the required arguments, you should
         init_used: string;
         triggering_fee: string;
     }
-    
+
     interface Withdrawal {
         count: number;
         limit: number;
@@ -761,7 +784,7 @@ To obtain the required arguments, you should
             merkleProof: string[];
         }[];
     }
-    
+
     interface Output {
         count: number;
         limit: number;
@@ -777,4 +800,5 @@ To obtain the required arguments, you should
     }
     ```
     </Tab>
+
 </Tabs>

@@ -2,15 +2,28 @@
 title: VIP Gauge Voting
 ---
 
-To decide how much of the total [Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards are distributed to each rollup in a given stage, a gauge weight voting process is used. This is similar to the one pioneered by Curve Finance for use with their liquidity pools.
+To decide how much of the total
+[Weight Pool](/home/core-concepts/vip/architecture#weight-pool) rewards are
+distributed to each rollup in a given stage, a gauge weight voting process is
+used. This is similar to the one pioneered by Curve Finance for use with their
+liquidity pools.
 
 ### Voting Cycles
 
-Voting on VIP gauges occurs at regular intervals called **cycles**. Every VIP-whitelisted rollup has a "gauge" that determines the ratio of total Weight Pool rewards it can receive. INIT and Enshrined Liquidity stakers can then use their voting power to increase the weight of the gauges for their preferred rollups. They can allocate their entire voting power to a single rollup's gauge or distribute it across multiple gauges. All gauge voting occurs on Initia L1.
+Voting on VIP gauges occurs at regular intervals called **cycles**. Every
+VIP-whitelisted rollup has a "gauge" that determines the ratio of total Weight
+Pool rewards it can receive. INIT and Enshrined Liquidity stakers can then use
+their voting power to increase the weight of the gauges for their preferred
+rollups. They can allocate their entire voting power to a single rollup's gauge
+or distribute it across multiple gauges. All gauge voting occurs on Initia L1.
 
 ### Gauge Voting Power
 
-For VIP Gauge Votes, a user's voting power depends on their staking position. For INIT staking, their VIP voting power matches their voting power in the Initia L1 governance. However, for Enshrined Liquidity staking positions, an adjustment factor is applied to their voting power. This adjustment factor varies for each staked LP token pair.
+For VIP Gauge Votes, a user's voting power depends on their staking position.
+For INIT staking, their VIP voting power matches their voting power in the
+Initia L1 governance. However, for Enshrined Liquidity staking positions, an
+adjustment factor is applied to their voting power. This adjustment factor
+varies for each staked LP token pair.
 
 #### Example Scenario
 
@@ -22,21 +35,22 @@ Consider a case with 3 users and 3 rollups:
 | User 2 | 50%                |
 | User 3 | 20%                |
 
-
 Each user decides to vote on the gauges as follows:
 
 | User   | Rollup 1 Gauge | Rollup 2 Gauge | Rollup 3 Gauge |
-| ------ | --------------- | --------------- | --------------- |
-| User 1 | 10%             | 15%             | 5%              |
-| User 2 | 25%             | 25%             | 0%              |
-| User 3 | 20%             | 0%              | 0%              |
+| ------ | -------------- | -------------- | -------------- |
+| User 1 | 10%            | 15%            | 5%             |
+| User 2 | 25%            | 25%            | 0%             |
+| User 3 | 20%            | 0%             | 0%             |
 
-*Percentages represent the portion of each user's total voting power allocated to each rollup.
+\*Percentages represent the portion of each user's total voting power allocated
+to each rollup.
 
-After the voting period ends, the final Weight Pool reward distribution is calculated as follows:
+After the voting period ends, the final Weight Pool reward distribution is
+calculated as follows:
 
 | Rollup   | Percentage of Total Rewards |
-| --------- | --------------------------- |
+| -------- | --------------------------- |
 | Rollup 1 | 55%                         |
 | Rollup 2 | 40%                         |
 | Rollup 3 | 5%                          |

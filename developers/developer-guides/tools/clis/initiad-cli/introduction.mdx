@@ -1,22 +1,32 @@
 ---
 title: Introduction
-description: Learn how to install and get started with the initiad command-line interface for interacting with Initia L1
+description:
+  Learn how to install and get started with the initiad command-line interface
+  for interacting with Initia L1
 ---
 
-The [initiad CLI](https://github.com/initia-labs/initia) is a command-line interface for interacting with the Initia L1. This tool provides comprehensive functionality for developers and users to manage accounts, query blockchain data, submit transactions, and perform other operations.
+The [initiad CLI](https://github.com/initia-labs/initia) is a command-line
+interface for interacting with the Initia L1. This tool provides comprehensive
+functionality for developers and users to manage accounts, query blockchain
+data, submit transactions, and perform other operations.
 
 ## Overview
 
 With initiad, you can:
 
 - **Account Management**: Create, import, and manage blockchain accounts
-- **Transaction Operations**: Send transactions, delegate tokens, and interact with smart contracts  
-- **Data Queries**: Query blockchain state, account balances, and transaction history
-- **Validator Operations**: Create validators, delegate stakes, and manage governance proposals
-- **Network Interaction**: Connect to different networks (mainnet, testnet, local)
+- **Transaction Operations**: Send transactions, delegate tokens, and interact
+  with smart contracts
+- **Data Queries**: Query blockchain state, account balances, and transaction
+  history
+- **Validator Operations**: Create validators, delegate stakes, and manage
+  governance proposals
+- **Network Interaction**: Connect to different networks (mainnet, testnet,
+  local)
 
 <Info>
-initiad is built using the Cosmos SDK and provides a familiar interface for users of other Cosmos-based chains.
+  initiad is built using the Cosmos SDK and provides a familiar interface for
+  users of other Cosmos-based chains.
 </Info>
 
 ## Prerequisites
@@ -28,7 +38,7 @@ Before installing initiad, ensure you have the following requirements:
 - **Make**: For building the binary
 
 <Tip>
-You can verify your Go installation by running `go version` in your terminal.
+  You can verify your Go installation by running `go version` in your terminal.
 </Tip>
 
 ## Installation
@@ -41,6 +51,7 @@ First, clone the initiad repository from GitHub:
 git clone https://github.com/initia-labs/initia.git
 cd initia
 ```
+
 </Step>
 
 <Step title="Get Version and Checkout">
@@ -57,12 +68,10 @@ git checkout $VERSION
 </Tab>
 
 <Tab title="Testnet">
-```bash
-# Get the current testnet version and checkout
-export VERSION=$(curl -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
+  ```bash # Get the current testnet version and checkout export VERSION=$(curl
+  -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info |
+  jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+  echo "Checking out version: $VERSION" git checkout $VERSION ```
 </Tab>
 
 <Tab title="Manual">
@@ -76,7 +85,8 @@ git checkout $VERSION
 </Tabs>
 
 <Warning>
-Always use a specific version tag rather than the main branch for production environments to ensure stability.
+  Always use a specific version tag rather than the main branch for production
+  environments to ensure stability.
 </Warning>
 
 <Note>
@@ -92,6 +102,7 @@ make install
 ```
 
 This will build the binary and install it to your `$GOPATH/bin` directory.
+
 </Step>
 </Steps>
 
@@ -121,7 +132,8 @@ initiad --help
 
 ## Network Configuration
 
-By default, initiad connects to the Initia mainnet. You can configure it to connect to different networks:
+By default, initiad connects to the Initia mainnet. You can configure it to
+connect to different networks:
 
 <Tabs>
 <Tab title="Mainnet">
@@ -132,10 +144,8 @@ initiad config node https://rpc.initia.xyz:443
 </Tab>
 
 <Tab title="Testnet">
-```bash
-initiad config chain-id initiation-1
-initiad config node https://rpc.testnet.initia.xyz:443
-```
+  ```bash initiad config chain-id initiation-1 initiad config node
+  https://rpc.testnet.initia.xyz:443 ```
 </Tab>
 
 <Tab title="Local Node">
@@ -155,8 +165,11 @@ Now that you have initiad installed and configured, you can:
 Set up accounts for sending transactions and managing assets
 </Card>
 
-<Card title="Query Blockchain Data" href="/developers/developer-guides/tools/clis/initiad-cli/querying-data">
-Learn how to query balances, transactions, and network information
+<Card
+  title="Query Blockchain Data"
+  href="/developers/developer-guides/tools/clis/initiad-cli/querying-data"
+>
+  Learn how to query balances, transactions, and network information
 </Card>
 
 <Card title="Send Transactions" href="/developers/developer-guides/tools/clis/initiad-cli/transactions">
