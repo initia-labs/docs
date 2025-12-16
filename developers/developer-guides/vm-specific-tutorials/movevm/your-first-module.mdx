@@ -75,8 +75,12 @@ Initialize your directory as a Move package, which creates the necessary project
 structure.
 
 <CodeGroup>
-  ```bash Initia L1 initiad move new hello_world ``` ```bash Move Rollups
-  minitiad move new hello_world ```
+```bash Initia L1
+initiad move new hello_world
+```
+```bash Move Rollups
+minitiad move new hello_world
+```
 </CodeGroup>
 
 ### Understanding the Project Structure
@@ -179,9 +183,12 @@ First, retrieve your account's hexadecimal address for the Move.toml
 configuration:
 
 <CodeGroup>
-  ```bash Initia L1 initiad keys parse $(initiad keys show example --address)
-  ``` ```bash Move Rollups minitiad keys parse $(minitiad keys show example
-  --address) ```
+```bash Initia L1
+initiad keys parse $(initiad keys show example --address)
+```
+```bash Move Rollups
+minitiad keys parse $(minitiad keys show example --address)
+```
 </CodeGroup>
 
 **Expected output:**
@@ -219,8 +226,12 @@ hello = "0xCC86AF3F776B95A7DED542035B3B666A9FDE2EE9" # Replace with your address
 Build your Move module into deployable bytecode:
 
 <CodeGroup>
-  ```bash Initia L1 initiad move build ``` ```bash Move Rollups minitiad move
-  build ```
+```bash Initia L1
+initiad move build
+```
+```bash Move Rollups
+minitiad move build
+```
 </CodeGroup>
 
 **Successful compilation output:**
@@ -241,7 +252,7 @@ After compilation, you'll find a new `build/` directory containing:
 - Compiled bytecode modules
 - Dependency information
 - Build artifacts and metadata
-  </Step>
+</Step>
 
 <Step title="Deploy Your Module">
 Deploy your compiled module to the blockchain network.
@@ -296,8 +307,7 @@ console.log(`✅  Success! Tx hash: ${result.txhash}`) console.log('Result:',
 result) } }
 
 main().catch(console.error)
-
-````
+```
 </CodeGroup>
 
 ### Understanding Deployment Options
@@ -344,7 +354,7 @@ initiad tx move execute $MODULE_ADDRESS hello_world save_message \
   --from example \
   --gas-prices $GAS_PRICES \
   --chain-id $CHAIN_ID
-````
+```
 
 ```bash Move Rollups
 export MODULE_ADDRESS=0xcc86af3f776b95a7ded542035b3b666a9fde2ee9 # Replace with your deployer address
@@ -435,8 +445,7 @@ bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()
 ] ) console.log('Result:', result) }
 
 main().catch(console.error)
-
-````
+```
 </CodeGroup>
 
 ### Expected Results
@@ -448,7 +457,7 @@ If both operations succeed, your query should return:
   "events": [],
   "gas_used": "1071"
 }
-````
+```
 
 <Check>
 **Success!** You've successfully created, deployed, and interacted with your first Move module. The message is now permanently stored on the blockchain and can be retrieved by anyone.
