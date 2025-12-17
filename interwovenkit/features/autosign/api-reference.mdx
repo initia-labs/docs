@@ -6,7 +6,7 @@ icon: code
 
 ## Overview
 
-The `autoSign` object provides methods and properties for managing autosign functionality. It's available through the `useInterwovenKit()` hook.
+The `autoSign` object provides methods and properties for managing autosign functionality. It is available through the `useInterwovenKit()` hook.
 
 ## Accessing the API
 
@@ -91,7 +91,7 @@ function ExpirationDisplay() {
 Map of chain IDs to expiration timestamps for all configured chains.
 
 <ParamField path="expirations" type="Record<string, number | null>">
-  Returns an object mapping chain IDs to expiration timestamps (in milliseconds since epoch). Use this for multi-chain applications to check autosign status across multiple chains. Returns `null` for chains where autosign is not enabled.
+  Returns an object mapping chain IDs to expiration timestamps (in milliseconds since epoch). Use this for multi-chain applications to check autosign status across multiple chains. Returns `null` values for chains where autosign is not enabled.
 </ParamField>
 
 **Example:**

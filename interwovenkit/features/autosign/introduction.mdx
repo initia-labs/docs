@@ -1,15 +1,15 @@
 ---
 title: Introduction
-description: Learn about autosign and ghost wallets for seamless transaction signing
+description: Learn about autosign and ghost wallets for seamless transaction signing.
 icon: robot
 ---
 
 ## Overview
 
-Autosign enables your application to send transactions automatically without requiring user confirmation for each transaction. This feature uses embedded wallet (also known as a "ghost wallet") to sign transactions on behalf of users, providing a seamless user experience while maintaining security through granular permission controls.
+Autosign enables your application to send transactions automatically without requiring user confirmation for each transaction. This feature uses an embedded wallet (also known as a "ghost wallet") to sign transactions on behalf of users, providing a seamless user experience while maintaining security through granular permission controls.
 
 <Info>
-  Autosign is built on Cosmos SDK's `authz` and `feegrant` modules, allowing fine-grained control over which transaction types can be automatically signed and when permissions expire.
+  Autosign is built on the Cosmos SDK's `authz` and `feegrant` modules, allowing fine-grained control over which transaction types can be automatically signed and when permissions expire.
 </Info>
 
 ## What Are Ghost Wallets?
@@ -51,7 +51,7 @@ The user signs a single transaction to create these grants.
 <Step title="Automatic Signing">
 
 When transactions match the granted permissions:
-1. InterwovenKit validates the transaction message types match the grants
+1. InterwovenKit validates that the transaction message types match the grants
 2. The system checks that permissions haven't expired
 3. The ghost wallet automatically signs the transaction
 4. The transaction is broadcast without user interaction

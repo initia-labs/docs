@@ -6,11 +6,11 @@ icon: play
 
 ## Overview
 
-Once autosign is configured, you can enable and manage it in your application using the `autoSign` object from `useInterwovenKit()`. This guide covers all aspects of using autosign in your code.
+Once autosign is configured, you can enable and manage it in your application using the `autoSign` object from `useInterwovenKit()`. This guide covers how to use autosign in your code.
 
 ## Accessing Autosign
 
-The `autoSign` object is available through the `useInterwovenKit` hook:
+The `autoSign` object is available through the `useInterwovenKit()` hook:
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -26,13 +26,17 @@ function MyComponent() {
 
 To enable autosign, call the `enable()` method. This opens a drawer where users can confirm the autosign setup and select an expiration duration.
 
-### Basic Usage
+The following examples show client components for enabling and disabling autosign. You can adapt this logic to your own UI or component structure.
+
+### Example: EnableAutosignButton
 
 ```tsx
+"use client"
+
 import { useState } from "react"
 import { useInterwovenKit } from "@initia/interwovenkit-react"
 
-function EnableAutosignButton() {
+export default function EnableAutosignButton() {
   const { autoSign } = useInterwovenKit()
   const [isEnabling, setIsEnabling] = useState(false)
 
@@ -77,19 +81,19 @@ When `autoSign.enable()` is called:
 </Step>
 
 <Step title="User Selection">
-  User can select an expiration duration from available defaults or use a custom duration.
+  The user can select an expiration duration from available defaults or use a custom duration.
 </Step>
 
 <Step title="Ghost Wallet Creation">
-  Privy creates an embedded wallet if one doesn't exist. This happens automatically in the background.
+  Privy creates an embedded wallet if one does not exist. This happens automatically in the background.
 </Step>
 
 <Step title="Permission Grant">
-  User signs a single transaction to grant `authz` and `feegrant` permissions to the ghost wallet.
+  The user signs a single transaction to grant `authz` and `feegrant` permissions to the ghost wallet.
 </Step>
 
 <Step title="Activation">
-  Autosign becomes active for the specified chain and message types. The Promise resolves on success.
+  Autosign becomes active for the specified chain and message types, and the Promise resolves on success.
 </Step>
 </Steps>
 
@@ -99,12 +103,14 @@ The method returns a Promise that resolves when autosign is successfully enabled
 
 Users can disable autosign at any time. This revokes all grants and prevents further automatic signing.
 
-### Basic Usage
+### Example: DisableAutosignButton
 
 ```tsx
+"use client"
+
 import { useInterwovenKit } from "@initia/interwovenkit-react"
 
-function DisableAutosignButton() {
+export default function DisableAutosignButton() {
   const { autoSign } = useInterwovenKit()
 
   const handleDisable = async () => {
