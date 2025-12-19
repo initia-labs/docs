@@ -1,0 +1,156 @@
+---
+title: useInterwovenKit
+---
+
+## Overview
+
+- Primary entry point for InterwovenKit connection state, UI actions, transaction helpers, and AutoSign functionality
+- Required when opening the InterwovenKit drawer or sending transactions
+- For simple address or username reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid extra transaction and AutoSign wiring
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`
+- Must be used within a React Query `QueryClientProvider`
+- Must be used within a wagmi `WagmiProvider`
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+
+## Quickstart
+
+```tsx
+"use client"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { WagmiProvider } from "wagmi"
+import {
+  InterwovenKitProvider,
+  MAINNET,
+  useInterwovenKit,
+} from "@initia/interwovenkit-react"
+
+const queryClient = new QueryClient()
+// Define your wagmi config with connectors, chains, and transports
+const wagmiConfig = /* your wagmi config */
+
+function ConnectButton() {
+  const { isConnected, openConnect, openWallet } = useInterwovenKit()
+  return (
+    <button onClick={isConnected ? openWallet : openConnect}>
+      {isConnected ? "Open wallet" : "Connect"}
+    </button>
+  )
+}
+
+export function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider {...MAINNET}>
+          <ConnectButton />
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+## Return value
+
+Returns an object with:
+
+**Connection state:**
+- `address`, `initiaAddress`, `hexAddress`, `username`, `offlineSigner`, `isConnected`, `isOpen`
+
+**UI actions:**
+- `openConnect`, `openWallet`, `openBridge`, `disconnect`
+
+**AutoSign:**
+- `autoSign` (status maps and `enable` / `disable` helpers)
+
+**Transaction helpers:**
+- `estimateGas`, `simulateTx`, `requestTxSync`, `requestTxBlock`, `submitTxSync`, `submitTxBlock`, `waitForTxConfirmation`
+
+## Notes
+
+- `disconnect()` clears bridge-related values from `localStorage`
+- Transaction helpers may throw `MoveError` on Move VM errors
+
+## Type reference (advanced)
+
+```ts
+function useInterwovenKit(): InterwovenKitResult
+
+type InterwovenKitResult = {
+  address: string
+  initiaAddress: string
+  hexAddress: string
+  username: string | null | undefined
+  offlineSigner: OfflineAminoSigner
+  isConnected: boolean
+  isOpen: boolean
+  openConnect: () => void
+  openWallet: () => void
+  openBridge: (defaultValues?: Partial<BridgeFormValues>) => void
+  disconnect: () => void
+  autoSign: AutoSignState
+  estimateGas: (tx: Pick<TxRequest, "messages" | "memo" | "chainId">) => Promise<number>
+  simulateTx: (tx: Pick<TxRequest, "messages" | "memo" | "chainId">) => Promise<unknown>
+  requestTxSync: (tx: TxRequest) => Promise<string>
+  requestTxBlock: (tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
+  submitTxSync: (tx: TxParams) => Promise<string>
+  submitTxBlock: (tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
+  waitForTxConfirmation: (options: WaitForTxOptions) => Promise<IndexedTx>
+}
+
+type BridgeFormValues = {
+  srcChainId: string
+  srcDenom: string
+  dstChainId: string
+  dstDenom: string
+  quantity: string
+  sender: string
+  cosmosWalletName?: string
+  recipient: string
+  slippagePercent: string
+}
+
+type TxRequest = {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string
+  gas?: number
+  gasAdjustment?: number
+  gasPrices?: Coin[] | null
+  spendCoins?: Coin[]
+  internal?: boolean | string | number
+}
+
+type TxParams = {
+  messages: EncodeObject[]
+  memo?: string
+  chainId?: string
+  fee: StdFee
+}
+
+type WaitForTxOptions = {
+  txHash: string
+  chainId?: string
+  timeoutMs?: number
+  intervalMs?: number
+}
+
+type AutoSignState = {
+  expiredAtByChain: Record<string, Date | null | undefined>
+  isEnabledByChain: Record<string, boolean>
+  isLoading: boolean
+  enable: (chainId?: string) => Promise<void>
+  disable: (chainId?: string) => Promise<void>
+}
+
+type OfflineAminoSigner = OfflineAminoSigner // Type from @cosmjs/amino
+type EncodeObject = EncodeObject // Type from @cosmjs/proto-signing
+type Coin = Coin // Type from cosmjs-types/cosmos/base/v1beta1/coin
+type StdFee = StdFee // Type from @cosmjs/stargate
+type DeliverTxResponse = DeliverTxResponse // Type from @cosmjs/stargate
+type IndexedTx = IndexedTx // Type from @cosmjs/stargate
+```

@@ -1,0 +1,63 @@
+---
+title: useAddress
+---
+
+## Overview
+
+- Returns the connected wallet address, automatically adapting to the default chain's format (hex for `minievm` chains, bech32 Initia address for others)
+- Use this hook when you need a single address that matches the default chain's format
+- Returns an empty string when there is no connected address or Privy has not finished connecting
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`
+- Must be used within a React Query `QueryClientProvider`
+- Must be used within a wagmi `WagmiProvider`
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+
+## Quickstart
+
+```tsx
+"use client"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { WagmiProvider } from "wagmi"
+import {
+  InterwovenKitProvider,
+  MAINNET,
+  useAddress,
+} from "@initia/interwovenkit-react"
+
+const queryClient = new QueryClient()
+// Define your wagmi config with connectors, chains, and transports
+const wagmiConfig = /* your wagmi config */
+
+function Address() {
+  const address = useAddress()
+  return <span>{address || "Not connected"}</span>
+}
+
+export function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider {...MAINNET}>
+          <Address />
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+## Return value
+
+```ts
+function useAddress(): string
+```
+
+Returns a hex address when the default chain is `minievm`, or an Initia bech32 address for other chain types. Returns an empty string when there is no connected address or when Privy is configured and not connected.
+
+## Notes
+
+- Prefer this hook over chain-specific address hooks (`useHexAddress`, `useInitiaAddress`) when you need a single address that automatically adapts to the default chain's format

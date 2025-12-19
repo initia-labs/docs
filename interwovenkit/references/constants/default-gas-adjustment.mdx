@@ -1,0 +1,18 @@
+---
+title: DEFAULT_GAS_ADJUSTMENT
+---
+
+## Overview
+
+- Default gas adjustment multiplier used by InterwovenKit when estimating gas for transactions
+- Reference this constant when you need to reproduce InterwovenKit's default gas estimate behavior in your own code or pass an explicit `gasAdjustment` to advanced transaction helpers
+
+## Value
+
+```ts
+const DEFAULT_GAS_ADJUSTMENT: number // 1.4
+```
+
+## Notes
+
+- This value is used when InterwovenKit estimates gas for transactions without an explicit `gasAdjustment`

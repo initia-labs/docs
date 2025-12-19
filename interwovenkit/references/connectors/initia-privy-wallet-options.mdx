@@ -1,0 +1,47 @@
+---
+title: initiaPrivyWalletOptions
+---
+
+## Overview
+
+- Default options object provided by the SDK for constructing Privy wallet connectors and RainbowKit wallets
+- Contains shared metadata (name, icon, ID) used by `initiaPrivyWalletConnector` and `initiaPrivyWallet`
+- Use this when you want to customize the display name or icon by creating a copy and overriding fields
+
+## Prerequisites
+
+- Relevant only if you are using Privy with wagmi or RainbowKit
+- Privy must be set up separately (see Privy documentation for setup)
+
+## Quickstart
+
+```ts
+import { createConfig } from "wagmi"
+import { initiaPrivyWalletOptions } from "@initia/interwovenkit-react"
+import { toPrivyWalletConnector } from "@privy-io/cross-app-connect/rainbow-kit"
+
+// To customize, create a copy and override fields (do not mutate the export)
+const customOptions = { ...initiaPrivyWalletOptions, name: "Custom Name" }
+const customPrivyConnector = toPrivyWalletConnector(customOptions)
+
+const wagmiConfig = createConfig({
+  connectors: [customPrivyConnector],
+  /* your chains and transports */
+})
+```
+
+## Value
+
+```ts
+const initiaPrivyWalletOptions: {
+  id: string
+  name: string
+  iconUrl: string
+  iconBackground: string
+}
+```
+
+## Notes
+
+- This export is a provided default; do not mutate the imported object directly
+- To customize name or icon, create a copy and override fields instead of mutating the export

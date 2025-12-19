@@ -1,0 +1,35 @@
+---
+title: MAINNET
+---
+
+## Overview
+
+- Default configuration preset for Initia mainnet providing safe defaults for registry, router, glyph, and username services
+- Use as a starting point for production apps targeting the Initia mainnet
+
+## Quickstart
+
+```tsx
+import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <InterwovenKitProvider {...MAINNET}>{children}</InterwovenKitProvider>
+}
+```
+
+## Value
+
+```ts
+const MAINNET: {
+  defaultChainId: string
+  registryUrl: string
+  routerApiUrl: string
+  glyphUrl: string
+  usernamesModuleAddress: string
+  theme: "dark"
+}
+```
+
+## Notes
+
+- Most apps should start with `{...MAINNET}` and override only what they need (for example `defaultChainId` or `theme`)

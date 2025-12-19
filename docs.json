@@ -399,10 +399,57 @@
             ]
           },
           {
-            "group": "References",
+            "group": "API Reference",
             "pages": [
-              "interwovenkit/references/interwovenkit-provider",
-              "interwovenkit/references/useinterwovenkit"
+              "interwovenkit/references/index",
+              {
+                "group": "Components",
+                "pages": [
+                  "interwovenkit/references/components/interwovenkit",
+                  "interwovenkit/references/components/interwovenkit-provider"
+                ]
+              },
+              {
+                "group": "Connectors",
+                "pages": [
+                  "interwovenkit/references/connectors/initia-privy-wallet",
+                  "interwovenkit/references/connectors/initia-privy-wallet-connector",
+                  "interwovenkit/references/connectors/initia-privy-wallet-options",
+                  "interwovenkit/references/connectors/privy-app-id"
+                ]
+              },
+              {
+                "group": "Hooks",
+                "pages": [
+                  "interwovenkit/references/hooks/use-interwovenkit",
+                  "interwovenkit/references/hooks/use-address",
+                  "interwovenkit/references/hooks/use-initia-address",
+                  "interwovenkit/references/hooks/use-hex-address",
+                  "interwovenkit/references/hooks/use-portfolio",
+                  "interwovenkit/references/hooks/use-username-query"
+                ]
+              },
+              {
+                "group": "Constants",
+                "pages": [
+                  "interwovenkit/references/constants/mainnet",
+                  "interwovenkit/references/constants/testnet",
+                  "interwovenkit/references/constants/default-gas-adjustment",
+                  "interwovenkit/references/constants/default-gas-price-multiplier"
+                ]
+              },
+              {
+                "group": "Errors",
+                "pages": [
+                  "interwovenkit/references/errors/move-error"
+                ]
+              },
+              {
+                "group": "Utilities",
+                "pages": [
+                  "interwovenkit/references/utilities/inject-styles"
+                ]
+              }
             ]
           }
         ]

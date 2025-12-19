@@ -1,0 +1,18 @@
+---
+title: DEFAULT_GAS_PRICE_MULTIPLIER
+---
+
+## Overview
+
+- Default gas price multiplier used by InterwovenKit when suggesting fees
+- Reference this constant when you need to reproduce InterwovenKit's default gas price calculation in custom fee logic
+
+## Value
+
+```ts
+const DEFAULT_GAS_PRICE_MULTIPLIER: number // 1.05
+```
+
+## Notes
+
+- This multiplier is applied on top of base gas prices when InterwovenKit suggests fees

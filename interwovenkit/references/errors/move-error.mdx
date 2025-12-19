@@ -1,0 +1,50 @@
+---
+title: MoveError
+---
+
+## Overview
+
+- Error type that carries parsed Move VM error metadata for distinguishing Move VM failures from generic network or client errors
+- Thrown by transaction helpers when Move VM transactions fail, enabling developers to branch UI, logging, or telemetry based on Move-specific metadata
+- Use `instanceof MoveError` to identify and handle Move VM errors separately from other error types
+
+## Quickstart
+
+```ts
+import { MoveError } from "@initia/interwovenkit-react"
+
+function isMoveError(error: unknown): error is MoveError {
+  return error instanceof MoveError
+}
+
+// Example: accessing Move-specific fields
+try {
+  await submitTxBlock({ messages, fee })
+} catch (error) {
+  if (error instanceof MoveError) {
+    console.error(`Move error in ${error.moduleName} at ${error.moduleAddress}: ${error.errorCode}`)
+  }
+}
+```
+
+## Properties
+
+```ts
+class MoveError extends Error {
+  originalError: Error
+  moduleAddress: string
+  moduleName: string
+  errorCode: string
+  errorCodeHex: string
+  isFromRegistry: boolean
+}
+```
+
+## Thrown by
+
+- `requestTxBlock`
+- `submitTxBlock`
+
+## Notes
+
+- Use `instanceof MoveError` to branch UI or logging logic based on Move‑specific metadata such as `moduleAddress`, `moduleName`, and `errorCode`

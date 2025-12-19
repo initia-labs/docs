@@ -1,0 +1,77 @@
+---
+title: InterwovenKit
+---
+
+## Overview
+
+- Full-screen InterwovenKit UI component that renders the complete drawer interface in a single surface
+- Reuses configuration from the surrounding `InterwovenKitProvider` (network settings, theme, routing)
+- Use this when you want a full-page InterwovenKit experience instead of modal drawers
+- For modal-based UI with finer-grained control, prefer using `useInterwovenKit()` hook with `InterwovenKitProvider`
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`
+- Must be used within a React Query `QueryClientProvider`
+- Required if you use wallet-related InterwovenKit APIs: Must be used within a wagmi `WagmiProvider`
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+
+## Quickstart
+
+```tsx
+"use client"
+
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { WagmiProvider } from "wagmi"
+import { InterwovenKit, InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+
+const queryClient = new QueryClient()
+const wagmiConfig = /* your wagmi config */
+
+export function Page() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider {...MAINNET}>
+          <InterwovenKit />
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+## Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `bridge` | `Partial<BridgeFormValues>` | `undefined` | Optional initial values for the bridge form. When provided, InterwovenKit opens on the bridge route and pre-fills the form |
+
+## Return value
+
+Renders the InterwovenKit route UI.
+
+## Notes
+
+- The `bridge` prop only sets initial values; users can still change the form inside the UI
+- For finer-grained control (modals instead of full-screen), prefer using `useInterwovenKit()` with `InterwovenKitProvider`
+
+## Type reference (advanced)
+
+```ts
+type InterwovenKitProps = {
+  bridge?: Partial<BridgeFormValues>
+}
+
+type BridgeFormValues = {
+  srcChainId: string
+  srcDenom: string
+  dstChainId: string
+  dstDenom: string
+  quantity: string
+  sender: string
+  cosmosWalletName?: string
+  recipient: string
+  slippagePercent: string
+}
+```

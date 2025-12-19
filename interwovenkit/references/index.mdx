@@ -1,0 +1,60 @@
+---
+title: Overview
+---
+
+The InterwovenKit React API provides components, hooks, and utilities for integrating Initia wallet connections, transaction signing, and UI flows into React applications.
+
+InterwovenKit is designed around a single provider (`InterwovenKitProvider`) that configures network and UI behavior, with hooks layered on top for state, UI control, and transactions. Most users start by configuring `InterwovenKitProvider` with a preset (`MAINNET` or `TESTNET`), then use hooks like `useInterwovenKit` or `useAddress` to read connection state and trigger UI flows. The API is organized into:
+
+- **Components**: React providers and UI components (`InterwovenKitProvider`, `InterwovenKit`)
+- **Hooks**: React hooks for connection state, transactions, and data (`useInterwovenKit`, `useAddress`, `usePortfolio`, etc.)
+- **Utilities**: Helper functions (`injectStyles`)
+- **Errors**: Error types thrown by the API (`MoveError`)
+- **Constants**: Configuration presets and default values (`MAINNET`, `TESTNET`, gas constants)
+- **Connectors**: Wagmi and RainbowKit integration helpers for Privy wallets
+
+## Common starting points
+
+- **Initial setup**: [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx) with [`MAINNET`](./constants/mainnet.mdx) or [`TESTNET`](./constants/testnet.mdx)
+- **Read connection state**: [`useAddress`](./hooks/use-address.mdx) or [`useInterwovenKit`](./hooks/use-interwovenkit.mdx)
+- **Open UI flows**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`openConnect`, `openWallet`, `openBridge`)
+- **Send transactions**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`requestTxBlock`, `submitTxBlock`)
+
+If you are new to InterwovenKit, start with [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx) and [`useInterwovenKit`](./hooks/use-interwovenkit.mdx). Everything else builds on top of those two APIs.
+
+## Components
+
+- [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx)
+- [`InterwovenKit`](./components/interwovenkit.mdx)
+
+## Hooks
+
+- [`useInterwovenKit`](./hooks/use-interwovenkit.mdx)
+- [`useAddress`](./hooks/use-address.mdx)
+- [`useHexAddress`](./hooks/use-hex-address.mdx)
+- [`useInitiaAddress`](./hooks/use-initia-address.mdx)
+- [`useUsernameQuery`](./hooks/use-username-query.mdx)
+- [`usePortfolio`](./hooks/use-portfolio.mdx)
+
+## Utilities
+
+- [`injectStyles`](./utilities/inject-styles.mdx)
+
+## Errors
+
+- [`MoveError`](./errors/move-error.mdx)
+
+## Constants
+
+- [`MAINNET`](./constants/mainnet.mdx)
+- [`TESTNET`](./constants/testnet.mdx)
+- [`DEFAULT_GAS_ADJUSTMENT`](./constants/default-gas-adjustment.mdx)
+- [`DEFAULT_GAS_PRICE_MULTIPLIER`](./constants/default-gas-price-multiplier.mdx)
+
+## Connectors
+
+- [`PRIVY_APP_ID`](./connectors/privy-app-id.mdx)
+- [`initiaPrivyWalletOptions`](./connectors/initia-privy-wallet-options.mdx)
+- [`initiaPrivyWalletConnector`](./connectors/initia-privy-wallet-connector.mdx)
+- [`initiaPrivyWallet`](./connectors/initia-privy-wallet.mdx)
+

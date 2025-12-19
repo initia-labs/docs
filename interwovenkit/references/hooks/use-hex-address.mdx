@@ -1,0 +1,57 @@
+---
+title: useHexAddress
+---
+
+## Overview
+
+- Returns the connected wallet address in hex format (always hex, regardless of chain type)
+- Use this hook when you specifically need a hex address for EVM-style tooling or when you want a consistent hex format regardless of the default chain
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`
+- Must be used within a wagmi `WagmiProvider`
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+
+## Quickstart
+
+```tsx
+"use client"
+
+import { WagmiProvider } from "wagmi"
+import {
+  InterwovenKitProvider,
+  MAINNET,
+  useHexAddress,
+} from "@initia/interwovenkit-react"
+
+const wagmiConfig = /* your wagmi config */
+
+function Address() {
+  const address = useHexAddress()
+  return <span>{address || "Not connected"}</span>
+}
+
+export function App() {
+  return (
+    <WagmiProvider config={wagmiConfig}>
+      <InterwovenKitProvider {...MAINNET}>
+        <Address />
+      </InterwovenKitProvider>
+    </WagmiProvider>
+  )
+}
+```
+
+## Return value
+
+```ts
+function useHexAddress(): string
+```
+
+Returns the Initia account address in hex format when Privy is connected. Returns an empty string (`""`) when there is no connected address, or when Privy is configured and not connected.
+
+## Notes
+
+- This hook always returns a hex address, unlike `useAddress` which adapts to the default chain's format
+- Use this hook for EVM-style integrations or when you need a consistent hex format regardless of chain type

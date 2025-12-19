@@ -1,0 +1,37 @@
+---
+title: TESTNET
+---
+
+## Overview
+
+- Default configuration preset for Initia testnet pointing to testnet registry, router, glyph, and username services
+- Use for development or staging apps targeting the Initia testnet
+
+## Quickstart
+
+```tsx
+import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react"
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return <InterwovenKitProvider {...TESTNET}>{children}</InterwovenKitProvider>
+}
+```
+
+## Value
+
+```ts
+const TESTNET: {
+  defaultChainId: string
+  registryUrl: string
+  routerApiUrl: string
+  glyphUrl: string
+  usernamesModuleAddress: string
+  theme: "dark"
+  disableAnalytics: true
+}
+```
+
+## Notes
+
+- Analytics are disabled by default on testnet via `disableAnalytics: true`
+- Most apps should start with `{...TESTNET}` in non‑production environments and override only what they need

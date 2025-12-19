@@ -1,0 +1,40 @@
+---
+title: initiaPrivyWallet
+---
+
+## Overview
+
+- RainbowKit wallet definition created from `initiaPrivyWalletOptions` for integrating Privy wallets with RainbowKit
+- Use this when configuring RainbowKit's `wallets` list and you want to include the bundled Privy wallet
+- Shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
+
+## Prerequisites
+
+- Relevant only if you are using RainbowKit
+- Privy must be set up separately (see Privy documentation for setup)
+
+## Quickstart
+
+```ts
+import { initiaPrivyWallet } from "@initia/interwovenkit-react"
+import { getDefaultConfig } from "@rainbow-me/rainbowkit"
+
+export const rainbowConfig = getDefaultConfig({
+  appName: "My dApp",
+  wallets: [[initiaPrivyWallet]],
+})
+```
+
+## Return value
+
+```ts
+const initiaPrivyWallet: Wallet
+```
+
+A RainbowKit `Wallet` object that can be included in the `wallets` array when configuring RainbowKit. The wallet object includes properties such as `id`, `name`, `iconUrl`, and `iconBackground` from `initiaPrivyWalletOptions`, along with RainbowKit-specific wallet connection methods.
+
+Type `Wallet` is from `@rainbow-me/rainbowkit`.
+
+## Notes
+
+- This wallet definition shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
