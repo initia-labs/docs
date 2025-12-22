@@ -6,20 +6,20 @@ icon: code
 
 ## Overview
 
-The `autoSign` object provides methods and properties for managing autosign functionality. It is available through the `useInterwovenKit()` hook.
+The `autoSign` object provides methods and properties for managing autosign
+functionality. It is available through the `useInterwovenKit()` hook.
 
 ## Accessing the API
 
 ```tsx
-import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 function MyComponent() {
   const { autoSign } = useInterwovenKit()
-  
+
   // Use autoSign methods and properties
 }
 ```
-
 
 ## Type Definitions
 
@@ -35,7 +35,6 @@ interface AutoSign {
 }
 ```
 
-
 ## Properties
 
 ### isLoading
@@ -43,7 +42,8 @@ interface AutoSign {
 Indicates whether autosign status is currently being checked.
 
 <ParamField path="isLoading" type="boolean">
-  Returns `true` when autosign status is being initialized or checked, `false` otherwise. Use this to show loading indicators in your UI.
+  Returns `true` when autosign status is being initialized or checked, `false`
+  otherwise. Use this to show loading indicators in your UI.
 </ParamField>
 
 **Example:**
@@ -65,7 +65,9 @@ function AutosignButton() {
 Expiration date for autosign on the default chain.
 
 <ParamField path="expiration" type="Date | null">
-  Returns a `Date` object representing when autosign expires on the default chain, or `null` if autosign is not enabled or has expired. Use this to display expiration information and check if autosign is currently active.
+  Returns a `Date` object representing when autosign expires on the default
+  chain, or `null` if autosign is not enabled or has expired. Use this to
+  display expiration information and check if autosign is currently active.
 </ParamField>
 
 **Example:**
@@ -75,11 +77,7 @@ function ExpirationDisplay() {
   const { autoSign } = useInterwovenKit()
 
   if (autoSign.expiration && autoSign.expiration > new Date()) {
-    return (
-      <p>
-        Autosign expires: {autoSign.expiration.toLocaleString()}
-      </p>
-    )
+    return <p>Autosign expires: {autoSign.expiration.toLocaleString()}</p>
   }
 
   return <p>Autosign is not enabled</p>
@@ -91,7 +89,10 @@ function ExpirationDisplay() {
 Map of chain IDs to expiration timestamps for all configured chains.
 
 <ParamField path="expirations" type="Record<string, number | null>">
-  Returns an object mapping chain IDs to expiration timestamps (in milliseconds since epoch). Use this for multi-chain applications to check autosign status across multiple chains. Returns `null` values for chains where autosign is not enabled.
+  Returns an object mapping chain IDs to expiration timestamps (in milliseconds
+  since epoch). Use this for multi-chain applications to check autosign status
+  across multiple chains. Returns `null` values for chains where autosign is not
+  enabled.
 </ParamField>
 
 **Example:**
@@ -104,13 +105,13 @@ function MultiChainStatus() {
     <div>
       {Object.entries(autoSign.expirations).map(([chainId, timestamp]) => {
         if (!timestamp) return null
-        
+
         const expiration = new Date(timestamp)
         const isActive = expiration > new Date()
-        
+
         return (
           <div key={chainId}>
-            {chainId}: {isActive ? "Active" : "Expired"}
+            {chainId}: {isActive ? 'Active' : 'Expired'}
             {isActive && ` (until ${expiration.toLocaleString()})`}
           </div>
         )
@@ -127,14 +128,14 @@ function MultiChainStatus() {
 Enables autosign for a specific chain or the default chain.
 
 <ParamField path="enable" type="(chainId?: string) => Promise<void>">
-  Opens a drawer for user confirmation and creates the necessary authz and feegrant permissions. Returns a Promise that resolves when autosign is successfully enabled or rejects if the user cancels or an error occurs.
-  
-  **Parameters:**
-  - `chainId` (optional): Chain ID to enable autosign for. If not provided, uses the default chain ID from `InterwovenKitProvider`.
-  
-  **Returns:** Promise that resolves when autosign is enabled
-  
-  **Throws:** Error if user rejects, permissions are not configured, or autosign is already enabled
+  Opens a drawer for user confirmation and creates the necessary authz and
+  feegrant permissions. Returns a Promise that resolves when autosign is
+  successfully enabled or rejects if the user cancels or an error occurs.
+  **Parameters:** - `chainId` (optional): Chain ID to enable autosign for. If
+  not provided, uses the default chain ID from `InterwovenKitProvider`.
+  **Returns:** Promise that resolves when autosign is enabled **Throws:** Error
+  if user rejects, permissions are not configured, or autosign is already
+  enabled
 </ParamField>
 
 **Example:**
@@ -143,18 +144,18 @@ Enables autosign for a specific chain or the default chain.
 async function enableAutosign() {
   try {
     await autoSign.enable()
-    console.log("Autosign enabled for default chain")
+    console.log('Autosign enabled for default chain')
   } catch (error) {
-    console.error("Failed to enable autosign:", error)
+    console.error('Failed to enable autosign:', error)
   }
 }
 
 async function enableForChain() {
   try {
-    await autoSign.enable("minievm-2")
-    console.log("Autosign enabled for minievm-2")
+    await autoSign.enable('minievm-2')
+    console.log('Autosign enabled for minievm-2')
   } catch (error) {
-    console.error("Failed to enable autosign:", error)
+    console.error('Failed to enable autosign:', error)
   }
 }
 ```
@@ -162,22 +163,23 @@ async function enableForChain() {
 **Error Cases:**
 
 - `"User rejected auto sign setup"`: User cancelled the confirmation dialog
-- `"Auto sign permissions are not configured"`: `enableAutoSign` is not configured in the provider
-- `"Auto sign is already enabled"`: Autosign is already active for the specified chain
+- `"Auto sign permissions are not configured"`: `enableAutoSign` is not
+  configured in the provider
+- `"Auto sign is already enabled"`: Autosign is already active for the specified
+  chain
 
 ### disable()
 
 Disables autosign for a specific chain or the default chain.
 
 <ParamField path="disable" type="(chainId?: string) => Promise<void>">
-  Revokes all authz and feegrant permissions for the specified chain, preventing further automatic signing. Returns a Promise that resolves when autosign is successfully disabled.
-  
-  **Parameters:**
-  - `chainId` (optional): Chain ID to disable autosign for. If not provided, uses the default chain ID from `InterwovenKitProvider`.
-  
-  **Returns:** Promise that resolves when autosign is disabled
-  
-  **Throws:** Error if permissions are not configured or autosign is not enabled
+  Revokes all authz and feegrant permissions for the specified chain, preventing
+  further automatic signing. Returns a Promise that resolves when autosign is
+  successfully disabled. **Parameters:** - `chainId` (optional): Chain ID to
+  disable autosign for. If not provided, uses the default chain ID from
+  `InterwovenKitProvider`. **Returns:** Promise that resolves when autosign is
+  disabled **Throws:** Error if permissions are not configured or autosign is
+  not enabled
 </ParamField>
 
 **Example:**
@@ -186,18 +188,18 @@ Disables autosign for a specific chain or the default chain.
 async function disableAutosign() {
   try {
     await autoSign.disable()
-    console.log("Autosign disabled for default chain")
+    console.log('Autosign disabled for default chain')
   } catch (error) {
-    console.error("Failed to disable autosign:", error)
+    console.error('Failed to disable autosign:', error)
   }
 }
 
 async function disableForChain() {
   try {
-    await autoSign.disable("minievm-2")
-    console.log("Autosign disabled for minievm-2")
+    await autoSign.disable('minievm-2')
+    console.log('Autosign disabled for minievm-2')
   } catch (error) {
-    console.error("Failed to disable autosign:", error)
+    console.error('Failed to disable autosign:', error)
   }
 }
 ```
