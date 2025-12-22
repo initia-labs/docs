@@ -2,16 +2,24 @@
 title: InitiaERC20
 ---
 
-GitHub: [InitiaERC20](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/InitiaERC20.sol)
+GitHub:
+[InitiaERC20](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/InitiaERC20.sol)
 
 ## Overview
 
-The `InitiaERC20` contract is an implementation of the ERC20 token standard with additional functionalities such as access control, registry integration, and support for Cosmos blockchain interactions. This contract inherits from multiple contracts including `IERC20`, `Ownable`, `ERC20Registry`, `ERC165`, and `ERC20ACL`.
+The `InitiaERC20` contract is an implementation of the ERC20 token standard with
+additional functionalities such as access control, registry integration, and
+support for Cosmos blockchain interactions. This contract inherits from multiple
+contracts including `IERC20`, `Ownable`, `ERC20Registry`, `ERC165`, and
+`ERC20ACL`.
 
 <Warning>
 The InitiaERC20 contract is only meant to be used by the [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory) contract. It is not meant to be used directly and does not have the necessary modifiers for full compatibility with the MiniEVM.
 
-To deploy a custom ERC20 token, developers should use the [InitiaCustomERC20](/resources/developer/contract-references/evm/initia-custom-erc20) contract instead.
+To deploy a custom ERC20 token, developers should use the
+[InitiaCustomERC20](/resources/developer/contract-references/evm/initia-custom-erc20)
+contract instead.
+
 </Warning>
 
 ## Inheritance
@@ -25,11 +33,13 @@ To deploy a custom ERC20 token, developers should use the [InitiaCustomERC20](/r
 ## Events
 
 -     `Transfer`: Emitted when tokens are transferred from one address to another.
+
   - `address indexed from`: The address sending the tokens.
   - `address indexed to`: The address receiving the tokens.
   - `uint256 value`: The amount of tokens transferred.
 
 -     `Approval`: Emitted when an address approves another address to spend tokens on its behalf.
+
   - `address indexed owner`: The address granting the approval.
   - `address indexed spender`: The address receiving the approval.
   - `uint256 value`: The amount of tokens approved.
@@ -57,11 +67,11 @@ constructor(string memory _name, string memory _symbol, uint8 _decimals) {
 
 #### Parameters
 
-| Name       | Type             | Description                      |
-| ---------- | ---------------- | -------------------------------- |
-| `_name`    | `string memory`  | The name of the token            |
-| `_symbol`  | `string memory`  | The symbol of the token          |
-| `_decimals`| `uint8`          | The number of decimals the token uses |
+| Name        | Type            | Description                            |
+| ----------- | --------------- | -------------------------------------- |
+| `_name`     | `string memory` | The name of the token.                 |
+| `_symbol`   | `string memory` | The symbol of the token.               |
+| `_decimals` | `uint8`         | The number of decimals the token uses. |
 
 ## Functions
 
@@ -75,19 +85,20 @@ function supportsInterface(bytes4 interfaceId) public view virtual override(IERC
 
 #### Parameters
 
-| Name         | Type       | Description                      |
-| ------------ | ---------- | -------------------------------- |
-| `interfaceId`| `bytes4`   | The interface identifier         |
+| Name          | Type     | Description               |
+| ------------- | -------- | ------------------------- |
+| `interfaceId` | `bytes4` | The interface identifier. |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the interface is supported, `false` otherwise |
+| Type   | Description                                              |
+| ------ | -------------------------------------------------------- |
+| `bool` | `true` if the interface is supported, `false` otherwise. |
 
 ### `_transfer`
 
-Transfers tokens from one address to another and registers the recipient's ERC20 store if necessary.
+Transfers tokens from one address to another and registers the recipient's ERC20
+store if necessary.
 
 ```solidity
 function _transfer(address sender, address recipient, uint256 amount) internal register_erc20_store(recipient)
@@ -95,15 +106,16 @@ function _transfer(address sender, address recipient, uint256 amount) internal r
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `sender`    | `address` | The address sending the tokens.   |
+| `recipient` | `address` | The address receiving the tokens. |
+| `amount`    | `uint256` | The amount of tokens to transfer. |
 
 ### `_mint`
 
-Mints new tokens and assigns them to an address, registering the recipient's ERC20 store if necessary.
+Mints new tokens and assigns them to an address, registering the recipient's
+ERC20 store if necessary.
 
 ```solidity
 function _mint(address to, uint256 amount) internal register_erc20_store(to)
@@ -111,10 +123,10 @@ function _mint(address to, uint256 amount) internal register_erc20_store(to)
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name     | Type      | Description                       |
+| -------- | --------- | --------------------------------- |
+| `to`     | `address` | The address receiving the tokens. |
+| `amount` | `uint256` | The amount of tokens to mint.     |
 
 ### `_burn`
 
@@ -126,14 +138,15 @@ function _burn(address from, uint256 amount) internal
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name     | Type      | Description                              |
+| -------- | --------- | ---------------------------------------- |
+| `from`   | `address` | The address whose tokens will be burned. |
+| `amount` | `uint256` | The amount of tokens to burn.            |
 
 ### `transfer`
 
-Transfers tokens to a recipient, ensuring the recipient is not a blocked address.
+Transfers tokens to a recipient, ensuring the recipient is not a blocked
+address.
 
 ```solidity
 function transfer(address recipient, uint256 amount) external transferable(recipient) returns (bool)
@@ -141,20 +154,21 @@ function transfer(address recipient, uint256 amount) external transferable(recip
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `recipient` | `address` | The address receiving the tokens. |
+| `amount`    | `uint256` | The amount of tokens to transfer. |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the transfer was successful |
+| Type   | Description                            |
+| ------ | -------------------------------------- |
+| `bool` | `true` if the transfer was successful. |
 
 ### `approve`
 
-Approves an address to spend a specified amount of tokens on behalf of the caller.
+Approves an address to spend a specified amount of tokens on behalf of the
+caller.
 
 ```solidity
 function approve(address spender, uint256 amount) external returns (bool)
@@ -162,20 +176,21 @@ function approve(address spender, uint256 amount) external returns (bool)
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `spender`  | `address`  | The address allowed to spend the tokens |
-| `amount`   | `uint256`  | The amount of tokens to approve  |
+| Name      | Type      | Description                              |
+| --------- | --------- | ---------------------------------------- |
+| `spender` | `address` | The address allowed to spend the tokens. |
+| `amount`  | `uint256` | The amount of tokens to approve.         |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the approval was successful |
+| Type   | Description                            |
+| ------ | -------------------------------------- |
+| `bool` | `true` if the approval was successful. |
 
 ### `transferFrom`
 
-Transfers tokens from one address to another on behalf of the sender, ensuring the recipient is not a blocked address.
+Transfers tokens from one address to another on behalf of the sender, ensuring
+the recipient is not a blocked address.
 
 ```solidity
 function transferFrom(address sender, address recipient, uint256 amount) external transferable(recipient) returns (bool)
@@ -183,21 +198,22 @@ function transferFrom(address sender, address recipient, uint256 amount) externa
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `sender`    | `address` | The address sending the tokens.   |
+| `recipient` | `address` | The address receiving the tokens. |
+| `amount`    | `uint256` | The amount of tokens to transfer. |
 
 #### Returns
 
-| Type        | Description                          |
-| ----------- | ------------------------------------ |
-| `bool`      | `true` if the transfer was successful |
+| Type   | Description                            |
+| ------ | -------------------------------------- |
+| `bool` | `true` if the transfer was successful. |
 
 ### `mint`
 
-Mints new tokens to a specified address, ensuring the recipient is not a blocked address. This function can only be called by the owner.
+Mints new tokens to a specified address, ensuring the recipient is not a blocked
+address. This function can only be called by the owner.
 
 ```solidity
 function mint(address to, uint256 amount) external mintable(to) onlyOwner
@@ -205,14 +221,15 @@ function mint(address to, uint256 amount) external mintable(to) onlyOwner
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name     | Type      | Description                       |
+| -------- | --------- | --------------------------------- |
+| `to`     | `address` | The address receiving the tokens. |
+| `amount` | `uint256` | The amount of tokens to mint.     |
 
 ### `burn`
 
-Burns tokens from a specified address, ensuring the sender is not a module address. This function can only be called by the owner.
+Burns tokens from a specified address, ensuring the sender is not a module
+address. This function can only be called by the owner.
 
 ```solidity
 function burn(address from, uint256 amount) external burnable(from) onlyOwner
@@ -220,14 +237,15 @@ function burn(address from, uint256 amount) external burnable(from) onlyOwner
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name     | Type      | Description                          |
+| -------- | --------- | ------------------------------------ |
+| `from`   | `address` | The address whose tokens are burned. |
+| `amount` | `uint256` | The amount of tokens to burn.        |
 
 ### `sudoTransfer`
 
-Transfers tokens from one address to another, bypassing the usual access control checks. This function can only be called by the chain signer.
+Transfers tokens from one address to another, bypassing the usual access control
+checks. This function can only be called by the chain signer.
 
 ```solidity
 function sudoTransfer(address sender, address recipient, uint256 amount) external onlyChain
@@ -235,15 +253,16 @@ function sudoTransfer(address sender, address recipient, uint256 amount) externa
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `sender`   | `address`  | The address sending the tokens   |
-| `recipient`| `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to transfer |
+| Name        | Type      | Description                       |
+| ----------- | --------- | --------------------------------- |
+| `sender`    | `address` | The address sending the tokens.   |
+| `recipient` | `address` | The address receiving the tokens. |
+| `amount`    | `uint256` | The amount of tokens to transfer. |
 
 ### `sudoMint`
 
-Mints new tokens to a specified address, bypassing the usual access control checks. This function can only be called by the chain signer.
+Mints new tokens to a specified address, bypassing the usual access control
+checks. This function can only be called by the chain signer.
 
 ```solidity
 function sudoMint(address to, uint256 amount) external onlyChain
@@ -251,14 +270,15 @@ function sudoMint(address to, uint256 amount) external onlyChain
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `to`       | `address`  | The address receiving the tokens |
-| `amount`   | `uint256`  | The amount of tokens to mint     |
+| Name     | Type      | Description                       |
+| -------- | --------- | --------------------------------- |
+| `to`     | `address` | The address receiving the tokens. |
+| `amount` | `uint256` | The amount of tokens to mint.     |
 
 ### `sudoBurn`
 
-Burns tokens from a specified address, bypassing the usual access control checks. This function can only be called by the chain signer.
+Burns tokens from a specified address, bypassing the usual access control
+checks. This function can only be called by the chain signer.
 
 ```solidity
 function sudoBurn(address from, uint256 amount) external onlyChain
@@ -266,7 +286,7 @@ function sudoBurn(address from, uint256 amount) external onlyChain
 
 #### Parameters
 
-| Name       | Type       | Description                      |
-| ---------- | ---------- | -------------------------------- |
-| `from`     | `address`  | The address whose tokens are burned |
-| `amount`   | `uint256`  | The amount of tokens to burn     |
+| Name     | Type      | Description                          |
+| -------- | --------- | ------------------------------------ |
+| `from`   | `address` | The address whose tokens are burned. |
+| `amount` | `uint256` | The amount of tokens to burn.        |

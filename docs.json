@@ -8,15 +8,7 @@
     "dark": "#4349FF"
   },
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude", "mcp", "cursor", "vscode"]
   },
   "favicon": "/favicon.svg",
   "navigation": {
@@ -134,6 +126,26 @@
         ]
       },
       {
+        "tab": "User Guides",
+        "group": "User Guides",
+        "pages": [
+          {
+            "group": "Initia Wallet",
+            "pages": [
+              {
+                "group": "Auto-signing",
+                "pages": [
+                  "user-guides/wallet/auto-signing/introduction",
+                  "user-guides/wallet/auto-signing/getting-started",
+                  "user-guides/wallet/auto-signing/using-auto-signing/enabling-auto-signing",
+                  "user-guides/wallet/auto-signing/using-auto-signing/revoking-auto-signing"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Nodes and Rollups",
         "groups": [
           {
@@ -149,7 +161,10 @@
             "pages": [
               {
                 "group": "Running Initia L1 Nodes",
-                "pages": ["nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave","nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"]
+                "pages": [
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-weave",
+                  "nodes-and-rollups/running-nodes/running-l1-nodes/l1-nodes-initiad"
+                ]
               },
               {
                 "group": "Running a Validator",
@@ -231,7 +246,9 @@
               {
                 "group": "DEX",
                 "icon": "swap",
-                "pages": ["developers/developer-guides/integrating-initia-apps/initiadex"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/initiadex"
+                ]
               },
               {
                 "group": "VIP",
@@ -246,7 +263,9 @@
               {
                 "group": "Usernames",
                 "icon": "user",
-                "pages": ["developers/developer-guides/integrating-initia-apps/usernames"]
+                "pages": [
+                  "developers/developer-guides/integrating-initia-apps/usernames"
+                ]
               }
             ]
           },
@@ -311,7 +330,9 @@
                   },
                   {
                     "group": "Rollup CLI",
-                    "pages": ["developers/developer-guides/tools/clis/minitiad-cli/introduction"]
+                    "pages": [
+                      "developers/developer-guides/tools/clis/minitiad-cli/introduction"
+                    ]
                   }
                 ]
               },
@@ -359,7 +380,7 @@
         ]
       },
       {
-        "tab":"InterwovenKit",
+        "tab": "InterwovenKit",
         "groups": [
           {
             "group": "InterwovenKit",

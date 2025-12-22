@@ -2,35 +2,51 @@
 title: Challenger
 ---
 
-The Challenger is a process distinct from the Executor, responsible for monitoring the Executor's output proposals and challenging any invalid submissions. This ensures the integrity of rollup's state and prevents malicious actions by the Executor.
+The Challenger is a process distinct from the Executor, responsible for
+monitoring the Executor's output proposals and challenging any invalid
+submissions. This ensures the integrity of rollup's state and prevents malicious
+actions by the Executor.
 
 The primary responsibilities of the Challenger include:
 
 1. **Verifying Deposits**:
-	- Ensure that the `MsgInitiateTokenDeposit` event is relayed correctly to the `MsgFinalizeTokenDeposit` event.
-	- Check if `MsgInitiateTokenDeposit` was relayed within the required time frame.
+   - Ensure that the `MsgInitiateTokenDeposit` event is relayed correctly to the
+     `MsgFinalizeTokenDeposit` event.
+   - Check if `MsgInitiateTokenDeposit` was relayed within the required time
+     frame.
 2. **Verifying Oracle Updates**:
-	- Confirm that Oracle data is correctly relayed to `MsgUpdateOracle`.
-	- Ensure that Oracle updates are processed on time.
+   - Confirm that Oracle data is correctly relayed to `MsgUpdateOracle`.
+   - Ensure that Oracle updates are processed on time.
 3. **Validating Outputs**:
-	- Check that the `OutputRoot` submitted with `MsgProposeOutput` is accurate.
-	- Ensure that the next `MsgProposeOutput` is submitted within the expected time frame.
+   - Check that the `OutputRoot` submitted with `MsgProposeOutput` is accurate.
+   - Ensure that the next `MsgProposeOutput` is submitted within the expected
+     time frame.
 
 ## Detailed Architecture
 
-The Challenger architecture is designed to ensure that interactions between Initia (L1) and rollup (L2) are correctly validated, securing internal processes within the Initia ecosystem. Each part of the architecture is tailored to handle specific challenges while maintaining the security and reliability of the Initia-rollup interactions.
+The Challenger architecture is designed to ensure that interactions between
+Initia (L1) and rollup (L2) are correctly validated, securing internal processes
+within the Initia ecosystem. Each part of the architecture is tailored to handle
+specific challenges while maintaining the security and reliability of the
+Initia-rollup interactions.
 
 ### Deposit Challenges
 
-Deposits from L1 to L2 must follow a strict verification process to ensure that tokens are correctly transferred between chains. 
+Deposits from L1 to L2 must follow a strict verification process to ensure that
+tokens are correctly transferred between chains.
 
-The Challenger plays a critical role in this by confirming that `MsgInitiateTokenDeposit` is not only correctly triggered but also completed within a specific timeframe by matching it to `MsgFinalizeTokenDeposit`.
+The Challenger plays a critical role in this by confirming that
+`MsgInitiateTokenDeposit` is not only correctly triggered but also completed
+within a specific timeframe by matching it to `MsgFinalizeTokenDeposit`.
 
-This prevents potential discrepancies or fraud, ensuring that deposits are secure.
+This prevents potential discrepancies or fraud, ensuring that deposits are
+secure.
 
-When a `MsgInitiateTokenDeposit` event is detected on the L1 chain, it is recorded as a **Deposit** challenge.
+When a `MsgInitiateTokenDeposit` event is detected on the L1 chain, it is
+recorded as a **Deposit** challenge.
 
-The system checks if it matches the `MsgFinalizeTokenDeposit` event for the same sequence.
+The system checks if it matches the `MsgFinalizeTokenDeposit` event for the same
+sequence.
 
 ```go
 // Deposit is the challenge event for deposit data
@@ -49,15 +65,21 @@ type Deposit struct {
 
 ## Output Challenges
 
-**Outputs**, which represent state changes in the L2 chain, must be correctly submitted to maintain the synchronization between L1 and L2. 
+**Outputs**, which represent state changes in the L2 chain, must be correctly
+submitted to maintain the synchronization between L1 and L2.
 
-The Challenger ensures that the OutputRoot of the submitted `MsgProposeOutput` matches the system’s expectations and that future proposals are made within the designated timeframe. 
+The Challenger ensures that the OutputRoot of the submitted `MsgProposeOutput`
+matches the system’s expectations and that future proposals are made within the
+designated timeframe.
 
-This process prevents any incorrect or malicious outputs from being finalized, ensuring the integrity of the system. 
+This process prevents any incorrect or malicious outputs from being finalized,
+ensuring the integrity of the system.
 
-When a `MsgProposeOutput` event is detected on the L1 chain, it triggers an **Output** challenge.
+When a `MsgProposeOutput` event is detected on the L1 chain, it triggers an
+**Output** challenge.
 
-The system replays up to the L2 block number and verifies whether the `OutputRoot` matches the one submitted.
+The system replays up to the L2 block number and verifies whether the
+`OutputRoot` matches the one submitted.
 
 ```go
 // Output is the challenge event for output data
@@ -73,11 +95,15 @@ type Output struct {
 
 ### Oracle Challenges
 
-Oracles serve as external data providers for the blockchain, and any failure in updating their data can lead to inaccuracies within the system.
+Oracles serve as external data providers for the blockchain, and any failure in
+updating their data can lead to inaccuracies within the system.
 
-The Challenger ensures that oracle updates happen in a timely manner and are properly relayed from L1 to L2 through `MsgUpdateOracle`, safeguarding the accuracy of external data within the Initia ecosystem.
+The Challenger ensures that oracle updates happen in a timely manner and are
+properly relayed from L1 to L2 through `MsgUpdateOracle`, safeguarding the
+accuracy of external data within the Initia ecosystem.
 
-If the `oracle_enable` setting is turned on in bridge config, the 0th transaction's bytes are saved as an **Oracle** challenge event. 
+If the `oracle_enable` setting is turned on in bridge config, the 0th
+transaction's bytes are saved as an **Oracle** challenge event.
 
 This data is verified against the `MsgUpdateOracle` for the same L1 height.
 
@@ -94,4 +120,6 @@ type Oracle struct {
 
 ## Rollback Challenges (TBA)
 
-If a challenge is created and the event is not finalized within the timeout period, it is possible to rollback before the challenge is finalized. This feature will be announced in a future release.
+If a challenge is created and the event is not finalized within the timeout
+period, it is possible to rollback before the challenge is finalized. This
+feature will be announced in a future release.

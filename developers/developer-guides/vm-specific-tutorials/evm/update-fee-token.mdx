@@ -8,17 +8,19 @@ title: Update Fee with ERC20 Token
 
 ## Update Fee Token with ERC20 Token
 
-You may want to use an ERC20 token as the Fee Token instead of the tokens issued by the Cosmos Bank module.
+You may want to use an ERC20 token as the Fee Token instead of the tokens issued
+by the Cosmos Bank module.
 
-To achieve this, you can update the chain parameter of the EVM module to set the Fee Token as an ERC20 token.
+To achieve this, you can update the chain parameter of the EVM module to set the
+Fee Token as an ERC20 token.
 
 Use validator (admin) account to update the chain parameter.
 
 <Warning>
-The deployed ERC20 token must inherit the `InitiaERC20` contract.
+  The deployed ERC20 token must inherit the `InitiaERC20` contract.
 </Warning>
 
-```ts 
+```ts
 import {
   EvmParams,
   RESTClient,
@@ -26,7 +28,7 @@ import {
   MsgUpdateEvmParams,
   Wallet,
   MsgExecuteMessages,
-} from "@initia/initia.js";
+} from '@initia/initia.js'
 
 /**
  * main() demonstrates how to update EVM-related chain parameters (such as fee denom, allowed publishers, etc.).
@@ -39,11 +41,11 @@ async function main() {
    *    - The second argument is an object providing client options like gas prices.
    *
    *    For example:
-   *    "https://maze-rpc-sequencer-fd70c395-4cfc-4624-ab8a-8e025af6a140.ane1-prod-nocsm.newmetric.xyz/" 
+   *    "https://maze-rpc-sequencer-fd70c395-4cfc-4624-ab8a-8e025af6a140.ane1-prod-nocsm.newmetric.xyz/"
    *    is a special endpoint in this context (provided by NewMetric).
    */
   const client = new RESTClient(
-    "https://maze-rpc-sequencer-fd70c395-4cfc-4624-ab8a-8e025af6a140.ane1-prod-nocsm.newmetric.xyz/", 
+    'https://maze-rpc-sequencer-fd70c395-4cfc-4624-ab8a-8e025af6a140.ane1-prod-nocsm.newmetric.xyz/',
     {
       /**
        * gasPrices: '0GAS'
@@ -53,8 +55,8 @@ async function main() {
        *     whatever fee denom and minimum gas price the network expects.
        */
       gasPrices: '0GAS',
-    }
-  );
+    },
+  )
 
   /**
    * 2) Create a Wallet instance using the client and a MnemonicKey.
@@ -67,12 +69,12 @@ async function main() {
     new MnemonicKey({
       /**
        * Replace with the actual mnemonic of the chain operator or the account with
-       * the authority to update EVM params. 
+       * the authority to update EVM params.
        * Make sure you keep this mnemonic secret.
        */
-      mnemonic: "" // enter validator mnemonic
-    })
-  );
+      mnemonic: '', // enter validator mnemonic
+    }),
+  )
 
   /**
    * 3) Construct the MsgUpdateEvmParams message.
@@ -85,14 +87,14 @@ async function main() {
    *      @param extra_eip (array): Optional EIPs to enable
    *      @param allowed_publisher (array): Entities allowed to publish certain EVM data
    *      @param allow_custom_erc20 (boolean): Toggle for custom ERC20 tokens
-   *      @param allowed_custom_erc20s (array): A list of allowed custom ERC20 addresses 
+   *      @param allowed_custom_erc20s (array): A list of allowed custom ERC20 addresses
    *                                            (could be 0x or bech32, depending on chain config)
-   *      @param fee_denom (string): The fee denomination on-chain (e.g. 'umin'). 
+   *      @param fee_denom (string): The fee denomination on-chain (e.g. 'umin').
    *                                 It typically should match the chain’s native fee token.
    */
   const msgs = [
     new MsgUpdateEvmParams(
-      "init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne", // Authority/Opchild module address
+      'init1gz9n8jnu9fgqw7vem9ud67gqjk5q4m2w0aejne', // Authority/Opchild module address
       new EvmParams(
         [], // extra_eip - e.g. ["EIP1559"] if needed
         [], // allowed_publisher - e.g. ['0x123...'] if you want certain publishers
@@ -120,14 +122,14 @@ async function main() {
         [],
         /**
          * fee_denom (string)
-         * - Must be the chain's fee token; often in the format `evm/<erc20Address>` 
+         * - Must be the chain's fee token; often in the format `evm/<erc20Address>`
          *   on an EVM-compatible chain.
          * - Example: "evm/9D9c32921575Fd98e67E27C0189ED4b750Cb17C5"
          */
-        "evm/9D9c32921575Fd98e67E27C0189ED4b750Cb17C5"
-      )
-    )
-  ];
+        'evm/9D9c32921575Fd98e67E27C0189ED4b750Cb17C5',
+      ),
+    ),
+  ]
 
   /**
    * 4) Create a MsgExecuteMessages message to execute the EVM parameter update.
@@ -137,7 +139,7 @@ async function main() {
    */
   const executeMsg = new MsgExecuteMessages(
     wallet.key.accAddress, // must be admin address
-    msgs
+    msgs,
   )
 
   /**
@@ -147,18 +149,18 @@ async function main() {
    */
   const signedTx = await wallet.createAndSignTx({
     msgs: [executeMsg],
-  });
+  })
 
   /**
    * 6) Broadcast the transaction to the chain’s REST endpoint.
    *    - This sends the signed transaction to be processed on-chain,
    *      where it will update the EVM parameters if everything is valid.
    */
-  await client.tx.broadcast(signedTx);
+  await client.tx.broadcast(signedTx)
 }
 
 /**
  * Finally, run the main() function.
  */
-main();
+main()
 ```

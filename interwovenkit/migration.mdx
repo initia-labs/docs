@@ -1,18 +1,19 @@
 ---
 title: Migrating from Wallet Widget
-description: Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
+description:
+  Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
 icon: up
 ---
 
-This comprehensive guide will help you migrate from the legacy `@initia/react-wallet-widget` to the new and improved `@initia/interwovenkit-react`. InterwovenKit v2 offers better performance, improved TypeScript support, and a more intuitive API.
+This comprehensive guide will help you migrate from the legacy
+`@initia/react-wallet-widget` to the new and improved
+`@initia/interwovenkit-react`. InterwovenKit v2 offers better performance,
+improved TypeScript support, and a more intuitive API.
 
 <Note>
-  **Migration Benefits**
-  - No more SSR configuration required
-  - Better TypeScript support
-  - Improved performance and bundle size
-  - Simplified API with consistent naming
-  - Enhanced error handling
+  **Migration Benefits** - No more SSR configuration required - Better
+  TypeScript support - Improved performance and bundle size - Simplified API
+  with consistent naming - Enhanced error handling
 </Note>
 
 ## Step-by-Step Migration
@@ -58,6 +59,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
     <Warning>
       Update all imports from `@initia/react-wallet-widget` to `@initia/interwovenkit-react` throughout your codebase.
     </Warning>
+
   </Step>
 
   <Step title="Clean Up Legacy Configuration">
@@ -84,6 +86,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
         ```
       </Accordion>
     </AccordionGroup>
+
   </Step>
 
   <Step title="Install Required Peer Dependencies">
@@ -110,6 +113,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
     <Info>
       These dependencies enable advanced wallet functionality and improved chain interaction capabilities.
     </Info>
+
   </Step>
 
   <Step title="Update Provider Configuration">
@@ -159,6 +163,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
     <Tip>
       The new provider structure separates concerns better and provides more flexibility for wallet configuration.
     </Tip>
+
   </Step>
 </Steps>
 
@@ -174,6 +179,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
 ```tsx New (v2)
 <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID" />
 ```
+
 </CodeGroup>
 
 <CodeGroup>
@@ -184,6 +190,7 @@ This comprehensive guide will help you migrate from the legacy `@initia/react-wa
 ```tsx New (v2)
 <InterwovenKitProvider customChain={YOUR_CHAIN} />
 ```
+
 </CodeGroup>
 
 #### Bridge Configuration Migration
@@ -203,27 +210,31 @@ export default function Providers() {
 ```
 
 ```tsx New (v2) - Method Level
-import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 export default function Home() {
   const { openBridge } = useInterwovenKit()
 
   return (
     <button
-      onClick={() => openBridge({
-        dstChainId: "YOUR_CHAIN_ID",
-        dstDenom: "YOUR_DENOM"
-      })}
+      onClick={() =>
+        openBridge({
+          dstChainId: 'YOUR_CHAIN_ID',
+          dstDenom: 'YOUR_DENOM',
+        })
+      }
     >
       Bridge
     </button>
   )
 }
 ```
+
 </CodeGroup>
 
 <Note>
-  Bridge configuration has moved from the provider level to individual method calls, providing more flexibility and better user experience.
+  Bridge configuration has moved from the provider level to individual method
+  calls, providing more flexibility and better user experience.
 </Note>
 
 #### Removed Provider Props
@@ -236,7 +247,9 @@ The following props are no longer supported:
 ```
 
 <Info>
-  To customize wallet options, use [wagmi connectors](https://wagmi.sh/react/api/connectors) in your wagmi configuration instead.
+  To customize wallet options, use [wagmi
+  connectors](https://wagmi.sh/react/api/connectors) in your wagmi configuration
+  instead.
 </Info>
 
 ### Hook and Method Changes
@@ -251,22 +264,14 @@ import { useWallet } from "@initia/react-wallet-widget"
 export default function WalletButton() {
   const { address, onboard, view, bridge, isLoading } = useWallet()
 
-  if (!address) {
-    return (
-      <button onClick={onboard} disabled={isLoading}>
-        {isLoading ? "Loading..." : "Connect Wallet"}
-      </button>
-    )
-  }
+if (!address) { return ( <button onClick={onboard} disabled={isLoading}>
+{isLoading ? "Loading..." : "Connect Wallet"} </button> ) }
 
-  return (
-    <div>
-      <button onClick={bridge}>Open Bridge</button>
-      <button onClick={view}>{truncate(address)}</button>
-    </div>
-  )
-}
-```
+return ( <div> <button onClick={bridge}>Open Bridge</button>
+
+<button onClick={view}>{truncate(address)}</button> </div> ) }
+
+````
 
 ```tsx New (v2)
 import { truncate } from "@initia/utils"
@@ -286,7 +291,8 @@ export default function WalletButton() {
     </div>
   )
 }
-```
+````
+
 </CodeGroup>
 
 <Warning>
@@ -302,21 +308,14 @@ import { useWallet } from "@initia/react-wallet-widget"
 export default function TransactionComponent() {
   const { requestTx } = useWallet()
 
-  const handleSubmit = async () => {
-    try {
-      const transactionHash = await requestTx(
-        { messages: [] },
-        { chainId: "YOUR_CHAIN_ID" }
-      )
-      console.log("Transaction submitted:", transactionHash)
-    } catch (error) {
-      console.error("Transaction failed:", error)
-    }
-  }
+const handleSubmit = async () => { try { const transactionHash = await
+requestTx( { messages: [] }, { chainId: "YOUR_CHAIN_ID" } )
+console.log("Transaction submitted:", transactionHash) } catch (error) {
+console.error("Transaction failed:", error) } }
 
-  return <button onClick={handleSubmit}>Submit Transaction</button>
-}
-```
+return <button onClick={handleSubmit}>Submit Transaction</button> }
+
+````
 
 ```tsx New (v2)
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -338,29 +337,34 @@ export default function TransactionComponent() {
 
   return <button onClick={handleSubmit}>Submit Transaction</button>
 }
-```
+````
+
 </CodeGroup>
 
 <Tip>
-  For more granular control over transaction states, use `requestTxSync()` to get the transaction hash immediately, then `waitForTxConfirmation()` to wait for blockchain confirmation. See the [useInterwovenKit reference](./references/useinterwovenkit#transactions) for details.
+  For more granular control over transaction states, use `requestTxSync()` to
+  get the transaction hash immediately, then `waitForTxConfirmation()` to wait
+  for blockchain confirmation. See the [useInterwovenKit
+  reference](./references/useinterwovenkit#transactions) for details.
 </Tip>
 
 ## Advanced Integration
 
 ### Working with @initia/initia.js
 
-For complex transaction building, InterwovenKit seamlessly integrates with `@initia/initia.js`:
+For complex transaction building, InterwovenKit seamlessly integrates with
+`@initia/initia.js`:
 
 ```tsx example-usage.tsx
-import { MsgSend, Msg } from "@initia/initia.js"
-import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { MsgSend, Msg } from '@initia/initia.js'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 // Helper function to convert Initia.js messages to InterwovenKit format
 function toEncodeObject(msg: Msg) {
   const data = msg.toData()
   return {
-    typeUrl: data["@type"],
-    value: msg.toProto()
+    typeUrl: data['@type'],
+    value: msg.toProto(),
   }
 }
 
@@ -372,8 +376,8 @@ export default function SendTransaction() {
     const msgs = [
       MsgSend.fromPartial({
         fromAddress: initiaAddress,
-        toAddress: "recipient_address_here",
-        amount: [{ amount: "1000000", denom: "uinit" }],
+        toAddress: 'recipient_address_here',
+        amount: [{ amount: '1000000', denom: 'uinit' }],
       }),
     ]
 
@@ -383,11 +387,11 @@ export default function SendTransaction() {
     try {
       const { transactionHash } = await requestTxBlock({
         messages,
-        chainId: "YOUR_CHAIN_ID"
+        chainId: 'YOUR_CHAIN_ID',
       })
-      console.log("Transfer successful:", transactionHash)
+      console.log('Transfer successful:', transactionHash)
     } catch (error) {
-      console.error("Transfer failed:", error)
+      console.error('Transfer failed:', error)
     }
   }
 
@@ -409,19 +413,17 @@ export default function SendTransaction() {
     - [ ] Updated all import statements
   </Accordion>
 
-  <Accordion title="✅ Configuration Cleanup">
-    - [ ] Removed SSR-related imports
-    - [ ] Removed build configuration changes
-    - [ ] Removed CDN scripts
-    - [ ] Updated provider configuration
-  </Accordion>
+<Accordion title="✅ Configuration Cleanup">
+  - [ ] Removed SSR-related imports - [ ] Removed build configuration changes -
+  [ ] Removed CDN scripts - [ ] Updated provider configuration
+</Accordion>
 
-  <Accordion title="✅ API Updates">
-    - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider`
-    - [ ] Updated `useWallet` to `useInterwovenKit`
-    - [ ] Migrated method calls (`onboard` → `openConnect`, etc.)
-    - [ ] Updated transaction handling (`requestTx` → `requestTxBlock`)
-  </Accordion>
+<Accordion title="✅ API Updates">
+  - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider` - [ ]
+  Updated `useWallet` to `useInterwovenKit` - [ ] Migrated method calls
+  (`onboard` → `openConnect`, etc.) - [ ] Updated transaction handling
+  (`requestTx` → `requestTxBlock`)
+</Accordion>
 
   <Accordion title="✅ Testing">
     - [ ] Wallet connection works correctly
@@ -432,5 +434,7 @@ export default function SendTransaction() {
 </AccordionGroup>
 
 <Note>
-  Need help with migration? Check out the [Getting Started guide](./getting-started) for complete implementation examples, or refer to the [API Reference](./references) for detailed method documentation.
+  Need help with migration? Check out the [Getting Started
+  guide](./getting-started) for complete implementation examples, or refer to
+  the [API Reference](./references) for detailed method documentation.
 </Note>
