@@ -420,7 +420,6 @@
                 "pages": [
                   "interwovenkit/references/connectors/initia-privy-wallet",
                   "interwovenkit/references/connectors/initia-privy-wallet-connector",
-                  "interwovenkit/references/connectors/initia-privy-wallet-options",
                   "interwovenkit/references/connectors/privy-app-id"
                 ]
               },
