@@ -10,6 +10,7 @@ title: useHexAddress
 ## Prerequisites
 
 - Must be rendered within `InterwovenKitProvider`
+- Must be used within a React Query `QueryClientProvider`
 - Must be used within a wagmi `WagmiProvider`
 - Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
 
@@ -18,28 +19,11 @@ title: useHexAddress
 ```tsx
 "use client"
 
-import { WagmiProvider } from "wagmi"
-import {
-  InterwovenKitProvider,
-  MAINNET,
-  useHexAddress,
-} from "@initia/interwovenkit-react"
-
-const wagmiConfig = /* your wagmi config */
+import { useHexAddress } from "@initia/interwovenkit-react"
 
 function Address() {
   const address = useHexAddress()
   return <span>{address || "Not connected"}</span>
-}
-
-export function App() {
-  return (
-    <WagmiProvider config={wagmiConfig}>
-      <InterwovenKitProvider {...MAINNET}>
-        <Address />
-      </InterwovenKitProvider>
-    </WagmiProvider>
-  )
 }
 ```
 
@@ -49,9 +33,16 @@ export function App() {
 function useHexAddress(): string
 ```
 
-Returns the Initia account address in hex format when Privy is connected. Returns an empty string (`""`) when there is no connected address, or when Privy is configured and not connected.
+Returns the Initia account address in hex format when a wallet is connected. Returns an empty string (`""`) when there is no connected address, or when Privy is configured via `privyContext` and has not finished connecting.
+
+## Examples
+
+### Full example (with providers)
+
+See [Provider Setup](../setup/providers.mdx) for complete provider configuration including `injectStyles` and all required providers.
 
 ## Notes
 
 - This hook always returns a hex address, unlike `useAddress` which adapts to the default chain's format
 - Use this hook for EVM-style integrations or when you need a consistent hex format regardless of chain type
+- This hook works without PrivyProvider. Privy is only required when `privyContext` is provided to `InterwovenKitProvider`

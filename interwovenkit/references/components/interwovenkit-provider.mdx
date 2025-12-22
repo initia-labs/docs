@@ -6,14 +6,21 @@ title: InterwovenKitProvider
 
 - React provider that configures and renders the InterwovenKit widget shell (drawer, routes, and supporting providers)
 - Mount once near the top of your app, typically wrapping your root component
-- Privy and AutoSign features are optional; configure `privyContext` and `enableAutoSign` only if needed
-- Renders into a Shadow DOM by default; use the `container` prop to attach to a specific DOM element
+- Privy and AutoSign features are optional. Configure `privyContext` and `enableAutoSign` only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`)
+- Renders into a Shadow DOM by default. Use the `container` prop to attach to a specific DOM element
 
 ## Prerequisites
 
 - Must be used within a React Query `QueryClientProvider`
 - Required if you use wallet-related InterwovenKit APIs: Must be used within a wagmi `WagmiProvider`
 - Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+
+## Styles
+
+- Font stylesheets are automatically injected via `<link>` elements
+- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles.mdx) once at app startup. Otherwise the UI will be unstyled
+
+**Note:** In React Strict Mode (development), `useEffect` may run twice, so ensure `injectStyles` runs only once: either add a simple guard or place it in a top-level Providers component.
 
 ## Quickstart
 
@@ -40,6 +47,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 }
 ```
 
+**Note:** This example shows the provider structure. For complete setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers.mdx).
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -55,8 +64,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 | `aminoConverters` | `AminoConverters` | `undefined` | Custom Amino converters for legacy signing. Only needed for advanced integrations |
 | `container` | `HTMLElement` | `undefined` | Optional element the widget should render into instead of the default Shadow DOM host |
 | `disableAnalytics` | `boolean` | `false` (mainnet), `true` (testnet) | When `true`, disables InterwovenKit's built‑in analytics events |
-| `enableAutoSign` | `boolean \| Record<string, string[]>` | `undefined` | Enables AutoSign and optionally whitelists chains and message types. `true` enables for supported chains and messages. `Record<string, string[]>` is a per-chain allowlist of message type URLs. Required at runtime only if you want AutoSign flows to be available |
-| `privyContext` | `PrivyContext` | `undefined` | Passes Privy authentication and wallet helpers into InterwovenKit. Required for embedded wallet and AutoSign features, otherwise optional |
+| `enableAutoSign` | `boolean \| Record<string, string[]>` | `undefined` | Enables AutoSign and optionally whitelists chains and message types. `true` enables for supported chains and messages. `Record<string, string[]>` is a per-chain allowlist of message type URLs. **Requires Privy** (`PrivyProvider` and `privyContext`). Required at runtime only if you want AutoSign flows to be available |
+| `privyContext` | `PrivyContext` | `undefined` | Passes Privy authentication and wallet helpers into InterwovenKit. **Required for AutoSign and embedded wallet features**, otherwise optional |
 
 Types `Chain`, `GeneratedType`, `AminoConverters`, and `PrivyContext` members are from external packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, `@cosmjs/stargate`, and `@privy-io/react-auth` for details.
 
@@ -89,66 +98,20 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
+**Note:** This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers.mdx).
+
 ### AutoSign configuration
 
-```tsx
-import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <InterwovenKitProvider
-      {...MAINNET}
-      enableAutoSign={{
-        "interwoven-1": ["/cosmos.bank.v1beta1.MsgSend", "/initia.move.v1.MsgExecute"],
-      }}
-    >
-      {children}
-    </InterwovenKitProvider>
-  )
-}
-```
+AutoSign requires Privy integration. See [Provider Setup](../setup/providers.mdx) for the complete AutoSign setup with Privy.
 
 ### Privy integration
 
-```tsx
-import {
-  PrivyProvider,
-  useCreateWallet,
-  useLoginWithSiwe,
-  usePrivy,
-  useWallets,
-} from "@privy-io/react-auth"
-import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
-
-function InterwovenKitWithPrivy({ children }: { children: React.ReactNode }) {
-  const privy = usePrivy()
-  const siwe = useLoginWithSiwe()
-  const { wallets } = useWallets()
-  const { createWallet } = useCreateWallet()
-
-  return (
-    <InterwovenKitProvider
-      {...MAINNET}
-      privyContext={{ privy, siwe, wallets, createWallet }}
-    >
-      {children}
-    </InterwovenKitProvider>
-  )
-}
-
-export function AppProviders({ children }: { children: React.ReactNode }) {
-  return (
-    <PrivyProvider appId="YOUR_PRIVY_APP_ID">
-      <InterwovenKitWithPrivy>{children}</InterwovenKitWithPrivy>
-    </PrivyProvider>
-  )
-}
-```
+For Privy integration with AutoSign, see [Provider Setup](../setup/providers.mdx) for the complete example.
 
 ## Notes
 
 - Runs a one‑time local storage migration on mount to keep existing widget data compatible across versions
-- Injects font stylesheets via `<link>` elements for the widget; override the visual style by adjusting the `theme` prop or your app's global styles (font injection cannot currently be disabled)
+- Injects font stylesheets via `<link>` elements automatically (font injection cannot currently be disabled)
 
 ## Type reference (advanced)
 

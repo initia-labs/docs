@@ -7,11 +7,12 @@ title: initiaPrivyWalletConnector
 - Wagmi connector created from `initiaPrivyWalletOptions` for integrating Privy wallets with wagmi and RainbowKit
 - Wraps the Privy wallet into a wagmi `Connector` so it can be used in wagmi and RainbowKit configs
 - Use this when you want to include the bundled Initia Privy wallet in your wagmi connector list
+- **Config-time only**: This connector can be included in wagmi config without requiring `PrivyProvider` at runtime
 
 ## Prerequisites
 
 - Must be used with wagmi `createConfig`
-- Privy must be set up separately (see Privy documentation for setup)
+- **Runtime Privy requirement**: `PrivyProvider` is only required if you need AutoSign or embedded wallet features (see [Provider Setup](../setup/providers.mdx))
 
 ## Quickstart
 
@@ -37,3 +38,4 @@ Type `Connector` is from `wagmi`.
 
 - Use this connector alongside other wagmi connectors in your `createConfig` call
 - Uses the shared `initiaPrivyWalletOptions` metadata (name, icon, ID)
+- **Config vs runtime**: Including this connector in wagmi config does not require `PrivyProvider` at runtime. `PrivyProvider` is only needed for AutoSign or embedded wallet features

@@ -14,6 +14,7 @@ title: InterwovenKit
 - Must be rendered within `InterwovenKitProvider`
 - Must be used within a React Query `QueryClientProvider`
 - Required if you use wallet-related InterwovenKit APIs: Must be used within a wagmi `WagmiProvider`
+- CSS styles must be injected via [`injectStyles`](../utilities/inject-styles.mdx) before rendering (see [`InterwovenKitProvider`](./interwovenkit-provider.mdx) for details)
 - Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
 
 ## Quickstart
@@ -21,31 +22,20 @@ title: InterwovenKit
 ```tsx
 "use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import { InterwovenKit, InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
-
-const queryClient = new QueryClient()
-const wagmiConfig = /* your wagmi config */
+import { InterwovenKit } from "@initia/interwovenkit-react"
 
 export function Page() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider {...MAINNET}>
-          <InterwovenKit />
-        </InterwovenKitProvider>
-      </WagmiProvider>
-    </QueryClientProvider>
-  )
+  return <InterwovenKit />
 }
 ```
+
+**Note:** This example assumes providers are already set up. For complete provider setup including `injectStyles`, see [Provider Setup](../setup/providers.mdx).
 
 ## Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `bridge` | `Partial<BridgeFormValues>` | `undefined` | Optional initial values for the bridge form. When provided, InterwovenKit opens on the bridge route and pre-fills the form |
+| `bridge` | `Partial<FormValues>` | `undefined` | Optional initial values for the bridge form. When provided, InterwovenKit opens on the bridge route and pre-fills the form |
 
 ## Return value
 
@@ -53,17 +43,17 @@ Renders the InterwovenKit route UI.
 
 ## Notes
 
-- The `bridge` prop only sets initial values; users can still change the form inside the UI
+- The `bridge` prop only sets initial values. Users can still change the form inside the UI
 - For finer-grained control (modals instead of full-screen), prefer using `useInterwovenKit()` with `InterwovenKitProvider`
 
 ## Type reference (advanced)
 
 ```ts
 type InterwovenKitProps = {
-  bridge?: Partial<BridgeFormValues>
+  bridge?: Partial<FormValues>
 }
 
-type BridgeFormValues = {
+type FormValues = {
   srcChainId: string
   srcDenom: string
   dstChainId: string

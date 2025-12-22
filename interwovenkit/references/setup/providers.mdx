@@ -1,0 +1,135 @@
+---
+title: Provider Setup
+---
+
+## Overview
+
+- Complete provider setup for InterwovenKit with all required dependencies
+- Two variants: basic setup (no Privy/AutoSign) and AutoSign setup (requires Privy)
+- Use the basic setup unless you need AutoSign or embedded wallet features
+
+## Basic setup
+
+For apps that don't need AutoSign or embedded wallets. **Note:** This setup uses `initiaPrivyWalletConnector` as a wagmi connector option, but does not require `PrivyProvider` at runtime:
+
+```tsx
+"use client"
+
+import { PropsWithChildren, useEffect } from "react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  MAINNET,
+} from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+
+const queryClient = new QueryClient()
+
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider {...MAINNET}>
+          {children}
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+## AutoSign setup (requires Privy)
+
+For apps that need AutoSign or embedded wallet features. **Privy is required** for AutoSign to work:
+
+```tsx
+"use client"
+
+import { PropsWithChildren, useEffect } from "react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  PRIVY_APP_ID,
+} from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+import {
+  PrivyProvider,
+  useCreateWallet,
+  useLoginWithSiwe,
+  usePrivy,
+  useWallets,
+} from "@privy-io/react-auth"
+
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+
+const queryClient = new QueryClient()
+
+function InterwovenKitWrapper({ children }: PropsWithChildren) {
+  const privy = usePrivy()
+  const siwe = useLoginWithSiwe()
+  const { createWallet } = useCreateWallet()
+  const { wallets } = useWallets()
+
+  return (
+    <InterwovenKitProvider
+      privyContext={{ privy, siwe, createWallet, wallets }}
+      enableAutoSign={{ "interwoven-1": ["/cosmos.bank.v1beta1.MsgSend"] }}
+    >
+      {children}
+    </InterwovenKitProvider>
+  )
+}
+
+export default function Providers({ children }: PropsWithChildren) {
+  useEffect(() => {
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
+  return (
+    <PrivyProvider
+      appId="YOUR_PRIVY_APP_ID"
+      config={{
+        loginMethodsAndOrder: {
+          primary: [`privy:${PRIVY_APP_ID}`, "detected_ethereum_wallets"],
+        },
+      }}
+    >
+      <QueryClientProvider client={queryClient}>
+        <WagmiProvider config={wagmiConfig}>
+          <InterwovenKitWrapper>{children}</InterwovenKitWrapper>
+        </WagmiProvider>
+      </QueryClientProvider>
+    </PrivyProvider>
+  )
+}
+```
+
+## Notes
+
+- Call `injectStyles()` once at app startup to avoid duplicate style tags
+- Privy is **required** for AutoSign. AutoSign will not work without `PrivyProvider` and `privyContext`
+- Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID (not `PRIVY_APP_ID`)
+- The `enableAutoSign` configuration is a per-chain allowlist of message type URLs
+- **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features

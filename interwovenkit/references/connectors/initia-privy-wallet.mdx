@@ -7,11 +7,12 @@ title: initiaPrivyWallet
 - RainbowKit wallet definition created from `initiaPrivyWalletOptions` for integrating Privy wallets with RainbowKit
 - Use this when configuring RainbowKit's `wallets` list and you want to include the bundled Privy wallet
 - Shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
+- **Config-time only**: This wallet definition can be included in RainbowKit config without requiring `PrivyProvider` at runtime
 
 ## Prerequisites
 
 - Relevant only if you are using RainbowKit
-- Privy must be set up separately (see Privy documentation for setup)
+- **Runtime Privy requirement**: `PrivyProvider` is only required if you need AutoSign or embedded wallet features (see [Provider Setup](../setup/providers.mdx))
 
 ## Quickstart
 
@@ -38,3 +39,4 @@ Type `Wallet` is from `@rainbow-me/rainbowkit`.
 ## Notes
 
 - This wallet definition shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
+- **Config vs runtime**: Including this wallet in RainbowKit config does not require `PrivyProvider` at runtime. `PrivyProvider` is only needed for AutoSign or embedded wallet features

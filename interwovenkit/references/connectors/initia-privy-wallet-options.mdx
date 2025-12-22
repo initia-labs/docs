@@ -7,11 +7,12 @@ title: initiaPrivyWalletOptions
 - Default options object provided by the SDK for constructing Privy wallet connectors and RainbowKit wallets
 - Contains shared metadata (name, icon, ID) used by `initiaPrivyWalletConnector` and `initiaPrivyWallet`
 - Use this when you want to customize the display name or icon by creating a copy and overriding fields
+- **Config-time only**: This options object is used to create connectors/wallets at config time. It does not require `PrivyProvider` at runtime
 
 ## Prerequisites
 
-- Relevant only if you are using Privy with wagmi or RainbowKit
-- Privy must be set up separately (see Privy documentation for setup)
+- Relevant only if you are using Privy connectors with wagmi or RainbowKit
+- **Runtime Privy requirement**: `PrivyProvider` is only required if you need AutoSign or embedded wallet features (see [Provider Setup](../setup/providers.mdx))
 
 ## Quickstart
 
@@ -43,5 +44,6 @@ const initiaPrivyWalletOptions: {
 
 ## Notes
 
-- This export is a provided default; do not mutate the imported object directly
+- This export is a provided default. Do not mutate the imported object directly
 - To customize name or icon, create a copy and override fields instead of mutating the export
+- **Config vs runtime**: Using this options object to create connectors does not require `PrivyProvider` at runtime. `PrivyProvider` is only needed for AutoSign or embedded wallet features

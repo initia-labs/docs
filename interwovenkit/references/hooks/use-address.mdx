@@ -20,33 +20,11 @@ title: useAddress
 ```tsx
 "use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import {
-  InterwovenKitProvider,
-  MAINNET,
-  useAddress,
-} from "@initia/interwovenkit-react"
-
-const queryClient = new QueryClient()
-// Define your wagmi config with connectors, chains, and transports
-const wagmiConfig = /* your wagmi config */
+import { useAddress } from "@initia/interwovenkit-react"
 
 function Address() {
   const address = useAddress()
   return <span>{address || "Not connected"}</span>
-}
-
-export function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider {...MAINNET}>
-          <Address />
-        </InterwovenKitProvider>
-      </WagmiProvider>
-    </QueryClientProvider>
-  )
 }
 ```
 
@@ -57,6 +35,12 @@ function useAddress(): string
 ```
 
 Returns a hex address when the default chain is `minievm`, or an Initia bech32 address for other chain types. Returns an empty string when there is no connected address or when Privy is configured and not connected.
+
+## Examples
+
+### Full example (with providers)
+
+See [Provider Setup](../setup/providers.mdx) for complete provider configuration including `injectStyles` and all required providers.
 
 ## Notes
 

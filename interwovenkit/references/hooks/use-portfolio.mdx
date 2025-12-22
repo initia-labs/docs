@@ -41,45 +41,13 @@ function PortfolioValue() {
 
 **Loading and control helpers:**
 - `isLoading`: `true` while any of the underlying queries are loading
-- `refetch`: Manually refetches balances, assets, and prices for all chains
+- `refetch`: Manually refetches balances, assets, and prices for all chains. Returns `void`
 
 ## Examples
 
 ### Full example (with providers)
 
-```tsx
-"use client"
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import {
-  InterwovenKitProvider,
-  MAINNET,
-  usePortfolio,
-} from "@initia/interwovenkit-react"
-
-const queryClient = new QueryClient()
-// Define your wagmi config with connectors, chains, and transports
-const wagmiConfig = /* your wagmi config */
-
-function PortfolioValue() {
-  const { totalValue, isLoading } = usePortfolio()
-  if (isLoading) return <span>Loading…</span>
-  return <span>${totalValue.toFixed(2)}</span>
-}
-
-export function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider {...MAINNET}>
-          <PortfolioValue />
-        </InterwovenKitProvider>
-      </WagmiProvider>
-    </QueryClientProvider>
-  )
-}
-```
+See [Provider Setup](../setup/providers.mdx) for complete provider configuration including `injectStyles` and all required providers.
 
 ## Notes
 

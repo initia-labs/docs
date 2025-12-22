@@ -15,7 +15,9 @@ InterwovenKit is designed around a single provider (`InterwovenKitProvider`) tha
 
 ## Common starting points
 
+- **Provider setup**: See [Provider Setup](./setup/providers.mdx) for complete configuration (basic setup or AutoSign with Privy)
 - **Initial setup**: [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx) with [`MAINNET`](./constants/mainnet.mdx) or [`TESTNET`](./constants/testnet.mdx)
+- **Inject styles**: Call [`injectStyles`](./utilities/inject-styles.mdx) before rendering InterwovenKit UI components
 - **Read connection state**: [`useAddress`](./hooks/use-address.mdx) or [`useInterwovenKit`](./hooks/use-interwovenkit.mdx)
 - **Open UI flows**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`openConnect`, `openWallet`, `openBridge`)
 - **Send transactions**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`requestTxBlock`, `submitTxBlock`)

@@ -403,6 +403,12 @@
             "pages": [
               "interwovenkit/references/index",
               {
+                "group": "Setup",
+                "pages": [
+                  "interwovenkit/references/setup/providers"
+                ]
+              },
+              {
                 "group": "Components",
                 "pages": [
                   "interwovenkit/references/components/interwovenkit",

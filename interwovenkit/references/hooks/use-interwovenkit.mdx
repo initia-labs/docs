@@ -7,6 +7,7 @@ title: useInterwovenKit
 - Primary entry point for InterwovenKit connection state, UI actions, transaction helpers, and AutoSign functionality
 - Required when opening the InterwovenKit drawer or sending transactions
 - For simple address or username reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid extra transaction and AutoSign wiring
+- **Note:** AutoSign features require Privy integration (see [Provider Setup](../setup/providers.mdx))
 
 ## Prerequisites
 
@@ -20,17 +21,7 @@ title: useInterwovenKit
 ```tsx
 "use client"
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import {
-  InterwovenKitProvider,
-  MAINNET,
-  useInterwovenKit,
-} from "@initia/interwovenkit-react"
-
-const queryClient = new QueryClient()
-// Define your wagmi config with connectors, chains, and transports
-const wagmiConfig = /* your wagmi config */
+import { useInterwovenKit } from "@initia/interwovenkit-react"
 
 function ConnectButton() {
   const { isConnected, openConnect, openWallet } = useInterwovenKit()
@@ -40,19 +31,9 @@ function ConnectButton() {
     </button>
   )
 }
-
-export function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider {...MAINNET}>
-          <ConnectButton />
-        </InterwovenKitProvider>
-      </WagmiProvider>
-    </QueryClientProvider>
-  )
-}
 ```
+
+**Note:** This example assumes providers are already set up. For complete provider setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers.mdx).
 
 ## Return value
 
@@ -65,7 +46,7 @@ Returns an object with:
 - `openConnect`, `openWallet`, `openBridge`, `disconnect`
 
 **AutoSign:**
-- `autoSign` (status maps and `enable` / `disable` helpers)
+- `autoSign`: Flat object containing `expiredAtByChain`, `isEnabledByChain`, `isLoading`, `enable()`, and `disable()` helpers
 
 **Transaction helpers:**
 - `estimateGas`, `simulateTx`, `requestTxSync`, `requestTxBlock`, `submitTxSync`, `submitTxBlock`, `waitForTxConfirmation`
@@ -90,7 +71,7 @@ type InterwovenKitResult = {
   isOpen: boolean
   openConnect: () => void
   openWallet: () => void
-  openBridge: (defaultValues?: Partial<BridgeFormValues>) => void
+  openBridge: (defaultValues?: Partial<FormValues>) => void
   disconnect: () => void
   autoSign: AutoSignState
   estimateGas: (tx: Pick<TxRequest, "messages" | "memo" | "chainId">) => Promise<number>
@@ -102,7 +83,7 @@ type InterwovenKitResult = {
   waitForTxConfirmation: (options: WaitForTxOptions) => Promise<IndexedTx>
 }
 
-type BridgeFormValues = {
+type FormValues = {
   srcChainId: string
   srcDenom: string
   dstChainId: string

@@ -5,7 +5,7 @@ title: PRIVY_APP_ID
 ## Overview
 
 - Initia's shared Privy application ID used by the bundled Initia Privy wallet helpers
-- This is NOT your own app's Privy ID; it references Initia's shared Privy app (the bundled social / embedded wallet)
+- This is NOT your own app's Privy ID. It references Initia's shared Privy app (the bundled social / embedded wallet)
 - Use this when configuring login methods that include the Initia Privy wallet alongside your own Privy app
 
 ## Prerequisites
@@ -35,6 +35,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
+**Note:** This example shows only `PrivyProvider` configuration. For complete provider setup including `InterwovenKitProvider`, `WagmiProvider`, `QueryClientProvider`, and `injectStyles`, see [Provider Setup](../setup/providers.mdx).
+
 ## Value
 
 ```ts
@@ -43,5 +45,5 @@ const PRIVY_APP_ID: string
 
 ## Notes
 
-- Do not pass this value as your `PrivyProvider` `appId`; it is only for referencing Initia's bundled wallet in login method configuration
+- Do not pass this value as your `PrivyProvider` `appId`. It is only for referencing Initia's bundled wallet in login method configuration
 - Your own Privy app ID must be set separately as shown in the example above
