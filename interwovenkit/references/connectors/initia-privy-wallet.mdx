@@ -4,26 +4,39 @@ title: initiaPrivyWallet
 
 ## Overview
 
-- RainbowKit wallet definition created from `initiaPrivyWalletOptions` for integrating Privy wallets with RainbowKit
-- Use this when configuring RainbowKit's `wallets` list and you want to include the bundled Privy wallet
-- Shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
-- **Config-time only**: This wallet definition can be included in RainbowKit config without requiring `PrivyProvider` at runtime
+- RainbowKit wallet that enables social login options (email, Google, X (formerly Twitter)) in your RainbowKit wallets list
+- **Social logins only**: This wallet is specifically for social login functionality and does not require `PrivyProvider`
 
 ## Prerequisites
 
-- Relevant only if you are using RainbowKit
-- **Runtime Privy requirement**: `PrivyProvider` is only required if you need AutoSign or embedded wallet features (see [Provider Setup](../setup/providers.mdx))
+- Must be used with RainbowKit `getDefaultConfig` or `createConfig`
+- If you need AutoSign or embedded wallet features, use `initiaPrivyWallet` with `PrivyProvider` (see [Provider Setup](../setup/providers.mdx))
 
 ## Quickstart
 
-```ts
+```tsx
 import { initiaPrivyWallet } from "@initia/interwovenkit-react"
-import { getDefaultConfig } from "@rainbow-me/rainbowkit"
+import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
+import { metaMask } from "@rainbow-me/rainbowkit/wallets"
+import { WagmiProvider } from "wagmi"
 
 export const rainbowConfig = getDefaultConfig({
   appName: "My dApp",
-  wallets: [[initiaPrivyWallet]],
+  wallets: [
+    [initiaPrivyWallet], // Social logins
+    [metaMask()], // External wallets
+  ],
 })
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <WagmiProvider config={rainbowConfig}>
+      <RainbowKitProvider>
+        {children}
+      </RainbowKitProvider>
+    </WagmiProvider>
+  )
+}
 ```
 
 ## Return value
@@ -32,11 +45,11 @@ export const rainbowConfig = getDefaultConfig({
 const initiaPrivyWallet: Wallet
 ```
 
-A RainbowKit `Wallet` object that can be included in the `wallets` array when configuring RainbowKit. The wallet object includes properties such as `id`, `name`, `iconUrl`, and `iconBackground` from `initiaPrivyWalletOptions`, along with RainbowKit-specific wallet connection methods.
-
 Type `Wallet` is from `@rainbow-me/rainbowkit`.
 
 ## Notes
 
-- This wallet definition shares its configuration with `initiaPrivyWalletConnector` via `initiaPrivyWalletOptions`
-- **Config vs runtime**: Including this wallet in RainbowKit config does not require `PrivyProvider` at runtime. `PrivyProvider` is only needed for AutoSign or embedded wallet features
+- This wallet enables social login options and does not require `PrivyProvider`
+- Use alongside other RainbowKit wallets (MetaMask, WalletConnect, etc.) to provide multiple connection options
+- Display name appears as "Connect Socials" in wallet selection UIs
+- For complete provider setup including `InterwovenKitProvider`, `QueryClientProvider`, and `injectStyles`, see [Provider Setup](../setup/providers.mdx)
