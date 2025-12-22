@@ -411,7 +411,6 @@
               {
                 "group": "Components",
                 "pages": [
-                  "interwovenkit/references/components/interwovenkit",
                   "interwovenkit/references/components/interwovenkit-provider"
                 ]
               },
