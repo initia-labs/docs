@@ -10,8 +10,8 @@ InterwovenKit is designed around a single provider (`InterwovenKitProvider`) tha
 - **Hooks**: React hooks for connection state, transactions, and data (`useInterwovenKit`, `useAddress`, `usePortfolio`, etc.)
 - **Utilities**: Helper functions (`injectStyles`)
 - **Errors**: Error types thrown by the API (`MoveError`)
-- **Constants**: Configuration presets and default values (`MAINNET`, `TESTNET`, gas constants)
-- **Connectors**: Wagmi and RainbowKit integration helpers for Privy wallets
+- **Constants**: Configuration presets and default values (`MAINNET`, `TESTNET`, gas constants, `PRIVY_APP_ID`)
+- **Social Login**: Wagmi and RainbowKit helpers for social login (`initiaPrivyWalletConnector`, `initiaPrivyWallet`)
 
 ## Common starting points
 
@@ -51,10 +51,10 @@ If you are new to InterwovenKit, start with [`InterwovenKitProvider`](./componen
 - [`TESTNET`](./constants/testnet)
 - [`DEFAULT_GAS_ADJUSTMENT`](./constants/default-gas-adjustment)
 - [`DEFAULT_GAS_PRICE_MULTIPLIER`](./constants/default-gas-price-multiplier)
+- [`PRIVY_APP_ID`](./constants/privy-app-id)
 
-## Connectors
+## Social Login
 
-- [`PRIVY_APP_ID`](./connectors/privy-app-id)
-- [`initiaPrivyWalletConnector`](./connectors/initia-privy-wallet-connector)
-- [`initiaPrivyWallet`](./connectors/initia-privy-wallet)
+- [`initiaPrivyWalletConnector`](./social-login/initia-privy-wallet-connector)
+- [`initiaPrivyWallet`](./social-login/initia-privy-wallet)
 

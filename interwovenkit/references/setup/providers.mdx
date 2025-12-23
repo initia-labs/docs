@@ -10,7 +10,10 @@ title: Provider Setup
 
 ## Basic setup
 
-For apps that don't need AutoSign or embedded wallets. **Note:** This setup uses `initiaPrivyWalletConnector` as a wagmi connector option, but does not require `PrivyProvider` at runtime:
+For apps that don't need AutoSign or embedded wallets.
+<Note>
+This setup uses `initiaPrivyWalletConnector` as a wagmi connector option, but does not require `PrivyProvider` at runtime.
+</Note>
 
 ```tsx
 "use client"
@@ -144,8 +147,8 @@ export default function Providers({ children }: PropsWithChildren) {
 - Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID. This is distinct from the imported `PRIVY_APP_ID`
 - **`enableAutoSign` configuration**:
   - **Boolean (`true`)**: Enables AutoSign with default message types based on chain type:
-    - `"minievm"`: `/minievm.evm.v1.MsgCall`
-    - `"miniwasm"`: `/cosmwasm.wasm.v1.MsgExecuteContract`
-    - Default: `/initia.move.v1.MsgExecute`
-  - **Record (`Record<string, string[]>)**: Per-chain allowlist of specific message type URLs. Use this to control exactly which message types can be auto-signed (e.g., `MsgSend`, `MsgDelegate`, `MsgExecute`)
+    - `minievm`: `/minievm.evm.v1.MsgCall`
+    - `miniwasm`: `/cosmwasm.wasm.v1.MsgExecuteContract`
+    - `default`: `/initia.move.v1.MsgExecute`
+  - **Record (`Record<string, string[]>`)**: Per-chain allowlist of specific message type URLs. Use this to control exactly which message types can be auto-signed (e.g., `MsgSend`, `MsgDelegate`, `MsgExecute`)
 - **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features

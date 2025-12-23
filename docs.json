@@ -417,9 +417,8 @@
               {
                 "group": "Connectors",
                 "pages": [
-                  "interwovenkit/references/connectors/initia-privy-wallet",
-                  "interwovenkit/references/connectors/initia-privy-wallet-connector",
-                  "interwovenkit/references/connectors/privy-app-id"
+                  "interwovenkit/references/social-login/initia-privy-wallet",
+                  "interwovenkit/references/social-login/initia-privy-wallet-connector"
                 ]
               },
               {
@@ -439,7 +438,8 @@
                   "interwovenkit/references/constants/mainnet",
                   "interwovenkit/references/constants/testnet",
                   "interwovenkit/references/constants/default-gas-adjustment",
-                  "interwovenkit/references/constants/default-gas-price-multiplier"
+                  "interwovenkit/references/constants/default-gas-price-multiplier",
+                  "interwovenkit/references/constants/privy-app-id"
                 ]
               },
               {
