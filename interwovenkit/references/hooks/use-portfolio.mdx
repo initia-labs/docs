@@ -29,6 +29,10 @@ function PortfolioValue() {
 }
 ```
 
+<Note>
+This example assumes providers are already set up. For complete provider setup including `injectStyles` and all required providers, see [Provider Setup](../setup/providers).
+</Note>
+
 ## Return value
 
 **Aggregated values:**
@@ -43,16 +47,9 @@ function PortfolioValue() {
 - `isLoading`: `true` while any of the underlying queries are loading
 - `refetch`: Manually refetches balances, assets, and prices for all chains. Returns `void`
 
-## Examples
-
-### Full example (with providers)
-
-See [Provider Setup](../setup/providers) for complete provider configuration including `injectStyles` and all required providers.
-
 ## Notes
 
 - The portfolio view only includes chains and assets that have non‑zero balances
-- Prices are fetched from Initia's public APIs and may be slightly delayed relative to on‑chain data
 
 ## Type reference (advanced)
 

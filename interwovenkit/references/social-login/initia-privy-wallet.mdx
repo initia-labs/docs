@@ -15,26 +15,46 @@ title: initiaPrivyWallet
 ## Quickstart
 
 ```tsx
-import { initiaPrivyWallet } from "@initia/interwovenkit-react"
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
-import { metaMask } from "@rainbow-me/rainbowkit/wallets"
-import { WagmiProvider } from "wagmi"
+"use client"
 
-export const rainbowConfig = getDefaultConfig({
+import { PropsWithChildren } from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
+import { metaMaskWallet } from "@rainbow-me/rainbowkit/wallets"
+import { initiaPrivyWallet } from "@initia/interwovenkit-react"
+import "@rainbow-me/rainbowkit/styles.css"
+
+const projectId = "YOUR_WALLETCONNECT_PROJECT_ID" // Required: Get from https://cloud.walletconnect.com
+
+const rainbowConfig = getDefaultConfig({
   appName: "My dApp",
+  projectId,
+  chains: [mainnet],
   wallets: [
-    [initiaPrivyWallet], // Social logins
-    [metaMask()], // External wallets
+    {
+      groupName: "Social",
+      wallets: [initiaPrivyWallet], // Social logins - shows as "Socials"
+    },
+    {
+      groupName: "Popular",
+      wallets: [(params) => metaMaskWallet({ ...params, projectId })], // External wallets
+    },
   ],
 })
 
-export function Providers({ children }: { children: React.ReactNode }) {
+const queryClient = new QueryClient()
+
+export function Providers({ children }: PropsWithChildren) {
   return (
-    <WagmiProvider config={rainbowConfig}>
-      <RainbowKitProvider>
-        {children}
-      </RainbowKitProvider>
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={rainbowConfig}>
+        <RainbowKitProvider>
+          {children}
+        </RainbowKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 ```
@@ -52,4 +72,4 @@ Type `Wallet` is from `@rainbow-me/rainbowkit`.
 - This wallet enables social login options and does not require `PrivyProvider`
 - Use alongside other RainbowKit wallets (MetaMask, WalletConnect, etc.) to provide multiple connection options
 - Display name appears as "Connect Socials" in wallet selection UIs
-- For complete provider setup including `InterwovenKitProvider`, `QueryClientProvider`, and `injectStyles`, see [Provider Setup](../setup/providers)
+- For complete provider setup including `InterwovenKitProvider` and `injectStyles`, see [Provider Setup](../setup/providers)

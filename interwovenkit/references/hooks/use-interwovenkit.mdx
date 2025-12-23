@@ -5,8 +5,8 @@ title: useInterwovenKit
 ## Overview
 
 - Primary entry point for InterwovenKit connection state, UI actions, transaction helpers, and AutoSign functionality
-- Required when opening the InterwovenKit drawer or sending transactions
-- For simple address or username reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid extra transaction and AutoSign wiring
+- Required when opening the InterwovenKit UI or sending transactions
+- For simple address or username reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid extra overhead
 - AutoSign features require Privy integration (see [Provider Setup](../setup/providers))
 
 ## Prerequisites
@@ -55,7 +55,6 @@ Returns an object with:
 
 ## Notes
 
-- `disconnect()` clears bridge-related values from `localStorage`
 - Transaction helpers may throw `MoveError` on Move VM errors
 
 ## Type reference (advanced)
@@ -130,10 +129,6 @@ type AutoSignState = {
   disable: (chainId?: string) => Promise<void>
 }
 
-type OfflineAminoSigner = OfflineAminoSigner // Type from @cosmjs/amino
-type EncodeObject = EncodeObject // Type from @cosmjs/proto-signing
-type Coin = Coin // Type from cosmjs-types/cosmos/base/v1beta1/coin
-type StdFee = StdFee // Type from @cosmjs/stargate
-type DeliverTxResponse = DeliverTxResponse // Type from @cosmjs/stargate
-type IndexedTx = IndexedTx // Type from @cosmjs/stargate
 ```
+
+Types `OfflineAminoSigner`, `EncodeObject`, `Coin`, `StdFee`, `DeliverTxResponse`, and `IndexedTx` are from external packages. See `@cosmjs/amino`, `@cosmjs/proto-signing`, `cosmjs-types`, `@cosmjs/stargate` for details.

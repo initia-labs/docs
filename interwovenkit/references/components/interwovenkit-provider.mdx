@@ -7,7 +7,6 @@ title: InterwovenKitProvider
 - React provider that configures and renders the InterwovenKit widget shell (drawer, routes, and supporting providers)
 - Mount once near the top of your app, typically wrapping your root component
 - Privy and AutoSign features are optional. Configure `privyContext` and `enableAutoSign` only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`)
-- Renders into a Shadow DOM by default. Use the `container` prop to attach to a specific DOM element
 
 ## Prerequisites
 
@@ -17,7 +16,7 @@ title: InterwovenKitProvider
 
 ## Styles
 
-- Font stylesheets are automatically injected via `<link>` elements
+- Font stylesheets are automatically injected
 - CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise the UI will be unstyled
 
 ## Quickstart
@@ -102,18 +101,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers).
 </Note>
 
-### AutoSign configuration
-
-AutoSign requires Privy integration. See [Provider Setup](../setup/providers) for the complete AutoSign setup with Privy.
-
-### Privy integration
-
-For Privy integration with AutoSign, see [Provider Setup](../setup/providers) for the complete example.
-
 ## Notes
 
-- Runs a one‑time local storage migration on mount to keep existing widget data compatible across versions
-- Injects font stylesheets via `<link>` elements automatically (font injection cannot currently be disabled)
+- For AutoSign and Privy integration setup, see [Provider Setup](../setup/providers)
 
 ## Type reference (advanced)
 
@@ -136,9 +126,6 @@ type Config = {
   privyContext?: PrivyContext
 }
 
-type Chain = Chain // Type from @initia/initia-registry-types
-type GeneratedType = GeneratedType // Type from @cosmjs/proto-signing
-type AminoConverters = AminoConverters // Type from @cosmjs/stargate
 type PrivyContext = {
   privy: PrivyHookResult
   createWallet: CreateWalletFunction

@@ -15,6 +15,10 @@ title: initiaPrivyWalletConnector
 ## Quickstart
 
 ```tsx
+"use client"
+
+import { PropsWithChildren } from "react"
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createConfig, http, WagmiProvider } from "wagmi"
 import { mainnet } from "wagmi/chains"
 import { metaMask } from "wagmi/connectors"
@@ -22,18 +26,22 @@ import { initiaPrivyWalletConnector } from "@initia/interwovenkit-react"
 
 const wagmiConfig = createConfig({
   connectors: [
-    initiaPrivyWalletConnector, // Social logins
+    initiaPrivyWalletConnector, // Social logins - shows as "Connect Socials"
     metaMask(), // External wallets
   ],
   chains: [mainnet],
   transports: { [mainnet.id]: http() },
 })
 
-export function Providers({ children }: { children: React.ReactNode }) {
+const queryClient = new QueryClient()
+
+export function Providers({ children }: PropsWithChildren) {
   return (
-    <WagmiProvider config={wagmiConfig}>
-      {children}
-    </WagmiProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        {children}
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 ```
@@ -51,4 +59,4 @@ Type `Connector` is from `wagmi`.
 - This connector enables social login options and does not require `PrivyProvider`
 - Use alongside other wagmi connectors (MetaMask, WalletConnect, etc.) to provide multiple connection options
 - Display name appears as "Connect Socials" in wallet selection UIs
-- For complete provider setup including `InterwovenKitProvider`, `QueryClientProvider`, and `injectStyles`, see [Provider Setup](../setup/providers)
+- For complete provider setup including `InterwovenKitProvider` and `injectStyles`, see [Provider Setup](../setup/providers)

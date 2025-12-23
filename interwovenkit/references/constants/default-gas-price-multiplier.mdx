@@ -4,16 +4,17 @@ title: DEFAULT_GAS_PRICE_MULTIPLIER
 
 ## Overview
 
-- Default gas price multiplier used by InterwovenKit when suggesting fees
-- Reference this constant when you need to reproduce InterwovenKit's default gas price calculation in custom fee logic
+- Default gas price multiplier used internally by InterwovenKit when calculating suggested fees
+- Used for non-INIT fee tokens on Layer 1 chains to adjust gas prices
+- Reference this constant only if you need to reproduce InterwovenKit's fee calculation logic in custom code
 
 ## Quickstart
 
 ```ts
 import { DEFAULT_GAS_PRICE_MULTIPLIER } from "@initia/interwovenkit-react"
 
-// Use the constant in your fee calculation logic
-const gasPriceMultiplier = DEFAULT_GAS_PRICE_MULTIPLIER // 1.05
+// Reproduce InterwovenKit's fee calculation logic
+const adjustedPrice = baseGasPrice * DEFAULT_GAS_PRICE_MULTIPLIER
 ```
 
 
@@ -25,4 +26,5 @@ const DEFAULT_GAS_PRICE_MULTIPLIER: number // 1.05
 
 ## Notes
 
-- This multiplier is applied on top of base gas prices when InterwovenKit suggests fees
+- This constant is primarily for internal use. InterwovenKit applies it automatically when suggesting fees
+- Only reference this constant if you're building custom fee calculation logic that needs to match InterwovenKit's behavior

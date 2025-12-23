@@ -27,22 +27,19 @@ function Address() {
 }
 ```
 
+<Note>
+This example assumes providers are already set up. For complete provider setup including `injectStyles` and all required providers, see [Provider Setup](../setup/providers).
+</Note>
+
 ## Return value
 
 ```ts
 function useHexAddress(): string
 ```
 
-Returns the Initia account address in hex format when a wallet is connected. Returns an empty string (`""`) when there is no connected address, or when Privy is configured via `privyContext` and has not finished connecting.
-
-## Examples
-
-### Full example (with providers)
-
-See [Provider Setup](../setup/providers) for complete provider configuration including `injectStyles` and all required providers.
+Returns the Initia account address in hex format when a wallet is connected. Returns an empty string when there is no connected address.
 
 ## Notes
 
 - This hook always returns a hex address, unlike `useAddress` which adapts to the default chain's format
 - Use this hook for EVM-style integrations or when you need a consistent hex format regardless of chain type
-- This hook works without PrivyProvider. Privy is only required when `privyContext` is provided to `InterwovenKitProvider`

@@ -6,7 +6,7 @@ title: useAddress
 
 - Returns the connected wallet address, automatically adapting to the default chain's format (hex for `minievm` chains, bech32 Initia address for others)
 - Use this hook when you need a single address that matches the default chain's format
-- Returns an empty string when there is no connected address or Privy has not finished connecting
+- Returns an empty string when there is no connected address
 
 ## Prerequisites
 
@@ -28,19 +28,17 @@ function Address() {
 }
 ```
 
+<Note>
+This example assumes providers are already set up. For complete provider setup including `injectStyles` and all required providers, see [Provider Setup](../setup/providers).
+</Note>
+
 ## Return value
 
 ```ts
 function useAddress(): string
 ```
 
-Returns a hex address when the default chain is `minievm`, or an Initia bech32 address for other chain types. Returns an empty string when there is no connected address or when Privy is configured and not connected.
-
-## Examples
-
-### Full example (with providers)
-
-See [Provider Setup](../setup/providers) for complete provider configuration including `injectStyles` and all required providers.
+Returns a hex address when the default chain is `minievm`, or an Initia bech32 address for other chain types. Returns an empty string when there is no connected address.
 
 ## Notes
 

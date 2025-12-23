@@ -415,13 +415,6 @@
                 ]
               },
               {
-                "group": "Connectors",
-                "pages": [
-                  "interwovenkit/references/social-login/initia-privy-wallet",
-                  "interwovenkit/references/social-login/initia-privy-wallet-connector"
-                ]
-              },
-              {
                 "group": "Hooks",
                 "pages": [
                   "interwovenkit/references/hooks/use-interwovenkit",
@@ -430,6 +423,18 @@
                   "interwovenkit/references/hooks/use-hex-address",
                   "interwovenkit/references/hooks/use-portfolio",
                   "interwovenkit/references/hooks/use-username-query"
+                ]
+              },
+              {
+                "group": "Utilities",
+                "pages": [
+                  "interwovenkit/references/utilities/inject-styles"
+                ]
+              },
+              {
+                "group": "Errors",
+                "pages": [
+                  "interwovenkit/references/errors/move-error"
                 ]
               },
               {
@@ -443,15 +448,10 @@
                 ]
               },
               {
-                "group": "Errors",
+                "group": "Social Login",
                 "pages": [
-                  "interwovenkit/references/errors/move-error"
-                ]
-              },
-              {
-                "group": "Utilities",
-                "pages": [
-                  "interwovenkit/references/utilities/inject-styles"
+                  "interwovenkit/references/social-login/initia-privy-wallet",
+                  "interwovenkit/references/social-login/initia-privy-wallet-connector"
                 ]
               }
             ]

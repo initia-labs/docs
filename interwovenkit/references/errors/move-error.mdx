@@ -40,11 +40,6 @@ class MoveError extends Error {
 }
 ```
 
-## Thrown by
-
-- `requestTxBlock`
-- `submitTxBlock`
-
 ## Notes
 
 - Use `instanceof MoveError` to branch UI or logging logic based on Move‑specific metadata such as `moduleAddress`, `moduleName`, and `errorCode`
