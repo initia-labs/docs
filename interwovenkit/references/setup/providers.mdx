@@ -95,7 +95,18 @@ function InterwovenKitWrapper({ children }: PropsWithChildren) {
   return (
     <InterwovenKitProvider
       privyContext={{ privy, siwe, createWallet, wallets }}
-      enableAutoSign={{ "interwoven-1": ["/cosmos.bank.v1beta1.MsgSend"] }}
+      // Option 1: Use boolean to enable default message types based on chain type
+      // - minievm: /minievm.evm.v1.MsgCall
+      // - miniwasm: /cosmwasm.wasm.v1.MsgExecuteContract
+      // - default: /initia.move.v1.MsgExecute
+      enableAutoSign={true}
+      // Option 2: Specify exact message types per chain
+      // enableAutoSign={{
+      //   "interwoven-1": [
+      //     "/cosmos.bank.v1beta1.MsgSend",        // Token transfers
+      //     "/cosmos.staking.v1beta1.MsgDelegate", // Staking/delegation
+      //   ],
+      // }}
     >
       {children}
     </InterwovenKitProvider>
@@ -131,5 +142,10 @@ export default function Providers({ children }: PropsWithChildren) {
 - Call `injectStyles()` once at app startup to avoid duplicate style tags
 - Privy is **required** for AutoSign. AutoSign will not work without `PrivyProvider` and `privyContext`
 - Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID. This is distinct from the imported `PRIVY_APP_ID`
-- The `enableAutoSign` configuration is a per-chain allowlist of message type URLs
+- **`enableAutoSign` configuration**:
+  - **Boolean (`true`)**: Enables AutoSign with default message types based on chain type:
+    - `"minievm"`: `/minievm.evm.v1.MsgCall`
+    - `"miniwasm"`: `/cosmwasm.wasm.v1.MsgExecuteContract`
+    - Default: `/initia.move.v1.MsgExecute`
+  - **Record (`Record<string, string[]>)**: Per-chain allowlist of specific message type URLs. Use this to control exactly which message types can be auto-signed (e.g., `MsgSend`, `MsgDelegate`, `MsgExecute`)
 - **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features
