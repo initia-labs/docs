@@ -51,7 +51,7 @@ export default function Providers({ children }: PropsWithChildren) {
 }
 ```
 
-**Note:** This example shows the typical usage pattern. For complete provider setup including AutoSign configuration, see [Provider Setup](../setup/providers.mdx).
+**Note:** This example shows the typical usage pattern. For complete provider setup including AutoSign configuration, see [Provider Setup](../setup/providers).
 
 ## API
 
@@ -66,4 +66,4 @@ Injects the provided CSS string into InterwovenKit's Shadow DOM. The `css` param
 - Required for InterwovenKit UI to render correctly. Without calling this function, components may appear unstyled
 - Call this once at app startup in your top-level Providers component (alongside `InterwovenKitProvider`) to avoid injecting duplicate style tags
 - Each call appends a new `<style>` element to the Shadow DOM
-- For complete setup examples, see [Provider Setup](../setup/providers.mdx)
+- For complete setup examples, see [Provider Setup](../setup/providers)

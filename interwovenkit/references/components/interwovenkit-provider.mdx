@@ -18,7 +18,7 @@ title: InterwovenKitProvider
 ## Styles
 
 - Font stylesheets are automatically injected via `<link>` elements
-- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles.mdx) once at app startup. Otherwise the UI will be unstyled
+- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise the UI will be unstyled
 
 **Note:** In React Strict Mode (development), `useEffect` may run twice, so ensure `injectStyles` runs only once: either add a simple guard or place it in a top-level Providers component.
 
@@ -47,7 +47,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 }
 ```
 
-**Note:** This example shows the provider structure. For complete setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers.mdx).
+**Note:** This example shows the provider structure. For complete setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers).
 
 ## Props
 
@@ -98,15 +98,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 }
 ```
 
-**Note:** This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers.mdx).
+**Note:** This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers).
 
 ### AutoSign configuration
 
-AutoSign requires Privy integration. See [Provider Setup](../setup/providers.mdx) for the complete AutoSign setup with Privy.
+AutoSign requires Privy integration. See [Provider Setup](../setup/providers) for the complete AutoSign setup with Privy.
 
 ### Privy integration
 
-For Privy integration with AutoSign, see [Provider Setup](../setup/providers.mdx) for the complete example.
+For Privy integration with AutoSign, see [Provider Setup](../setup/providers) for the complete example.
 
 ## Notes
 

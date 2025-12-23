@@ -130,6 +130,6 @@ export default function Providers({ children }: PropsWithChildren) {
 
 - Call `injectStyles()` once at app startup to avoid duplicate style tags
 - Privy is **required** for AutoSign. AutoSign will not work without `PrivyProvider` and `privyContext`
-- Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID (not `PRIVY_APP_ID`)
+- Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID. This is distinct from the imported `PRIVY_APP_ID`
 - The `enableAutoSign` configuration is a per-chain allowlist of message type URLs
 - **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features

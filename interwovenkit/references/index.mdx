@@ -6,7 +6,7 @@ The InterwovenKit React API provides components, hooks, and utilities for integr
 
 InterwovenKit is designed around a single provider (`InterwovenKitProvider`) that configures network and UI behavior, with hooks layered on top for state, UI control, and transactions. Most users start by configuring `InterwovenKitProvider` with a preset (`MAINNET` or `TESTNET`), then use hooks like `useInterwovenKit` or `useAddress` to read connection state and trigger UI flows. The API is organized into:
 
-- **Components**: React providers and UI components (`InterwovenKitProvider`, `InterwovenKit`)
+- **Components**: React providers and UI components (`InterwovenKitProvider`)
 - **Hooks**: React hooks for connection state, transactions, and data (`useInterwovenKit`, `useAddress`, `usePortfolio`, etc.)
 - **Utilities**: Helper functions (`injectStyles`)
 - **Errors**: Error types thrown by the API (`MoveError`)
@@ -15,46 +15,46 @@ InterwovenKit is designed around a single provider (`InterwovenKitProvider`) tha
 
 ## Common starting points
 
-- **Provider setup**: See [Provider Setup](./setup/providers.mdx) for complete configuration (basic setup or AutoSign with Privy)
-- **Initial setup**: [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx) with [`MAINNET`](./constants/mainnet.mdx) or [`TESTNET`](./constants/testnet.mdx)
-- **Inject styles**: Call [`injectStyles`](./utilities/inject-styles.mdx) before rendering InterwovenKit UI components
-- **Read connection state**: [`useAddress`](./hooks/use-address.mdx) or [`useInterwovenKit`](./hooks/use-interwovenkit.mdx)
-- **Open UI flows**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`openConnect`, `openWallet`, `openBridge`)
-- **Send transactions**: [`useInterwovenKit`](./hooks/use-interwovenkit.mdx) (`requestTxBlock`, `submitTxBlock`)
+- **Provider setup**: See [Provider Setup](./setup/providers) for complete configuration (basic setup or AutoSign with Privy)
+- **Initial setup**: [`InterwovenKitProvider`](./components/interwovenkit-provider) with [`MAINNET`](./constants/mainnet) or [`TESTNET`](./constants/testnet)
+- **Inject styles**: Call [`injectStyles`](./utilities/inject-styles) before rendering InterwovenKit UI components
+- **Read connection state**: [`useAddress`](./hooks/use-address) or [`useInterwovenKit`](./hooks/use-interwovenkit)
+- **Open UI flows**: [`useInterwovenKit`](./hooks/use-interwovenkit) (`openConnect`, `openWallet`, `openBridge`)
+- **Send transactions**: [`useInterwovenKit`](./hooks/use-interwovenkit) (`requestTxBlock`, `submitTxBlock`)
 
-If you are new to InterwovenKit, start with [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx) and [`useInterwovenKit`](./hooks/use-interwovenkit.mdx). Everything else builds on top of those two APIs.
+If you are new to InterwovenKit, start with [`InterwovenKitProvider`](./components/interwovenkit-provider) and [`useInterwovenKit`](./hooks/use-interwovenkit). Everything else builds on top of those two APIs.
 
 ## Components
 
-- [`InterwovenKitProvider`](./components/interwovenkit-provider.mdx)
+- [`InterwovenKitProvider`](./components/interwovenkit-provider)
 
 ## Hooks
 
-- [`useInterwovenKit`](./hooks/use-interwovenkit.mdx)
-- [`useAddress`](./hooks/use-address.mdx)
-- [`useHexAddress`](./hooks/use-hex-address.mdx)
-- [`useInitiaAddress`](./hooks/use-initia-address.mdx)
-- [`useUsernameQuery`](./hooks/use-username-query.mdx)
-- [`usePortfolio`](./hooks/use-portfolio.mdx)
+- [`useInterwovenKit`](./hooks/use-interwovenkit)
+- [`useAddress`](./hooks/use-address)
+- [`useHexAddress`](./hooks/use-hex-address)
+- [`useInitiaAddress`](./hooks/use-initia-address)
+- [`useUsernameQuery`](./hooks/use-username-query)
+- [`usePortfolio`](./hooks/use-portfolio)
 
 ## Utilities
 
-- [`injectStyles`](./utilities/inject-styles.mdx)
+- [`injectStyles`](./utilities/inject-styles)
 
 ## Errors
 
-- [`MoveError`](./errors/move-error.mdx)
+- [`MoveError`](./errors/move-error)
 
 ## Constants
 
-- [`MAINNET`](./constants/mainnet.mdx)
-- [`TESTNET`](./constants/testnet.mdx)
-- [`DEFAULT_GAS_ADJUSTMENT`](./constants/default-gas-adjustment.mdx)
-- [`DEFAULT_GAS_PRICE_MULTIPLIER`](./constants/default-gas-price-multiplier.mdx)
+- [`MAINNET`](./constants/mainnet)
+- [`TESTNET`](./constants/testnet)
+- [`DEFAULT_GAS_ADJUSTMENT`](./constants/default-gas-adjustment)
+- [`DEFAULT_GAS_PRICE_MULTIPLIER`](./constants/default-gas-price-multiplier)
 
 ## Connectors
 
-- [`PRIVY_APP_ID`](./connectors/privy-app-id.mdx)
-- [`initiaPrivyWalletConnector`](./connectors/initia-privy-wallet-connector.mdx)
-- [`initiaPrivyWallet`](./connectors/initia-privy-wallet.mdx)
+- [`PRIVY_APP_ID`](./connectors/privy-app-id)
+- [`initiaPrivyWalletConnector`](./connectors/initia-privy-wallet-connector)
+- [`initiaPrivyWallet`](./connectors/initia-privy-wallet)
 
