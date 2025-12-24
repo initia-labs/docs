@@ -4,31 +4,36 @@ title: useInitiaAddress
 
 ## Overview
 
-- Returns the connected wallet address in Initia bech32 format (always bech32, regardless of chain type).
-- Use when you always need a bech32 address, regardless of the default chain type.
+- Returns the connected wallet address in Initia bech32 format (always bech32,
+  regardless of chain type).
+- Use when you always need a bech32 address, regardless of the default chain
+  type.
 
 ## Prerequisites
 
 - Must be rendered within `InterwovenKitProvider`.
 - Must be used within a React Query `QueryClientProvider`.
 - Must be used within a wagmi `WagmiProvider`.
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
 
 ## Quickstart
 
 ```tsx
-"use client"
+'use client'
 
-import { useInitiaAddress } from "@initia/interwovenkit-react"
+import { useInitiaAddress } from '@initia/interwovenkit-react'
 
 function Address() {
   const address = useInitiaAddress()
-  return <span>{address || "Not connected"}</span>
+  return <span>{address || 'Not connected'}</span>
 }
 ```
 
 <Note>
-This example assumes providers are already set up. For complete provider setup including `injectStyles` and all required providers, see [Provider Setup](../setup/providers).
+  This example assumes providers are already set up. For complete provider setup
+  including `injectStyles` and all required providers, see [Provider
+  Setup](../setup/providers).
 </Note>
 
 ## Return value
@@ -37,9 +42,12 @@ This example assumes providers are already set up. For complete provider setup i
 function useInitiaAddress(): string
 ```
 
-Converts the connected hex wallet address into an Initia bech32 address. Returns an empty string when there is no connected address.
+Converts the connected hex wallet address into an Initia bech32 address. Returns
+an empty string when there is no connected address.
 
 ## Notes
 
-- Always returns bech32 format, unlike `useAddress` which adapts to the default chain's format.
-- Use for Initia-specific integrations or when you need a consistent bech32 format regardless of chain type.
+- Always returns bech32 format, unlike `useAddress` which adapts to the default
+  chain's format.
+- Use for Initia-specific integrations or when you need a consistent bech32
+  format regardless of chain type.

@@ -4,13 +4,14 @@ title: MAINNET
 
 ## Overview
 
-- Configuration preset for Initia mainnet with defaults for registry, router, glyph, and username services.
+- Configuration preset for Initia mainnet with defaults for registry, router,
+  glyph, and username services.
 - Use as a starting point for production apps.
 
 ## Quickstart
 
 ```tsx
-import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+import { InterwovenKitProvider, MAINNET } from '@initia/interwovenkit-react'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return <InterwovenKitProvider {...MAINNET}>{children}</InterwovenKitProvider>
@@ -21,19 +22,25 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 ```ts
 const MAINNET: {
-  defaultChainId: "interwoven-1"
-  registryUrl: "https://registry.initia.xyz"
-  routerApiUrl: "https://router-api.initia.xyz"
-  glyphUrl: "https://glyph.initia.xyz"
-  usernamesModuleAddress: "0x72ed9b26ecdcd6a21d304df50f19abfdbe31d2c02f60c84627844620a45940ef"
-  theme: "dark"
+  defaultChainId: 'interwoven-1'
+  registryUrl: 'https://registry.initia.xyz'
+  routerApiUrl: 'https://router-api.initia.xyz'
+  glyphUrl: 'https://glyph.initia.xyz'
+  usernamesModuleAddress: '0x72ed9b26ecdcd6a21d304df50f19abfdbe31d2c02f60c84627844620a45940ef'
+  theme: 'dark'
 }
 ```
 
 **Property descriptions:**
-- `usernamesModuleAddress`: On-chain module address of the `.init` username contract. This is the same for all apps using mainnet and it represents the deployed contract address that handles username lookups (e.g., resolving `alice.init` to an address)
-- `theme`: Default theme is `"dark"`, but can be overridden to `"light"` when using the preset
+
+- `usernamesModuleAddress`: On-chain module address of the `.init` username
+  contract. This is the same for all apps using mainnet and it represents the
+  deployed contract address that handles username lookups (e.g., resolving
+  `alice.init` to an address)
+- `theme`: Default theme is `"dark"`, but can be overridden to `"light"` when
+  using the preset
 
 ## Notes
 
-- Most apps should start with `{...MAINNET}` and override only what they need (for example `defaultChainId` or `theme`).
+- Most apps should start with `{...MAINNET}` and override only what they need
+  (for example `defaultChainId` or `theme`).

@@ -4,41 +4,43 @@ title: initiaPrivyWallet
 
 ## Overview
 
-- RainbowKit wallet that enables social login (email, Google, X) in your RainbowKit wallets list.
+- RainbowKit wallet that enables social login (email, Google, X) in your
+  RainbowKit wallets list.
 - Social logins only. Does not require `PrivyProvider`.
 
 ## Prerequisites
 
 - Must be used with RainbowKit `getDefaultConfig` or `createConfig`.
-- If you need AutoSign or embedded wallet features, use `initiaPrivyWallet` with `PrivyProvider` (see [Provider Setup](../setup/providers)).
+- If you need AutoSign or embedded wallet features, use `initiaPrivyWallet` with
+  `PrivyProvider` (see [Provider Setup](../setup/providers)).
 
 ## Quickstart
 
 ```tsx
-"use client"
+'use client'
 
-import { PropsWithChildren } from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import { mainnet } from "wagmi/chains"
-import { getDefaultConfig, RainbowKitProvider } from "@rainbow-me/rainbowkit"
-import { metaMaskWallet } from "@rainbow-me/rainbowkit/wallets"
-import { initiaPrivyWallet } from "@initia/interwovenkit-react"
-import "@rainbow-me/rainbowkit/styles.css"
+import { PropsWithChildren } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
+import { initiaPrivyWallet } from '@initia/interwovenkit-react'
+import '@rainbow-me/rainbowkit/styles.css'
 
-const projectId = "YOUR_WALLETCONNECT_PROJECT_ID" // Required: Get from https://cloud.walletconnect.com
+const projectId = 'YOUR_WALLETCONNECT_PROJECT_ID' // Required: Get from https://cloud.walletconnect.com
 
 const rainbowConfig = getDefaultConfig({
-  appName: "My dApp",
+  appName: 'My dApp',
   projectId,
   chains: [mainnet],
   wallets: [
     {
-      groupName: "Social",
+      groupName: 'Social',
       wallets: [initiaPrivyWallet], // Social logins - shows as "Socials"
     },
     {
-      groupName: "Popular",
+      groupName: 'Popular',
       wallets: [(params) => metaMaskWallet({ ...params, projectId })], // External wallets
     },
   ],
@@ -50,9 +52,7 @@ export function Providers({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={rainbowConfig}>
-        <RainbowKitProvider>
-          {children}
-        </RainbowKitProvider>
+        <RainbowKitProvider>{children}</RainbowKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
   )

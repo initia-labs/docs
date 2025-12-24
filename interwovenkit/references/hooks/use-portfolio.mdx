@@ -4,23 +4,26 @@ title: usePortfolio
 
 ## Overview
 
-- Aggregates balances, asset metadata, and prices across all chains in the Initia registry into a single portfolio view.
+- Aggregates balances, asset metadata, and prices across all chains in the
+  Initia registry into a single portfolio view.
 - Groups assets by symbol and computes per-chain and total portfolio value.
-- Tracks loading state and provides manual refetching for all underlying queries.
+- Tracks loading state and provides manual refetching for all underlying
+  queries.
 
 ## Prerequisites
 
 - Must be rendered within `InterwovenKitProvider`.
 - Must be used within a React Query `QueryClientProvider`.
 - Must be used within a wagmi `WagmiProvider`.
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
 
 ## Quickstart
 
 ```tsx
-"use client"
+'use client'
 
-import { usePortfolio } from "@initia/interwovenkit-react"
+import { usePortfolio } from '@initia/interwovenkit-react'
 
 function PortfolioValue() {
   const { totalValue, isLoading } = usePortfolio()
@@ -30,26 +33,34 @@ function PortfolioValue() {
 ```
 
 <Note>
-This example assumes providers are already set up. For complete provider setup including `injectStyles` and all required providers, see [Provider Setup](../setup/providers).
+  This example assumes providers are already set up. For complete provider setup
+  including `injectStyles` and all required providers, see [Provider
+  Setup](../setup/providers).
 </Note>
 
 ## Return value
 
 **Aggregated values:**
+
 - `totalValue`: Estimated total USD value across all chains.
 - `chainsByValue`: List of chains sorted by portfolio value on each chain.
 
 **Grouped assets:**
+
 - `assetGroups`: Aggregated assets grouped by symbol across chains.
-- `unlistedAssets`: Assets without registry metadata, kept separate from grouped assets.
+- `unlistedAssets`: Assets without registry metadata, kept separate from grouped
+  assets.
 
 **Loading and control:**
+
 - `isLoading`: `true` while any underlying query is loading.
-- `refetch`: Manually refetches all balances, assets, and prices (returns `void`).
+- `refetch`: Manually refetches all balances, assets, and prices (returns
+  `void`).
 
 ## Notes
 
-- The portfolio view only includes chains and assets that have non‑zero balances.
+- The portfolio view only includes chains and assets that have non‑zero
+  balances.
 
 ## Type reference (advanced)
 

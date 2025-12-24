@@ -10,12 +10,11 @@ title: DEFAULT_GAS_PRICE_MULTIPLIER
 ## Quickstart
 
 ```ts
-import { DEFAULT_GAS_PRICE_MULTIPLIER } from "@initia/interwovenkit-react"
+import { DEFAULT_GAS_PRICE_MULTIPLIER } from '@initia/interwovenkit-react'
 
 // Reproduce InterwovenKit's fee calculation logic
 const adjustedPrice = baseGasPrice * DEFAULT_GAS_PRICE_MULTIPLIER
 ```
-
 
 ## Value
 
@@ -26,4 +25,5 @@ const DEFAULT_GAS_PRICE_MULTIPLIER: number // 1.05
 ## Notes
 
 - InterwovenKit applies this automatically when suggesting fees.
-- Reference only if building custom fee calculation logic that needs to match InterwovenKit's behavior.
+- Reference only if building custom fee calculation logic that needs to match
+  InterwovenKit's behavior.

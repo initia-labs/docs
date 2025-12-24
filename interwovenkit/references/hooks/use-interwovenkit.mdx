@@ -4,9 +4,11 @@ title: useInterwovenKit
 
 ## Overview
 
-- Primary entry point for connection state, UI actions, transaction helpers, and AutoSign.
+- Primary entry point for connection state, UI actions, transaction helpers, and
+  AutoSign.
 - Required for opening InterwovenKit UI or sending transactions.
-- For simple reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid overhead.
+- For simple reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to
+  avoid overhead.
 - AutoSign requires Privy (see [Provider Setup](../setup/providers)).
 
 ## Prerequisites
@@ -14,27 +16,30 @@ title: useInterwovenKit
 - Must be rendered within `InterwovenKitProvider`.
 - Must be used within a React Query `QueryClientProvider`.
 - Must be used within a wagmi `WagmiProvider`.
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
 
 ## Quickstart
 
 ```tsx
-"use client"
+'use client'
 
-import { useInterwovenKit } from "@initia/interwovenkit-react"
+import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 function ConnectButton() {
   const { isConnected, openConnect, openWallet } = useInterwovenKit()
   return (
     <button onClick={isConnected ? openWallet : openConnect}>
-      {isConnected ? "Open wallet" : "Connect"}
+      {isConnected ? 'Open wallet' : 'Connect'}
     </button>
   )
 }
 ```
 
 <Note>
-This example assumes providers are already set up. For complete provider setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers).
+  This example assumes providers are already set up. For complete provider setup
+  including `injectStyles` and AutoSign configuration, see [Provider
+  Setup](../setup/providers).
 </Note>
 
 ## Return value
@@ -42,40 +47,61 @@ This example assumes providers are already set up. For complete provider setup i
 Returns an object with:
 
 **Connection state:**
-- `address`: Connected wallet address, adapts to default chain format (hex for `minievm`, bech32 for others) (returns `string`).
-- `initiaAddress`: Connected wallet address in Initia bech32 format (returns `string`).
+
+- `address`: Connected wallet address, adapts to default chain format (hex for
+  `minievm`, bech32 for others) (returns `string`).
+- `initiaAddress`: Connected wallet address in Initia bech32 format (returns
+  `string`).
 - `hexAddress`: Connected wallet address in hex format (returns `string`).
-- `username`: `.init` username for the connected address, if available (returns `string | null | undefined`).
-- `offlineSigner`: Offline signer for Cosmos transactions (returns `OfflineAminoSigner`).
+- `username`: `.init` username for the connected address, if available (returns
+  `string | null | undefined`).
+- `offlineSigner`: Offline signer for Cosmos transactions (returns
+  `OfflineAminoSigner`).
 - `isConnected`: Whether a wallet is currently connected (returns `boolean`).
-- `isOpen`: Whether the InterwovenKit drawer/modal is currently open (returns `boolean`).
+- `isOpen`: Whether the InterwovenKit drawer/modal is currently open (returns
+  `boolean`).
 
 **UI actions:**
+
 - `openConnect`: Opens the wallet connection UI (returns `void`).
 - `openWallet`: Opens the main wallet UI (returns `void`).
-- `openBridge`: Opens the bridge UI with optional default values (returns `void`).
+- `openBridge`: Opens the bridge UI with optional default values (returns
+  `void`).
 - `disconnect`: Disconnects the current wallet connection (returns `void`).
 
 **AutoSign:**
+
 - `autoSign`: Object containing AutoSign state and control methods:
-  - `expiredAtByChain`: Expiration dates for AutoSign permissions by chain ID (returns `Record<string, Date | null | undefined>`).
-  - `isEnabledByChain`: Whether AutoSign is enabled for each chain (returns `Record<string, boolean>`).
+  - `expiredAtByChain`: Expiration dates for AutoSign permissions by chain ID
+    (returns `Record<string, Date | null | undefined>`).
+  - `isEnabledByChain`: Whether AutoSign is enabled for each chain (returns
+    `Record<string, boolean>`).
   - `isLoading`: Whether AutoSign status is being loaded (returns `boolean`).
-  - `enable(chainId?)`: Opens UI to enable AutoSign for a chain (returns `Promise<void>`).
-  - `disable(chainId?)`: Disables AutoSign for a chain (returns `Promise<void>`).
+  - `enable(chainId?)`: Opens UI to enable AutoSign for a chain (returns
+    `Promise<void>`).
+  - `disable(chainId?)`: Disables AutoSign for a chain (returns
+    `Promise<void>`).
 
 **Transaction helpers:**
+
 - `estimateGas`: Estimates gas for a transaction (returns `number`).
-- `simulateTx`: Simulates a transaction without broadcasting (returns transaction result).
-- `requestTxSync`: Requests transaction approval via UI, signs, and broadcasts synchronously (returns `txHash: string`).
-- `requestTxBlock`: Requests transaction approval via UI, signs, and waits for block confirmation (returns `DeliverTxResponse`).
-- `submitTxSync`: Signs and broadcasts transaction directly without UI (returns `txHash: string`).
-- `submitTxBlock`: Signs and broadcasts transaction directly, waits for block confirmation (returns `DeliverTxResponse`).
-- `waitForTxConfirmation`: Polls chain for transaction confirmation by hash (returns `IndexedTx`).
+- `simulateTx`: Simulates a transaction without broadcasting (returns
+  transaction result).
+- `requestTxSync`: Requests transaction approval via UI, signs, and broadcasts
+  synchronously (returns `txHash: string`).
+- `requestTxBlock`: Requests transaction approval via UI, signs, and waits for
+  block confirmation (returns `DeliverTxResponse`).
+- `submitTxSync`: Signs and broadcasts transaction directly without UI (returns
+  `txHash: string`).
+- `submitTxBlock`: Signs and broadcasts transaction directly, waits for block
+  confirmation (returns `DeliverTxResponse`).
+- `waitForTxConfirmation`: Polls chain for transaction confirmation by hash
+  (returns `IndexedTx`).
 
 ## Notes
 
-- Transaction helpers throw `MoveError` on Move VM errors (see [MoveError](../errors/move-error)).
+- Transaction helpers throw `MoveError` on Move VM errors (see
+  [MoveError](../errors/move-error)).
 - `requestTx*` methods show a transaction approval UI before signing.
 - `submitTx*` methods sign and broadcast directly without UI.
 - `waitForTxConfirmation` polls until confirmed or timeout.
@@ -98,12 +124,24 @@ type InterwovenKitResult = {
   openBridge: (defaultValues?: Partial<FormValues>) => void
   disconnect: () => void
   autoSign: AutoSignState
-  estimateGas: (tx: Pick<TxRequest, "messages" | "memo" | "chainId">) => Promise<number>
-  simulateTx: (tx: Pick<TxRequest, "messages" | "memo" | "chainId">) => Promise<unknown>
+  estimateGas: (
+    tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>,
+  ) => Promise<number>
+  simulateTx: (
+    tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>,
+  ) => Promise<unknown>
   requestTxSync: (tx: TxRequest) => Promise<string>
-  requestTxBlock: (tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
+  requestTxBlock: (
+    tx: TxRequest,
+    timeoutMs?: number,
+    intervalMs?: number,
+  ) => Promise<DeliverTxResponse>
   submitTxSync: (tx: TxParams) => Promise<string>
-  submitTxBlock: (tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
+  submitTxBlock: (
+    tx: TxParams,
+    timeoutMs?: number,
+    intervalMs?: number,
+  ) => Promise<DeliverTxResponse>
   waitForTxConfirmation: (options: WaitForTxOptions) => Promise<IndexedTx>
 }
 
@@ -151,7 +189,9 @@ type AutoSignState = {
   enable: (chainId?: string) => Promise<void>
   disable: (chainId?: string) => Promise<void>
 }
-
 ```
 
-Types `OfflineAminoSigner`, `EncodeObject`, `Coin`, `StdFee`, `DeliverTxResponse`, and `IndexedTx` are from external packages. See `@cosmjs/amino`, `@cosmjs/proto-signing`, `cosmjs-types`, `@cosmjs/stargate` for details.
+Types `OfflineAminoSigner`, `EncodeObject`, `Coin`, `StdFee`,
+`DeliverTxResponse`, and `IndexedTx` are from external packages. See
+`@cosmjs/amino`, `@cosmjs/proto-signing`, `cosmjs-types`, `@cosmjs/stargate` for
+details.

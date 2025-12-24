@@ -404,9 +404,7 @@
               "interwovenkit/references/index",
               {
                 "group": "Setup",
-                "pages": [
-                  "interwovenkit/references/setup/providers"
-                ]
+                "pages": ["interwovenkit/references/setup/providers"]
               },
               {
                 "group": "Components",
@@ -427,15 +425,11 @@
               },
               {
                 "group": "Utilities",
-                "pages": [
-                  "interwovenkit/references/utilities/inject-styles"
-                ]
+                "pages": ["interwovenkit/references/utilities/inject-styles"]
               },
               {
                 "group": "Errors",
-                "pages": [
-                  "interwovenkit/references/errors/move-error"
-                ]
+                "pages": ["interwovenkit/references/errors/move-error"]
               },
               {
                 "group": "Constants",

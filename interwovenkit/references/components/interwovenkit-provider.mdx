@@ -4,36 +4,41 @@ title: InterwovenKitProvider
 
 ## Overview
 
-- React provider that configures and renders the InterwovenKit widget shell (drawer, routes, and supporting providers).
+- React provider that configures and renders the InterwovenKit widget shell
+  (drawer, routes, and supporting providers).
 - Mount once near the top of your app, wrapping your root component.
-- Privy and AutoSign are optional. Configure `privyContext` and `enableAutoSign` only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`).
+- Privy and AutoSign are optional. Configure `privyContext` and `enableAutoSign`
+  only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`).
 
 ## Prerequisites
 
 - Must be used within a React Query `QueryClientProvider`.
 - Must be used within a wagmi `WagmiProvider` if using wallet-related APIs.
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
 
 ## Styles
 
-- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise the UI will be unstyled.
+- CSS styles must be injected manually using
+  [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise
+  the UI will be unstyled.
 
 ## Quickstart
 
 ```tsx
-"use client"
+'use client'
 
-import { useEffect } from "react"
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { createConfig, http, WagmiProvider } from "wagmi"
-import { mainnet } from "wagmi/chains"
+import { useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
 import {
   initiaPrivyWalletConnector,
   injectStyles,
   InterwovenKitProvider,
   MAINNET,
-} from "@initia/interwovenkit-react"
-import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+} from '@initia/interwovenkit-react'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const queryClient = new QueryClient()
 const wagmiConfig = createConfig({
@@ -50,9 +55,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider {...MAINNET}>
-          {children}
-        </InterwovenKitProvider>
+        <InterwovenKitProvider {...MAINNET}>{children}</InterwovenKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
   )
@@ -60,26 +63,27 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ```
 
 <Note>
-This example shows the provider structure. For complete setup including AutoSign configuration, see [Provider Setup](../setup/providers).
+  This example shows the provider structure. For complete setup including
+  AutoSign configuration, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `defaultChainId` | `string` | From preset | Initia or rollup chain ID that InterwovenKit should treat as the "home" chain |
-| `registryUrl` | `string` | From preset | Base URL for the Initia registry API used to resolve chains and assets |
-| `routerApiUrl` | `string` | From preset | Base URL for the router API used by the bridge and swap flows |
-| `glyphUrl` | `string` | From preset | Base URL for Glyph profile data (user avatars and related metadata) |
-| `usernamesModuleAddress` | `string` | From preset | On‑chain module address of the `.init` username contract |
-| `theme` | `"light" \| "dark"` | From preset (typically dark) | Visual theme for the widget |
-| `customChain` | `Chain` | `undefined` | Adds or overrides a chain definition in the Initia registry. Use when you run a private rollup or need to inject a chain that is not yet in the public registry |
-| `protoTypes` | `Iterable<[string, GeneratedType]>` | `undefined` | Additional protobuf type mappings used when encoding Cosmos transactions. Only needed if you use custom message types |
-| `aminoConverters` | `AminoConverters` | `undefined` | Custom Amino converters for legacy signing. Only needed for advanced integrations |
-| `container` | `HTMLElement` | `undefined` | Optional element the widget should render into instead of the default Shadow DOM host |
-| `disableAnalytics` | `boolean` | `false` (mainnet), `true` (testnet) | When `true`, disables InterwovenKit's built‑in analytics events |
-| `enableAutoSign` | `boolean \| Record<string, string[]>` | `undefined` | Enables AutoSign and optionally whitelists chains and message types. `true` enables for supported chains and messages. `Record<string, string[]>` is a per-chain allowlist of message type URLs. **Requires Privy** (`PrivyProvider` and `privyContext`). Required at runtime only if you want AutoSign flows to be available |
-| `privyContext` | `PrivyContext` | `undefined` | Passes Privy authentication and wallet helpers into InterwovenKit. **Required for AutoSign and embedded wallet features**, otherwise optional |
+| Prop                     | Type                                  | Default                             | Description                                                                                                                                                                                                                                                                                                                   |
+| ------------------------ | ------------------------------------- | ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `defaultChainId`         | `string`                              | From preset                         | Initia or rollup chain ID that InterwovenKit should treat as the "home" chain                                                                                                                                                                                                                                                 |
+| `registryUrl`            | `string`                              | From preset                         | Base URL for the Initia registry API used to resolve chains and assets                                                                                                                                                                                                                                                        |
+| `routerApiUrl`           | `string`                              | From preset                         | Base URL for the router API used by the bridge and swap flows                                                                                                                                                                                                                                                                 |
+| `glyphUrl`               | `string`                              | From preset                         | Base URL for Glyph profile data (user avatars and related metadata)                                                                                                                                                                                                                                                           |
+| `usernamesModuleAddress` | `string`                              | From preset                         | On‑chain module address of the `.init` username contract                                                                                                                                                                                                                                                                      |
+| `theme`                  | `"light" \| "dark"`                   | From preset (typically dark)        | Visual theme for the widget                                                                                                                                                                                                                                                                                                   |
+| `customChain`            | `Chain`                               | `undefined`                         | Adds or overrides a chain definition in the Initia registry. Use when you run a private rollup or need to inject a chain that is not yet in the public registry                                                                                                                                                               |
+| `protoTypes`             | `Iterable<[string, GeneratedType]>`   | `undefined`                         | Additional protobuf type mappings used when encoding Cosmos transactions. Only needed if you use custom message types                                                                                                                                                                                                         |
+| `aminoConverters`        | `AminoConverters`                     | `undefined`                         | Custom Amino converters for legacy signing. Only needed for advanced integrations                                                                                                                                                                                                                                             |
+| `container`              | `HTMLElement`                         | `undefined`                         | Optional element the widget should render into instead of the default Shadow DOM host                                                                                                                                                                                                                                         |
+| `disableAnalytics`       | `boolean`                             | `false` (mainnet), `true` (testnet) | When `true`, disables InterwovenKit's built‑in analytics events                                                                                                                                                                                                                                                               |
+| `enableAutoSign`         | `boolean \| Record<string, string[]>` | `undefined`                         | Enables AutoSign and optionally whitelists chains and message types. `true` enables for supported chains and messages. `Record<string, string[]>` is a per-chain allowlist of message type URLs. **Requires Privy** (`PrivyProvider` and `privyContext`). Required at runtime only if you want AutoSign flows to be available |
+| `privyContext`           | `PrivyContext`                        | `undefined`                         | Passes Privy authentication and wallet helpers into InterwovenKit. **Required for AutoSign and embedded wallet features**, otherwise optional                                                                                                                                                                                 |
 
 ## Return value
 
@@ -90,27 +94,27 @@ Renders `children` and mounts the InterwovenKit UI shell.
 ### Custom chain configuration
 
 ```tsx
-import type { Chain } from "@initia/initia-registry-types"
-import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+import type { Chain } from '@initia/initia-registry-types'
+import { InterwovenKitProvider, MAINNET } from '@initia/interwovenkit-react'
 
 const MY_ROLLUP: Chain = {
-  chain_id: "my-rollup-1",
-  chain_name: "my-rollup",
-  pretty_name: "My Rollup",
-  network_type: "mainnet",
-  bech32_prefix: "init",
+  chain_id: 'my-rollup-1',
+  chain_name: 'my-rollup',
+  pretty_name: 'My Rollup',
+  network_type: 'mainnet',
+  bech32_prefix: 'init',
   fees: {
     fee_tokens: [
       {
-        denom: "uinit",
+        denom: 'uinit',
         fixed_min_gas_price: 0.1,
       },
     ],
   },
   apis: {
-    rpc: [{ address: "https://rpc.my-rollup.com" }],
-    rest: [{ address: "https://api.my-rollup.com" }],
-    indexer: [{ address: "https://indexer.my-rollup.com" }],
+    rpc: [{ address: 'https://rpc.my-rollup.com' }],
+    rest: [{ address: 'https://api.my-rollup.com' }],
+    indexer: [{ address: 'https://indexer.my-rollup.com' }],
   },
 } as Chain
 
@@ -128,12 +132,15 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ```
 
 <Note>
-This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers).
+  This example shows only the `InterwovenKitProvider` configuration. For
+  complete provider setup including `QueryClientProvider`, `WagmiProvider`, and
+  `injectStyles`, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Notes
 
-- For AutoSign and Privy integration setup, see [Provider Setup](../setup/providers).
+- For AutoSign and Privy integration setup, see
+  [Provider Setup](../setup/providers).
 
 ## Type reference (advanced)
 
@@ -149,7 +156,7 @@ type Config = {
   routerApiUrl: string
   glyphUrl: string
   usernamesModuleAddress: string
-  theme: "light" | "dark"
+  theme: 'light' | 'dark'
   container?: HTMLElement
   disableAnalytics?: boolean
   enableAutoSign?: boolean | Record<string, string[]>
@@ -158,12 +165,16 @@ type Config = {
 
 type PrivyContext = {
   privy: ReturnType<typeof usePrivy>
-  createWallet: ReturnType<typeof useCreateWallet>["createWallet"]
-  wallets: ReturnType<typeof useWallets>["wallets"]
+  createWallet: ReturnType<typeof useCreateWallet>['createWallet']
+  wallets: ReturnType<typeof useWallets>['wallets']
   siwe: ReturnType<typeof useLoginWithSiwe>
 }
 ```
 
-Types `Chain`, `GeneratedType`, and `AminoConverters` are from external packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, and `@cosmjs/stargate` for details.
+Types `Chain`, `GeneratedType`, and `AminoConverters` are from external
+packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, and
+`@cosmjs/stargate` for details.
 
-`PrivyContext` members are derived from Privy hooks: `usePrivy`, `useCreateWallet`, `useWallets`, and `useLoginWithSiwe` from `@privy-io/react-auth`.
+`PrivyContext` members are derived from Privy hooks: `usePrivy`,
+`useCreateWallet`, `useWallets`, and `useLoginWithSiwe` from
+`@privy-io/react-auth`.
