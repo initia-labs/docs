@@ -4,9 +4,9 @@ title: MoveError
 
 ## Overview
 
-- Error type that carries parsed Move VM error metadata for distinguishing Move VM failures from generic network or client errors
-- Thrown by transaction helpers when Move VM transactions fail, enabling developers to branch UI, logging, or telemetry based on Move-specific metadata
-- Use `instanceof MoveError` to identify and handle Move VM errors separately from other error types
+- Error type that carries parsed Move VM error metadata.
+- Thrown by transaction helpers on Move VM failures.
+- Use `instanceof MoveError` to identify and handle Move VM errors separately.
 
 ## Quickstart
 
@@ -51,4 +51,6 @@ class MoveError extends Error {
 
 ## Notes
 
-- Use `instanceof MoveError` to branch UI or logging logic based on Move‑specific metadata such as `moduleAddress`, `moduleName`, and `errorCode`
+- Use `instanceof MoveError` to branch UI or logging based on Move-specific metadata (`moduleAddress`, `moduleName`, `errorCode`).
+- `originalError` contains the original error with full message and stack trace.
+- `isFromRegistry` indicates whether the error message was resolved from the Initia error registry (more user-friendly when `true`).

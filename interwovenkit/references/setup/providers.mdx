@@ -4,9 +4,9 @@ title: Provider Setup
 
 ## Overview
 
-- Complete provider setup for InterwovenKit with all required dependencies
-- Two variants: basic setup (no Privy/AutoSign) and AutoSign setup (requires Privy)
-- Use the basic setup unless you need AutoSign or embedded wallet features
+- Complete provider setup for InterwovenKit with all required dependencies.
+- Two variants: basic setup (no Privy/AutoSign) and AutoSign setup (requires Privy).
+- Use the basic setup unless you need AutoSign or embedded wallet features.
 
 ## Basic setup
 
@@ -142,13 +142,14 @@ export default function Providers({ children }: PropsWithChildren) {
 
 ## Notes
 
-- Call `injectStyles()` once at app startup to avoid duplicate style tags
-- Privy is **required** for AutoSign. AutoSign will not work without `PrivyProvider` and `privyContext`
-- Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID. This is distinct from the imported `PRIVY_APP_ID`
+- Call `injectStyles()` once at app startup to avoid duplicate style tags.
+- Privy is **required** for AutoSign. AutoSign will not work without `PrivyProvider` and `privyContext`.
+- Replace `YOUR_PRIVY_APP_ID` with your own Privy app ID. This is distinct from the imported `PRIVY_APP_ID` (which is Initia's shared Privy app ID).
+- The `privyContext` prop must be passed from within a component that has access to Privy hooks (`usePrivy`, `useLoginWithSiwe`, `useCreateWallet`, `useWallets`).
 - **`enableAutoSign` configuration**:
   - **Boolean (`true`)**: Enables AutoSign with default message types based on chain type:
     - `minievm`: `/minievm.evm.v1.MsgCall`
     - `miniwasm`: `/cosmwasm.wasm.v1.MsgExecuteContract`
     - `default`: `/initia.move.v1.MsgExecute`
-  - **Record (`Record<string, string[]>`)**: Per-chain allowlist of specific message type URLs. Use this to control exactly which message types can be auto-signed (e.g., `MsgSend`, `MsgDelegate`, `MsgExecute`)
-- **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features
+  - **Record (`Record<string, string[]>`)**: Per-chain allowlist of specific message type URLs. Use this to control exactly which message types can be auto-signed (e.g., `MsgSend`, `MsgDelegate`, `MsgExecute`).
+- **Config vs runtime**: Both setups use `initiaPrivyWalletConnector` in wagmi config (config-time), but only the AutoSign setup requires `PrivyProvider` at runtime. The connector itself does not require Privy runtime unless you need AutoSign or embedded wallet features.

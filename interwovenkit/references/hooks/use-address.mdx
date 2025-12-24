@@ -4,16 +4,15 @@ title: useAddress
 
 ## Overview
 
-- Returns the connected wallet address, automatically adapting to the default chain's format (hex for `minievm` chains, bech32 Initia address for others)
-- Use this hook when you need a single address that matches the default chain's format
-- Returns an empty string when there is no connected address
+- Returns the connected wallet address, adapting to the default chain's format (hex for `minievm`, bech32 for others).
+- Use when you need a single address that matches the default chain's format.
 
 ## Prerequisites
 
-- Must be rendered within `InterwovenKitProvider`
-- Must be used within a React Query `QueryClientProvider`
-- Must be used within a wagmi `WagmiProvider`
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
 
 ## Quickstart
 
@@ -42,4 +41,5 @@ Returns a hex address when the default chain is `minievm`, or an Initia bech32 a
 
 ## Notes
 
-- Prefer this hook over chain-specific address hooks (`useHexAddress`, `useInitiaAddress`) when you need a single address that automatically adapts to the default chain's format
+- Prefer this hook over chain-specific address hooks (`useHexAddress`, `useInitiaAddress`) when you need a single address that automatically adapts to the default chain's format.
+- Returns hex format for `minievm` chains, bech32 format for other chain types.

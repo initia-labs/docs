@@ -4,15 +4,15 @@ title: useHexAddress
 
 ## Overview
 
-- Returns the connected wallet address in hex format (always hex, regardless of chain type)
-- Use this hook when you specifically need a hex address for EVM-style tooling or when you want a consistent hex format regardless of the default chain
+- Returns the connected wallet address in hex format (always hex, regardless of chain type).
+- Use when you need a hex address for EVM-style tooling or a consistent hex format.
 
 ## Prerequisites
 
-- Must be rendered within `InterwovenKitProvider`
-- Must be used within a React Query `QueryClientProvider`
-- Must be used within a wagmi `WagmiProvider`
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
 
 ## Quickstart
 
@@ -41,5 +41,5 @@ Returns the Initia account address in hex format when a wallet is connected. Ret
 
 ## Notes
 
-- This hook always returns a hex address, unlike `useAddress` which adapts to the default chain's format
-- Use this hook for EVM-style integrations or when you need a consistent hex format regardless of chain type
+- Always returns hex format, unlike `useAddress` which adapts to the default chain's format.
+- Use for EVM-style integrations or when you need a consistent hex format regardless of chain type.

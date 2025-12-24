@@ -4,16 +4,16 @@ title: useUsernameQuery
 
 ## Overview
 
-- React Query hook that fetches the `.init` username for the currently connected address
-- Depends on the connected address and automatically re-runs when the address changes
-- Exposes standard React Query loading and error state (`isLoading`, `error`, etc.)
+- React Query hook that fetches the `.init` username for the connected address.
+- Automatically re-runs when the address changes.
+- Exposes standard React Query state (`isLoading`, `error`, etc.).
 
 ## Prerequisites
 
-- Must be rendered within `InterwovenKitProvider`
-- Must be used within a React Query `QueryClientProvider`
-- Must be used within a wagmi `WagmiProvider`
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
 
 ## Quickstart
 
@@ -39,13 +39,13 @@ This example assumes providers are already set up. For complete provider setup i
 function useUsernameQuery(): UseQueryResult<string | null>
 ```
 
-Returns a React Query `UseQueryResult` object. The `data` property is:
+Returns a React Query `UseQueryResult<string | null>` object. The `data` property is:
 - `string` when a username exists (ends with `.init`)
 - `null` when no username exists or the address is invalid
-- `undefined` before the query has produced a value or when the query is disabled
+- `undefined` before the query has produced a value or when the query is disabled (e.g., when no address is connected)
 
 Type `UseQueryResult` is from `@tanstack/react-query`.
 
 ## Notes
 
-- The query is disabled until a non‑empty address is available from `useAddress()`
+- The query is disabled until a non‑empty address is available from `useAddress()`.

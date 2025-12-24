@@ -4,30 +4,36 @@ title: InterwovenKitProvider
 
 ## Overview
 
-- React provider that configures and renders the InterwovenKit widget shell (drawer, routes, and supporting providers)
-- Mount once near the top of your app, typically wrapping your root component
-- Privy and AutoSign features are optional. Configure `privyContext` and `enableAutoSign` only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`)
+- React provider that configures and renders the InterwovenKit widget shell (drawer, routes, and supporting providers).
+- Mount once near the top of your app, wrapping your root component.
+- Privy and AutoSign are optional. Configure `privyContext` and `enableAutoSign` only if needed. AutoSign requires Privy (`PrivyProvider` and `privyContext`).
 
 ## Prerequisites
 
-- Must be used within a React Query `QueryClientProvider`
-- Required if you use wallet-related InterwovenKit APIs: Must be used within a wagmi `WagmiProvider`
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider` if using wallet-related APIs.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
 
 ## Styles
 
-- Font stylesheets are automatically injected
-- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise the UI will be unstyled
+- CSS styles must be injected manually using [`injectStyles`](../utilities/inject-styles) once at app startup. Otherwise the UI will be unstyled.
 
 ## Quickstart
 
 ```tsx
 "use client"
 
+import { useEffect } from "react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { createConfig, http, WagmiProvider } from "wagmi"
 import { mainnet } from "wagmi/chains"
-import { initiaPrivyWalletConnector, InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  MAINNET,
+} from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
 
 const queryClient = new QueryClient()
 const wagmiConfig = createConfig({
@@ -37,6 +43,10 @@ const wagmiConfig = createConfig({
 })
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    injectStyles(InterwovenKitStyles)
+  }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
@@ -50,7 +60,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ```
 
 <Note>
-This example shows the provider structure. For complete setup including `injectStyles` and AutoSign configuration, see [Provider Setup](../setup/providers).
+This example shows the provider structure. For complete setup including AutoSign configuration, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Props
@@ -70,8 +80,6 @@ This example shows the provider structure. For complete setup including `injectS
 | `disableAnalytics` | `boolean` | `false` (mainnet), `true` (testnet) | When `true`, disables InterwovenKit's built‑in analytics events |
 | `enableAutoSign` | `boolean \| Record<string, string[]>` | `undefined` | Enables AutoSign and optionally whitelists chains and message types. `true` enables for supported chains and messages. `Record<string, string[]>` is a per-chain allowlist of message type URLs. **Requires Privy** (`PrivyProvider` and `privyContext`). Required at runtime only if you want AutoSign flows to be available |
 | `privyContext` | `PrivyContext` | `undefined` | Passes Privy authentication and wallet helpers into InterwovenKit. **Required for AutoSign and embedded wallet features**, otherwise optional |
-
-Types `Chain`, `GeneratedType`, `AminoConverters`, and `PrivyContext` members are from external packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, `@cosmjs/stargate`, and `@privy-io/react-auth` for details.
 
 ## Return value
 
@@ -125,7 +133,7 @@ This example shows only the `InterwovenKitProvider` configuration. For complete 
 
 ## Notes
 
-- For AutoSign and Privy integration setup, see [Provider Setup](../setup/providers)
+- For AutoSign and Privy integration setup, see [Provider Setup](../setup/providers).
 
 ## Type reference (advanced)
 
@@ -149,11 +157,13 @@ type Config = {
 }
 
 type PrivyContext = {
-  privy: PrivyHookResult
-  createWallet: CreateWalletFunction
-  wallets: Wallet[]
-  siwe: SiweHookResult
+  privy: ReturnType<typeof usePrivy>
+  createWallet: ReturnType<typeof useCreateWallet>["createWallet"]
+  wallets: ReturnType<typeof useWallets>["wallets"]
+  siwe: ReturnType<typeof useLoginWithSiwe>
 }
 ```
 
-Types `Chain`, `GeneratedType`, `AminoConverters`, and `PrivyContext` members are from external packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, `@cosmjs/stargate`, and `@privy-io/react-auth` for details.
+Types `Chain`, `GeneratedType`, and `AminoConverters` are from external packages. See `@initia/initia-registry-types`, `@cosmjs/proto-signing`, and `@cosmjs/stargate` for details.
+
+`PrivyContext` members are derived from Privy hooks: `usePrivy`, `useCreateWallet`, `useWallets`, and `useLoginWithSiwe` from `@privy-io/react-auth`.

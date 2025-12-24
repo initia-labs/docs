@@ -4,8 +4,8 @@ title: TESTNET
 
 ## Overview
 
-- Default configuration preset for Initia testnet pointing to testnet registry, router, glyph, and username services
-- Use for development or staging apps targeting the Initia testnet
+- Configuration preset for Initia testnet with testnet registry, router, glyph, and username services.
+- Use for development or staging apps.
 
 ## Quickstart
 
@@ -21,17 +21,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 ```ts
 const TESTNET: {
-  defaultChainId: string
-  registryUrl: string
-  routerApiUrl: string
-  glyphUrl: string
-  usernamesModuleAddress: string
+  defaultChainId: "initiation-2"
+  registryUrl: "https://registry.testnet.initia.xyz"
+  routerApiUrl: "https://router-api.initiation-2.initia.xyz"
+  glyphUrl: "https://glyph.initiation-2.initia.xyz"
+  usernamesModuleAddress: "0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a"
   theme: "dark"
   disableAnalytics: true
 }
 ```
 
+**Property descriptions:**
+- `usernamesModuleAddress`: On-chain module address of the `.init` username contract. This is the same for all apps using testnet and it represents the deployed contract address that handles username lookups (e.g., resolving `alice.init` to an address)
+- `theme`: Default theme is `"dark"`, but can be overridden to `"light"` when using the preset
+
 ## Notes
 
-- Analytics are disabled by default on testnet via `disableAnalytics: true`
-- Most apps should start with `{...TESTNET}` in non‑production environments and override only what they need
+- Analytics are disabled by default on testnet via `disableAnalytics: true`.
+- Most apps should start with `{...TESTNET}` in non‑production environments and override only what they need.

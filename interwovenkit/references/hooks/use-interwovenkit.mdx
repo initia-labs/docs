@@ -4,17 +4,17 @@ title: useInterwovenKit
 
 ## Overview
 
-- Primary entry point for InterwovenKit connection state, UI actions, transaction helpers, and AutoSign functionality
-- Required when opening the InterwovenKit UI or sending transactions
-- For simple address or username reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid extra overhead
-- AutoSign features require Privy integration (see [Provider Setup](../setup/providers))
+- Primary entry point for connection state, UI actions, transaction helpers, and AutoSign.
+- Required for opening InterwovenKit UI or sending transactions.
+- For simple reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid overhead.
+- AutoSign requires Privy (see [Provider Setup](../setup/providers)).
 
 ## Prerequisites
 
-- Must be rendered within `InterwovenKitProvider`
-- Must be used within a React Query `QueryClientProvider`
-- Must be used within a wagmi `WagmiProvider`
-- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js.
 
 ## Quickstart
 
@@ -42,20 +42,43 @@ This example assumes providers are already set up. For complete provider setup i
 Returns an object with:
 
 **Connection state:**
-- `address`, `initiaAddress`, `hexAddress`, `username`, `offlineSigner`, `isConnected`, `isOpen`
+- `address`: Connected wallet address, adapts to default chain format (hex for `minievm`, bech32 for others) (returns `string`).
+- `initiaAddress`: Connected wallet address in Initia bech32 format (returns `string`).
+- `hexAddress`: Connected wallet address in hex format (returns `string`).
+- `username`: `.init` username for the connected address, if available (returns `string | null | undefined`).
+- `offlineSigner`: Offline signer for Cosmos transactions (returns `OfflineAminoSigner`).
+- `isConnected`: Whether a wallet is currently connected (returns `boolean`).
+- `isOpen`: Whether the InterwovenKit drawer/modal is currently open (returns `boolean`).
 
 **UI actions:**
-- `openConnect`, `openWallet`, `openBridge`, `disconnect`
+- `openConnect`: Opens the wallet connection UI (returns `void`).
+- `openWallet`: Opens the main wallet UI (returns `void`).
+- `openBridge`: Opens the bridge UI with optional default values (returns `void`).
+- `disconnect`: Disconnects the current wallet connection (returns `void`).
 
 **AutoSign:**
-- `autoSign`: Flat object containing `expiredAtByChain`, `isEnabledByChain`, `isLoading`, `enable()`, and `disable()` helpers
+- `autoSign`: Object containing AutoSign state and control methods:
+  - `expiredAtByChain`: Expiration dates for AutoSign permissions by chain ID (returns `Record<string, Date | null | undefined>`).
+  - `isEnabledByChain`: Whether AutoSign is enabled for each chain (returns `Record<string, boolean>`).
+  - `isLoading`: Whether AutoSign status is being loaded (returns `boolean`).
+  - `enable(chainId?)`: Opens UI to enable AutoSign for a chain (returns `Promise<void>`).
+  - `disable(chainId?)`: Disables AutoSign for a chain (returns `Promise<void>`).
 
 **Transaction helpers:**
-- `estimateGas`, `simulateTx`, `requestTxSync`, `requestTxBlock`, `submitTxSync`, `submitTxBlock`, `waitForTxConfirmation`
+- `estimateGas`: Estimates gas for a transaction (returns `number`).
+- `simulateTx`: Simulates a transaction without broadcasting (returns transaction result).
+- `requestTxSync`: Requests transaction approval via UI, signs, and broadcasts synchronously (returns `txHash: string`).
+- `requestTxBlock`: Requests transaction approval via UI, signs, and waits for block confirmation (returns `DeliverTxResponse`).
+- `submitTxSync`: Signs and broadcasts transaction directly without UI (returns `txHash: string`).
+- `submitTxBlock`: Signs and broadcasts transaction directly, waits for block confirmation (returns `DeliverTxResponse`).
+- `waitForTxConfirmation`: Polls chain for transaction confirmation by hash (returns `IndexedTx`).
 
 ## Notes
 
-- Transaction helpers may throw `MoveError` on Move VM errors
+- Transaction helpers throw `MoveError` on Move VM errors (see [MoveError](../errors/move-error)).
+- `requestTx*` methods show a transaction approval UI before signing.
+- `submitTx*` methods sign and broadcast directly without UI.
+- `waitForTxConfirmation` polls until confirmed or timeout.
 
 ## Type reference (advanced)
 
