@@ -4,12 +4,16 @@ title: useInterwovenKit
 
 ## Overview
 
-- Primary entry point for connection state, UI actions, transaction helpers, and
-  AutoSign.
-- Required for opening InterwovenKit UI or sending transactions.
-- For simple reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to
-  avoid overhead.
-- AutoSign requires Privy (see [Provider Setup](../setup/providers)).
+The `useInterwovenKit` hook provides access to wallet connection state, account
+information, UI controls, transaction utilities, and AutoSign functionality for
+interacting with the Initia blockchain.
+
+<Note>
+  This hook must be used within a component wrapped by `InterwovenKitProvider`
+  to access wallet functionality. For simple reads, prefer smaller hooks
+  (`useAddress`, `useUsernameQuery`) to avoid overhead. AutoSign requires Privy
+  (see [Provider Setup](../setup/providers)).
+</Note>
 
 ## Prerequisites
 
@@ -42,61 +46,420 @@ function ConnectButton() {
   Setup](../setup/providers).
 </Note>
 
-## Return value
+## Account Information
 
-Returns an object with:
+The hook provides multiple address formats and account details for the currently
+connected wallet:
 
-**Connection state:**
+<ParamField path="address" type="string">
+  Current address in either Bech32 or hex format, depending on the configured
+  chain type (hex for `minievm`, bech32 for others).
+</ParamField>
 
-- `address`: Connected wallet address, adapts to default chain format (hex for
-  `minievm`, bech32 for others) (returns `string`).
-- `initiaAddress`: Connected wallet address in Initia bech32 format (returns
-  `string`).
-- `hexAddress`: Connected wallet address in hex format (returns `string`).
-- `username`: `.init` username for the connected address, if available (returns
-  `string | null | undefined`).
-- `offlineSigner`: Offline signer for Cosmos transactions (returns
-  `OfflineAminoSigner`).
-- `isConnected`: Whether a wallet is currently connected (returns `boolean`).
-- `isOpen`: Whether the InterwovenKit drawer/modal is currently open (returns
-  `boolean`).
+<ParamField path="initiaAddress" type="string">
+  Bech32-formatted Initia wallet address of the connected account.
+</ParamField>
 
-**UI actions:**
+<ParamField path="hexAddress" type="string">
+  Hex-encoded Ethereum-compatible address of the connected account.
+</ParamField>
 
-- `openConnect`: Opens the wallet connection UI (returns `void`).
-- `openWallet`: Opens the main wallet UI (returns `void`).
-- `openBridge`: Opens the bridge UI with optional default values (returns
-  `void`).
-- `disconnect`: Disconnects the current wallet connection (returns `void`).
+<ParamField path="username" type="string | null | undefined">
+  Optional username linked to the account. Returns `null` if no username is
+  associated, or `undefined` before the query has produced a value.
+</ParamField>
 
-**AutoSign:**
+<ParamField path="offlineSigner" type="OfflineAminoSigner">
+  Offline signer for Cosmos transactions.
+</ParamField>
 
-- `autoSign`: Object containing AutoSign state and control methods:
-  - `expiredAtByChain`: Expiration dates for AutoSign permissions by chain ID
-    (returns `Record<string, Date | null | undefined>`).
-  - `isEnabledByChain`: Whether AutoSign is enabled for each chain (returns
-    `Record<string, boolean>`).
-  - `isLoading`: Whether AutoSign status is being loaded (returns `boolean`).
-  - `enable(chainId?)`: Opens UI to enable AutoSign for a chain (returns
-    `Promise<void>`).
-  - `disable(chainId?)`: Disables AutoSign for a chain (returns
-    `Promise<void>`).
+<ParamField path="isConnected" type="boolean">
+  Whether a wallet is currently connected.
+</ParamField>
 
-**Transaction helpers:**
+<ParamField path="isOpen" type="boolean">
+  Whether the InterwovenKit drawer/modal is currently open.
+</ParamField>
 
-- `estimateGas`: Estimates gas for a transaction (returns `number`).
-- `simulateTx`: Simulates a transaction without broadcasting (returns
-  transaction result).
-- `requestTxSync`: Requests transaction approval via UI, signs, and broadcasts
-  synchronously (returns `txHash: string`).
-- `requestTxBlock`: Requests transaction approval via UI, signs, and waits for
-  block confirmation (returns `DeliverTxResponse`).
-- `submitTxSync`: Signs and broadcasts transaction directly without UI (returns
-  `txHash: string`).
-- `submitTxBlock`: Signs and broadcasts transaction directly, waits for block
-  confirmation (returns `DeliverTxResponse`).
-- `waitForTxConfirmation`: Polls chain for transaction confirmation by hash
-  (returns `IndexedTx`).
+```tsx
+function AccountInfo() {
+  const { address, initiaAddress, hexAddress, username, isConnected } =
+    useInterwovenKit()
+
+  if (!isConnected) return <div>Not connected</div>
+
+  return (
+    <div>
+      <div>Address: {address}</div>
+      <div>Initia Address: {initiaAddress}</div>
+      <div>Hex Address: {hexAddress}</div>
+      {username && <div>Username: {username}</div>}
+    </div>
+  )
+}
+```
+
+## UI Controls
+
+The hook provides methods for controlling wallet-related UI components:
+
+<ParamField path="openConnect" type="() => void">
+  Opens a drawer for connecting an external wallet.
+</ParamField>
+
+<ParamField path="openWallet" type="() => void">
+  Opens the main wallet drawer showing balances for the connected account.
+</ParamField>
+
+<ParamField
+  path="openBridge"
+  type="(defaultValues?: Partial<FormValues>) => void"
+>
+  Opens the bridge drawer to onboard assets with optional pre-populated values.
+</ParamField>
+
+<ParamField path="disconnect" type="() => void">
+  Disconnects the current wallet connection.
+</ParamField>
+
+### Bridge Form Values
+
+The `openBridge` method accepts optional `FormValues` to pre-populate the bridge
+form:
+
+<ParamField path="srcChainId" type="string">
+  Source chain ID for the bridge transaction.
+</ParamField>
+
+<ParamField path="srcDenom" type="string">
+  Source token denomination to bridge from.
+</ParamField>
+
+<ParamField path="dstChainId" type="string">
+  Destination chain ID for the bridge transaction.
+</ParamField>
+
+<ParamField path="dstDenom" type="string">
+  Destination token denomination to bridge to.
+</ParamField>
+
+<ParamField path="quantity" type="string">
+  Initial bridge amount (use human-readable values, e.g., "1" for 1 INIT).
+</ParamField>
+
+<ParamField path="sender" type="string">
+  Sender address.
+</ParamField>
+
+<ParamField path="recipient" type="string">
+  Recipient address.
+</ParamField>
+
+<ParamField path="slippagePercent" type="string">
+  Slippage tolerance percentage.
+</ParamField>
+
+<ParamField path="cosmosWalletName" type="string">
+  Optional Cosmos wallet name.
+</ParamField>
+
+<Tip>
+  All bridge form values are optional. You can pre-populate any subset of fields
+  to improve the user experience.
+</Tip>
+
+```tsx
+function BridgeButton() {
+  const { openBridge } = useInterwovenKit()
+
+  return (
+    <button
+      onClick={() =>
+        openBridge({
+          srcChainId: 'interwoven-1',
+          srcDenom: 'uinit',
+          dstChainId: 'my-rollup-1',
+          dstDenom: 'uinit',
+          quantity: '100',
+        })
+      }
+    >
+      Bridge Assets
+    </button>
+  )
+}
+```
+
+## Transaction Methods
+
+The hook provides utilities for estimating, simulating, signing, and sending
+transactions on the blockchain:
+
+<ParamField
+  path="estimateGas"
+  type="(tx: Pick&lt;TxRequest, 'messages' | 'memo' | 'chainId'&gt;) => Promise&lt;number&gt;"
+>
+  Estimates the gas required for a transaction before execution.
+</ParamField>
+
+<ParamField
+  path="simulateTx"
+  type="(tx: Pick&lt;TxRequest, 'messages' | 'memo' | 'chainId'&gt;) => Promise&lt;unknown&gt;"
+>
+  Simulates a transaction without broadcasting, returning the transaction result.
+</ParamField>
+
+<ParamField path="requestTxSync" type="(tx: TxRequest) => Promise&lt;string&gt;">
+  Signs and broadcasts a transaction, returning the transaction hash immediately
+  without waiting for block inclusion. Shows transaction approval UI before
+  signing.
+</ParamField>
+
+<ParamField
+  path="requestTxBlock"
+  type="(tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
+>
+  Signs, broadcasts, and waits for block inclusion, returning the complete
+  transaction response. Shows transaction approval UI before signing.
+</ParamField>
+
+<ParamField path="submitTxSync" type="(tx: TxParams) => Promise&lt;string&gt;">
+  Signs and broadcasts a transaction with pre-calculated fee, returning the
+  transaction hash immediately without waiting for block inclusion. Does not show
+  UI.
+</ParamField>
+
+<ParamField
+  path="submitTxBlock"
+  type="(tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
+>
+  Signs, broadcasts, and waits for block inclusion with pre-calculated fee,
+  returning the complete transaction response. Does not show UI.
+</ParamField>
+
+<ParamField
+  path="waitForTxConfirmation"
+  type="(options: WaitForTxOptions) => Promise&lt;IndexedTx&gt;"
+>
+  Polls for transaction confirmation on-chain using a transaction hash.
+</ParamField>
+
+<Tip>
+  Use `requestTxSync` for better UX when you want to show immediate feedback,
+  then use `waitForTxConfirmation` to track the final transaction status. Use
+  `requestTxBlock` when you need the complete transaction result immediately.
+</Tip>
+
+### Transaction Request Interface
+
+The `TxRequest` interface defines parameters for transaction operations that
+include gas estimation:
+
+<ParamField path="messages" type="EncodeObject[]" required>
+  Array of encoded transaction messages to include in the transaction.
+</ParamField>
+
+<ParamField path="memo" type="string">
+  Optional memo to attach to the transaction.
+</ParamField>
+
+<ParamField path="chainId" type="string">
+  Target chain ID for the transaction. Defaults to the provider's
+  `defaultChainId`.
+</ParamField>
+
+<ParamField path="gasAdjustment" type="number" default="1.4">
+  Multiplier applied to the estimated gas amount for safety margin.
+</ParamField>
+
+<ParamField path="gas" type="number">
+  Explicit gas limit for the transaction. If provided, skips gas estimation.
+</ParamField>
+
+<ParamField path="gasPrices" type="Coin[] | null">
+  Explicit gas prices. If provided, skips the fee denomination selection UI.
+</ParamField>
+
+<ParamField path="spendCoins" type="Coin[]">
+  Coins to spend for the transaction fee.
+</ParamField>
+
+<ParamField path="internal" type="boolean | string | number">
+  Internal transaction flag.
+</ParamField>
+
+### Transaction Params Interface
+
+The `TxParams` interface defines parameters for transactions with pre-calculated
+fees:
+
+<ParamField path="messages" type="EncodeObject[]" required>
+  Array of encoded transaction messages to include in the transaction.
+</ParamField>
+
+<ParamField path="memo" type="string">
+  Optional memo to attach to the transaction.
+</ParamField>
+
+<ParamField path="chainId" type="string">
+  Target chain ID for the transaction. Defaults to the provider's
+  `defaultChainId`.
+</ParamField>
+
+<ParamField path="fee" type="StdFee" required>
+  Pre-calculated fee for the transaction.
+</ParamField>
+
+### Transaction Confirmation Options
+
+The `WaitForTxOptions` interface defines parameters for tracking transaction
+confirmation:
+
+<ParamField path="txHash" type="string" required>
+  Hash of the transaction to track for confirmation.
+</ParamField>
+
+<ParamField path="chainId" type="string">
+  Chain ID where the transaction was broadcast.
+</ParamField>
+
+<ParamField path="timeoutMs" type="number">
+  Maximum time in milliseconds to wait for transaction confirmation before
+  failing.
+</ParamField>
+
+<ParamField path="intervalMs" type="number">
+  Polling interval in milliseconds for checking transaction status.
+</ParamField>
+
+### Transaction Examples
+
+```tsx
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import type { EncodeObject, StdFee } from '@cosmjs/stargate'
+
+function SendTransaction() {
+  const { requestTxBlock, submitTxSync, waitForTxConfirmation } =
+    useInterwovenKit()
+
+  // Example: Request transaction with UI approval
+  const handleRequestTx = async (messages: EncodeObject[]) => {
+    try {
+      const response = await requestTxBlock({ messages })
+      console.log('Transaction confirmed:', response.transactionHash)
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    }
+  }
+
+  // Example: Submit transaction directly without UI
+  const handleSubmitTx = async (messages: EncodeObject[], fee: StdFee) => {
+    try {
+      const txHash = await submitTxSync({ messages, fee })
+      console.log('Transaction hash:', txHash)
+
+      // Optionally wait for confirmation
+      const confirmed = await waitForTxConfirmation({ txHash })
+      console.log('Transaction confirmed:', confirmed)
+    } catch (error) {
+      console.error('Transaction failed:', error)
+    }
+  }
+
+  return (
+    <div>
+      <button
+        onClick={() =>
+          handleRequestTx([
+            /* messages */
+          ])
+        }
+      >
+        Send with UI
+      </button>
+      <button
+        onClick={() =>
+          handleSubmitTx(
+            [
+              /* messages */
+            ],
+            {
+              /* fee */
+            },
+          )
+        }
+      >
+        Send without UI
+      </button>
+    </div>
+  )
+}
+```
+
+## AutoSign
+
+The hook provides AutoSign state and control methods for automatic transaction
+signing:
+
+<ParamField path="autoSign.expiredAtByChain" type="Record<string, Date | null | undefined>">
+  Expiration dates for AutoSign permissions by chain ID.
+</ParamField>
+
+<ParamField path="autoSign.isEnabledByChain" type="Record<string, boolean>">
+  Whether AutoSign is enabled for each chain.
+</ParamField>
+
+<ParamField path="autoSign.isLoading" type="boolean">
+  Whether AutoSign status is being loaded.
+</ParamField>
+
+<ParamField path="autoSign.enable" type="(chainId?: string) => Promise<void>">
+  Opens UI to enable AutoSign for a chain. Optionally specify a chain ID, or
+  enables for all supported chains if omitted.
+</ParamField>
+
+<ParamField path="autoSign.disable" type="(chainId?: string) => Promise<void>">
+  Disables AutoSign for a chain. Optionally specify a chain ID, or disables for
+  all chains if omitted.
+</ParamField>
+
+<Tip>
+  AutoSign requires Privy integration. See [Provider Setup](../setup/providers)
+  for complete AutoSign configuration.
+</Tip>
+
+```tsx
+function AutoSignControls() {
+  const { autoSign } = useInterwovenKit()
+  const chainId = 'interwoven-1'
+
+  return (
+    <div>
+      {autoSign.isLoading ? (
+        <div>Loading AutoSign status...</div>
+      ) : (
+        <>
+          <div>
+            AutoSign enabled:{' '}
+            {autoSign.isEnabledByChain[chainId] ? 'Yes' : 'No'}
+          </div>
+          {autoSign.expiredAtByChain[chainId] && (
+            <div>
+              Expires: {autoSign.expiredAtByChain[chainId]?.toLocaleString()}
+            </div>
+          )}
+          <button onClick={() => autoSign.enable(chainId)}>
+            Enable AutoSign
+          </button>
+          <button onClick={() => autoSign.disable(chainId)}>
+            Disable AutoSign
+          </button>
+        </>
+      )}
+    </div>
+  )
+}
+```
 
 ## Notes
 

@@ -40,22 +40,38 @@ function PortfolioValue() {
 
 ## Return value
 
+The hook returns an object with aggregated portfolio data, grouped assets, and
+control methods:
+
 **Aggregated values:**
 
-- `totalValue`: Estimated total USD value across all chains.
-- `chainsByValue`: List of chains sorted by portfolio value on each chain.
+<ParamField path="totalValue" type="number">
+  Estimated total USD value across all chains.
+</ParamField>
+
+<ParamField path="chainsByValue" type="PortfolioChainItem[]">
+  List of chains sorted by portfolio value on each chain.
+</ParamField>
 
 **Grouped assets:**
 
-- `assetGroups`: Aggregated assets grouped by symbol across chains.
-- `unlistedAssets`: Assets without registry metadata, kept separate from grouped
-  assets.
+<ParamField path="assetGroups" type="PortfolioAssetGroup[]">
+  Aggregated assets grouped by symbol across chains.
+</ParamField>
+
+<ParamField path="unlistedAssets" type="PortfolioAssetItem[]">
+  Assets without registry metadata, kept separate from grouped assets.
+</ParamField>
 
 **Loading and control:**
 
-- `isLoading`: `true` while any underlying query is loading.
-- `refetch`: Manually refetches all balances, assets, and prices (returns
-  `void`).
+<ParamField path="isLoading" type="boolean">
+  `true` while any underlying query is loading.
+</ParamField>
+
+<ParamField path="refetch" type="() => void">
+  Manually refetches all balances, assets, and prices.
+</ParamField>
 
 ## Notes
 
