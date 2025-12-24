@@ -10,19 +10,28 @@ title: MoveError
 
 ## Quickstart
 
-```ts
-import { MoveError } from "@initia/interwovenkit-react"
+```tsx
+import { MoveError, useInterwovenKit } from "@initia/interwovenkit-react"
+import type { EncodeObject, StdFee } from "@cosmjs/stargate"
 
 function isMoveError(error: unknown): error is MoveError {
   return error instanceof MoveError
 }
 
-// Example: accessing Move-specific fields
-try {
-  await submitTxBlock({ messages, fee })
-} catch (error) {
-  if (error instanceof MoveError) {
-    console.error(`Move error in ${error.moduleName} at ${error.moduleAddress}: ${error.errorCode}`)
+function MyComponent() {
+  const { submitTxBlock } = useInterwovenKit()
+  
+  const handleSubmit = async (messages: EncodeObject[], fee: StdFee) => {
+    try {
+      await submitTxBlock({ messages, fee })
+    } catch (error) {
+      if (isMoveError(error)) {
+        console.error(
+          `Move error in ${error.moduleName} at ${error.moduleAddress}: ${error.errorCode}`,
+          error.originalError
+        )
+      }
+    }
   }
 }
 ```

@@ -6,14 +6,14 @@ title: injectStyles
 
 - Required for correct visual rendering of InterwovenKit UI components
 - Injects CSS into InterwovenKit's Shadow DOM by appending a `<style>` element
-- Must be called before rendering InterwovenKit components. Without it, UI may appear unstyled
+- Must be called before rendering InterwovenKit components. Without it, UI will be unstyled
 - Typically called once in your top-level Providers component alongside `InterwovenKitProvider`
 - Operates at the DOM level and must be called in a browser environment
 
 ## Prerequisites
 
 - Must be called in a browser environment (`document` must exist)
-- Client-only (no SSR): Not safe for server-side rendering
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a dynamic import in Next.js
 - Should be called before `InterwovenKitProvider` renders (typically in the same component)
 
 ## Quickstart
@@ -65,7 +65,7 @@ Injects the provided CSS string into InterwovenKit's Shadow DOM. The `css` param
 
 ## Notes
 
-- Required for InterwovenKit UI to render correctly. Without calling this function, components may appear unstyled
+- Required for InterwovenKit UI to render correctly. Without calling this function, components will be unstyled
 - Call this once at app startup in your top-level Providers component (alongside `InterwovenKitProvider`) to avoid injecting duplicate style tags
 - Each call appends a new `<style>` element to the Shadow DOM
 - For complete setup examples, see [Provider Setup](../setup/providers)

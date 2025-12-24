@@ -25,11 +25,16 @@ title: InterwovenKitProvider
 "use client"
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { WagmiProvider } from "wagmi"
-import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import { initiaPrivyWalletConnector, InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
 
 const queryClient = new QueryClient()
-const wagmiConfig = /* your wagmi config */
+const wagmiConfig = createConfig({
+  connectors: [initiaPrivyWalletConnector],
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -81,7 +86,24 @@ import type { Chain } from "@initia/initia-registry-types"
 import { InterwovenKitProvider, MAINNET } from "@initia/interwovenkit-react"
 
 const MY_ROLLUP: Chain = {
-  // your custom chain definition
+  chain_id: "my-rollup-1",
+  chain_name: "my-rollup",
+  pretty_name: "My Rollup",
+  network_type: "mainnet",
+  bech32_prefix: "init",
+  fees: {
+    fee_tokens: [
+      {
+        denom: "uinit",
+        fixed_min_gas_price: 0.1,
+      },
+    ],
+  },
+  apis: {
+    rpc: [{ address: "https://rpc.my-rollup.com" }],
+    rest: [{ address: "https://api.my-rollup.com" }],
+    indexer: [{ address: "https://indexer.my-rollup.com" }],
+  },
 } as Chain
 
 export function Providers({ children }: { children: React.ReactNode }) {
