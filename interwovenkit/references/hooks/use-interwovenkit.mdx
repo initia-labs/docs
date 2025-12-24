@@ -11,8 +11,7 @@ interacting with the Initia blockchain.
 <Note>
   This hook must be used within a component wrapped by `InterwovenKitProvider`
   to access wallet functionality. For simple reads, prefer smaller hooks
-  (`useAddress`, `useUsernameQuery`) to avoid overhead. AutoSign requires Privy
-  (see [Provider Setup](../setup/providers)).
+  (`useAddress`, `useUsernameQuery`) to avoid overhead.
 </Note>
 
 ## Prerequisites
@@ -41,9 +40,8 @@ function ConnectButton() {
 ```
 
 <Note>
-  This example assumes providers are already set up. For complete provider setup
-  including `injectStyles` and AutoSign configuration, see [Provider
-  Setup](../setup/providers).
+  This example assumes providers are already set up. For complete setup
+  configurations, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Account Information
@@ -53,8 +51,8 @@ connected wallet:
 
 <ParamField path="address" type="string">
   Current address in either Bech32 or hex format, depending on the configured
-  chain type (hex for `minievm`, bech32 for others). Returns an empty string when
-  not connected.
+  chain type (hex for `minievm`, bech32 for others). Returns an empty string
+  when not connected.
 </ParamField>
 
 <ParamField path="initiaAddress" type="string">
@@ -227,8 +225,8 @@ transactions on the blockchain:
   type="(tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
 >
   Signs, broadcasts, and waits for block inclusion, returning the complete
-  transaction response. Shows transaction approval UI before signing. Defaults to
-  `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
+  transaction response. Shows transaction approval UI before signing. Defaults
+  to `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
 </ParamField>
 
 <ParamField path="submitTxSync" type="(tx: TxParams) => Promise&lt;string&gt;">
@@ -433,8 +431,9 @@ signing:
 </ParamField>
 
 <Tip>
-  AutoSign requires Privy integration. See [Provider Setup](../setup/providers)
-  for complete AutoSign configuration.
+  AutoSign requires Privy integration. See [AutoSign
+  setup](../setup/providers#autosign-setup-requires-privy) for complete AutoSign
+  configuration.
 </Tip>
 
 ```tsx
