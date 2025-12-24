@@ -53,15 +53,18 @@ connected wallet:
 
 <ParamField path="address" type="string">
   Current address in either Bech32 or hex format, depending on the configured
-  chain type (hex for `minievm`, bech32 for others).
+  chain type (hex for `minievm`, bech32 for others). Returns an empty string when
+  not connected.
 </ParamField>
 
 <ParamField path="initiaAddress" type="string">
-  Bech32-formatted Initia wallet address of the connected account.
+  Bech32-formatted Initia wallet address of the connected account. Returns an
+  empty string when not connected.
 </ParamField>
 
 <ParamField path="hexAddress" type="string">
-  Hex-encoded Ethereum-compatible address of the connected account.
+  Hex-encoded Ethereum-compatible address of the connected account. Returns an
+  empty string when not connected.
 </ParamField>
 
 <ParamField path="username" type="string | null | undefined">
@@ -224,7 +227,8 @@ transactions on the blockchain:
   type="(tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
 >
   Signs, broadcasts, and waits for block inclusion, returning the complete
-  transaction response. Shows transaction approval UI before signing.
+  transaction response. Shows transaction approval UI before signing. Defaults to
+  `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
 </ParamField>
 
 <ParamField path="submitTxSync" type="(tx: TxParams) => Promise&lt;string&gt;">
@@ -238,7 +242,8 @@ transactions on the blockchain:
   type="(tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
 >
   Signs, broadcasts, and waits for block inclusion with pre-calculated fee,
-  returning the complete transaction response. Does not show UI.
+  returning the complete transaction response. Does not show UI. Defaults to
+  `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
 </ParamField>
 
 <ParamField
@@ -288,10 +293,6 @@ include gas estimation:
   Coins to spend for the transaction fee.
 </ParamField>
 
-<ParamField path="internal" type="boolean | string | number">
-  Internal transaction flag.
-</ParamField>
-
 ### Transaction Params Interface
 
 The `TxParams` interface defines parameters for transactions with pre-calculated
@@ -327,13 +328,14 @@ confirmation:
   Chain ID where the transaction was broadcast.
 </ParamField>
 
-<ParamField path="timeoutMs" type="number">
+<ParamField path="timeoutMs" type="number" default="30000">
   Maximum time in milliseconds to wait for transaction confirmation before
-  failing.
+  failing. Defaults to 30000 (30 seconds).
 </ParamField>
 
-<ParamField path="intervalMs" type="number">
-  Polling interval in milliseconds for checking transaction status.
+<ParamField path="intervalMs" type="number" default="500">
+  Polling interval in milliseconds for checking transaction status. Defaults to
+  500 (0.5 seconds).
 </ParamField>
 
 ### Transaction Examples
@@ -422,12 +424,12 @@ signing:
 
 <ParamField path="autoSign.enable" type="(chainId?: string) => Promise<void>">
   Opens UI to enable AutoSign for a chain. Optionally specify a chain ID, or
-  enables for all supported chains if omitted.
+  defaults to the provider's `defaultChainId` if omitted.
 </ParamField>
 
 <ParamField path="autoSign.disable" type="(chainId?: string) => Promise<void>">
-  Disables AutoSign for a chain. Optionally specify a chain ID, or disables for
-  all chains if omitted.
+  Disables AutoSign for a chain. Optionally specify a chain ID, or defaults to
+  the provider's `defaultChainId` if omitted.
 </ParamField>
 
 <Tip>
@@ -535,7 +537,6 @@ type TxRequest = {
   gasAdjustment?: number
   gasPrices?: Coin[] | null
   spendCoins?: Coin[]
-  internal?: boolean | string | number
 }
 
 type TxParams = {
