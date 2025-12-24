@@ -206,10 +206,14 @@ transactions on the blockchain:
   path="simulateTx"
   type="(tx: Pick&lt;TxRequest, 'messages' | 'memo' | 'chainId'&gt;) => Promise&lt;unknown&gt;"
 >
-  Simulates a transaction without broadcasting, returning the transaction result.
+  Simulates a transaction without broadcasting, returning the transaction
+  result.
 </ParamField>
 
-<ParamField path="requestTxSync" type="(tx: TxRequest) => Promise&lt;string&gt;">
+<ParamField
+  path="requestTxSync"
+  type="(tx: TxRequest) => Promise&lt;string&gt;"
+>
   Signs and broadcasts a transaction, returning the transaction hash immediately
   without waiting for block inclusion. Shows transaction approval UI before
   signing.
@@ -225,8 +229,8 @@ transactions on the blockchain:
 
 <ParamField path="submitTxSync" type="(tx: TxParams) => Promise&lt;string&gt;">
   Signs and broadcasts a transaction with pre-calculated fee, returning the
-  transaction hash immediately without waiting for block inclusion. Does not show
-  UI.
+  transaction hash immediately without waiting for block inclusion. Does not
+  show UI.
 </ParamField>
 
 <ParamField
@@ -401,7 +405,10 @@ function SendTransaction() {
 The hook provides AutoSign state and control methods for automatic transaction
 signing:
 
-<ParamField path="autoSign.expiredAtByChain" type="Record<string, Date | null | undefined>">
+<ParamField
+  path="autoSign.expiredAtByChain"
+  type="Record<string, Date | null | undefined>"
+>
   Expiration dates for AutoSign permissions by chain ID.
 </ParamField>
 
