@@ -24,13 +24,11 @@ import { PropsWithChildren } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
-import { metaMask } from 'wagmi/connectors'
 import { initiaPrivyWalletConnector } from '@initia/interwovenkit-react'
 
 const wagmiConfig = createConfig({
   connectors: [
     initiaPrivyWalletConnector, // Social logins - shows as "Connect Socials"
-    metaMask(), // External wallets
   ],
   chains: [mainnet],
   transports: { [mainnet.id]: http() },
