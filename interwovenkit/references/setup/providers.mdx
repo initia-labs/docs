@@ -31,7 +31,7 @@ import {
   InterwovenKitProvider,
   MAINNET,
 } from '@initia/interwovenkit-react'
-import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const wagmiConfig = createConfig({
   connectors: [initiaPrivyWalletConnector],
@@ -43,7 +43,7 @@ const queryClient = new QueryClient()
 
 export default function Providers({ children }: PropsWithChildren) {
   useEffect(() => {
-    injectStyles(InterwovenKitStyles)
+    injectStyles(interwovenKitStyles)
   }, [])
 
   return (
@@ -74,7 +74,7 @@ import {
   InterwovenKitProvider,
   PRIVY_APP_ID,
 } from '@initia/interwovenkit-react'
-import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 import {
   PrivyProvider,
   useCreateWallet,
@@ -120,7 +120,7 @@ function InterwovenKitWrapper({ children }: PropsWithChildren) {
 
 export default function Providers({ children }: PropsWithChildren) {
   useEffect(() => {
-    injectStyles(InterwovenKitStyles)
+    injectStyles(interwovenKitStyles)
   }, [])
 
   return (

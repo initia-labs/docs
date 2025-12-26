@@ -68,7 +68,7 @@ import {
   injectStyles,
   InterwovenKitProvider,
 } from '@initia/interwovenkit-react'
-import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const wagmiConfig = createConfig({
   connectors: [initiaPrivyWalletConnector],
@@ -80,7 +80,7 @@ const queryClient = new QueryClient()
 export default function Providers({ children }: PropsWithChildren) {
   useEffect(() => {
     // Inject styles into the shadow DOM used by Initia Wallet
-    injectStyles(InterwovenKitStyles)
+    injectStyles(interwovenKitStyles)
   }, [])
 
   return (

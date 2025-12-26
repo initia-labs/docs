@@ -131,7 +131,7 @@ improved TypeScript support, and a more intuitive API.
       injectStyles,
       InterwovenKitProvider
     } from "@initia/interwovenkit-react"
-    import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+    import interwovenKitStyles from "@initia/interwovenkit-react/styles.js"
 
     // Configure Wagmi for wallet connections
     const wagmiConfig = createConfig({
@@ -145,7 +145,7 @@ improved TypeScript support, and a more intuitive API.
     export default function Providers({ children }: PropsWithChildren) {
       useEffect(() => {
         // Inject styles into the shadow DOM used by Initia Wallet
-        injectStyles(InterwovenKitStyles)
+        injectStyles(interwovenKitStyles)
       }, [])
 
       return (

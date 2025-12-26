@@ -66,7 +66,7 @@ RainbowKit integration with InterwovenKit provides:
     import { connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit"
     import "@rainbow-me/rainbowkit/styles.css"
     import { initiaPrivyWallet, injectStyles, InterwovenKitProvider } from "@initia/interwovenkit-react"
-    import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+    import interwovenKitStyles from "@initia/interwovenkit-react/styles.js"
 
     const connectors = connectorsForWallets(
       [
@@ -92,7 +92,7 @@ RainbowKit integration with InterwovenKit provides:
     export default function Providers({ children }: PropsWithChildren) {
       useEffect(() => {
         // Inject styles into the shadow DOM used by Initia Wallet
-        injectStyles(InterwovenKitStyles)
+        injectStyles(interwovenKitStyles)
       }, [])
 
       return (

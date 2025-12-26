@@ -41,7 +41,7 @@ import {
   InterwovenKitProvider,
   TESTNET,
 } from '@initia/interwovenkit-react'
-import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const minievm = {
   id: 4303131403034904,
@@ -63,7 +63,7 @@ const queryClient = new QueryClient()
 export default function Providers({ children }: PropsWithChildren) {
   useEffect(() => {
     // Inject styles into the shadow DOM used by Initia Wallet
-    injectStyles(InterwovenKitStyles)
+    injectStyles(interwovenKitStyles)
   }, [])
 
   return (
