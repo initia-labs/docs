@@ -6,7 +6,8 @@ icon: server
 <Steps>
 <Step title="Install Weave">
 
-First, you need to install the [Weave CLI](https://github.com/initia-labs/weave)
+First, you need to install the
+[Weave CLI](https://github.com/initia-labs/weave):
 
 <CodeGroup>
     ```sh macOS
@@ -22,18 +23,20 @@ First, you need to install the [Weave CLI](https://github.com/initia-labs/weave)
 </Step>
 <Step title="Initialize the L1 Node">
 
-Once Weave is installed, you can initialize the L1 node. To do so, you need to run the following command:
+Once Weave is installed, you can initialize the L1 node. To do so, you need to
+run the following command:
 
 ```sh
 weave initia init
 ```
 
-This will guide you through the process of initializing the L1 node. You will need to provide the following information:
+This will guide you through the process of initializing the L1 node. You will
+need to provide the following information:
 
 - The Initia L1 network your node will connect to
-- Enabling gRPC and REST endpoints
+- Whether to enable gRPC and/or REST endpoints
 - Pruning strategy
-- Enabling automatic chain upgrade handling via Cosmovisor
+- Whether to enable automatic chain upgrade handling via Cosmovisor
 - Node syncing method (Snapshot, State Sync)
 
 and more.
@@ -57,11 +60,13 @@ and more.
 ✓ Initia node setup successfully. Config files are saved at /Users/tansawit/.initia/config/config.toml and /Users/tansawit/.initia/config/app.toml. Feel free to modify them as needed.
 ✓ You can start the node by running `weave initia start`
 ```
+
 </Step>
 
 <Step title="Start the L1 Node">
 
-Once the L1 node is initialized, you can start it by running the following command:
+Once the L1 node is initialized, you can start it by running the following
+command:
 
 ```sh
 weave initia start
@@ -86,6 +91,6 @@ Streaming logs from launchd com.cosmovisor.daemon
 6:07PM INF service start impl=IndexerService module=txindex msg="Starting IndexerService service"
 6:07PM INF ABCI Handshake App Info hash=38D7B1C2574882732E7D65520AF9C56336280E72861DD09A7B25F40C56339DFF height=5311532 module=consensus protocol-version=0 software-version=v0.7.0
 ```
+
 </Step>
 </Steps>
-

@@ -2,12 +2,24 @@
 title: WasmVM IBC Hooks
 ---
 
-The Wasm hook is an IBC middleware which is used to allow ICS20 token transfers to initiate contract calls. This allows cross-chain contract calls, that involve token movement. This is useful for a variety of usecases. One of primary importance is cross-chain swaps, which is an extremely powerful primitive.
-The mechanism enabling this is a `memo` field on every ICS20 or ICS721 transfer packet as of [IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b). Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo field is of a particular form, executes a wasm contract call. We now detail the memo format for wasm contract calls, and the execution guarantees provided.
+The Wasm hook is an IBC middleware which is used to allow ICS20 token transfers
+to initiate contract calls. This allows cross-chain contract calls, that involve
+token movement. This is useful for a variety of usecases. One of primary
+importance is cross-chain swaps, which is an extremely powerful primitive. The
+mechanism enabling this is a `memo` field on every ICS20 or ICS721 transfer
+packet as of
+[IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b).
+Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo
+field is of a particular form, executes a wasm contract call. We now detail the
+memo format for wasm contract calls, and the execution guarantees provided.
 
 # Cosmwasm Contract Execution Format
 
-Before we dive into the IBC metadata format, we show the CosmWasm execute message format, so the reader has a sense of what are the fields we need to be setting in. The CosmWasm `MsgExecuteContract` is defined [here](https://github.com/CosmWasm/wasmd/blob/4fe2fbc8f322efdaf187e2e5c99ce32fd1df06f0/x/wasm/types/tx.pb.go#L340-L349) as the following type:
+Before we dive into the IBC metadata format, we show the CosmWasm execute
+message format, so the reader has a sense of what are the fields we need to be
+setting in. The CosmWasm `MsgExecuteContract` is defined
+[here](https://github.com/CosmWasm/wasmd/blob/4fe2fbc8f322efdaf187e2e5c99ce32fd1df06f0/x/wasm/types/tx.pb.go#L340-L349)
+as the following type:
 
 ```go
 // HookData defines a wrapper for wasm execute message
@@ -35,12 +47,27 @@ type MsgExecuteContract struct {
 
 So we detail where we want to get each of these fields from:
 
-- `Sender`: We cannot trust the sender of an IBC packet, the counterparty chain has full ability to lie about it. We cannot risk this sender being confused for a particular user or module address on Osmosis. So we replace the sender with an account to represent the sender prefixed by the channel and a wasm module prefix. This is done by setting the sender to Bech32(Hash("ibc-wasm-hook-intermediary" || channelID || sender)), where the channelId is the channel id on the local chain.
-- `Contract`: This field should be directly obtained from the ICS-20 packet metadata
+- `Sender`: We cannot trust the sender of an IBC packet, the counterparty chain
+  has full ability to lie about it. We cannot risk this sender being confused
+  for a particular user or module address on Osmosis. So we replace the sender
+  with an account to represent the sender prefixed by the channel and a wasm
+  module prefix. This is done by setting the sender to
+  Bech32(Hash("ibc-wasm-hook-intermediary" || channelID || sender)), where the
+  channelId is the channel id on the local chain.
+- `Contract`: This field should be directly obtained from the ICS-20 packet
+  metadata
 - `Msg`: This field should be directly obtained from the ICS-20 packet metadata.
-- `Funds`: This field is set to the amount of funds being sent over in the ICS 20 packet. One detail is that the denom in the packet is the counterparty chains representation of the denom, so we have to translate it to Osmosis' representation.
+- `Funds`: This field is set to the amount of funds being sent over in the ICS
+  20 packet. One detail is that the denom in the packet is the counterparty
+  chains representation of the denom, so we have to translate it to Osmosis'
+  representation.
 
-<Hint>Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the packet forward middleware, we cannot trust the sender from chains that use PFM. Until that is fixed, we recommend chains to not trust the sender on contracts executed via IBC hooks.</Hint>
+<Hint>
+  Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the
+  packet forward middleware, we cannot trust the sender from chains that use
+  PFM. Until that is fixed, we recommend chains to not trust the sender on
+  contracts executed via IBC hooks.
+</Hint>
 
 ```go
 msg := MsgExecuteContract{
@@ -57,28 +84,27 @@ msg := MsgExecuteContract{
 
 # ICS20 packet structure
 
-So given the details above, we propagate the implied ICS20 packet data structure. ICS20 is JSON native, so we use JSON for the memo format.
+So given the details above, we propagate the implied ICS20 packet data
+structure. ICS20 is JSON native, so we use JSON for the memo format.
 
 ```json
 {
-    //... other ibc fields that we don't care about
-    "data":{
-     "denom": "denom on counterparty chain (e.g. uatom)",  // will be transformed to the local denom (ibc/...)
-        "amount": "1000",
-        "sender": "addr on counterparty chain", // will be transformed
-        "receiver": "contract addr or blank",
-        "memo": {
-           "wasm": {
-              "contract": "init1contractAddr",
-              "msg": {
-                "raw_message_fields": "raw_message_data",
-              },
-              "funds": [
-                {"denom": "ibc/denom", "amount": "100"}
-              ]
-            }
-        }
+  //... other ibc fields that we don't care about
+  "data": {
+    "denom": "denom on counterparty chain (e.g. uatom)", // will be transformed to the local denom (ibc/...)
+    "amount": "1000",
+    "sender": "addr on counterparty chain", // will be transformed
+    "receiver": "contract addr or blank",
+    "memo": {
+      "wasm": {
+        "contract": "init1contractAddr",
+        "msg": {
+          "raw_message_fields": "raw_message_data"
+        },
+        "funds": [{ "denom": "ibc/denom", "amount": "100" }]
+      }
     }
+  }
 }
 ```
 
@@ -87,17 +113,21 @@ An ICS20 packet is formatted correctly for wasmhooks iff the following all hold:
 - [x] `memo` is not blank
 - [x] `memo` is valid JSON
 - [x] `memo` has at least one key, with value `"wasm"`
-- [x] `memo["wasm"]["message"]` has exactly two entries, `"contract"`, `"msg"` and `"fund"`
+- [x] `memo["wasm"]["message"]` has exactly two entries, `"contract"`, `"msg"`
+      and `"fund"`
 - [x] `memo["wasm"]["message"]["msg"]` is a valid JSON object
 - [x] `receiver` == "" || `receiver` == `memo["wasm"]["contract"]`
 
-We consider an ICS20 packet as directed towards wasmhooks iff all of the following hold:
+We consider an ICS20 packet as directed towards wasmhooks iff all of the
+following hold:
 
 - [x] `memo` is not blank
 - [x] `memo` is valid JSON
 - [x] `memo` has at least one key, with name `"wasm"`
 
-If an ICS20 packet is not directed towards wasmhooks, wasmhooks doesn't do anything. If an ICS20 packet is directed towards wasmhooks, and is formatted incorrectly, then wasmhooks returns an error.
+If an ICS20 packet is not directed towards wasmhooks, wasmhooks doesn't do
+anything. If an ICS20 packet is directed towards wasmhooks, and is formatted
+incorrectly, then wasmhooks returns an error.
 
 # Execution flow
 
@@ -120,21 +150,31 @@ In Wasm hooks, post packet execution:
 
 # Ack callbacks
 
-A contract that sends an IBC transfer, may need to listen for the ACK from that packet. To allow contracts to listen on the ack of specific packets, we provide Ack callbacks.
+A contract that sends an IBC transfer, may need to listen for the ACK from that
+packet. To allow contracts to listen on the ack of specific packets, we provide
+Ack callbacks.
 
 ## Design
 
-The sender of an IBC transfer packet may specify a callback for when the ack of that packet is received in the memo field of the transfer packet.
-Crucially, only the IBC packet sender can set the callback.
+The sender of an IBC transfer packet may specify a callback for when the ack of
+that packet is received in the memo field of the transfer packet. Crucially,
+only the IBC packet sender can set the callback.
 
 ## Use case
-The crosschain swaps implementation sends an IBC transfer. If the transfer were to fail, we want to allow the sender to be able to retrieve their funds (which would otherwise be stuck in the contract). To do this, we allow users to retrieve the funds after the timeout has passed, but without the ack information, we cannot guarantee that the send hasn't failed (i.e.: returned an error ack notifying that the receiving change didn't accept it)
+
+The crosschain swaps implementation sends an IBC transfer. If the transfer were
+to fail, we want to allow the sender to be able to retrieve their funds (which
+would otherwise be stuck in the contract). To do this, we allow users to
+retrieve the funds after the timeout has passed, but without the ack
+information, we cannot guarantee that the send hasn't failed (i.e.: returned an
+error ack notifying that the receiving change didn't accept it)
 
 # Implementation
 
 ## Callback information in memo
 
-For the callback to be processed, the transfer packet's memo should contain the following in its JSON:
+For the callback to be processed, the transfer packet's memo should contain the
+following in its JSON:
 
 ```json
 {
@@ -143,11 +183,14 @@ For the callback to be processed, the transfer packet's memo should contain the 
   }
 }
 ```
-When an ack is received, it will notify the specified contract via a sudo message.
+
+When an ack is received, it will notify the specified contract via a sudo
+message.
 
 ## Interface for receiving the Acks and Timeouts
 
-The contract that awaits the callback should implement the following interface for a sudo message:
+The contract that awaits the callback should implement the following interface
+for a sudo message:
 
 ```rust
 #[cw_serde]
@@ -182,13 +225,14 @@ pub enum SudoMsg {
 
 # Tutorials
 
-This tutorial will guide you through the process of deploying a Wasm contract and calling it from another chain using IBC hooks.
-We will use IBC hook from Initia chain to call a Wasm contract on MiniWasm chain in this example.
+This tutorial will guide you through the process of deploying a Wasm contract
+and calling it from another chain using IBC hooks. We will use IBC hook from
+Initia chain to call a Wasm contract on MiniWasm chain in this example.
 
 ## Step 1. Deploy a Wasm contract
 
 ```rust
-// ... 
+// ...
 #[entry_point]
 pub fn execute(deps: DepsMut, env: Env, info: MessageInfo, msg: ExecuteMsg) -> StdResult<Response> {
     match msg {
@@ -217,25 +261,21 @@ pub fn simple_transfer(
 
 ## Step 2. Update IBC hook ACL for the contract
 
-IBC hook has strong power to execute any functions in counterparty chain and this can be used for fishing easily.
-So, we need to set the ACL for the contract to prevent unauthorized access.
-To update MiniWasm ACL, you need to use `MsgExecuteMessages` in OPchild module.
+IBC hook has strong power to execute any functions in counterparty chain and
+this can be used for fishing easily. So, we need to set the ACL for the contract
+to prevent unauthorized access. To update MiniWasm ACL, you need to use
+`MsgExecuteMessages` in OPchild module.
 
 ```typescript
 const aclMsg = new MsgUpdateACL(
-  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',                     // authority
+  'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
   'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8', // contract address
-  true                                                               // allow
+  true, // allow
 )
 
-const msgs = [
-  new MsgExecuteMessages(
-    proposer.key.accAddress, 
-    [aclMsg]
-  )
-]
+const msgs = [new MsgExecuteMessages(proposer.key.accAddress, [aclMsg])]
 const signedTx = await proposer.createAndSignTx({ msgs })
-await proposer.rest.tx.broadcast(signedTx).then(res => console.log(res))
+await proposer.rest.tx.broadcast(signedTx).then((res) => console.log(res))
 ```
 
 ```bash
@@ -256,68 +296,76 @@ Response:
 
 ## Step 3. Execute IBC Hooks Message
 
-After the contract is deployed and the ACL is set, we can execute the IBC hooks message to call the contract.
+After the contract is deployed and the ACL is set, we can execute the IBC hooks
+message to call the contract.
 
 ```typescript
-import { Coin, Height, RESTClient, MnemonicKey, MsgTransfer, sha256, Wallet } from "@initia/initia.js";
+import {
+  Coin,
+  Height,
+  RESTClient,
+  MnemonicKey,
+  MsgTransfer,
+  sha256,
+  Wallet,
+} from '@initia/initia.js'
 
 function createHook(params: object) {
-    const hook = { wasm: { message: params } }
-    return JSON.stringify(hook)
+  const hook = { wasm: { message: params } }
+  return JSON.stringify(hook)
 }
 
 function ibcDenom(channelId: string, denom: string) {
-    const fullTrace = `transfer/${channelId}/${denom}`;
-    const shaSum = sha256(Buffer.from(fullTrace));
-    const hash = Buffer.from(shaSum).toString('hex').toUpperCase();
-    return `ibc/${hash}`;
-} 
+  const fullTrace = `transfer/${channelId}/${denom}`
+  const shaSum = sha256(Buffer.from(fullTrace))
+  const hash = Buffer.from(shaSum).toString('hex').toUpperCase()
+  return `ibc/${hash}`
+}
 
 async function main() {
-    const l1RestClient = new RESTClient('https://rest.testnet.initia.xyz', {
-        gasAdjustment: '1.75',
-        gasPrices: '0.015uinit' // set l1 gas price
-    })
+  const l1RestClient = new RESTClient('https://rest.testnet.initia.xyz', {
+    gasAdjustment: '1.75',
+    gasPrices: '0.015uinit', // set l1 gas price
+  })
 
-    const sender = new Wallet(
-        l1RestClient,
-        new MnemonicKey({
-            mnemonic: 'power elder gather acoustic ...' 
-        })
-    )
+  const sender = new Wallet(
+    l1RestClient,
+    new MnemonicKey({
+      mnemonic: 'power elder gather acoustic ...',
+    }),
+  )
 
-    const recipientAddress = "init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx"
-    const tokenPair = await l1RestClient.ophost.tokenPairByL1Denom(1457, "uinit") // { l1_denom: 'uinit', l2_denom: 'l2/8b3e1fc559b327a35335e3f26ff657eaee5ff8486ccd3c1bc59007a93cf23156' }
-    const denom = ibcDenom("channel-0", tokenPair.l1_denom)                       // use IBC channel on MiniWasm side
-    const amount = "1000"
+  const recipientAddress = 'init1wgl839zxdh5c89mvc4ps97wyx6ejjygxs4qmcx'
+  const tokenPair = await l1RestClient.ophost.tokenPairByL1Denom(1457, 'uinit') // { l1_denom: 'uinit', l2_denom: 'l2/8b3e1fc559b327a35335e3f26ff657eaee5ff8486ccd3c1bc59007a93cf23156' }
+  const denom = ibcDenom('channel-0', tokenPair.l1_denom) // use IBC channel on MiniWasm side
+  const amount = '1000'
 
-    const msgs = [
-        new MsgTransfer(
-            'transfer',
-            'channel-2',
-            new Coin(tokenPair.l1_denom, amount),
-            sender.key.accAddress,
-            "init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8",    // IBC hook receiver = `ModuleAddress::ModuleName::FunctionName`
-            new Height(0, 0),
-            ((new Date().valueOf() + 100000) * 1000000).toString(),
-            createHook({
-                contract: "init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8", 
-                msg : {
-                    "simple_transfer": {
-                        amount: Number(amount),
-                        denom: denom,
-                        receiver: recipientAddress,
-                    }
-                },        
-                funds: [
-                    {"denom": denom, "amount": amount}
-                ]
-            })
-        )
-    ]
+  const msgs = [
+    new MsgTransfer(
+      'transfer',
+      'channel-2',
+      new Coin(tokenPair.l1_denom, amount),
+      sender.key.accAddress,
+      'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8', // IBC hook receiver = `ModuleAddress::ModuleName::FunctionName`
+      new Height(0, 0),
+      ((new Date().valueOf() + 100000) * 1000000).toString(),
+      createHook({
+        contract:
+          'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8',
+        msg: {
+          simple_transfer: {
+            amount: Number(amount),
+            denom: denom,
+            receiver: recipientAddress,
+          },
+        },
+        funds: [{ denom: denom, amount: amount }],
+      }),
+    ),
+  ]
 
-    const signedTx = await sender.createAndSignTx({ msgs });
-    await l1RestClient.tx.broadcastSync(signedTx).then(res => console.log(res));
+  const signedTx = await sender.createAndSignTx({ msgs })
+  await l1RestClient.tx.broadcastSync(signedTx).then((res) => console.log(res))
 }
 
 main()

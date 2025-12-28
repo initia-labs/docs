@@ -2,17 +2,21 @@
 title: ERC20Registry
 ---
 
-GitHub: [ERC20Registry](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20Registry.sol)
+GitHub:
+[ERC20Registry](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20Registry.sol)
 
 ## Overview
 
-The `ERC20Registry` contract provides modifiers for registering ERC20 tokens and their associated stores. The registration is done to allow the token to be recognized and interoperable with other parts of the MiniEVM rollup functionality.
+The `ERC20Registry` contract provides modifiers for registering ERC20 tokens and
+their associated stores. Registration allows the token to be recognized and made
+interoperable with other parts of the MiniEVM rollup functionality.
 
 ## Modifiers
 
 ### `register_erc20`
 
-Registers an ERC20 token with the ERC20 registry. This is done to allow the token to be recognized and interoperable with other parts of the MiniEVM rollup.
+Registers an ERC20 token with the ERC20 registry. This is done to allow the
+token to be recognized and interoperable with other parts of the MiniEVM rollup.
 
 ```solidity
 modifier register_erc20() {
@@ -23,7 +27,9 @@ modifier register_erc20() {
 
 ### `register_erc20_store`
 
-Registers an ERC20 store for a given account with the ERC20 registry if it is not already registered. This is done to keep track of which accounts are associated with which ERC20 tokens.
+Registers an ERC20 store for a given account with the ERC20 registry if it is
+not already registered. This is done to keep track of which accounts are
+associated with which ERC20 tokens.
 
 ```solidity
 modifier register_erc20_store(address account) {
@@ -36,6 +42,6 @@ modifier register_erc20_store(address account) {
 
 #### Parameters
 
-| Name      | Type      | Description                      |
-| --------- | --------- | -------------------------------- |
-| `account` | `address` | The address of the ERC20 store to check and register if not already registered |
+| Name      | Type      | Description                                                                     |
+| --------- | --------- | ------------------------------------------------------------------------------- |
+| `account` | `address` | The address of the ERC20 store to check and register if not already registered. |

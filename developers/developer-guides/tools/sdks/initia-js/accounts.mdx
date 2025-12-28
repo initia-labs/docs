@@ -4,7 +4,7 @@ title: Account
 
 ## Creating an Account
 
-Before you can start building and transacting, you'll need to create an account. 
+Before you can start building and transacting, you'll need to create an account.
 
 ```ts InitiaJS
 import { MnemonicKey } from '@initia/initia.js'
@@ -12,7 +12,10 @@ import { MnemonicKey } from '@initia/initia.js'
 const key = new MnemonicKey()
 ```
 
-<Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
+<Warning>
+  The mnemonic key is the only way to recover your account if you forget your
+  password.
+</Warning>
 
 ## Importing an Account
 
@@ -22,7 +25,7 @@ You can also import an account by providing a mnemonic phrase or a raw key.
 import { MnemonicKey } from '@initia/initia.js'
 
 const keyByMnemonic = new MnemonicKey({
-    mnemonic: 'bird upset ... evil cigar'
+  mnemonic: 'bird upset ... evil cigar',
 })
 const keyByRawKey = new RawKey(keyByMnemonic.privateKey)
 
@@ -41,12 +44,12 @@ If you want to create an EVM account, you can use the following code:
 
 ```ts InitiaJS
 const cosmosKeyByMnemonic = new MnemonicKey({
-    mnemonic: 'bird upset ... evil cigar',
+  mnemonic: 'bird upset ... evil cigar',
 })
 const evmKeyByMnemonic = new MnemonicKey({
-    mnemonic: 'bird upset ... evil cigar',
-    coinType: 60,
-    eth: true
+  mnemonic: 'bird upset ... evil cigar',
+  coinType: 60,
+  eth: true,
 })
 
 console.log('cosmosKeyByMnemonic:', cosmosKeyByMnemonic.accAddress)
@@ -68,7 +71,8 @@ You can retrieve account data from the key object.
 import { MnemonicKey } from '@initia/initia.js'
 
 const key = new MnemonicKey({
-    mnemonic: 'across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model',
+  mnemonic:
+    'across debate retreat border auction drum inflict demise jaguar fine dizzy absorb general include brush wet exclude host reward post angle shield mouse model',
 })
 
 console.log('mnemonic:', key.mnemonic)

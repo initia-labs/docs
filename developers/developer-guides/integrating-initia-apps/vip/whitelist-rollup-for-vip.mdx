@@ -2,10 +2,16 @@
 title: Whitelisting Rollup for VIP
 ---
 
-A rollup must be whitelisted before it can participate in the Vested Interest Program (VIP).
+A rollup must be whitelisted before it can participate in the Vested Interest
+Program (VIP).
 
 <Note>
-The following steps are for whitelisting a rollup for VIP on Mainnet. For testnet rollups, please contact the Initia team. This section also assumes you have already added your rollup to the [Initia Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction). If not, please follow the guide in the [previous section](/developers/developer-guides/integrating-initia-apps/vip/integrate-vip).
+  The following steps are for whitelisting a rollup for VIP on Mainnet. For
+  testnet rollups, please contact the Initia team. This section also assumes you
+  have already added your rollup to the [Initia
+  Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction).
+  If not, please follow the guide in the [previous
+  section](/developers/developer-guides/integrating-initia-apps/vip/integrate-vip).
 </Note>
 
 <Steps>
@@ -35,12 +41,12 @@ The following steps are for whitelisting a rollup for VIP on Mainnet. For testne
     const BRIDGE_ID = process.env.BRIDGE_ID || '16'                                                                         // Bridge ID
     const BRIDGE_ADDRESS = process.env.BRIDGE_ADDRESS || 'init1y3avrs2r9q3ggj5xs2q5zg4mmpqvr2necwl6s6fhfergtyp93ueq5270ht'  // Bridge address
     const L2_SCORE_CONTRACT_ADDRESS = process.env.L2_SCORE_CONTRACT_ADDRESS || '0x668dc438bd71f365d1e9ae39ac92f35d5ccde03d' // L2 score contract address
-    
+
     // Operator commission settings
     const OPERATOR_COMMISSION_MAX_RATE = process.env.OPERATOR_COMMISSION_MAX_RATE || '0.2'                                  // Operator commission max rate, e.g., 0.2 for 20%
     const OPERATOR_COMMISSION_MAX_CHANGE_RATE = process.env.OPERATOR_COMMISSION_MAX_CHANGE_RATE || '0.2'                    // Operator commission max change rate, e.g., 0.2 for 20%
     const OPERATOR_COMMISSION_RATE = process.env.OPERATOR_COMMISSION_RATE || '0.2'                                          // Operator commission rate, e.g., 0.2 for 20%
-    
+
     // Proposal parameters
     const PROPOSAL_METADATA = process.env.PROPOSAL_METADATA || 'https://forum.initia.xyz'                                  // VIP proposal forum URL
     const PROPOSAL_TITLE = process.env.PROPOSAL_TITLE || 'Whitelist Rollup on VIP'                                         // VIP proposal title
@@ -89,7 +95,7 @@ The following steps are for whitelisting a rollup for VIP on Mainnet. For testne
     }
 
     main().catch(console.error)
-    ```  
+    ```
 
   </Step>
   <Step title="Proposal Voting Period">

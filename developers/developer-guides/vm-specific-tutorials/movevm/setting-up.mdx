@@ -2,17 +2,22 @@
 title: Setting Up Your Development Environment
 ---
 
-This guide walks you through setting up your development environment for working with Move modules on Initia. You'll learn how to install the necessary tools, create accounts, and prepare for Move development on either Initia L1 or Move rollups.
+This guide walks you through setting up your development environment for working
+with Move modules on Initia. You'll learn how to install the necessary tools,
+create accounts, and prepare for Move development on either Initia L1 or Move
+rollups.
 
 ## Prerequisites
 
 Before getting started, ensure you have:
+
 - A terminal or command prompt
 - Internet connection for downloading tools and accessing faucets
 - Basic familiarity with command-line interfaces
 
 <Info>
-This tutorial supports both Initia L1 and Move rollups development. The steps are similar, but we'll highlight the differences where they occur.
+  This tutorial supports both Initia L1 and Move rollups development. The steps
+  are similar, but we'll highlight the differences where they occur.
 </Info>
 
 ## Development Tools Overview
@@ -43,18 +48,30 @@ Choose and install the tools that match your development approach and target net
 ### CLI Tools
 
 <CardGroup cols={2}>
-<Card title="initiad CLI" icon="gear" href="/developers/developer-guides/tools/clis/initiad-cli/introduction">
-Command-line interface for Initia L1 development and interaction.
-</Card>
-<Card title="minitiad CLI" icon="cube" href="/developers/developer-guides/tools/clis/minitiad-cli/introduction">
-Command-line interface for Move rollup development and interaction.
-</Card>
+  <Card
+    title="initiad CLI"
+    icon="gear"
+    href="/developers/developer-guides/tools/clis/initiad-cli/introduction"
+  >
+    Command-line interface for Initia L1 development and interaction.
+  </Card>
+  <Card
+    title="minitiad CLI"
+    icon="cube"
+    href="/developers/developer-guides/tools/clis/minitiad-cli/introduction"
+  >
+    Command-line interface for Move rollup development and interaction.
+  </Card>
 </CardGroup>
 
 ### SDK Option
 
-<Card title="InitiaJS SDK" icon="js" href="/developers/developer-guides/tools/sdks/initia-js/introduction">
-TypeScript/JavaScript SDK for programmatic blockchain interaction.
+<Card
+  title="InitiaJS SDK"
+  icon="js"
+  href="/developers/developer-guides/tools/sdks/initia-js/introduction"
+>
+  TypeScript/JavaScript SDK for programmatic blockchain interaction.
 </Card>
 
 <Tip>
@@ -98,11 +115,12 @@ import { MnemonicKey } from '@initia/initia.js'
 
 // Import existing account from environment variable
 const key = new MnemonicKey({
-    mnemonic: process.env.MNEMONIC,
+  mnemonic: process.env.MNEMONIC,
 })
 
 console.log('account address:', key.accAddress)
 ```
+
 </Tab>
 </Tabs>
 
@@ -118,11 +136,11 @@ Your account creation will generate output similar to this:
   pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AzBfkuS1ojSqNfqztk34Pn86n7D5MbhKobmsUIN372QG"}'
   type: local
 
-
-**Important** write this mnemonic phrase in a safe place.
-It is the only way to recover your account if you ever forget your password.
+**Important** write this mnemonic phrase in a safe place. It is the only way to
+recover your account if you ever forget your password.
 
 [mnemonic from environment variable]
+
 ```
 </Tab>
 <Tab title="InitiaJS Output">
@@ -135,16 +153,21 @@ account address: init1d7s3q7nmlzqz9v4tk6ntrvfmavu2vk656gr29j
 ```
 
 **For importing existing account:**
+
 ```bash
 account address: init17mq4sqemx2djc59tda76y20nwp4pfn4943x9ze
 ```
+
 </Tab>
 </Tabs>
 
 <Warning>
 **Secure Your Mnemonic Phrase**
 
-Your mnemonic phrase is the only way to recover your account. Store it securely and never share it publicly. Consider using a password manager or writing it down and storing it in a safe place.
+Your mnemonic phrase is the only way to recover your account. Store it securely
+and never share it publicly. Consider using a password manager or writing it
+down and storing it in a safe place.
+
 </Warning>
 </Step>
 
@@ -155,8 +178,12 @@ To deploy and test Move modules, your account needs tokens to pay for transactio
 
 For testnet development, use the official Initia faucet to get free tokens:
 
-<Card title="Initia Testnet Faucet" icon="droplet" href="https://v1.app.testnet.initia.xyz/faucet">
-Get free testnet tokens for development and testing purposes.
+<Card
+  title="Initia Testnet Faucet"
+  icon="droplet"
+  href="https://v1.app.testnet.initia.xyz/faucet"
+>
+  Get free testnet tokens for development and testing purposes.
 </Card>
 
 ### Funding Process
@@ -167,7 +194,8 @@ Get free testnet tokens for development and testing purposes.
 4. Wait for the transaction to be processed
 
 <Info>
-Faucet tokens are only for testnet use and have no monetary value. They're designed specifically for development and testing purposes.
+  Faucet tokens are only for testnet use and have no monetary value. They're
+  designed specifically for development and testing purposes.
 </Info>
 
 ### Verify Your Balance
@@ -191,13 +219,15 @@ minitiad query bank balances [your-address]
 
 ## Next Steps
 
-With your development environment set up, you're ready to start building with Move! The next section will guide you through creating, compiling, deploying, and interacting with your first Move module.
+With your development environment set up, you're ready to start building with
+Move! The next section will guide you through creating, compiling, deploying,
+and interacting with your first Move module.
 
 <CardGroup cols={2}>
-<Card title="Network Configuration" icon="network-wired">
-Learn how to configure your CLI for different networks and environments.
-</Card>
-<Card title="Move Module Basics" icon="cubes">
-Understand the fundamentals of Move module structure and development.
-</Card>
+  <Card title="Network Configuration" icon="network-wired">
+    Learn how to configure your CLI for different networks and environments.
+  </Card>
+  <Card title="Move Module Basics" icon="cubes">
+    Understand the fundamentals of Move module structure and development.
+  </Card>
 </CardGroup>

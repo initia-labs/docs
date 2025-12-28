@@ -5,7 +5,9 @@ icon: gear
 
 ## Overview
 
-Configuring autosign requires two main steps: setting up Privy for embedded wallet management and configuring autosign permissions in your `InterwovenKitProvider`. This guide walks you through both processes.
+Configuring autosign requires two main steps: setting up Privy for embedded
+wallet management and configuring autosign permissions in your
+`InterwovenKitProvider`. This guide walks you through both processes.
 
 ## Prerequisites
 
@@ -13,11 +15,12 @@ Before configuring autosign, ensure you have:
 
 - A Privy account and application ID
 - InterwovenKit already integrated in your application
-- Understanding of which transaction types you need to auto-sign
+- An understanding of which transaction types you need to auto-sign
 
 ## Setting Up Privy
 
-Autosign requires Privy to manage embedded wallets. Privy provides secure key management and wallet creation for ghost wallets.
+Autosign requires Privy to manage embedded wallets. Privy provides secure key
+management and wallet creation for ghost wallets.
 
 <Steps>
 <Step title="Create a Privy Account">
@@ -30,7 +33,8 @@ Autosign requires Privy to manage embedded wallets. Privy provides secure key ma
 
 <Step title="Install Privy Dependencies">
 
-Install the required Privy packages in your application. The app should already have InterwovenKit installed::
+Install the required Privy packages in your application. The app should already
+have InterwovenKit installed:
 
 <CodeGroup>
 ```bash npm
@@ -48,75 +52,76 @@ pnpm add @privy-io/react-auth
 ```bash bun
 bun add @privy-io/react-auth
 ```
+
 </CodeGroup>
 
 </Step>
 
 <Step title="Configure Allowed Domains">
 
-Before configuring your application, set up allowed domains in the Privy Dashboard to ensure security and proper functionality:
+Before configuring your application, set up allowed domains in the Privy
+Dashboard to ensure security and proper functionality:
 
 1. **Access Privy Dashboard**: Log in to your Privy account
-2. **Navigate to Configuration**: Go to **Configuration > App settings**
-3. **Add Domains**: In the **Allowed Domains** field, add:
+2. **Click Into Application**: Click into the application you would like Privy
+   to work with
+3. **Navigate to Allowed Domains**: Click **App settings** on the left sidebar
+   and then click on the **Domains** tab.
+4. **Add Domains**: Under **Allowed Origins**, add:
    - Your production domain (e.g., `app.example.com`)
    - Your development domain (e.g., `localhost:3000`)
    - Any staging domains you use
 
 <Warning>
-  Privy services will only work on domains you've explicitly allowed. Add all domains where your application will run, including localhost for development.
+  Privy services will only work on domains you've explicitly allowed. Add all
+  domains where your application will run, including localhost for development.
 </Warning>
 
 </Step>
 
-<Step title="Configure Privy Provider">
+<Step title="Configure Privy and Integrate with InterwovenKit">
 
-Wrap your application with `PrivyProvider` and configure it for embedded wallets:
+The following configuration wires Privy into InterwovenKit to enable embedded
+wallets and autosign:
 
-```tsx App.tsx
-import { PrivyProvider } from "@privy-io/react-auth"
-import { InterwovenKitProvider } from "@initia/interwovenkit-react"
+1. Wraps your app with `PrivyProvider` to enable authentication and embedded
+   wallet management.
+2. Uses Privy hooks (`usePrivy`, `useLoginWithSiwe`, `useCreateWallet`,
+   `useWallets`) to access wallet and auth state.
+3. Passes those hooks into `InterwovenKitProvider` via `privyContext`.
+4. Enables autosign for supported message types using `enableAutoSign`.
 
-export default function App({ children }) {
-  return (
-    <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID}
-      config={{
-        embeddedWallets: {
-          createOnLogin: "all-users",
-        },
-      }}
-    >
-      {/* Your app */}
-    </PrivyProvider>
-  )
-}
-```
+**Required Configuration for Autosign:**
 
-**Basic Configuration Options:**
-
-- `appId`: Your Privy application ID (required)
-- `embeddedWallets.createOnLogin`: Create embedded wallets for all users (required)
-
-</Step>
-
-<Step title="Integrate Privy Context with InterwovenKit">
-
-Pass Privy hooks to `InterwovenKitProvider` using the `privyContext` prop:
+- `appId`: Your Privy application ID
+- `embeddedWallets.ethereum.createOnLogin: "all-users"`: **Required for
+  autosign**. Ensures an embedded (ghost) wallet is created at login. Privy’s
+  default behavior may not create an embedded wallet automatically, which will
+  prevent autosign from working.
 
 ```tsx providers.tsx
-import { PrivyProvider, usePrivy, useCrossAppAccounts, useCreateWallet, useWallets } from "@privy-io/react-auth"
-import { InterwovenKitProvider, PRIVY_APP_ID } from "@initia/interwovenkit-react"
+import {
+  PrivyProvider,
+  useCreateWallet,
+  useLoginWithSiwe,
+  usePrivy,
+  useWallets,
+} from '@privy-io/react-auth'
+import {
+  InterwovenKitProvider,
+  PRIVY_APP_ID,
+} from '@initia/interwovenkit-react'
 
 function InterwovenKitWrapper({ children }) {
   const privy = usePrivy()
-  const crossAppAccounts = useCrossAppAccounts()
+  const siwe = useLoginWithSiwe()
   const { createWallet } = useCreateWallet()
   const { wallets } = useWallets()
 
   return (
     <InterwovenKitProvider
-      privyContext={{ privy, crossAppAccounts, createWallet, wallets }}
+      privyContext={{ privy, siwe, createWallet, wallets }}
+      // Allows autosign only for default contract execution messages
       enableAutoSign
     >
       {children}
@@ -130,20 +135,18 @@ export default function Providers() {
       appId="YOUR_PRIVY_APP_ID"
       config={{
         appearance: {
-          theme: "dark",
+          theme: 'dark',
         },
         embeddedWallets: {
-          ethereum: { createOnLogin: "all-users" },
+          ethereum: { createOnLogin: 'all-users' },
           showWalletUIs: false,
         },
         loginMethodsAndOrder: {
-          primary: [`privy:${PRIVY_APP_ID}`, "detected_ethereum_wallets"],
+          primary: [`privy:${PRIVY_APP_ID}`, 'detected_ethereum_wallets'],
         },
       }}
     >
-      <InterwovenKitWrapper>
-        {/* Your app */}
-      </InterwovenKitWrapper>
+      <InterwovenKitWrapper>{/* Your app */}</InterwovenKitWrapper>
     </PrivyProvider>
   )
 }
@@ -154,21 +157,48 @@ export default function Providers() {
 
 ## Configuring Autosign Permissions
 
-Once Privy is set up, configure autosign permissions using the `enableAutoSign` prop in `InterwovenKitProvider`. You can use either a simple boolean configuration or a detailed per-chain configuration.
+### Choose Your Autosign Mode
 
-### Simple Configuration
+Before enabling autosign, decide which mode fits your application:
 
-For single-chain applications using the default chain, enable autosign with a boolean:
+- **Boolean (`enableAutoSign`)**
+  - Best for simple, single-chain apps
+  - Automatically allows default contract execution messages for the chain
+  - Does **not** allow token transfers, staking, or other non-default messages
+
+- **Per-Chain Configuration
+  (`enableAutoSign: { "chain-id": ["msg.type.Url", ...] }`)**
+  - Required if your app sends tokens, delegates, or uses multiple chains
+  - You must explicitly list every allowed message type
+
+If your app does more than basic contract execution, you should skip the boolean
+option and use the per-chain permissions in the
+[Advanced Configuration](#advanced-configuration-explicit-permissions) section.
+
+Most production applications will eventually require the per-chain
+configuration.
+
+### Simple Configuration (Limited)
+
+This option only enables autosign for default contract execution messages and is
+intentionally restrictive.
 
 ```tsx
 <InterwovenKitProvider
-  privyContext={{ privy, crossAppAccounts, createWallet, wallets }}
+  privyContext={{ privy, siwe, createWallet, wallets }}
   enableAutoSign
   // ... other config
 >
   {children}
 </InterwovenKitProvider>
 ```
+
+<Info>
+  If you later need to support token transfers, staking, or multiple chains, you
+  must switch from the boolean configuration to the per-chain configuration
+  presented in the [Advanced
+  Configuration](#advanced-configuration-explicit-permissions) section.
+</Info>
 
 When using boolean configuration, InterwovenKit automatically:
 
@@ -178,19 +208,21 @@ When using boolean configuration, InterwovenKit automatically:
   - **MiniWasm**: `/cosmwasm.wasm.v1.MsgExecuteContract`
   - **MiniMove**: `/initia.move.v1.MsgExecute`
 
-### Per-Chain Permissions
+### Advanced Configuration (Explicit Permissions)
 
-For multi-chain applications or when you need custom message types, specify permissions per chain:
+For multi-chain applications or when you need custom message types, specify
+permissions per chain:
 
 ```tsx
 <InterwovenKitProvider
   enableAutoSign={{
-    "evm-1": ["/minievm.evm.v1.MsgCall"],
-    "wasm-1": ["/cosmwasm.wasm.v1.MsgExecuteContract"],
-    "move-1": [
-      "/initia.move.v1.MsgExecute",
-      "/cosmos.bank.v1beta1.MsgSend",
+    'interwoven-1': [
+      '/cosmos.bank.v1beta1.MsgSend', // native token transfers
+      '/cosmos.staking.v1beta1.MsgDelegate', // staking
     ],
+    'evm-1': ['/minievm.evm.v1.MsgCall'],
+    'wasm-1': ['/cosmwasm.wasm.v1.MsgExecuteContract'],
+    'move-1': ['/initia.move.v1.MsgExecute', '/cosmos.bank.v1beta1.MsgSend'],
   }}
   // ... other config
 >
@@ -201,6 +233,7 @@ For multi-chain applications or when you need custom message types, specify perm
 **Configuration Format:**
 
 The `enableAutoSign` prop accepts an object where:
+
 - **Keys**: Chain IDs (strings)
 - **Values**: Arrays of message type URLs (strings)
 
@@ -213,5 +246,6 @@ The `enableAutoSign` prop accepts an object where:
 - **Staking**: `/cosmos.staking.v1beta1.MsgDelegate`
 
 <Warning>
-  Only grant permissions for message types that your application actually needs. Granting overly broad permissions increases security risk.
+  Only grant permissions for message types that your application actually needs.
+  Granting overly broad permissions increases security risk.
 </Warning>

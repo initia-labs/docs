@@ -8,9 +8,15 @@ title: Managing Operator Settings
 
 ## Updating Operator Address
 
-The operator is the account you specify during VIP whitelisting that will receives your rollup's operator commission rewards. To learn more about the VIP operator rewards, see [this section](/home/core-concepts/vip/architecture#distribution-to-rollup-operators). 
+The operator is the account you specify during VIP whitelisting that will
+receives your rollup's operator commission rewards. To learn more about the VIP
+operator rewards, see
+[this section](/home/core-concepts/vip/architecture#distribution-to-rollup-operators).
 
-To replace the operator address, call `update_operator` on the VIP contract and pass two arguments in order: the rollup bridge ID and the new operator address. The bridge ID uniquely identifies your rollup bridge and can be retrieved from `${REST_URL}/opinit/opchild/v1/bridge_info`.
+To replace the operator address, call `update_operator` on the VIP contract and
+pass two arguments in order: the rollup bridge ID and the new operator address.
+The bridge ID uniquely identifies your rollup bridge and can be retrieved from
+`${REST_URL}/opinit/opchild/v1/bridge_info`.
 
 <Tabs>
     <Tab title="Mainnet (interwoven-1)">
@@ -49,21 +55,27 @@ To replace the operator address, call `update_operator` on the VIP contract and 
             --gas auto
         ```
     </Tab>
-</Tabs>
 
+</Tabs>
 
 ## Updating Operator Commission
 
-Operator commissions can be adjusted based on the `operator_commission_max_rate` and `operator_commission_max_change_rate` settings established during VIP whitelisting.
+Operator commissions can be adjusted based on the `operator_commission_max_rate`
+and `operator_commission_max_change_rate` settings established during VIP
+whitelisting.
 
-Note that the commission value can be modified only once per stage, and any updated rate will take effect starting from the next stage. To update the operator commission, call `update_operator_commission` on the VIP contract. This function takes three arguments
+Note that the commission value can be modified only once per stage, and any
+updated rate will take effect starting from the next stage. To update the
+operator commission, call `update_operator_commission` on the VIP contract. This
+function takes three arguments
 
 1. the rollup bridge ID
 2. the version number
 3. the new commission rate
 
-Use version value `1` when the rollup is listed for the first time. If the rollup is delisted and later relisted, set the version to the previous value plus 1.
-
+Use version value `1` when the rollup is listed for the first time. If the
+rollup is delisted and later relisted, set the version to the previous value
+plus 1.
 
 <Tabs>
     <Tab title="Mainnet (interwoven-1)">
@@ -104,4 +116,5 @@ Use version value `1` when the rollup is listed for the first time. If the rollu
             --gas auto
         ```
     </Tab>
+
 </Tabs>

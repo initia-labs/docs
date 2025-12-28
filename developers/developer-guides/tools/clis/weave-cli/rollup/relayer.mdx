@@ -2,44 +2,65 @@
 title: Running IBC Relayer
 ---
 
-An IBC relayer is a software component that facilitates communication between two distinct blockchain networks that support the Inter-Blockchain Communication (IBC) protocol. It is required for built-in oracle, Minitswap, and other cross-chain services to function with your rollup.
+An IBC relayer is a software component that facilitates communication between
+two distinct blockchain networks that support the Inter-Blockchain Communication
+(IBC) protocol. It is required for built-in oracle, Minitswap, and other
+cross-chain services to function with your rollup.
 
-Weave currently only supports Rapid relayer configuration generation. It will support running the rapid relayer directly in the future. For more detailed information about Rapid relayer, see the [Rapid relayer documentation](https://github.com/initia-labs/rapid-relayer).
+Weave currently only supports Rapid relayer configuration generation. It will
+support running the rapid relayer directly in the future. For more detailed
+information about Rapid relayer, see the
+[Rapid relayer documentation](https://github.com/initia-labs/rapid-relayer).
 
 <Note>
-Weave only supports IBC relayer setup between Initia L1 and Interwoven Rollups. Setting up relayers between other arbitrary networks is not supported.
+  Weave only supports IBC relayer setup between Initia L1 and Interwoven
+  Rollups. Setting up relayers between other arbitrary networks is not
+  supported.
 </Note>
 
 ## Setting up
 
-For this guide, you'll need Weave v0.3.0 or newer. You can check your Weave version by running `weave version`. If you need to upgrade, run `weave upgrade`.
+For this guide, you'll need Weave v0.3.0 or newer. You can check your Weave
+version by running `weave version`. If you need to upgrade, run `weave upgrade`.
 
 ```bash
 weave relayer init
 ```
 
 This command will guide you through 2 major parts of the relayer setup:
+
 - Setting up networks and channels to relay messages between
 - Setting up the account responsible for relaying messages
 
-
 For the former, Weave will present you with three options:
-1. Configure channels between Initia L1 and a whitelisted Rollup (those available in [Initia Registry](https://github.com/initia-labs/initia-registry))
-2. Configure using artifacts from `weave rollup launch` (recommended for users who have just launched their rollup)
+
+1. Configure channels between Initia L1 and a whitelisted Rollup (those
+   available in
+   [Initia Registry](https://github.com/initia-labs/initia-registry))
+2. Configure using artifacts from `weave rollup launch` (recommended for users
+   who have just launched their rollup)
 3. Configure manually
 
-As for the latter, Weave will ask whether you want to use the OPinit Challenger bot account for the relayer. This is recommended as it is exempted from gas fees on the rollup and able to stop other relayers from relaying when it detects a malicious message.
+As for the latter, Weave will ask whether you want to use the OPinit Challenger
+bot account for the relayer. This is recommended as it is exempted from gas fees
+on the rollup and able to stop other relayers from relaying when it detects a
+malicious message.
 
 <Warning>
-Relayer requires funds to relay messages between Initia L1 and your rollup (if it's not in the fee whitelist). If Weave detects that your account does not have enough funds, Weave will ask you to fund via Gas Station.
+  Relayer requires funds to relay messages between Initia L1 and your rollup (if
+  it's not in the fee whitelist). If Weave detects that your account does not
+  have enough funds, Weave will ask you to fund via Gas Station.
 </Warning>
 
 ## Running Relayer
 
-Currently, Weave generates the relayer configuration file but does not run the relayer directly. You'll need to manually set up and run the Rapid relayer using the generated configuration.
+Currently, Weave generates the relayer configuration file but does not run the
+relayer directly. You'll need to manually set up and run the Rapid relayer using
+the generated configuration.
 
 <Note>
-Make sure you have Node.js and npm installed on your system if you wish to run the relayer in the same machine.
+  Make sure you have Node.js and npm installed on your system if you wish to run
+  the relayer in the same machine.
 </Note>
 
 <Steps>
@@ -51,6 +72,7 @@ Make sure you have Node.js and npm installed on your system if you wish to run t
     cd rapid-relayer
     npm install
     ```
+
   </Step>
 
   <Step title="Copy Configuration File">
@@ -59,6 +81,7 @@ Make sure you have Node.js and npm installed on your system if you wish to run t
     ```bash
     cp ~/.relayer/config.json ./config.json
     ```
+
   </Step>
 
   <Step title="Start the Relayer">
@@ -67,12 +90,14 @@ Make sure you have Node.js and npm installed on your system if you wish to run t
     ```bash
     npm start
     ```
+
   </Step>
 </Steps>
 
 ## Help
 
 To see all the available commands:
+
 ```bash
 weave relayer --help
 ```
