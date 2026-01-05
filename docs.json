@@ -399,6 +399,21 @@
             ]
           },
           {
+            "group": "Features",
+            "pages": [
+              {
+                "group": "Autosign",
+                "icon": "wand-sparkles",
+                "pages": [
+                  "interwovenkit/features/autosign/introduction",
+                  "interwovenkit/features/autosign/configuration",
+                  "interwovenkit/features/autosign/usage",
+                  "interwovenkit/features/autosign/api-reference"
+                ]
+              }
+            ]
+          },
+          {
             "group": "References",
             "pages": [
               "interwovenkit/references/interwovenkit-provider",

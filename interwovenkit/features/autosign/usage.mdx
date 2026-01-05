@@ -1,0 +1,142 @@
+---
+title: Usage
+description:
+  Learn how to enable, disable, and manage autosign in your application
+icon: play
+---
+
+## Overview
+
+Once autosign is configured, you can enable and manage it in your application
+using the `autoSign` object from `useInterwovenKit()`. This guide covers how to
+use autosign in your code.
+
+## Accessing Autosign
+
+The `autoSign` object is available via the `useInterwovenKit()` hook:
+
+```tsx
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+function MyComponent() {
+  const { autoSign } = useInterwovenKit()
+
+  // Use autoSign.enable(), autoSign.disable(), etc.
+}
+```
+
+## Enabling Autosign
+
+To enable autosign, call the `enable()` method. This opens a drawer where users
+confirm the autosign setup and select an expiration duration.
+
+The following examples show client components for enabling and disabling
+autosign. You can adapt this logic to your own UI or component structure.
+
+### Example: EnableAutosignButton
+
+```tsx
+'use client'
+
+import { useState } from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+export default function EnableAutosignButton() {
+  const { autoSign } = useInterwovenKit()
+  const [isEnabling, setIsEnabling] = useState(false)
+
+  const handleEnable = async () => {
+    try {
+      setIsEnabling(true)
+      await autoSign.enable() // Uses defaultChainId
+      console.log('Autosign enabled successfully!')
+    } catch (error) {
+      console.error('Failed to enable autosign:', error)
+    } finally {
+      setIsEnabling(false)
+    }
+  }
+
+  return (
+    <button onClick={handleEnable} disabled={isEnabling || autoSign.isLoading}>
+      Enable Autosign
+    </button>
+  )
+}
+```
+
+### Enabling for a Specific Chain
+
+Specify a chain ID to enable autosign for a particular chain:
+
+```tsx
+await autoSign.enable('interwoven-1')
+```
+
+### What Happens When Enabled
+
+When `autoSign.enable()` is called:
+
+<Steps>
+<Step title="Drawer Opens">
+  A drawer appears asking the user to confirm autosign setup, showing which permissions will be granted.
+</Step>
+
+<Step title="Expiration Selection">
+  The user can select an expiration duration from available defaults or use a
+  custom duration.
+</Step>
+
+<Step title="Ghost Wallet Creation">
+  Privy creates an embedded wallet if one does not exist. This happens
+  automatically in the background.
+</Step>
+
+<Step title="Permission Grant">
+  The user signs a single transaction to grant `authz` and `feegrant`
+  permissions to the ghost wallet.
+</Step>
+
+<Step title="Activation">
+  Autosign becomes active for the specified chain and message types. The Promise resolves on success.
+</Step>
+</Steps>
+
+The method returns a Promise that resolves when autosign is successfully enabled
+or rejects if the user cancels or an error occurs.
+
+## Disabling Autosign
+
+Users can disable autosign at any time. This revokes all grants for the selected
+chain and prevents further automatic signing.
+
+### Example: DisableAutosignButton
+
+```tsx
+'use client'
+
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+export default function DisableAutosignButton() {
+  const { autoSign } = useInterwovenKit()
+
+  const handleDisable = async () => {
+    try {
+      await autoSign.disable() // Uses defaultChainId
+      console.log('Autosign disabled successfully!')
+    } catch (error) {
+      console.error('Failed to disable autosign:', error)
+    }
+  }
+
+  return <button onClick={handleDisable}>Disable Autosign</button>
+}
+```
+
+### Disabling for a Specific Chain
+
+Specify a chain ID to disable autosign for a particular chain:
+
+```tsx
+await autoSign.disable('interwoven-1')
+```
