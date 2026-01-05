@@ -694,131 +694,243 @@ import { concatBytes, toBytes } from '@noble/hashes/utils'
 import { toHex } from '@cosmjs/encoding'
 import { MsgUndelegate } from 'vm/move/msgs/staking'
 
-const user = new Wallet( new RESTClient('http://localhost:1317', { gasPrices:
-'0.015uinit', gasAdjustment: '1.75' }), new MnemonicKey({ // TODO: put your
-mnemonic here mnemonic: 'mimic exist actress ...' }) )
+const user = new Wallet(
+  new RESTClient('http://localhost:1317', {
+    gasPrices: '0.015uinit',
+    gasAdjustment: '1.75',
+  }),
+  new MnemonicKey({
+    // TODO: put your mnemonic here
+    mnemonic: 'mimic exist actress ...',
+  }),
+)
 
-const validator = new Wallet( new RESTClient('http://localhost:1317', {
-gasPrices: '0.015uinit', gasAdjustment: '1.75' }), new MnemonicKey({ // TODO:
-put your mnemonic here mnemonic: 'mimic exist actress ...' }) )
+const validator = new Wallet(
+  new RESTClient('http://localhost:1317', {
+    gasPrices: '0.015uinit',
+    gasAdjustment: '1.75',
+  }),
+  new MnemonicKey({
+    // TODO: put your mnemonic here
+    mnemonic: 'mimic exist actress ...',
+  }),
+)
 
-function coinMetadata(creator: string, symbol: string) { const
-OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe const addrBytes =
-bcs.address().serialize(creator).toBytes() const seed = toBytes(symbol) const
-bytes = new Uint8Array([...concatBytes(addrBytes, seed),
-OBJECT_FROM_SEED_ADDRESS_SCHEME]) const sum =
-sha3_256.create().update(bytes).digest() return toHex(sum) }
+function coinMetadata(creator: string, symbol: string) {
+  const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
+  const addrBytes = bcs.address().serialize(creator).toBytes()
+  const seed = toBytes(symbol)
+  const bytes = new Uint8Array([
+    ...concatBytes(addrBytes, seed),
+    OBJECT_FROM_SEED_ADDRESS_SCHEME,
+  ])
+  const sum = sha3_256.create().update(bytes).digest()
+  return toHex(sum)
+}
 
-async function getLastProposalId(restClient: RESTClient): Promise<number> {
-const [proposals, pagination] = await restClient.gov.proposals() if
-(proposals.length === 0) return 0 return proposals[proposals.length - 1].id }
+async function getLastProposalId(
+  restClient: RESTClient,
+): Promise<number> {
+  const [proposals, pagination] = await restClient.gov.proposals()
+  if (proposals.length === 0) return 0
+  return proposals[proposals.length - 1].id
+}
 
-async function getProposalStatus(restClient: RESTClient, proposalId: number):
-Promise<ProposalStatus | null> { const proposal = await
-restClient.gov.proposal(proposalId) return proposal ? proposal.status : null }
+async function getProposalStatus(
+  restClient: RESTClient,
+  proposalId: number,
+): Promise<ProposalStatus | null> {
+  const proposal = await restClient.gov.proposal(proposalId)
+  return proposal ? proposal.status : null
+}
 
-async function checkProposalPassed(restClient: RESTClient, proposalId: number):
-Promise<void> { for (;;) {
-console.log(`checking proposal ${proposalId} status... in ${restClient.URL}/cosmos/gov/v1/proposals/${proposalId}`)
-const status = await getProposalStatus(restClient, proposalId)
+async function checkProposalPassed(
+  restClient: RESTClient,
+  proposalId: number,
+): Promise<void> {
+  for (;;) {
+    console.log(
+      `checking proposal ${proposalId} status... in ${restClient.URL}/cosmos/gov/v1/proposals/${proposalId}`,
+    )
+    const status = await getProposalStatus(restClient, proposalId)
 
     if (status === ProposalStatus.PROPOSAL_STATUS_PASSED) return
-    if (status === ProposalStatus.PROPOSAL_STATUS_REJECTED) throw new Error(`proposal ${proposalId} rejected`)
-    if (status === ProposalStatus.PROPOSAL_STATUS_FAILED) throw new Error(`proposal ${proposalId} failed`)
+    if (status === ProposalStatus.PROPOSAL_STATUS_REJECTED)
+      throw new Error(`proposal ${proposalId} rejected`)
+    if (status === ProposalStatus.PROPOSAL_STATUS_FAILED)
+      throw new Error(`proposal ${proposalId} failed`)
     await delay(5_000)
+  }
+}
 
-} }
+async function provideLiquidity(
+  lp_metadata: string,
+  coin_a_amount: number,
+  coin_b_amount: number,
+  min_liquidity: number | null,
+) {
+  const msg = new MsgExecute(
+    user.key.accAddress,
+    '0x1',
+    'dex',
+    'provide_liquidity_script',
+    [],
+    [
+      bcs.string().serialize(lp_metadata).toBase64(),
+      bcs.u64().serialize(coin_a_amount).toBase64(),
+      bcs.u64().serialize(coin_b_amount).toBase64(),
+      bcs.option(bcs.u64()).serialize(min_liquidity).toBase64(),
+    ],
+  )
 
-async function provideLiquidity( lp_metadata: string, coin_a_amount: number,
-coin_b_amount: number, min_liquidity: number | null ) { const msg = new
-MsgExecute( user.key.accAddress, '0x1', 'dex', 'provide_liquidity_script', [], [
-bcs.string().serialize(lp_metadata).toBase64(),
-bcs.u64().serialize(coin_a_amount).toBase64(),
-bcs.u64().serialize(coin_b_amount).toBase64(),
-bcs.option(bcs.u64()).serialize(min_liquidity).toBase64() ] )
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
+}
 
-const signedTx = await user.createAndSignTx({ msgs: [msg] }) await
-user.rest.tx.broadcast(signedTx).catch(console.log) }
+async function createPairScript(
+  sender: Wallet,
+  name: string,
+  symbol: string,
+  swap_fee_rate: number,
+  coin_a_weight: number,
+  coin_b_weight: number,
+  coin_a_metadata: string,
+  coin_b_metadata: string,
+  coin_a_amount: number,
+  coin_b_amount: number,
+) {
+  const msg = new MsgExecute(
+    sender.key.accAddress,
+    '0x1',
+    'dex',
+    'create_pair_script',
+    [],
+    [
+      bcs.string().serialize(name).toBase64(),
+      bcs.string().serialize(symbol).toBase64(),
+      bcs.bigdecimal().serialize(swap_fee_rate).toBase64(),
+      bcs.bigdecimal().serialize(coin_a_weight).toBase64(),
+      bcs.bigdecimal().serialize(coin_b_weight).toBase64(),
+      bcs.object().serialize(coin_a_metadata).toBase64(),
+      bcs.object().serialize(coin_b_metadata).toBase64(),
+      bcs.u64().serialize(coin_a_amount).toBase64(),
+      bcs.u64().serialize(coin_b_amount).toBase64(),
+    ],
+  )
 
-async function createPairScript( sender: Wallet, name: string, symbol: string,
-swap_fee_rate: number, coin_a_weight: number, coin_b_weight: number,
-coin_a_metadata: string, coin_b_metadata: string, coin_a_amount: number,
-coin_b_amount: number ) { const msg = new MsgExecute( sender.key.accAddress,
-'0x1', 'dex', 'create_pair_script', [], [
-bcs.string().serialize(name).toBase64(),
-bcs.string().serialize(symbol).toBase64(),
-bcs.bigdecimal().serialize(swap_fee_rate).toBase64(),
-bcs.bigdecimal().serialize(coin_a_weight).toBase64(),
-bcs.bigdecimal().serialize(coin_b_weight).toBase64(),
-bcs.object().serialize(coin_a_metadata).toBase64(),
-bcs.object().serialize(coin_b_metadata).toBase64(),
-bcs.u64().serialize(coin_a_amount).toBase64(),
-bcs.u64().serialize(coin_b_amount).toBase64() ] )
+  const signedTx = await sender.createAndSignTx({ msgs: [msg] })
+  await sender.rest.tx.broadcast(signedTx).catch(console.log)
+}
 
-const signedTx = await sender.createAndSignTx({ msgs: [msg] }) await
-sender.rest.tx.broadcast(signedTx).catch(console.log) }
+async function whitelistLP(lpMetadata: string) {
+  const msgWhiteList = new MsgWhitelist(
+    'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
+    AccAddress.fromHex(lpMetadata), // metadata
+    '1000000000000000000', // weight for reward (10^18)
+  )
 
-async function whitelistLP(lpMetadata: string) { const msgWhiteList = new
-MsgWhitelist( 'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3', // authority
-AccAddress.fromHex(lpMetadata), // metadata '1000000000000000000' // weight for
-reward (10^18) )
+  const proposal = new MsgSubmitProposal(
+    [msgWhiteList],
+    '100000000uinit', // deposit
+    user.key.accAddress, // proposer
+    'uinit', // metadata
+    'awesome proposal', // title
+    'it is awesome', // summary
+    false, // expedited
+  )
 
-const proposal = new MsgSubmitProposal( [msgWhiteList], '100000000uinit', //
-deposit user.key.accAddress, // proposer 'uinit', // metadata 'awesome
-proposal', // title 'it is awesome', // summary false // expedited )
+  const proposalId = (await getLastProposalId(user.rest)) + 1
 
-const proposalId = (await getLastProposalId(user.rest)) + 1
+  // if there's only one validator, it will exceed the quorum (cause we set as
+  // user = validator)
+  const vote = new MsgVote(
+    proposalId,
+    user.key.accAddress,
+    VoteOption.VOTE_OPTION_YES,
+    '',
+  )
+  const signedTx = await user.createAndSignTx({ msgs: [proposal, vote] })
 
-// if there's only one validator, it will exceed the quorum (cause we set as
-user = validator) const vote = new MsgVote(proposalId, user.key.accAddress,
-VoteOption.VOTE_OPTION_YES, '') const signedTx = await user.createAndSignTx({
-msgs: [proposal, vote]})
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
+  await checkProposalPassed(user.rest, proposalId)
+}
 
-await user.rest.tx.broadcast(signedTx).catch(console.log) await
-checkProposalPassed(user.rest, proposalId) }
+async function delegateLP(lpMetadata: string, amount: number) {
+  // we can get lp denom from lp metadata by adding 'move/' prefix
+  // if lp metadata is ff5c7412979...
+  // then lp denom is move/ff5c7412979...
+  const msg = new MsgDelegate(
+    user.key.accAddress, // delegator
+    validator.key.valAddress, // validator
+    `${amount}move/${lpMetadata}`, // lp token
+  )
 
-async function delegateLP( lpMetadata: string, amount: number ) { // we can get
-lp denom from lp metadata by adding 'move/' prefix // if lp metadata is
-ff5c7412979... // then lp denom is move/ff5c7412979... const msg = new
-MsgDelegate( user.key.accAddress, // delegator validator.key.valAddress, //
-validator `${amount}move/${lpMetadata}` // lp token )
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
+}
 
-const signedTx = await user.createAndSignTx({ msgs: [msg] }) await
-user.rest.tx.broadcast(signedTx).catch(console.log) }
+async function withdrawRewards() {
+  const msg = new MsgWithdrawDelegatorReward(
+    user.key.accAddress,
+    validator.key.valAddress,
+  )
 
-async function withdrawRewards() { const msg = new MsgWithdrawDelegatorReward(
-user.key.accAddress, validator.key.valAddress )
+  const signedTx = await user.createAndSignTx({ msgs: [msg] })
+  await user.rest.tx.broadcast(signedTx).catch(console.log)
+}
 
-const signedTx = await user.createAndSignTx({ msgs: [msg] }) await
-user.rest.tx.broadcast(signedTx).catch(console.log }
+// NOTE: if you uncomment step 2, there will be an error
+// because it takes a bit of time to create a pair
+async function main() {
+  console.log('user:', user.key.accAddress)
+  console.log('validator:', validator.key.valAddress)
 
-// NOTE: if you uncomment step 2, there will be an error // because it takes a
-bit of time to create a pair async function main() { console.log('user:',
-user.key.accAddress) console.log('validator:', validator.key.valAddress)
+  // step 1: create pair script
+  await createPairScript(
+    user,
+    'init-usdc',
+    'init-usdc',
+    0.003,
+    0.5,
+    0.5,
+    coinMetadata('0x1', 'uinit'),
+    coinMetadata('0x1', 'uusdc'),
+    100_000_000,
+    100_000_000,
+  )
 
-// step 1: create pair script await createPairScript( user, 'init-usdc',
-'init-usdc', 0.003, 0.5, 0.5, coinMetadata('0x1', 'uinit'), coinMetadata('0x1',
-'uusdc'), 100_000_000, 100_000_000 )
+  const lpMetadata = coinMetadata(user.key.accAddress, 'init-usdc') //
+  // ff5c7412979176c5e7f084a6...
+  console.log('step 1 done, lp metadata:', lpMetadata)
 
-const lpMetadata = coinMetadata(user.key.accAddress, 'init-usdc') //
-ff5c7412979176c5e7f084a6... console.log('step 1 done, lp metadata:', lpMetadata)
+  // step 2 (optional): provide liquidity
+  // you will get LP tokens when you create a pair, so you can skip this step
+  // await provideLiquidity(
+  //   lpMetadata,
+  //   100_000_000,
+  //   100_000_000,
+  //   100_000
+  // )
+  // console.log('step 2 provide liquidity done')
 
-// step 2 (optional): provide liquidity // you will get LP tokens when you
-create a pair, so you can skip this step // await provideLiquidity( //
-lpMetadata, // 100_000_000, // 100_000_000, // 100_000 // ) // console.log('step
-2 provide liquidity done')
+  // step 3: whitelist LP
+  // this step could take a while (check your 'expedited_voting_period' time in
+  // genesis.json)
+  await whitelistLP(lpMetadata)
+  console.log('step 3 whitelist done')
 
-// step 3: whitelist LP // this step could take a while (check your
-'expedited_voting_period' time in genesis.json) await whitelistLP(lpMetadata)
-console.log('step 3 whitelist done')
+  // step 4: delegate LP tokens to the validator
+  await delegateLP(lpMetadata, 100_000)
+  console.log('step 4 delegate done')
 
-// step 4: delegate LP tokens to the validator await delegateLP(lpMetadata,
-100_000) console.log('step 4 delegate done')
+  // step 5: withdraw rewards
+  // await withdrawRewards()
+  // console.log('step 5 withdraw done')
+}
 
-// step 5: withdraw rewards // await withdrawRewards() // console.log('step 5
-withdraw done') }
-
-if (require.main === module) { main() }
+if (require.main === module) {
+  main()
+}
 
 ```
 </CodeGroup>
