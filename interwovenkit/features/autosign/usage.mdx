@@ -13,7 +13,7 @@ use autosign in your code.
 
 ## Accessing Autosign
 
-The `autoSign` object is available through the `useInterwovenKit()` hook:
+The `autoSign` object is available via the `useInterwovenKit()` hook:
 
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
@@ -28,7 +28,7 @@ function MyComponent() {
 ## Enabling Autosign
 
 To enable autosign, call the `enable()` method. This opens a drawer where users
-can confirm the autosign setup and select an expiration duration.
+confirm the autosign setup and select an expiration duration.
 
 The following examples show client components for enabling and disabling
 autosign. You can adapt this logic to your own UI or component structure.
@@ -82,7 +82,7 @@ When `autoSign.enable()` is called:
   A drawer appears asking the user to confirm autosign setup, showing which permissions will be granted.
 </Step>
 
-<Step title="User Selection">
+<Step title="Expiration Selection">
   The user can select an expiration duration from available defaults or use a
   custom duration.
 </Step>
@@ -98,7 +98,7 @@ When `autoSign.enable()` is called:
 </Step>
 
 <Step title="Activation">
-  Autosign becomes active for the specified chain and message types, and the Promise resolves on success.
+  Autosign becomes active for the specified chain and message types. The Promise resolves on success.
 </Step>
 </Steps>
 
@@ -107,8 +107,8 @@ or rejects if the user cancels or an error occurs.
 
 ## Disabling Autosign
 
-Users can disable autosign at any time. This revokes all grants and prevents
-further automatic signing.
+Users can disable autosign at any time. This revokes all grants for the selected
+chain and prevents further automatic signing.
 
 ### Example: DisableAutosignButton
 
