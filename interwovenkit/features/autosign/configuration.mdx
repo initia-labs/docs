@@ -14,7 +14,7 @@ wallet management and configuring autosign permissions in your
 Before configuring autosign, ensure you have:
 
 - A Privy account and application ID
-- InterwovenKit already integrated in your application
+- InterwovenKit already integrated into your application
 - An understanding of which transaction types you need to auto-sign
 
 ## Setting Up Privy
@@ -33,8 +33,8 @@ management and wallet creation for ghost wallets.
 
 <Step title="Install Privy Dependencies">
 
-Install the required Privy packages in your application. The app should already
-have InterwovenKit installed:
+Install the required Privy packages in your application. This guide assumes
+InterwovenKit is already installed:
 
 <CodeGroup>
 ```bash npm
@@ -60,13 +60,13 @@ bun add @privy-io/react-auth
 <Step title="Configure Allowed Domains">
 
 Before configuring your application, set up allowed domains in the Privy
-Dashboard to ensure security and proper functionality:
+dashboard to ensure security and proper functionality:
 
 1. **Access Privy Dashboard**: Log in to your Privy account
 2. **Click Into Application**: Click into the application you would like Privy
    to work with
 3. **Navigate to Allowed Domains**: Click **App settings** on the left sidebar
-   and then click on the **Domains** tab.
+   and then click on the **Domains** tab
 4. **Add Domains**: Under **Allowed Origins**, add:
    - Your production domain (e.g., `app.example.com`)
    - Your development domain (e.g., `localhost:3000`)
@@ -84,12 +84,12 @@ Dashboard to ensure security and proper functionality:
 The following configuration wires Privy into InterwovenKit to enable embedded
 wallets and autosign:
 
-1. Wraps your app with `PrivyProvider` to enable authentication and embedded
+1. Wrap your app with `PrivyProvider` to enable authentication and embedded
    wallet management.
-2. Uses Privy hooks (`usePrivy`, `useLoginWithSiwe`, `useCreateWallet`,
+2. Use Privy hooks (`usePrivy`, `useLoginWithSiwe`, `useCreateWallet`,
    `useWallets`) to access wallet and auth state.
-3. Passes those hooks into `InterwovenKitProvider` via `privyContext`.
-4. Enables autosign for supported message types using `enableAutoSign`.
+3. Pass those hooks into `InterwovenKitProvider` via `privyContext`.
+4. Enable autosign for supported message types using `enableAutoSign`.
 
 **Required Configuration for Autosign:**
 
@@ -121,7 +121,7 @@ function InterwovenKitWrapper({ children }) {
   return (
     <InterwovenKitProvider
       privyContext={{ privy, siwe, createWallet, wallets }}
-      // Allows autosign only for default contract execution messages
+      // Enables autosign only for default contract execution messages
       enableAutoSign
     >
       {children}
@@ -171,8 +171,8 @@ Before enabling autosign, decide which mode fits your application:
   - Required if your app sends tokens, delegates, or uses multiple chains
   - You must explicitly list every allowed message type
 
-If your app does more than basic contract execution, you should skip the boolean
-option and use the per-chain permissions in the
+If your app does more than basic contract execution calls, you should skip the
+boolean option and use the per-chain permissions in the
 [Advanced Configuration](#advanced-configuration-explicit-permissions) section.
 
 Most production applications will eventually require the per-chain
@@ -195,9 +195,9 @@ intentionally restrictive.
 
 <Info>
   If you later need to support token transfers, staking, or multiple chains, you
-  must switch from the boolean configuration to the per-chain configuration
-  presented in the [Advanced
-  Configuration](#advanced-configuration-explicit-permissions) section.
+  must switch from the boolean configuration to the per-chain configuration in
+  the [Advanced Configuration](#advanced-configuration-explicit-permissions)
+  section.
 </Info>
 
 When using boolean configuration, InterwovenKit automatically:
@@ -211,7 +211,7 @@ When using boolean configuration, InterwovenKit automatically:
 ### Advanced Configuration (Explicit Permissions)
 
 For multi-chain applications or when you need custom message types, specify
-permissions per chain:
+autosign permissions per chain:
 
 ```tsx
 <InterwovenKitProvider
