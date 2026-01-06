@@ -1,14 +1,18 @@
 ---
-title: "KV Indexer (Legacy)"
-description: "Overview of the legacy KV Indexer, its limitations, and why Rollytics is the recommended replacement."
+title: 'KV Indexer (Legacy)'
+description:
+  'Overview of the legacy KV Indexer, its limitations, and why Rollytics is the
+  recommended replacement.'
 ---
 
 ⚠️ **Legacy / Deprecated**
 
-KV Indexer is a legacy indexing solution and is not recommended for production rollups.  
+KV Indexer is a legacy indexing solution and is not recommended for production
+rollups.  
 New deployments should use Rollytics instead.
 
-Initia products discover indexer endpoints via the Initia registry (`chain.json` → `apis.indexer`).
+Initia products discover indexer endpoints via the Initia registry (`chain.json`
+→ `apis.indexer`).
 
 ## What KV Indexer is
 
@@ -23,9 +27,11 @@ KV Indexer does not scale well for production rollups:
 - **RPC performance impact**
   - Indexing competes with RPC traffic for CPU, memory, and I/O
 - **No active development**
-  - KV Indexer is deprecated and no longer receives bug fixes or feature improvements
+  - KV Indexer is deprecated and no longer receives bug fixes or feature
+    improvements
 
-Because of these fundamental limitations, KV Indexer is not the long-term indexing solution for Initia rollups.
+Because of these fundamental limitations, KV Indexer is not the long-term
+indexing solution for Initia rollups.
 
 ## When you might still see KV Indexer
 
@@ -39,14 +45,16 @@ Its presence does not indicate an issue, but migration is strongly recommended.
 
 ## How to disable KV Indexer
 
-After migrating to Rollytics, KV Indexer can be disabled in `~/.minitia/config/app.toml`:
+After migrating to Rollytics, KV Indexer can be disabled in
+`~/.minitia/config/app.toml`:
 
 ```toml
 [indexer]
 enable = false
 ```
 
-Disabling KV Indexer reduces disk usage and removes unnecessary load from RPC nodes.
+Disabling KV Indexer reduces disk usage and removes unnecessary load from RPC
+nodes.
 
 ## What to use instead
 
@@ -58,4 +66,5 @@ Rollytics is Initia's dedicated indexing service:
 - **Exposes KV Indexer endpoint-compatible APIs**
 - **Runs separately from RPC nodes**
 
-Rollytics is the long-term indexing solution for Initia rollups and should be used for all production deployments.
+Rollytics is the long-term indexing solution for Initia rollups and should be
+used for all production deployments.

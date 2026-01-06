@@ -1,15 +1,23 @@
 ---
-title: "Setup and Migration Guide"
-description: "Step-by-step guide to deploying Rollytics and migrating from the legacy KV Indexer."
+title: 'Setup and Migration Guide'
+description:
+  'Step-by-step guide to deploying Rollytics and migrating from the legacy KV
+  Indexer.'
 ---
 
-This guide walks through deploying Rollytics (Initia's production indexing service) and migrating safely from the legacy KV Indexer with no downtime.
+This guide walks through deploying Rollytics (Initia's production indexing
+service) and migrating safely from the legacy KV Indexer with no downtime.
 
-Rollytics runs as a dedicated external service that indexes chain data into Postgres and exposes a KV-compatible API, eliminating the need to duplicate index storage across RPC nodes.
+Rollytics runs as a dedicated external service that indexes chain data into
+Postgres and exposes a KV-compatible API, eliminating the need to duplicate
+index storage across RPC nodes.
 
-The recommended approach is to **run Rollytics in parallel** with KV Indexer, validate correctness, then disable KV Indexer.
+The recommended approach is to **run Rollytics in parallel** with KV Indexer,
+validate correctness, then disable KV Indexer.
 
-If you are starting a new rollup or do not already run KV Indexer, deploy Rollytics and use its API directly. You can skip the migration and deprecation steps.
+If you are starting a new rollup or do not already run KV Indexer, deploy
+Rollytics and use its API directly. You can skip the migration and deprecation
+steps.
 
 ## Components
 
@@ -30,7 +38,8 @@ These services should be deployed separately.
 - Postgres database (15+ compatible)
 - Sufficient disk space for index growth
 
-You are responsible for provisioning and operating Postgres (managed service or self-hosted).
+You are responsible for provisioning and operating Postgres (managed service or
+self-hosted).
 
 ### Resource guidance
 
@@ -50,7 +59,8 @@ You are responsible for provisioning and operating Postgres (managed service or 
 
 ## Step 1: Deploy Rollytics
 
-1. Follow the official setup instructions in the [Rollytics repository](https://github.com/initia-labs/rollytics):
+1. Follow the official setup instructions in the
+   [Rollytics repository](https://github.com/initia-labs/rollytics):
    - Use the latest release
 2. Configure:
    - Archival RPC endpoint
@@ -76,7 +86,8 @@ rollytics indexer
 rollytics api
 ```
 
-Initial sync speed varies by chain activity and infrastructure (reference: ~1M blocks/day). Use `/status` to track catch-up progress.
+Initial sync speed varies by chain activity and infrastructure (reference: ~1M
+blocks/day). Use `/status` to track catch-up progress.
 
 ### Docker quickstart (optional)
 
@@ -120,11 +131,13 @@ For non-EVM rollups, omit `JSON_RPC_URL`.
 - **EVM**: internal transaction indexing is enabled by default
 - **Move/Wasm**: internal transaction indexing is disabled by default
 
-Setting `INTERNAL_TX=true` for Move or Wasm rollups is not supported and will fail.
+Setting `INTERNAL_TX=true` for Move or Wasm rollups is not supported and will
+fail.
 
 ### EVM ret cleanup (optional)
 
-If your EVM database was indexed before the ret-only address fix, enable the cleanup extension to remove incorrect `tx_accounts` entries:
+If your EVM database was indexed before the ret-only address fix, enable the
+cleanup extension to remove incorrect `tx_accounts` entries:
 
 ```bash
 export EVM_RET_CLEANUP=true
@@ -143,13 +156,16 @@ Do not switch consumers until the indexer is fully synced.
 
 ## Step 3: Switch consumers to Rollytics
 
-If you currently query the KV Indexer, update services to point to the Rollytics API instead.
+If you currently query the KV Indexer, update services to point to the Rollytics
+API instead.
 
 Because Rollytics is KV-compatible:
+
 - No code changes are required
 - Only the base URL needs to change
 
 Validate:
+
 - Transaction queries
 - NFT data
 - EVM transaction data (if applicable)
@@ -162,8 +178,10 @@ Update your rollup’s registry entry so Initia products use Rollytics:
 - Point it to the Rollytics API endpoint
 
 Example registry update:
+
 - Replace KV Indexer endpoint with Rollytics API endpoint
-- Reference: https://github.com/initia-labs/initia-registry/blob/main/mainnets/moo/chain.json#L39
+- Reference:
+  https://github.com/initia-labs/initia-registry/blob/main/mainnets/moo/chain.json#L39
 
 ```json
 {
