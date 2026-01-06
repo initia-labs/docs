@@ -7,9 +7,15 @@ Rollytics exposes a **read-only**, KV Indexer endpoint-compatible (drop-in for m
 
 Base URL: `https://<your-rollytics-api-host>`
 
-OpenAPI (Swagger, OAS 2.0, authoritative): `/swagger/doc.json`
+OpenAPI: `/swagger/doc.json`
+
+Response schemas and full field definitions are in the OpenAPI spec. Examples below show representative payloads.
 
 ## Conventions
+
+### Response format
+
+All responses are `application/json`.
 
 ### Pagination
 
@@ -25,7 +31,7 @@ Many list endpoints accept Cosmos-style pagination parameters.
 | `pagination.count_total` | query | boolean | `true` | Count total (when supported) |
 | `pagination.reverse` | query | boolean | `true` | Reverse order. Default is descending; set `pagination.reverse=false` for ascending order |
 
-Pagination responses may include `pagination.next_key`, `pagination.previous_key`, and `pagination.total`, depending on the endpoint and data set. For exact response fields, refer to Swagger.
+Pagination responses may include `pagination.next_key`, `pagination.previous_key`, and `pagination.total`, depending on the endpoint and data set. For exact response fields, refer to OpenAPI.
 
 #### Pagination Examples
 
@@ -67,7 +73,20 @@ Returns current indexer status including chain ID and latest indexed heights.
 
 **200 OK**
 
-Response schema: see Swagger (`/swagger/doc.json`).
+Schema: `status.StatusResponse`
+
+Example response:
+
+```json
+{
+  "version": "0.7.1",
+  "commit_hash": "a1b2c3d",
+  "chain_id": "initia-1",
+  "height": 123456,
+  "internal_tx_height": 123400,
+  "rich_list_height": 123450
+}
+```
 
 Field notes:
 - `height`: latest indexed block height
@@ -77,6 +96,8 @@ Field notes:
 ---
 
 # Block
+
+Block endpoints return JSON objects defined in OpenAPI; see `/swagger/doc.json` for full schema details.
 
 ## GET `/indexer/block/v1/avg_blocktime`
 
@@ -88,9 +109,7 @@ Returns the average block time over recent blocks.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ## GET `/indexer/block/v1/blocks`
 
@@ -111,9 +130,7 @@ Returns a list of blocks with pagination.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ## GET `/indexer/block/v1/blocks/{height}`
 
@@ -131,13 +148,13 @@ Get block by height.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ---
 
 # Transactions
+
+Transaction endpoints return JSON objects defined in OpenAPI; see `/swagger/doc.json` for full schema details.
 
 ## GET `/indexer/tx/v1/txs`
 
@@ -160,9 +177,7 @@ Returns a list of transactions with pagination.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ## GET `/indexer/tx/v1/txs/by_account/{account}`
 
@@ -185,9 +200,7 @@ Get transactions by account.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ## GET `/indexer/tx/v1/txs/by_height/{height}`
 
@@ -213,9 +226,7 @@ Get transactions at a specific block height.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ## GET `/indexer/tx/v1/txs/{tx_hash}`
 
@@ -231,13 +242,13 @@ Get transaction by hash.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ---
 
 # NFT
+
+NFT schemas in OpenAPI: `nft.CollectionsResponse`, `nft.CollectionResponse`, `nft.NftsResponse`.
 
 ## GET `/indexer/nft/v1/collections`
 
@@ -257,7 +268,35 @@ Get NFT collections.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.CollectionsResponse`
+
+Example response:
+
+```json
+{
+  "collections": [
+    {
+      "object_addr": "initia1collectionaddress",
+      "collection": {
+        "creator": "initia1creatoraddress",
+        "name": "Initia Badges",
+        "origin_name": "initia.badges",
+        "nfts": {
+          "handle": "badge",
+          "length": 12
+        }
+      },
+      "height": 123456,
+      "timestamp": "2024-01-12T10:20:30Z"
+    }
+  ],
+  "pagination": {
+    "next_key": "AQID",
+    "previous_key": "",
+    "total": "1"
+  }
+}
+```
 
 ## GET `/indexer/nft/v1/collections/by_account/{account}`
 
@@ -278,7 +317,7 @@ Get NFT collections by account.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.CollectionsResponse`
 
 ## GET `/indexer/nft/v1/collections/by_name/{name}`
 
@@ -299,11 +338,11 @@ Get NFT collections by name.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.CollectionsResponse`
 
 ## GET `/indexer/nft/v1/collections/{collection_addr}`
 
-Get NFT Collections By Collection Address.
+Get NFT collection by address.
 
 ### Parameters
 
@@ -315,7 +354,7 @@ Get NFT Collections By Collection Address.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.CollectionResponse`
 
 ## GET `/indexer/nft/v1/tokens/by_account/{account}`
 
@@ -339,7 +378,34 @@ Get NFT tokens by account.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.NftsResponse`
+
+Example response:
+
+```json
+{
+  "tokens": [
+    {
+      "collection_addr": "initia1collectionaddress",
+      "collection_name": "Initia Badges",
+      "collection_origin_name": "initia.badges",
+      "object_addr": "initia1nftobject",
+      "owner": "initia1owneraddress",
+      "nft": {
+        "token_id": "42",
+        "uri": "ipfs://bafy.../metadata.json"
+      },
+      "height": 123456,
+      "timestamp": "2024-01-12T10:20:30Z"
+    }
+  ],
+  "pagination": {
+    "next_key": "AQID",
+    "previous_key": "",
+    "total": "1"
+  }
+}
+```
 
 ## GET `/indexer/nft/v1/tokens/by_collection/{collection_addr}`
 
@@ -362,7 +428,7 @@ Get NFT tokens by collection.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `nft.NftsResponse`
 
 ## GET `/indexer/nft/v1/txs/{collection_addr}/{token_id}`
 
@@ -384,9 +450,7 @@ Get NFT transactions by collection and token ID.
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
-
-Content type: `application/json`
+Schema: see OpenAPI (`/swagger/doc.json`)
 
 ---
 
@@ -413,4 +477,22 @@ Get a list of token holders for a specific denomination, ordered by amount in de
 
 **200 OK**
 
-Response: see Swagger (`/swagger/doc.json`)
+Schema: `richlist.TokenHoldersResponse`
+
+Example response:
+
+```json
+{
+  "holders": [
+    {
+      "account": "initia1holderaddress",
+      "amount": "1000000"
+    }
+  ],
+  "pagination": {
+    "next_key": "AQID",
+    "previous_key": "",
+    "total": "1"
+  }
+}
+```

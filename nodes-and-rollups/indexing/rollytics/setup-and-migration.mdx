@@ -3,9 +3,9 @@ title: "Setup and Migration Guide"
 description: "Step-by-step guide to deploying Rollytics and migrating from the legacy KV Indexer."
 ---
 
-This guide walks through deploying `Rollytics` (Initia's production indexing service) and migrating safely from the legacy KV Indexer with no downtime.
+This guide walks through deploying Rollytics (Initia's production indexing service) and migrating safely from the legacy KV Indexer with no downtime.
 
-`Rollytics` runs as a dedicated external service that indexes chain data into Postgres and exposes a KV-compatible API, eliminating the need to duplicate index storage across RPC nodes.
+Rollytics runs as a dedicated external service that indexes chain data into Postgres and exposes a KV-compatible API, eliminating the need to duplicate index storage across RPC nodes.
 
 The recommended approach is to **run Rollytics in parallel** with KV Indexer, validate correctness, then disable KV Indexer.
 
@@ -27,14 +27,25 @@ These services should be deployed separately.
 - Access to an **archival RPC endpoint** (genesis → latest)
 - REST endpoint
 - For EVM rollups, JSON-RPC endpoint
-- Postgres database
+- Postgres database (15+ compatible)
 - Sufficient disk space for index growth
 
 You are responsible for provisioning and operating Postgres (managed service or self-hosted).
 
+### Resource guidance
+
+- Run **Indexer** and **API** on separate machines to avoid resource contention
+- Recommended starting spec (each service): 1 CPU / 2 GB memory
+- Plan initial disk space for index growth (20-50 GB to start; scale as needed)
+
+### Supported VM types
+
+- Move
+- Wasm
+- EVM
+
 ## Deployment recommendations
 
-- Run **Indexer** and **API** on separate machines
 - Start with modest resources and scale as chain activity grows
 
 ## Step 1: Deploy Rollytics
@@ -47,7 +58,8 @@ You are responsible for provisioning and operating Postgres (managed service or 
    - JSON-RPC endpoint (EVM rollups)
    - `CHAIN_ID`, `VM_TYPE`, and `DB_DSN`
 3. For EVM rollups:
-   - Set `INTERNAL_TX=true` to index internal transactions
+   - Internal transactions are enabled by default (`INTERNAL_TX=true`)
+   - Set `INTERNAL_TX=false` only if you explicitly want to disable it
 4. Start the indexer and allow it to sync from genesis
 
 Minimum config and run:
@@ -64,7 +76,61 @@ rollytics indexer
 rollytics api
 ```
 
-Initial sync speed varies by chain activity and infrastructure. Use `/status` to track catch-up progress.
+Initial sync speed varies by chain activity and infrastructure (reference: ~1M blocks/day). Use `/status` to track catch-up progress.
+
+### Docker quickstart (optional)
+
+Rollytics is available as a container image:
+
+```bash
+docker pull ghcr.io/initia-labs/rollytics:<version>
+```
+
+Run the API service:
+
+```bash
+docker run --rm \
+  -p 8080:8080 \
+  -e CHAIN_ID="<chain-id>" \
+  -e VM_TYPE="move|wasm|evm" \
+  -e RPC_URL="https://<rpc>" \
+  -e REST_URL="https://<rest>" \
+  -e JSON_RPC_URL="https://<json-rpc>" \
+  -e DB_DSN="postgres://user:pass@host:5432/rollytics" \
+  ghcr.io/initia-labs/rollytics:<version> api
+```
+
+Run the indexer:
+
+```bash
+docker run --rm \
+  -e CHAIN_ID="<chain-id>" \
+  -e VM_TYPE="move|wasm|evm" \
+  -e RPC_URL="https://<rpc>" \
+  -e REST_URL="https://<rest>" \
+  -e JSON_RPC_URL="https://<json-rpc>" \
+  -e DB_DSN="postgres://user:pass@host:5432/rollytics" \
+  ghcr.io/initia-labs/rollytics:<version> indexer
+```
+
+For non-EVM rollups, omit `JSON_RPC_URL`.
+
+### VM-specific defaults
+
+- **EVM**: internal transaction indexing is enabled by default
+- **Move/Wasm**: internal transaction indexing is disabled by default
+
+Setting `INTERNAL_TX=true` for Move or Wasm rollups is not supported and will fail.
+
+### EVM ret cleanup (optional)
+
+If your EVM database was indexed before the ret-only address fix, enable the cleanup extension to remove incorrect `tx_accounts` entries:
+
+```bash
+export EVM_RET_CLEANUP=true
+```
+
+Progress is reported in `/status` as `evm_ret_cleanup_height`.
 
 ## Step 2: Verify sync status
 
@@ -97,6 +163,7 @@ Update your rollup’s registry entry so Initia products use Rollytics:
 
 Example registry update:
 - Replace KV Indexer endpoint with Rollytics API endpoint
+- Reference: https://github.com/initia-labs/initia-registry/blob/main/mainnets/moo/chain.json#L39
 
 ```json
 {

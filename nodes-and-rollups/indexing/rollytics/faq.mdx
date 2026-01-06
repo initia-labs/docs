@@ -5,7 +5,7 @@ description: "Frequently asked questions about Rollytics and migrating from the 
 
 ## What is Rollytics?
 
-`Rollytics` is Initia's production indexing service that replaces the legacy KV Indexer. Unlike KV Indexer, which runs inside each RPC node and duplicates index storage, Rollytics runs as a dedicated external service that indexes chain data once into a shared Postgres database and serves queries via a KV-compatible HTTP API.
+Rollytics is Initia's production indexing service that replaces the legacy KV Indexer. Unlike KV Indexer, which runs inside each RPC node and duplicates index storage, Rollytics runs as a dedicated external service that indexes chain data once into a shared Postgres database and serves queries via a KV-compatible HTTP API.
 
 Key benefits:
 - Eliminates duplicate index storage across RPC nodes
@@ -30,7 +30,7 @@ No immediate breakage is expected, but migration is recommended before productio
 
 ## Is Rollytics compatible with existing KV Indexer endpoints?
 
-Yes, `Rollytics` is fully compatible with KV Indexer endpoints.
+Yes, Rollytics is fully compatible with KV Indexer endpoints.
 
 Rollytics exposes a KV Indexer endpoint-compatible HTTP API, which means:
 - Existing tools and services continue to work without modification
@@ -60,6 +60,10 @@ The indexer needs access to **historical data from genesis**, which requires:
 - REST endpoint
 - JSON-RPC endpoint for EVM rollups
 
+## What Postgres version is required?
+
+Postgres 15+ compatible.
+
 ## How many Rollytics instances should we run?
 
 - **Indexer**: one per chain
@@ -74,6 +78,14 @@ Rollytics indexes:
 - NFTs
 - EVM transactions
 - Internal EVM transactions (MiniEVM only)
+
+## Which VM types are supported?
+
+Rollytics supports Move, Wasm, and EVM rollups.
+
+## Does Rollytics support internal EVM transactions?
+
+Yes. For EVM rollups, internal transaction indexing is enabled by default. It is not supported for Move or Wasm rollups.
 
 ## Where is the API reference?
 

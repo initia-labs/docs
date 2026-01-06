@@ -19,7 +19,7 @@ Without indexing, these queries would be slow or impractical to serve directly f
 
 ## What is Rollytics?
 
-`Rollytics` is Initia's recommended indexing service. Unlike the legacy KV Indexer, Rollytics runs as a dedicated external service that indexes chain data once into a shared Postgres database.
+Rollytics is Initia's recommended indexing service. Unlike the legacy KV Indexer, Rollytics runs as a dedicated external service that indexes chain data once into a shared Postgres database. It supports Move, Wasm, and EVM rollups.
 
 If you do not already run KV Indexer, you can ignore the legacy sections and use Rollytics directly.
 
@@ -30,12 +30,13 @@ If you do not already run KV Indexer, you can ignore the legacy sections and use
 - **Better performance**: RPC nodes focus on serving chain data without indexing overhead
 - **Scalability**: Add RPC nodes without duplicating index storage or reindexing
 - **KV-compatible API**: Compatible with existing KV Indexer consumers for migrations
+- **Better data accuracy**: Resolves known KV Indexer NFT data issues
 
 ## Indexing options on Initia
 
-Historically, Initia rollups relied on the **KV Indexer**, which runs inside each RPC node and stores indexed data locally.
+Historically, Initia rollups relied on the KV Indexer, which runs inside each RPC node and stores indexed data locally.
 
-Today, Initia recommends using **Rollytics** instead.
+Today, Initia recommends using Rollytics instead.
 
 ### KV Indexer (legacy)
 
@@ -76,3 +77,9 @@ For existing rollups:
 - Disable the KV Indexer after validation
 
 This approach allows migration with no downtime and minimal risk.
+
+## Get started
+
+- Deploy and migrate: [Setup and Migration Guide](./rollytics/setup-and-migration)
+- API endpoints: [API Reference](./rollytics/api-reference)
+- Common questions: [FAQ](./rollytics/faq)
