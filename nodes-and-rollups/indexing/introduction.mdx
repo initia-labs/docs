@@ -49,6 +49,21 @@ Today, Initia recommends using **Rollytics** instead.
 - Indexes once into a shared Postgres database
 - Exposes a KV Indexer endpoint-compatible HTTP API
 
+## Why Rollytics
+
+- **Index once, serve everywhere**: One shared Postgres database supports many API instances
+- **Operational simplicity**: Reindexing and upgrades happen in one place
+- **Better RPC performance**: RPC nodes are not competing with indexing workloads
+
+## When to use Rollytics
+
+Use Rollytics if you:
+
+- Operate more than one RPC node
+- Serve wallets, explorers, or public APIs
+- Plan to scale RPC nodes over time
+- Run an EVM rollup and need EVM transaction indexing
+
 ## Recommended approach
 
 For new rollups:
