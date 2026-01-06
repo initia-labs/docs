@@ -154,7 +154,31 @@
           },
           {
             "group": "Rollups",
-            "pages": ["nodes-and-rollups/deploying-rollups/deploy"]
+            "pages": [
+              "nodes-and-rollups/deploying-rollups/deploy",
+              {
+                "group": "Indexing",
+                "icon": "database",
+                "pages": [
+                  "nodes-and-rollups/indexing/introduction",
+                  {
+                    "group": "Rollytics",
+                    "pages": [
+                      "nodes-and-rollups/indexing/rollytics/why-rollytics",
+                      "nodes-and-rollups/indexing/rollytics/setup-and-migration",
+                      "nodes-and-rollups/indexing/rollytics/faq",
+                      "nodes-and-rollups/indexing/rollytics/api-reference"
+                    ]
+                  },
+                  {
+                    "group": "KV Indexer (Legacy)",
+                    "pages": [
+                      "nodes-and-rollups/indexing/kv-indexer/legacy-overview"
+                    ]
+                  }
+                ]
+              }
+            ]
           },
           {
             "group": "Nodes",

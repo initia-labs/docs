@@ -1,0 +1,45 @@
+---
+title: "Why Rollytics"
+description: "Why and when Initia recommends Rollytics over the legacy KV Indexer for rollup indexing."
+---
+
+`Rollytics` is Initia's recommended indexing solution for production rollups. If you are starting fresh, deploy Rollytics directly and skip KV Indexer entirely. It replaces the legacy KV Indexer by moving indexing out of RPC nodes and into a dedicated service backed by Postgres.
+
+If you operate RPC infrastructure for a rollup—especially more than one node—you should run Rollytics.
+
+## The problem with KV Indexer
+
+KV Indexer embeds indexing inside each Cosmos RPC node and stores index data locally. This creates predictable scaling and operational issues:
+
+- **Duplicate storage and reindexing**  
+  - Every RPC node stores its own index data and must be reindexed individually.
+- **RPC performance impact**  
+  - Indexing competes with RPC traffic for CPU, memory, and I/O resources.
+- **Legacy status**  
+  - KV Indexer is deprecated and no longer receives bug fixes or feature improvements.
+
+These limitations make KV Indexer unsuitable for production rollups.
+
+## Why Rollytics is better
+
+Rollytics moves indexing out of RPC nodes and into a dedicated, scalable service:
+
+- **Index once, serve everywhere**  
+  - Index into a shared Postgres database; serve from multiple API instances.
+- **Operational simplicity**  
+  - Reindexing and upgrades happen in one place.
+- **Better RPC performance**  
+  - RPC nodes focus on serving chain data without indexing overhead.
+- **Drop-in compatibility**  
+  - KV Indexer endpoint-compatible API for easy endpoint swaps.
+
+## When to use Rollytics
+
+Rollytics should be treated as required infrastructure for production rollups, especially if you:
+
+- Operate **more than one RPC node**
+- Serve **wallets, explorers, or public APIs**
+- Plan to **scale RPC nodes** over time
+- Run an **EVM rollup** and need EVM transaction indexing
+
+If you are migrating from KV Indexer, follow the setup and migration guide for the step-by-step approach.

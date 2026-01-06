@@ -1,0 +1,416 @@
+---
+title: "API Reference"
+description: "Rollytics KV Indexer endpoint-compatible API reference, with endpoints for status, blocks, transactions, NFTs, and rich lists."
+---
+
+Rollytics exposes a **read-only**, KV Indexer endpoint-compatible (drop-in for most consumers) HTTP API for indexed chain data. This section documents the endpoints commonly used by wallets, explorers, and backend services.
+
+Base URL: `https://<your-rollytics-api-host>`
+
+OpenAPI (Swagger, OAS 2.0, authoritative): `/swagger/doc.json`
+
+## Conventions
+
+### Pagination
+
+Many list endpoints accept Cosmos-style pagination parameters.
+
+**Pagination Parameters:**
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `pagination.key` | query | string | - | Cursor-based pagination, preferred for large datasets |
+| `pagination.offset` | query | integer | - | Offset-based pagination |
+| `pagination.limit` | query | integer | `100` | Pagination limit |
+| `pagination.count_total` | query | boolean | `true` | Count total (when supported) |
+| `pagination.reverse` | query | boolean | `true` | Reverse order. Default is descending; set `pagination.reverse=false` for ascending order |
+
+Pagination responses may include `pagination.next_key`, `pagination.previous_key`, and `pagination.total`, depending on the endpoint and data set. For exact response fields, refer to Swagger.
+
+#### Pagination Examples
+
+**Key-based pagination:**
+
+```bash
+# First page
+curl "https://<host>/indexer/tx/v1/txs?pagination.limit=50"
+
+# Next page using next_key from response
+curl "https://<host>/indexer/tx/v1/txs?pagination.limit=50&pagination.key=<next_key_from_response>"
+```
+
+### Filtering
+
+Some transaction endpoints support filtering by message type via the `msgs` parameter:
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `msgs` | query | array[string] | - | Message types to filter (comma-separated or multiple params). Example: `"cosmos.bank.v1beta1.MsgSend,initia.move.v1.MsgExecute"` |
+
+Example:
+
+```bash
+curl "https://<host>/indexer/tx/v1/txs?msgs=cosmos.bank.v1beta1.MsgSend&msgs=initia.move.v1.MsgExecute"
+```
+
+---
+
+# App
+
+## GET `/status`
+
+Status check.
+
+Returns current indexer status including chain ID and latest indexed heights.
+
+### Response
+
+**200 OK**
+
+Response schema: see Swagger (`/swagger/doc.json`).
+
+Field notes:
+- `height`: latest indexed block height
+- `internal_tx_height`: latest indexed internal EVM transaction height
+- `rich_list_height`: latest indexed rich list height
+
+---
+
+# Block
+
+## GET `/indexer/block/v1/avg_blocktime`
+
+Get average block time.
+
+Returns the average block time over recent blocks.
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+## GET `/indexer/block/v1/blocks`
+
+Get blocks.
+
+Returns a list of blocks with pagination.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+## GET `/indexer/block/v1/blocks/{height}`
+
+Get block by height.
+
+**Note:** The `height` parameter is a string for this endpoint, but an integer for `GET /indexer/tx/v1/txs/by_height/{height}`.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `height` | path | string | - | Block height |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+---
+
+# Transactions
+
+## GET `/indexer/tx/v1/txs`
+
+Get transactions.
+
+Returns a list of transactions with pagination.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+| `msgs` | query | array[string] | - | See [Filtering](#filtering) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+## GET `/indexer/tx/v1/txs/by_account/{account}`
+
+Get transactions by account.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `account` | path | string | - | Account address |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+| `is_signer` | query | boolean | `false` | Filter by signer accounts |
+| `msgs` | query | array[string] | - | See [Filtering](#filtering) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+## GET `/indexer/tx/v1/txs/by_height/{height}`
+
+Get transactions by height.
+
+Get transactions at a specific block height.
+
+**Note:** The `height` parameter is an integer for this endpoint, but a string for `GET /indexer/block/v1/blocks/{height}`.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `height` | path | integer | - | Block height |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+| `msgs` | query | array[string] | - | See [Filtering](#filtering) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+## GET `/indexer/tx/v1/txs/{tx_hash}`
+
+Get transaction by hash.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `tx_hash` | path | string | - | Transaction hash |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+---
+
+# NFT
+
+## GET `/indexer/nft/v1/collections`
+
+Get NFT collections.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/collections/by_account/{account}`
+
+Get NFT collections by account.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `account` | path | string | - | Account address |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/collections/by_name/{name}`
+
+Get NFT collections by name.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `name` | path | string | - | Collection name |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/collections/{collection_addr}`
+
+Get NFT Collections By Collection Address.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `collection_addr` | path | string | - | Collection address |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/tokens/by_account/{account}`
+
+Get NFT tokens by account.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `account` | path | string | - | Account address |
+| `collection_addr` | query | string | - | Collection address to filter by (optional) |
+| `token_id` | query | string | - | Token ID to filter by (optional) |
+| `order_by` | query | string | `token_id` | Order by field. Available values: `token_id`, `height` |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/tokens/by_collection/{collection_addr}`
+
+Get NFT tokens by collection.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `collection_addr` | path | string | - | Collection address |
+| `token_id` | query | string | - | Token ID to filter by (optional) |
+| `order_by` | query | string | `token_id` | Order by field. Available values: `token_id`, `height` |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+## GET `/indexer/nft/v1/txs/{collection_addr}/{token_id}`
+
+Get NFT transactions by collection and token ID.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `collection_addr` | path | string | - | Collection address |
+| `token_id` | path | string | - | Token ID |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)
+
+Content type: `application/json`
+
+---
+
+# Rich List
+
+## GET `/indexer/richlist/v1/{denom}`
+
+Get token holders.
+
+Get a list of token holders for a specific denomination, ordered by amount in descending order.
+
+### Parameters
+
+| Name | In | Type | Default | Description |
+|------|----|----|---------|-------------|
+| `denom` | path | string | - | Token denomination |
+| `pagination.key` | query | string | - | See [Pagination](#pagination) |
+| `pagination.offset` | query | integer | - | See [Pagination](#pagination) |
+| `pagination.limit` | query | integer | `100` | See [Pagination](#pagination) |
+| `pagination.count_total` | query | boolean | `true` | See [Pagination](#pagination) |
+| `pagination.reverse` | query | boolean | `true` | See [Pagination](#pagination) |
+
+### Response
+
+**200 OK**
+
+Response: see Swagger (`/swagger/doc.json`)

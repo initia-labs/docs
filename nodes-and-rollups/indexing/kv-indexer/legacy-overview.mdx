@@ -1,0 +1,61 @@
+---
+title: "KV Indexer (Legacy)"
+description: "Overview of the legacy KV Indexer, its limitations, and why Rollytics is the recommended replacement."
+---
+
+⚠️ **Legacy / Deprecated**
+
+KV Indexer is a legacy indexing solution and is not recommended for production rollups.  
+New deployments should use `Rollytics` instead.
+
+Initia products discover indexer endpoints via the Initia registry (`chain.json` → `apis.indexer`).
+
+## What KV Indexer is
+
+KV Indexer is an indexing system embedded directly inside Cosmos RPC nodes.
+
+## Why KV Indexer is deprecated
+
+KV Indexer does not scale well for production rollups:
+
+- **Duplicated storage and reindexing**
+  - Each RPC node stores its own index and must be reindexed individually
+- **RPC performance impact**
+  - Indexing competes with RPC traffic for CPU, memory, and I/O
+- **No active development**
+  - KV Indexer is deprecated and no longer receives bug fixes or feature improvements
+
+Because of these fundamental limitations, KV Indexer is not the long-term indexing solution for Initia rollups.
+
+## When you might still see KV Indexer
+
+You may still see KV Indexer on:
+
+- Older rollups that have not yet migrated
+- Existing RPC nodes with indexing enabled
+- Local development or test environments
+
+Its presence does not indicate an issue, but migration is strongly recommended.
+
+## How to disable KV Indexer
+
+After migrating to Rollytics, KV Indexer can be disabled in `~/.minitia/config/app.toml`:
+
+```toml
+[indexer]
+enable = false
+```
+
+Disabling KV Indexer reduces disk usage and removes unnecessary load from RPC nodes.
+
+## What to use instead
+
+Initia recommends `Rollytics` as the production indexing solution.
+
+`Rollytics` is Initia's dedicated indexing service:
+
+- **Indexes once into a shared Postgres database**
+- **Exposes KV Indexer endpoint-compatible APIs**
+- **Runs separately from RPC nodes**
+
+Rollytics is the long-term indexing solution for Initia rollups and should be used for all production deployments.
