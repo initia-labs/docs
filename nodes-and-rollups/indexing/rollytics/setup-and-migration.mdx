@@ -134,17 +134,6 @@ For non-EVM rollups, omit `JSON_RPC_URL`.
 Setting `INTERNAL_TX=true` for Move or Wasm rollups is not supported and will
 fail.
 
-### EVM ret cleanup (optional)
-
-If your EVM database was indexed before the ret-only address fix, enable the
-cleanup extension to remove incorrect `tx_accounts` entries:
-
-```bash
-export EVM_RET_CLEANUP=true
-```
-
-Progress is reported in `/status` as `evm_ret_cleanup_height`.
-
 ## Step 2: Verify sync status
 
 Wait until the indexer has fully caught up.
