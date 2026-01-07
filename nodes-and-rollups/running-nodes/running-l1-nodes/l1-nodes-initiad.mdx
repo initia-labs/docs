@@ -260,3 +260,12 @@ journalctl -t initiad    # View current logs
 journalctl -t initiad -f # Follow logs in real-time
 journalctl -t initiad -n <number> # View last N lines
 ```
+
+## Cosmovisor (Optional)
+
+If you want automatic binary upgrades, set up Cosmovisor after completing all
+steps above. In the Cosmovisor setup, the `<path-to-executable>` refers to your
+`initiad` binary path.
+
+Follow the
+[Cosmovisor guide](/nodes-and-rollups/running-nodes/manual-setup/cosmovisor).
