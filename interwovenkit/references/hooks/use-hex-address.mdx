@@ -1,0 +1,52 @@
+---
+title: useHexAddress
+---
+
+## Overview
+
+- Returns the connected wallet address in hex format (always hex, regardless of
+  chain type).
+- Use when you need a hex address for EVM-style tooling or a consistent hex
+  format.
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
+
+## Quickstart
+
+```tsx
+'use client'
+
+import { useHexAddress } from '@initia/interwovenkit-react'
+
+function Address() {
+  const address = useHexAddress()
+  return <span>{address || 'Not connected'}</span>
+}
+```
+
+<Note>
+  This example assumes providers are already set up. For complete setup
+  configurations, see [Provider Setup](../setup/providers).
+</Note>
+
+## Return value
+
+```ts
+function useHexAddress(): string
+```
+
+Returns the Initia account address in hex format when a wallet is connected.
+Returns an empty string when there is no connected address.
+
+## Notes
+
+- Always returns hex format, unlike `useAddress` which adapts to the default
+  chain's format.
+- Use for EVM-style integrations or when you need a consistent hex format
+  regardless of chain type.

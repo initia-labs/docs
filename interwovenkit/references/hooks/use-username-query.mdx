@@ -1,0 +1,58 @@
+---
+title: useUsernameQuery
+---
+
+## Overview
+
+- React Query hook that fetches the Initia (`.init`) username for the connected
+  address.
+- Automatically re-runs when the address changes.
+- Exposes standard React Query state (`isLoading`, `error`, etc.).
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
+
+## Quickstart
+
+```tsx
+'use client'
+
+import { useUsernameQuery } from '@initia/interwovenkit-react'
+
+function Username() {
+  const { data, isLoading } = useUsernameQuery()
+  if (isLoading) return <span>Loading…</span>
+  return <span>{data ?? 'No username'}</span>
+}
+```
+
+<Note>
+  This example assumes providers are already set up. For complete setup
+  configurations, see [Provider Setup](../setup/providers).
+</Note>
+
+## Return value
+
+```ts
+function useUsernameQuery(): UseQueryResult<string | null>
+```
+
+Returns a React Query `UseQueryResult<string | null>` object. The `data`
+property is:
+
+- `string` when a username exists (ends with `.init`)
+- `null` when no username exists or the address is invalid
+- `undefined` before the query has produced a value or when the query is
+  disabled (e.g., when no address is connected)
+
+Type `UseQueryResult` is from `@tanstack/react-query`.
+
+## Notes
+
+- The query is disabled until a non‑empty address is available from
+  `useAddress()`.

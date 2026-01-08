@@ -1,0 +1,126 @@
+---
+title: usePortfolio
+---
+
+## Overview
+
+- Aggregates balances, asset metadata, and prices across all chains in the
+  Initia registry into a single portfolio view.
+- Groups assets by symbol and computes per-chain and total portfolio value.
+- Tracks loading state and provides manual refetching for all underlying
+  queries.
+
+## Prerequisites
+
+- Must be rendered within `InterwovenKitProvider`.
+- Must be used within a React Query `QueryClientProvider`.
+- Must be used within a wagmi `WagmiProvider`.
+- Client-only (no SSR): Put this in a `use client` provider tree, or use a
+  dynamic import in Next.js.
+
+## Quickstart
+
+```tsx
+'use client'
+
+import { usePortfolio } from '@initia/interwovenkit-react'
+
+function PortfolioValue() {
+  const { totalValue, isLoading } = usePortfolio()
+  if (isLoading) return <span>Loading…</span>
+  return <span>${totalValue.toFixed(2)}</span>
+}
+```
+
+<Note>
+  This example assumes providers are already set up. For complete setup
+  configurations, see [Provider Setup](../setup/providers).
+</Note>
+
+## Return value
+
+The hook returns an object with aggregated portfolio data, grouped assets, and
+control methods:
+
+**Aggregated values:**
+
+<ParamField path="totalValue" type="number">
+  Estimated total USD value across all chains.
+</ParamField>
+
+<ParamField path="chainsByValue" type="PortfolioChainItem[]">
+  List of chains sorted by portfolio value on each chain.
+</ParamField>
+
+**Grouped assets:**
+
+<ParamField path="assetGroups" type="PortfolioAssetGroup[]">
+  Aggregated assets grouped by symbol across chains.
+</ParamField>
+
+<ParamField path="unlistedAssets" type="PortfolioAssetItem[]">
+  Assets without registry metadata, kept separate from grouped assets.
+</ParamField>
+
+**Loading and control:**
+
+<ParamField path="isLoading" type="boolean">
+  `true` while any underlying query is loading.
+</ParamField>
+
+<ParamField path="refetch" type="() => void">
+  Manually refetches all balances, assets, and prices.
+</ParamField>
+
+## Notes
+
+- The portfolio view only includes chains and assets that have non‑zero
+  balances.
+
+## Type reference (advanced)
+
+```ts
+function usePortfolio(): PortfolioResult
+
+type PortfolioResult = {
+  chainsByValue: PortfolioChainItem[]
+  assetGroups: PortfolioAssetGroup[]
+  unlistedAssets: PortfolioAssetItem[]
+  totalValue: number
+  isLoading: boolean
+  refetch: () => void
+}
+
+type PortfolioChainItem = {
+  chainId: string
+  name: string
+  logoUrl: string
+  value: number
+}
+
+type PortfolioAssetGroup = {
+  symbol: string
+  logoUrl: string
+  assets: PortfolioAssetItem[]
+}
+
+type PortfolioAssetItem = {
+  symbol: string
+  logoUrl: string
+  amount: string
+  denom: string
+  decimals: number
+  quantity: string
+  price?: number
+  value?: number
+  address?: string
+  unlisted?: boolean
+  chain: PortfolioChainInfo
+}
+
+type PortfolioChainInfo = {
+  chainId: string
+  name: string
+  logoUrl: string
+}
+```

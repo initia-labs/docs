@@ -1,0 +1,58 @@
+---
+title: MoveError
+---
+
+## Overview
+
+- Error type that carries parsed Move VM error metadata.
+- Thrown by transaction helpers on Move VM failures.
+- Use `instanceof MoveError` to identify and handle Move VM errors separately.
+
+## Quickstart
+
+```tsx
+import { MoveError, useInterwovenKit } from '@initia/interwovenkit-react'
+import type { EncodeObject, StdFee } from '@cosmjs/stargate'
+
+function isMoveError(error: unknown): error is MoveError {
+  return error instanceof MoveError
+}
+
+function MyComponent() {
+  const { submitTxBlock } = useInterwovenKit()
+
+  const handleSubmit = async (messages: EncodeObject[], fee: StdFee) => {
+    try {
+      await submitTxBlock({ messages, fee })
+    } catch (error) {
+      if (isMoveError(error)) {
+        console.error(
+          `Move error in ${error.moduleName} at ${error.moduleAddress}: ${error.errorCode}`,
+          error.originalError,
+        )
+      }
+    }
+  }
+}
+```
+
+## Properties
+
+```ts
+class MoveError extends Error {
+  originalError: Error
+  moduleAddress: string
+  moduleName: string
+  errorCode: string
+  errorCodeHex: string
+  isFromRegistry: boolean
+}
+```
+
+## Notes
+
+- Use `instanceof MoveError` to branch UI or logging based on Move-specific
+  metadata (`moduleAddress`, `moduleName`, `errorCode`).
+- `originalError` contains the original error with full message and stack trace.
+- `isFromRegistry` indicates whether the error message was resolved from the
+  Initia error registry (more user-friendly when `true`).

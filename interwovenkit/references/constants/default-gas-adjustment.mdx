@@ -1,0 +1,33 @@
+---
+title: DEFAULT_GAS_ADJUSTMENT
+---
+
+## Overview
+
+- Default gas adjustment multiplier used when `gasAdjustment` is not provided in
+  transaction requests.
+- Reference only if you need to match InterwovenKit's default in custom logic.
+
+## Quickstart
+
+```ts
+import { DEFAULT_GAS_ADJUSTMENT } from "@initia/interwovenkit-react"
+
+// Pass explicit gasAdjustment to match InterwovenKit's default
+const { requestTxBlock } = useInterwovenKit()
+await requestTxBlock({
+  messages: [...],
+  gasAdjustment: DEFAULT_GAS_ADJUSTMENT, // Optional: defaults to this value if omitted
+})
+```
+
+## Value
+
+```ts
+const DEFAULT_GAS_ADJUSTMENT: number // 1.4
+```
+
+## Notes
+
+- InterwovenKit uses this automatically when `gasAdjustment` is omitted.
+- Reference only if you need to match the default in custom logic.

@@ -415,10 +415,55 @@
             ]
           },
           {
-            "group": "References",
+            "group": "API Reference",
             "pages": [
-              "interwovenkit/references/interwovenkit-provider",
-              "interwovenkit/references/useinterwovenkit"
+              "interwovenkit/references/index",
+              {
+                "group": "Setup",
+                "pages": ["interwovenkit/references/setup/providers"]
+              },
+              {
+                "group": "Components",
+                "pages": [
+                  "interwovenkit/references/components/interwovenkit-provider"
+                ]
+              },
+              {
+                "group": "Hooks",
+                "pages": [
+                  "interwovenkit/references/hooks/use-interwovenkit",
+                  "interwovenkit/references/hooks/use-address",
+                  "interwovenkit/references/hooks/use-initia-address",
+                  "interwovenkit/references/hooks/use-hex-address",
+                  "interwovenkit/references/hooks/use-portfolio",
+                  "interwovenkit/references/hooks/use-username-query"
+                ]
+              },
+              {
+                "group": "Utilities",
+                "pages": ["interwovenkit/references/utilities/inject-styles"]
+              },
+              {
+                "group": "Errors",
+                "pages": ["interwovenkit/references/errors/move-error"]
+              },
+              {
+                "group": "Constants",
+                "pages": [
+                  "interwovenkit/references/constants/mainnet",
+                  "interwovenkit/references/constants/testnet",
+                  "interwovenkit/references/constants/default-gas-adjustment",
+                  "interwovenkit/references/constants/default-gas-price-multiplier",
+                  "interwovenkit/references/constants/privy-app-id"
+                ]
+              },
+              {
+                "group": "Social Login",
+                "pages": [
+                  "interwovenkit/references/social-login/initia-privy-wallet",
+                  "interwovenkit/references/social-login/initia-privy-wallet-connector"
+                ]
+              }
             ]
           }
         ]

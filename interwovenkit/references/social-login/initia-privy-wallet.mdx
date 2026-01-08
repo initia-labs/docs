@@ -1,0 +1,74 @@
+---
+title: initiaPrivyWallet
+---
+
+## Overview
+
+- RainbowKit wallet that enables social login (email, Google, X) in your
+  RainbowKit wallets list.
+- Social logins only. Does not require `PrivyProvider`.
+
+## Prerequisites
+
+- Must be used with RainbowKit `getDefaultConfig` or `createConfig`.
+- If you need AutoSign or embedded wallet features, use `initiaPrivyWallet` with
+  `PrivyProvider` (see [Provider Setup](../setup/providers)).
+
+## Quickstart
+
+```tsx
+'use client'
+
+import { PropsWithChildren } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
+import { initiaPrivyWallet } from '@initia/interwovenkit-react'
+import '@rainbow-me/rainbowkit/styles.css'
+
+const projectId = 'YOUR_WALLETCONNECT_PROJECT_ID' // Required: Get from https://cloud.walletconnect.com
+
+const rainbowConfig = getDefaultConfig({
+  appName: 'My dApp',
+  projectId,
+  chains: [mainnet],
+  wallets: [
+    {
+      groupName: 'Social',
+      wallets: [initiaPrivyWallet], // Social logins - shows as "Socials"
+    },
+    {
+      groupName: 'Popular',
+      wallets: [(params) => metaMaskWallet({ ...params, projectId })], // External wallets
+    },
+  ],
+})
+
+const queryClient = new QueryClient()
+
+export function Providers({ children }: PropsWithChildren) {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={rainbowConfig}>
+        <RainbowKitProvider>{children}</RainbowKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
+  )
+}
+```
+
+## Return value
+
+```ts
+const initiaPrivyWallet: Wallet
+```
+
+Type `Wallet` is from `@rainbow-me/rainbowkit`.
+
+## Notes
+
+- Enables social login options without requiring `PrivyProvider`.
+- Use alongside other RainbowKit wallets (MetaMask, WalletConnect, etc.).
+- Display name: "Socials".
