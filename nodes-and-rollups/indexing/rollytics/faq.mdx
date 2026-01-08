@@ -1,0 +1,107 @@
+---
+title: 'FAQ'
+description:
+  'Frequently asked questions about Rollytics and migrating from the legacy KV
+  Indexer.'
+---
+
+## What is Rollytics?
+
+Rollytics is Initia's production indexing service that replaces the legacy KV
+Indexer. Unlike KV Indexer, which runs inside each RPC node and duplicates index
+storage, Rollytics runs as a dedicated external service that indexes chain data
+once into a shared Postgres database and serves queries via a KV-compatible HTTP
+API.
+
+Key benefits:
+
+- Eliminates duplicate index storage across RPC nodes
+- Simplifies operations (reindexing happens in one place)
+- Improves RPC node performance by removing indexing overhead
+
+## Can we keep using KV Indexer?
+
+Yes, but it is **not recommended**.
+
+KV Indexer:
+
+- Duplicates storage on every RPC node
+- Increases operational cost as you scale
+- Adds load to RPC nodes
+- Is no longer actively maintained
+
+Rollytics is the long-term supported indexing solution for Initia rollups.
+
+## Will services break if we don’t migrate?
+
+No immediate breakage is expected, but migration is recommended before
+production scale.
+
+## Is Rollytics compatible with existing KV Indexer endpoints?
+
+Yes, Rollytics is fully compatible with KV Indexer endpoints.
+
+Rollytics exposes a KV Indexer endpoint-compatible HTTP API, which means:
+
+- Existing tools and services continue to work without modification
+- No code changes are required
+- Only the base endpoint URL needs to be updated
+
+This allows Rollytics to act as a drop-in replacement, making migration
+straightforward and low-risk.
+
+## Can Rollytics run alongside KV Indexer?
+
+Yes, and this is the recommended migration approach.
+
+You can:
+
+- Run both in parallel
+- Switch consumers incrementally
+- Validate correctness
+- Disable KV Indexer after confirmation
+
+This approach requires no downtime and allows easy rollback.
+
+## Does Rollytics require archival nodes?
+
+Yes.
+
+The indexer needs access to **historical data from genesis**, which requires:
+
+- Archival RPC
+- REST endpoint
+- JSON-RPC endpoint for EVM rollups
+
+## What Postgres version is required?
+
+Postgres 15+ compatible.
+
+## How many Rollytics instances should we run?
+
+- **Indexer**: one per chain
+- **API**: one or more, depending on query load
+- **Postgres**: one primary database, with replicas if needed
+
+## What data does Rollytics index?
+
+Rollytics indexes:
+
+- Blocks
+- Transactions
+- NFTs
+- EVM transactions
+- Internal EVM transactions (EVM rollups only)
+
+## Which VM types are supported?
+
+Rollytics supports Move, Wasm, and EVM rollups.
+
+## Does Rollytics support internal EVM transactions?
+
+Yes. For EVM rollups, internal transaction indexing is enabled by default.
+
+## Where is the API reference?
+
+The API reference is documented separately and mirrors the KV Indexer endpoint
+structure.

@@ -1,0 +1,103 @@
+---
+title: 'Indexing on Initia'
+description:
+  'Overview of indexing on Initia rollups and the recommended approach using
+  Rollytics.'
+---
+
+Indexing provides fast, structured access to on-chain data for wallets,
+explorers, and backend services. On Initia, indexing is a core part of operating
+a production rollup.
+
+## What indexing is used for
+
+Indexed data powers common read-heavy use cases, including:
+
+- Transaction history
+- Account activity
+- NFT collections and tokens
+- Block and chain statistics
+- Token holder (rich list) queries
+
+Without indexing, these queries would be slow or impractical to serve directly
+from RPC nodes.
+
+## What is Rollytics?
+
+Rollytics is Initia's recommended indexing service. Unlike the legacy KV
+Indexer, Rollytics runs as a dedicated external service that indexes chain data
+once into a shared Postgres database. It supports Move, Wasm, and EVM rollups.
+
+If you do not already run KV Indexer, you can ignore the legacy sections and use
+Rollytics directly.
+
+### Key advantages
+
+- **Single source of truth**: Index once into Postgres, serve from multiple API
+  instances
+- **Operational simplicity**: Reindexing and maintenance happen in one place,
+  not across every RPC node
+- **Better performance**: RPC nodes focus on serving chain data without indexing
+  overhead
+- **Scalability**: Add RPC nodes without duplicating index storage or reindexing
+- **KV-compatible API**: Compatible with existing KV Indexer consumers for
+  migrations
+- **Better data accuracy**: Resolves known KV Indexer NFT data issues
+
+## Indexing options on Initia
+
+Historically, Initia rollups relied on the KV Indexer, which runs inside each
+RPC node and stores indexed data locally.
+
+Today, Initia recommends using Rollytics instead.
+
+### KV Indexer (legacy)
+
+- Runs inside RPC nodes and stores index data locally per node
+- Requires reindexing on every node
+- Legacy and not recommended for production rollups
+
+### Rollytics (recommended)
+
+- Runs as a dedicated external service
+- Indexes once into a shared Postgres database
+- Exposes a KV Indexer endpoint-compatible HTTP API
+
+## Why Rollytics
+
+- **Index once, serve everywhere**: One shared Postgres database supports many
+  API instances
+- **Operational simplicity**: Reindexing and upgrades happen in one place
+- **Better RPC performance**: RPC nodes are not competing with indexing
+  workloads
+
+## When to use Rollytics
+
+Use Rollytics if you:
+
+- Operate more than one RPC node
+- Serve wallets, explorers, or public APIs
+- Plan to scale RPC nodes over time
+- Run an EVM rollup and need EVM transaction indexing
+
+## Recommended approach
+
+For new rollups:
+
+- Deploy Rollytics from the start
+- Use the Rollytics API for all indexed queries
+
+For existing rollups:
+
+- Run Rollytics alongside the KV Indexer
+- Switch consumers to the Rollytics API
+- Disable the KV Indexer after validation
+
+This approach allows migration with no downtime and minimal risk.
+
+## Get started
+
+- Deploy and migrate:
+  [Setup and Migration Guide](./rollytics/setup-and-migration)
+- API endpoints: [API Reference](./rollytics/api-reference)
+- Common questions: [FAQ](./rollytics/faq)
