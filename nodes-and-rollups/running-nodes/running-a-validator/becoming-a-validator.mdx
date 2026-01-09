@@ -4,7 +4,7 @@ icon: check-to-slot
 ---
 
 <Note>
-  Before proceeding to create a validator, first make sure that your Initia node
+  Before creating a validator, make sure that your Initia node
   is fully synced to the latest height. You can verify this by comparing your
   node's latest block height with the network's.
 </Note>
@@ -45,7 +45,7 @@ initiad tx mstaking create-validator \\
 | `bond_amount`                | This is the amount of tokens you wish to self-bond. It can be in uinit or other tokens that are whitelisted as liquidity provider (LP) tokens.                                                                                                                                                                   |
 | `pubkey`                     | The public key necessary for validator consensus. Typically, this is obtained from the output of the `initiad tendermint show-validator` command.                                                                                                                                                                |
 | `your_moniker`               | A human-readable name for your validator. This should match either the moniker you used in the `initiad init` command or a moniker registered in the `~/.initia/config/config.toml` file.                                                                                                                        |
-| `chain_id`                   | The ID of the chain you wish to join as a validator. It must correspond with the ID specified in the `genesis.json` file.                                                                                                                                                                                        |
+| `chain_id`                   | The ID of the chain you wish to join as a validator. It must correspond to the ID specified in the `genesis.json` file.                                                                                                                                                                                          |
 | `key_name`                   | The account address or name used to submit the transaction. The output of `initiad keys show <key name>` should correctly display your account details. If not, verify the accuracy of your `key_name` or keyring settings. A fee is required to submit the transaction, paid in the blockchain's native tokens. |
 | `identity`                   | An optional field for adding your Keybase identity information, which allows displaying an icon for your validator. This requires a 16-digit string associated with your Keybase account. Without this, no icon will be displayed in user interfaces.                                                            |
 | `commission-rate`            | The commission rate you charge delegators, expressed as a fraction. It must be set above the `min_commission_rate` parameter specified by the mStaking protocol.                                                                                                                                                 |
@@ -65,7 +65,7 @@ command:
 initiad query tendermint-validator-set | grep "$(initiad tendermint show-validator)"
 ```
 
-If the command returns a result, your validator is active and is proposing and
+If the command returns a result, your validator is active and proposing and
 signing blocks.
 
 <Note>
@@ -73,7 +73,9 @@ Only the top 100 validators in voting power are included in the active validator
 </Note>
 </Step>
 <Step title="Running the Connect Oracle Sidecar">
-Initia validators are also required to run the Connect Oracle Sidecar. For more information on how to run the sidecar, please refer to the [Skip Connect documentation](https://docs.skip.build/connect/validators/quickstart).
+Initia validators are also required to run the Connect Oracle Sidecar. For more
+information on how to run the sidecar, see the
+[Skip Connect documentation](https://docs.skip.build/connect/validators/quickstart).
 
 </Step>
 </Steps>
@@ -81,7 +83,7 @@ Initia validators are also required to run the Connect Oracle Sidecar. For more 
 ## Secure Your Validator Keys
 
 Protecting your keys and having a contingency backup plan will help mitigate
-catastrophic hardware or software failures of the node. It is a good practice to
+catastrophic hardware or software failures of the node. It is good practice to
 test your backup plan on a testnet node in case of node failure.
 
 Also, always back up your validator node's mnemonic and
