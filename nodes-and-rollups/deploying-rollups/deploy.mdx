@@ -70,7 +70,8 @@ From the provided options, you can:
 - Set genesis accounts
 
 If you want more information about a specific option, access the tooltip by
-pressing `ctrl+T`. If you want to go back to the previous step, press `ctrl+Z`.
+pressing `ctrl+T`. And if you want to go back to the previous step, press
+`ctrl+Z`.
 
 <Warning>
   To ensure that you have tokens available to send transactions on your rollup,
@@ -116,7 +117,7 @@ need to run the OPinit Executor and Challenger bots as well as the IBC Relayer.
 
 The OPinit Executor bot is responsible for executing INIT bridging transactions
 between the Initia L1 and your rollup, submitting the rollup state output to the
-L1, submitting DA data to Celestia, and more. To start the bot, run:
+L1, submitting DA data to Celestia, and more. To start the bot, run
 
 ```sh
 weave opinit init
@@ -183,7 +184,7 @@ Streaming logs from launchd com.opinitd.executor.daemon
 </Warning>
 
 The OPinit Challenger bot is responsible for monitoring the Executor bot's
-output proposal and ensuring its validity. To start the bot, run:
+output proposal and ensuring its validity. To start the bot, run
 
 ```sh
 weave opinit init
@@ -239,16 +240,15 @@ Challenger bots running.
 
 </Step>
 <Step title="Start the IBC Relayer">
-Finally, you need to set up the IBC Relayer bot. This bot relays IBC messages
-between the Initia L1 and your rollup. It is essential for oracle price updates
-and managing IBC bridging transactions, including Minitswap compatibility.
+Finally, you need to set up the IBC Relayer bot. This bot relays IBC messages between the Initia L1 and your rollup. It is essential for oracle price updates and managing IBC bridging transactions, including compatibility with Minitswap.
 
 ```sh
 weave relayer init
 ```
 
 By default, Weave also allows you to set up the relayer for any whitelisted
-rollup. However, in this case, set up the relayer for your local rollup.
+rollup. But in this case, we will be setting up the relayer for your local
+rollup.
 
 ```sh
 ✓ Select the type of Interwoven rollup you want to relay > Local Rollup (demo-314)
@@ -260,7 +260,7 @@ rollup. However, in this case, set up the relayer for your local rollup.
 ✓ Select the IBC channels you would like to relay ... 2 IBC channels subscribed
 ✓ Do you want to setup relayer with the challenger key > Yes (recommended, open the tooltip to see the details)
 ✓ Relayer setup successfully. Config file is saved at /Users/tansawit/.hermes/config.toml. Feel free to modify it as needed.
-✓ You can start the relayer by running `weave relayer start`
+✓ You can start the relayer by running `weave relayer start
 ```
 
 Once all of that is complete, you can start the bot by running the following
