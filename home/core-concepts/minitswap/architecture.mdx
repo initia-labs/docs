@@ -16,8 +16,8 @@ import {
   systems themselves already has safeguards in place to prevent various forms of
   manipulation from malicious actors. The Minitswap DEX is further designed to
   ensure that, in unforeseen events, any subsequent damages are minimized.
-- **Capital Efficiency**: As the number of rollups continue to increase,
-  naively, the same number of DEX pairs must also exists. This results in
+- **Capital Efficiency**: As the number of rollups continues to increase,
+  naively, the same number of DEX pairs must also exist. This results in
   liquidity fragmentation, high slippage and volatility, and subpar user
   experience.
 
@@ -41,7 +41,7 @@ StableSwap pool design:
   swapped back into regular INIT tokens remains restricted.
 - **Single INIT Token Pool**: To minimize liquidity fragmentation, there is a
   single INIT token pool that can be paired with multiple IbcOpINIT token pools,
-  instead of having separate INIT token pools for each rollups.
+  instead of having separate INIT token pools for each rollup.
 
 ## Swap Mechanisms
 
@@ -99,9 +99,9 @@ When bridging from a rollup to Initia L1, the user is currently holding
 $OpINIT_m$ tokens on a rollup $m$ and would like to bridge it back to $INIT$
 tokens on the Initia L1.
 
-In this scenario, utilizing Minitswap will enable them to bridging their INIT
-back to the Initia L1 instantaneously without waiting for the challenge period
-to expire.
+In this scenario, utilizing Minitswap will enable them to bridge their INIT back
+to the Initia L1 instantaneously without waiting for the challenge period to
+expire.
 
 1. **Transfer to Initia L1 via IBC**: The user begins by transferring their
    $OpINIT_m$ tokens on the rollup $m$ back to Initia L1 using IBC. As a result,
@@ -148,7 +148,7 @@ Direct Swap option becomes more appealing to users.
 
 ### Parameters
 
-- **Max Ratio**: The Max Ratio, $R_{max}$, is a Initia L1 governance-controlled
+- **Max Ratio**: The Max Ratio, $R_{max}$, is an Initia L1 governance-controlled
   parameter that dictates the maximum pool ratio between IbcOpINIT and regular
   INIT
 
