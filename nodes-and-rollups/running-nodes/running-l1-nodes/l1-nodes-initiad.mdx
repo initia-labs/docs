@@ -109,7 +109,7 @@ Initialize your node with a moniker (a human-readable name):
 initiad init <moniker>
 ```
 
-Note that
+Note that:
 
 - Moniker must contain only ASCII characters
 - Maximum length is 70 characters
@@ -118,7 +118,7 @@ Note that
 
 <Warning>
   Your private key is generated during initialization and stored in `${HOME}
-  /.initia/config/priv_validator_key.json`. **IMPORTANT**: Always backup your
+  /.initia/config/priv_validator_key.json`. **IMPORTANT**: Always back up your
   private key, especially for validator nodes. Loss of the private key may
   result in permanent node inaccessibility.
 </Warning>
@@ -188,12 +188,12 @@ sed -i -e 's/external_address = \"\"/external_address = \"'$(curl httpbin.org/ip
 
 ## Connecting to Initia Network
 
-To fully connect to the network, you first need to download the genesis file and
+To fully connect to the network, you first need to download the genesis file,
 configure your peers, and sync the node.
 
 <Note>
   You can find information on the genesis file, peers, and state sync for the
-  network you want to join in the [networks
+  network you want to join on the [networks
   page](/resources/developer/initia-l1)
 </Note>
 
@@ -253,7 +253,7 @@ systemctl enable initiad
 systemctl start initiad
 ```
 
-To then see the logs, you can use the following commands:
+To see the logs, you can use the following commands:
 
 ```bash
 journalctl -t initiad    # View current logs
