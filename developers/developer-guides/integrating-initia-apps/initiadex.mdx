@@ -107,9 +107,9 @@ _For more information on metadata, please refer to
 ### Provide Liquidity
 
 `provide_liquidity` enables the users to provide liquidity of both `coin_a` and
-`coin_b` in the specific pair. In order to maximize liquidity, the user should
-provide in resonation with the current ratio. The Move module interface is as
-follows:
+`coin_b` in the specific pair. In order to maximize the LP tokens received and
+minimize slippage, the user should provide liquidity in proportion with the
+current ratio. The Move module interface is as follows:
 
 ```bash
 public entry fun provide_liquidity_script(
@@ -193,10 +193,10 @@ public entry fun provide_liquidity_script(
 
 ### Single Asset Provide Liquidity
 
-Instead of creating a pair, the user can provide a pool of only one token.
-Internally, the token will be swapped to another token and provide liquidity, so
-there can be fee and slippage in occurrence. The Move function interface is as
-follows:
+Instead of providing both tokens in a pair, the user can provide liquidity using
+only one token. Internally, half of the token will be swapped to the other token
+in the pair to provide liquidity, which may result in fees and slippage. The
+Move function interface is as follows:
 
 ```move
 public entry fun single_asset_provide_liquidity_script(

@@ -207,7 +207,7 @@ Also when a contract make IBC transfer request, it should provide async callback
 data through memo field.
 
 - `memo['move']['async_callback']['id']`: the async callback id is assigned from
-  the contract. so later it will be passed as argument of ibc_ack and
+  the contract. so later it will be passed as an argument of ibc_ack and
   ibc_timeout.
 - `memo['move']['async_callback']['module_address']`: The address of module
   which defines the callback function.
@@ -243,9 +243,9 @@ module deployer::example {
 
 ## Step 2. Update IBC hook ACL for the contract
 
-IBC hook has strong power to execute any functions in counterparty chain and
-this can be used for fishing easily. So, we need to set the ACL for the contract
-to prevent unauthorized access.
+IBC hooks have the power to execute any function on the counterparty chain,
+which can easily be exploited for phishing. Therefore, we need to set the ACL
+for the contract to prevent unauthorized access.
 
 ```typescript
 // for initia L1, you can update ACL by submitting a proposal
