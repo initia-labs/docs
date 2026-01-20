@@ -28,8 +28,7 @@ Minitswap itself is designed as a virtual pool DEX between
 <Tooltip tip={INIT}>INIT</Tooltip> and the various
 <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the rollups. The
 exchange rates on each swap are determined by the
-[StableSwap](https://docs.curve.finance/stableswap-exchange/overview/)
-formula.
+[StableSwap](https://docs.curve.finance/stableswap-exchange/overview/) formula.
 
 To achieve the above goals, two main improvements are made to the base
 StableSwap pool design:
@@ -197,9 +196,9 @@ When run, the Peg Keeper swap follows the following procedure:
 
 Note that the Peg Keeper Swap check is done
 
-- _before_ a L2 -> L1 swap to make sure the user gets the best rate possible
-- _after_ a L1 -> L2 swap to make sure the user's swap rate doesn't get affected
-  by the Peg Keeper Swap
+- _before_ an L2 -> L1 swap to make sure the user gets the best rate possible
+- _after_ an L1 -> L2 swap to make sure the user's swap rate doesn't get
+  affected by the Peg Keeper Swap
 
 #### Internal Rebalancing
 

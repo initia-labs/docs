@@ -23,7 +23,7 @@ and other types are defined
 // HookData defines a wrapper for evm execute message
 // and async callback.
 type HookData struct {
- // Message is a evm execute message which will be executed
+ // Message is an evm execute message which will be executed
  // at `OnRecvPacket` of receiver chain.
  Message evmtypes.MsgCall `json:"message"`
 
@@ -58,7 +58,7 @@ So we detail where we want to get each of these fields from:
 - `Sender`: We cannot trust the sender of an IBC packet, the counter-party chain
   has full ability to lie about it. We cannot risk this sender being confused
   for a particular user or module address on Initia. So we replace the sender
-  with an account to represent the sender prefixed by the channel and a evm
+  with an account to represent the sender prefixed by the channel and an evm
   module prefix. This is done by setting the sender to
   `Bech32(Hash(Hash("ibc-evm-hook-intermediary") + channelID/sender))`, where
   the channelId is the channel id on the local chain.
@@ -180,9 +180,9 @@ data through memo field.
 
 # Tutorials
 
-This tutorial will guide you through the process of deploying a EVM contract and
-calling it from another chain using IBC hooks. We will use IBC hook from Initia
-chain to call a EVM contract on MiniEVM chain in this example.
+This tutorial will guide you through the process of deploying an EVM contract
+and calling it from another chain using IBC hooks. We will use IBC hook from
+Initia chain to call an EVM contract on MiniEVM chain in this example.
 
 ## Step 1. Deploy a contract on MiniEVM chain
 

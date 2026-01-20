@@ -44,7 +44,7 @@ pub struct CurrencyPairResponse {
 }
 
 
-pub fn example_get_all_curreny_pairs(deps: Deps) -> StdResult<GetAllCurrencyPairsResponse> {
+pub fn example_get_all_currency_pairs(deps: Deps) -> StdResult<GetAllCurrencyPairsResponse> {
     let state = STATE.load(deps.storage)?;
     let connect_addr = state.connect;
     deps.querier.query(&QueryRequest::Wasm(WasmQuery::Smart {

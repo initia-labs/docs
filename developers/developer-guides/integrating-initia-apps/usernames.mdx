@@ -59,29 +59,24 @@ public fun get_name_from_address(addr: address): Option<String>
 ```
 
 ```js InitiaJS
-const { RESTClient, bcs } = require('@initia/initia.js');
+const { RESTClient, bcs } = require('@initia/initia.js')
 
-const moduleAddress = '0x...';
-const address = "init1...";
+const moduleAddress = '0x...'
+const address = 'init1...'
 const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
-            gasPrices: '0.015uinit',
-            gasAdjustment: '1.5',
-        });
+  gasPrices: '0.015uinit',
+  gasAdjustment: '1.5',
+})
 
 restClient.move
   .view(
-    moduleAddress
+    moduleAddress,
     'usernames',
     'get_name_from_address',
     [],
-    [
-      bcs
-        .address()
-        .serialize(address)
-        .toBase64(),
-    ]
+    [bcs.address().serialize(address).toBase64()],
   )
-  .then(console.log);
+  .then(console.log)
 
 // Response:
 // {
