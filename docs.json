@@ -438,9 +438,7 @@
               {
                 "group": "Transfers",
                 "icon": "swap",
-                "pages": [
-                  "interwovenkit/features/transfers/deposit-withdraw"
-                ]
+                "pages": ["interwovenkit/features/transfers/deposit-withdraw"]
               }
             ]
           },
