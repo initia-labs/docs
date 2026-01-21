@@ -434,6 +434,13 @@
                   "interwovenkit/features/autosign/usage",
                   "interwovenkit/features/autosign/api-reference"
                 ]
+              },
+              {
+                "group": "Transfers",
+                "icon": "swap",
+                "pages": [
+                  "interwovenkit/features/transfers/deposit-withdraw"
+                ]
               }
             ]
           },
