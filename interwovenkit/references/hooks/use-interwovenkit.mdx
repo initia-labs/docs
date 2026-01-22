@@ -119,6 +119,20 @@ The hook provides methods for controlling wallet-related UI components:
   Opens the bridge drawer to onboard assets with optional pre-populated values.
 </ParamField>
 
+<ParamField
+  path="openDeposit"
+  type="(params: { denoms: string[]; chainId?: string; srcOptions?: AssetOption[]; recipientAddress?: string }) => void"
+>
+  Opens a modal to deposit assets from another chain to the current chain.
+</ParamField>
+
+<ParamField
+  path="openWithdraw"
+  type="(params: { denoms: string[]; chainId?: string; dstOptions?: AssetOption[]; recipientAddress?: string }) => void"
+>
+  Opens a modal to withdraw assets from the current chain to another chain.
+</ParamField>
+
 <ParamField path="disconnect" type="() => void">
   Disconnects the current wallet connection.
 </ParamField>
@@ -190,6 +204,44 @@ function BridgeButton() {
   )
 }
 ```
+
+### Deposit and Withdraw example
+
+```tsx
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+function DepositWithdrawButtons() {
+  const { openDeposit, openWithdraw } = useInterwovenKit()
+
+  return (
+    <>
+      <button
+        onClick={() =>
+          openDeposit({
+            denoms: ['uinit'],
+            chainId: 'interwoven-1',
+          })
+        }
+      >
+        Open deposit
+      </button>
+      <button
+        onClick={() =>
+          openWithdraw({
+            denoms: ['uinit'],
+            chainId: 'interwoven-1',
+          })
+        }
+      >
+        Open withdraw
+      </button>
+    </>
+  )
+}
+```
+
+For a full walkthrough, see
+[Deposit and Withdraw](../../features/transfers/deposit-withdraw).
 
 ## Transaction Methods
 

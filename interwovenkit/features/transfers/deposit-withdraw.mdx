@@ -1,0 +1,110 @@
+---
+title: Deposit and Withdraw
+description: Open deposit and withdraw modals for cross-chain transfers.
+icon: swap
+---
+
+## Overview
+
+Use `openDeposit` and `openWithdraw` from `useInterwovenKit()` to launch the
+built-in deposit and withdraw flows. These modals guide users through moving
+assets between chains without you rebuilding the UI.
+
+## Basic usage
+
+```tsx
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+function TransferButtons() {
+  const { openDeposit, openWithdraw } = useInterwovenKit()
+
+  return (
+    <>
+      <button
+        onClick={() =>
+          openDeposit({ denoms: ['uinit'], chainId: 'interwoven-1' })
+        }
+      >
+        Open deposit
+      </button>
+      <button
+        onClick={() =>
+          openWithdraw({ denoms: ['uinit'], chainId: 'interwoven-1' })
+        }
+      >
+        Open withdraw
+      </button>
+    </>
+  )
+}
+```
+
+## Defaults and requirements
+
+- `chainId` defaults to the current chain.
+- `recipientAddress` defaults to the connected user address.
+- `srcOptions` and `dstOptions` default to assets that match the selected symbol
+  across supported chains.
+- A wallet must be connected, or the call throws an error.
+- `denoms` must be a non-empty array.
+
+## Optional asset options
+
+Use `srcOptions` or `dstOptions` to limit the asset list shown in the modal.
+
+## Full example
+
+```tsx
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+function ScopedTransferButtons() {
+  const { address, openDeposit, openWithdraw } = useInterwovenKit()
+
+  const assetOptions = [
+    {
+      denom: 'uinit',
+      chainId: 'interwoven-1',
+    },
+    {
+      denom: 'uinit',
+      chainId: 'my-rollup-1',
+    },
+  ]
+
+  if (!address) return null
+
+  return (
+    <>
+      <button
+        onClick={() =>
+          openDeposit({
+            denoms: ['uinit'],
+            chainId: 'interwoven-1',
+            srcOptions: assetOptions,
+            recipientAddress: address,
+          })
+        }
+      >
+        Deposit INIT
+      </button>
+      <button
+        onClick={() =>
+          openWithdraw({
+            denoms: ['uinit'],
+            chainId: 'interwoven-1',
+            dstOptions: assetOptions,
+            recipientAddress: address,
+          })
+        }
+      >
+        Withdraw INIT
+      </button>
+    </>
+  )
+}
+```
+
+## Related reference
+
+See [`useInterwovenKit`](../../references/hooks/use-interwovenkit) for parameter
+signatures and types.
