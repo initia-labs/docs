@@ -5,8 +5,17 @@ title: Installation & Setup
 ## Prerequisites
 
 - Operating System: **Linux, MacOS**
-- Go **v1.23** or higher
+- Go **v1.24** or higher (when building from source)
 - NPM & Node **v20** or higher (if you wish to run relayer in the same machine)
+- Docker and Docker Compose
+  - For macOS: Install Docker Desktop from https://www.docker.com/products/docker-desktop/
+  - For Ubuntu/Debian:
+    - `apt-get install docker.io docker-compose-plugin`
+  - For other Linux distributions: Use your package manager or install Docker Engine from https://docs.docker.com/engine/install/
+  - Verify: `docker --version` and `docker compose version`
+- LZ4 compression tool
+  - For macOS: `brew install lz4`
+  - For Ubuntu/Debian: `apt-get install lz4`
 
 ## Installation
 
