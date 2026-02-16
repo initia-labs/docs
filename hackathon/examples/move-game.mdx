@@ -1,5 +1,5 @@
 ---
-title: 'Example Tutorial: BlockForge Game'
+title: 'Move Tutorial: BlockForge Game'
 ---
 
 **Prerequisite:** Before starting this tutorial, you should have completed the
@@ -29,10 +29,10 @@ appchain.
 
 **Example Prompt:**
 
-```
-Using the `initia-appchain-dev` skill, please create a Move module for our BlockForge game. The module should be named `items` inside a `blockforge` project. The game has the following rules:
-- Players can mint basic items called "Shards".
-- Players can craft "Relics" by burning 2 "Shards".
+```terminal wrap
+Using the `initia-appchain-dev` skill, please create a Move module for our BlockForge game. The module should be named items inside a blockforge project. The game has the following rules:
+- Players can mint basic items called shards.
+- Players can craft relics by burning 2 shards.
 - Players should have an inventory to store their items.
 - I need a way to view a player's inventory.
 ```
@@ -303,16 +303,16 @@ skill.
 
 **1. Scaffold the Frontend:**
 
-```
-Using the `initia-appchain-dev` skill, please scaffold a new React application for our BlockForge game using Vite. Then, create a simple component named `Game.jsx`. This component should have two buttons: "Mint Shard" and "Craft Relic". For now, make the buttons log a message to the console when clicked. Finally, add the `Game` component to the main `App.jsx` file.
+```terminal wrap
+Using the `initia-appchain-dev` skill, please scaffold a new React application for our BlockForge game using Vite. Then, create a simple component named Game.jsx. This component should have two buttons: Mint Shard and Craft Relic. For now, make the buttons log a message to the console when clicked. Finally, add the Game component to the main App.jsx file.
 ```
 
 **2. Connect the Frontend to the Appchain:**
 
-```
-Now, using the `initia-appchain-dev`, please modify the `Game.jsx` component to interact with our deployed "blockforge" smart contract on my appchain.
+```terminal wrap
+Now, using the `initia-appchain-dev`, please modify the Game.jsx component to interact with our deployed blockforge smart contract on my appchain.
 
-The "Mint Shard" button should call the `mint_shard` function, and the "Craft Relic" button should call the `craft_relic` function. Also, please display the player's current inventory of shards and relics. Finally, add a button to enable/disable the native auto-signing feature for a smoother game experience.
+The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics. Finally, add a button to enable/disable the native auto-signing feature for a smoother game experience.
 ```
 
 Your assistant will use the `@initia/interwoven-kit` to connect your new

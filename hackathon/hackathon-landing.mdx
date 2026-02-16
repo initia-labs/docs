@@ -92,19 +92,19 @@ the commands for your chosen VM directly in your standard terminal:
   <Tab title="MoveVM">
     ```bash wrap
     git clone --depth 1 https://github.com/initia-labs/minimove.git
-    cd minimove && make install cd .. && rm -rf minimove
+    cd minimove && make install && cd .. && rm -rf minimove
     ```
   </Tab>
   <Tab title="EVM">
     ```bash wrap
     git clone --depth 1 https://github.com/initia-labs/minievm.git
-    cd minievm && make install cd .. && rm -rf minievm
+    cd minievm && make install && cd .. && rm -rf minievm
     ```
   </Tab>
   <Tab title="WasmVM">
     ```bash wrap
     git clone --depth 1 https://github.com/initia-labs/miniwasm.git
-    cd miniwasm && make install cd .. && rm -rf miniwasm
+    cd miniwasm && make install && cd .. && rm -rf miniwasm
     ```
   </Tab>
 </Tabs>
@@ -559,10 +559,12 @@ address.
 
 **2. Ask your assistant to fund you:**
 
+Replace `<YOUR_WALLET_ADDRESS>` in the prompt below with the address you just copied from your browser wallet.
+
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_INIT1_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
 ---
@@ -576,16 +578,29 @@ blockchain.
 Now that you have the basics down, you can dive into a full example or start
 building your own idea.
 
-### Option 1: Follow the BlockForge Example
+### Option 1: Explore an Example Tutorial
 
-See a complete working example of a game economy with a smart contract and
-frontend.
 
-**[→ Go to BlockForge Example](./example-appchain-tutorial)**
+
+Pick a tutorial based on your preferred Virtual Machine (VM) and use case:
+
+
+
+*   **[BlockForge Game (Move)](./examples/move-game)**: Build a simple crafting game using Move's resource safety.
+
+*   **[MiniBank (EVM)](./examples/evm-bank)**: Create a digital piggy bank using standard Solidity.
+
+*   **[MemoBoard (Wasm)](./examples/wasm-social)**: Build an on-chain guestbook using high-performance Rust.
+
+
 
 ### Option 2: Build Your Own Idea
 
-Jump straight into building your hackathon project.
+
+
+Jump straight into building your unique hackathon project.
+
+
 
 **[→ Go to Builder Guide](./builder-guide)**
 
