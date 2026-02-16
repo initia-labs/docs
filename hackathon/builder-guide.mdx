@@ -4,28 +4,42 @@ title: 'Hackathon Builder Guide'
 
 # 🚀 Transitioning to Your Own Idea
 
-The Builder Guide is designed for developers who have already completed the initial environment setup. If you haven't yet launched your first appchain, please start with the **[Step-by-Step Guide](./hackathon-landing)**.
+The Builder Guide is designed for developers who have already completed the
+initial environment setup. If you haven't yet launched your first appchain,
+please start with the **[Step-by-Step Guide](./hackathon-landing)**.
 
 ### ✅ Readiness Checklist
+
 Before proceeding, ensure you have completed these milestones:
-- [ ] **Tools Installed**: You have `weave`, `initiad`, and your chosen VM CLI (`minitiad`) in your PATH. ([Step 4](./hackathon-landing#step-4:-install-required-tools))
-- [ ] **Infrastructure Live**: Your rollup is running and your OPinit/Relayer bots are active. ([Step 6](./hackathon-landing#step-6:-setup-interwoven-bots-[terminal]))
-- [ ] **Keys Imported**: Your Gas Station mnemonic is imported into your local `initiad` and `minitiad` keyrings. ([Step 7](./hackathon-landing#step-7:-final-key-setup-[terminal]))
+
+- [ ] **Tools Installed**: You have `weave`, `initiad`, and your chosen VM CLI
+      (`minitiad`) in your PATH.
+      ([Step 4](./hackathon-landing#step-4:-install-required-tools))
+- [ ] **Infrastructure Live**: Your rollup is running and your OPinit/Relayer
+      bots are active.
+      ([Step 6](./hackathon-landing#step-6:-setup-interwoven-bots-[terminal]))
+- [ ] **Keys Imported**: Your Gas Station mnemonic is imported into your local
+      `initiad` and `minitiad` keyrings.
+      ([Step 7](./hackathon-landing#step-7:-final-key-setup-[terminal]))
 
 ---
 
 # ⚡ Quick Reference: The Essentials
 
-Use these common commands and AI prompts to manage your project during the hackathon.
+Use these common commands and AI prompts to manage your project during the
+hackathon.
 
-| Task | Command / AI Prompt |
-| :--- | :--- |
-| **Resume Appchain** | `weave start` |
-| **Health Check** | *"Using the `initia-appchain-dev` skill, please verify that my appchain is producing blocks and show my gas-station balances."* |
-| **Key Import** | See the [Local Keyring Import](#key-import) section below. |
+| Task                | Command / AI Prompt                                                                                                             |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------ |
+| **Resume Appchain** | `weave start`                                                                                                                   |
+| **Health Check**    | _"Using the `initia-appchain-dev` skill, please verify that my appchain is producing blocks and show my gas-station balances."_ |
+| **Key Import**      | See the [Local Keyring Import](#key-import) section below.                                                                      |
 
 ### <a name="key-import"></a>Local Keyring Import
-The **Gas Station** account acts as your **Universal Developer Key**. Run these commands in your terminal to import it into your local keychains so you can sign transactions via the CLI.
+
+The **Gas Station** account acts as your **Universal Developer Key**. Run these
+commands in your terminal to import it into your local keychains so you can sign
+transactions via the CLI.
 
 ```bash wrap
 # 1. Extract your mnemonic from the weave config
@@ -45,51 +59,64 @@ minitiad keys add gas-station --recover --keyring-backend test --coin-type 60 --
 Master the **Describe → Build → Test** cycle. This is how you win the hackathon.
 
 ### The Core Loop
-1.  **Describe the Goal**: Tell the AI *what* you want to achieve and *why*.
+
+1.  **Describe the Goal**: Tell the AI _what_ you want to achieve and _why_.
 2.  **Build & Test (Unit)**: Let the AI write the code AND the unit tests.
 
     **Prompt:**
+
     ```terminal wrap
     Using the `initia-appchain-dev` skill, please write a Move module for a marketplace and a unit test to verify the 'list_item' function.
     ```
+
 3.  **Deploy & Interact**: Instruct the AI to deploy to your appchain.
 
     **Prompt:**
+
     ```terminal wrap
     Using the `initia-appchain-dev` skill, please deploy this module to my appchain and execute the 'list_item' function.
     ```
+
 4.  **Verify State**: Ask the AI to query the chain to prove the logic works.
 
 <Tip>
-  **Submission Receipt:** To qualify for the hackathon prizes, you must provide the **Contract Address** of your primary logic and a **Transaction Hash** of a user interacting with it. Save these as soon as you have a working version!
+  **Submission Receipt:** To qualify for the hackathon prizes, you must provide
+  the **Contract Address** of your primary logic and a **Transaction Hash** of a
+  user interacting with it. Save these as soon as you have a working version!
 </Tip>
 
 ---
 
 # Part 2: Power-Up with Native Features
 
-To qualify for the prize pool, you must implement at least **one** of these. 
+To qualify for the prize pool, you must implement at least **one** of these.
 
 ### 1. Built-in Indexer (Rich Data)
+
 Query transaction history and NFT holdings via REST APIs.
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, how do I query the built-in indexer to show my transaction history in my React frontend?
 ```
 
 ### 2. Connect Oracle (Skip/Slinky)
+
 Access fast, enshrined price data directly in your smart contracts.
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, show me how to use the `initia_std::oracle` to get the current price of ETH in my Move module.
 ```
 
 ### 3. Auto-signing (Web2 UX)
+
 Enable frictionless, session-based signing for high-frequency interactions.
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, modify my InterwovenKit frontend to enable auto-signing for 1 hour.
 ```
@@ -101,8 +128,12 @@ Using the `initia-appchain-dev` skill, modify my InterwovenKit frontend to enabl
 Judges want to see **On-chain Proof**. Use this checklist before submitting.
 
 - [ ] **Contract Address**: Your primary logic is deployed.
-- [ ] **Interaction TX**: You have a transaction hash of a user *interacting* with your contract.
+- [ ] **Interaction TX**: You have a transaction hash of a user _interacting_
+      with your contract.
 - [ ] **Frontend**: You are using **InterwovenKit** for the wallet connection.
-- [ ] **Native Feature**: You've pointed to the code implementing an Initia-native feature.
+- [ ] **Native Feature**: You've pointed to the code implementing an
+      Initia-native feature.
 
-> **Mandatory:** Review the **[Submission & Technical Requirements](./submission-requirements)** to ensure you are eligible for prizes.
+> **Mandatory:** Review the
+> **[Submission & Technical Requirements](./submission-requirements)** to ensure
+> you are eligible for prizes.

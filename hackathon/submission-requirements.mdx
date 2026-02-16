@@ -2,30 +2,52 @@
 title: 'Submission & Eligibility Criteria'
 ---
 
-Welcome to the Initia hackathon! Our goal is to empower builders to push the boundaries of what's possible with Interwoven Rollups. To ensure your project is eligible for judging and showcases the best of the Initia ecosystem, please adhere to the following technical pillars.
+Welcome to the Initia hackathon! Our goal is to empower builders to push the
+boundaries of what's possible with Interwoven Rollups. To ensure your project is
+eligible for judging and showcases the best of the Initia ecosystem, please
+adhere to the following technical pillars.
 
 ---
 
 # 1. Eligibility Pillars
 
-To qualify for the prize pool, projects must demonstrate meaningful integration with the Initia stack.
+To qualify for the prize pool, projects must demonstrate meaningful integration
+with the Initia stack.
 
 ### 🏗️ Pillar 1: Dedicated Rollup Architecture
-This hackathon is dedicated to the power of appchains. Your project should be deployed as its own sovereign rollup.
-*   **Requirement:** Provide your rollup's **Chain ID** and a link to a transaction or contract deployment on your rollup.
-*   **Getting Started:** Use the `weave` CLI to launch and manage your environment.
+
+This hackathon is dedicated to the power of appchains. Your project should be
+deployed as its own sovereign rollup.
+
+- **Requirement:** Provide your rollup's **Chain ID** and a link to a
+  transaction or contract deployment on your rollup.
+- **Getting Started:** Use the `weave` CLI to launch and manage your
+  environment.
 
 ### ⚛️ Pillar 2: Optimized Frontend Experience
-We encourage builders to use the flagship tooling designed for the Interwoven ecosystem. This ensures your application is "Interwoven-ready" and provides a seamless experience for users across Initia.
-*   **Requirement:** Utilize **InterwovenKit** (`@initia/interwovenkit-react`) for wallet connections and transaction handling.
-*   **Why:** This stack enables advanced Initia features like social logins via Privy and cross-chain visibility.
+
+We encourage builders to use the flagship tooling designed for the Interwoven
+ecosystem. This ensures your application is "Interwoven-ready" and provides a
+seamless experience for users across Initia.
+
+- **Requirement:** Utilize **InterwovenKit** (`@initia/interwovenkit-react`) for
+  wallet connections and transaction handling.
+- **Why:** This stack enables advanced Initia features like social logins via
+  Privy and cross-chain visibility.
 
 ### ⚡ Pillar 3: Showcasing Initia Native Features
-High-value projects go beyond "Hello World" by leveraging Initia's native features. Your submission should implement at least **one** of the following:
-1.  **Auto-signing:** Create a frictionless UX for high-frequency interactions (e.g., games or trading).
-2.  **Built-in Indexer:** Query rich historical data or NFT holdings using the native REST APIs.
-3.  **Connect Oracle:** Integrate Skip's enshrined price feeds for DeFi or economic logic.
-4.  **Initia Usernames:** Resolve and display `.init` names to improve user onboarding.
+
+High-value projects go beyond "Hello World" by leveraging Initia's native
+features. Your submission should implement at least **one** of the following:
+
+1.  **Auto-signing:** Create a frictionless UX for high-frequency interactions
+    (e.g., games or trading).
+2.  **Built-in Indexer:** Query rich historical data or NFT holdings using the
+    native REST APIs.
+3.  **Connect Oracle:** Integrate Skip's enshrined price feeds for DeFi or
+    economic logic.
+4.  **Initia Usernames:** Resolve and display `.init` names to improve user
+    onboarding.
 
 ---
 
@@ -34,28 +56,38 @@ High-value projects go beyond "Hello World" by leveraging Initia's native featur
 Access the official tools and documentation to build your project:
 
 ### Official Repositories
-*   **[Initia L1](https://github.com/initia-labs/initia):** Core Layer 1 source code.
-*   **[Weave CLI](https://github.com/initia-labs/weave):** Essential for launching appchains.
-*   **[InterwovenKit](https://github.com/initia-labs/interwovenkit):** The standard React SDK for Initia frontends.
-*   **[Initia.js](https://github.com/initia-labs/initia.js):** The primary JavaScript library for blockchain interactions.
+
+- **[Initia L1](https://github.com/initia-labs/initia):** Core Layer 1 source
+  code.
+- **[Weave CLI](https://github.com/initia-labs/weave):** Essential for launching
+  appchains.
+- **[InterwovenKit](https://github.com/initia-labs/interwovenkit):** The
+  standard React SDK for Initia frontends.
+- **[Initia.js](https://github.com/initia-labs/initia.js):** The primary
+  JavaScript library for blockchain interactions.
 
 ### APIs & Endpoints
-*   **Rollup Indexer (Rollytics):** [View Swagger](https://rollytics-api-echelon-1.anvil.asia-southeast.initia.xyz/swagger/index.html) — Use this to query transactions and assets **on your appchain**.
-*   **L1 Indexer:** [View Swagger](https://indexer.initia.xyz/swagger/index.html) — Use this to query global data like **Initia Usernames**.
-*   **L1 Testnet RPC:** `https://rpc.testnet.initia.xyz`
-*   **L1 Testnet LCD:** `https://lcd.testnet.initia.xyz`
-*   **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
+
+- **Rollup Indexer (Rollytics):**
+  [View Swagger](https://rollytics-api-echelon-1.anvil.asia-southeast.initia.xyz/swagger/index.html)
+  — Use this to query transactions and assets **on your appchain**.
+- **L1 Indexer:** [View Swagger](https://indexer.initia.xyz/swagger/index.html)
+  — Use this to query global data like **Initia Usernames**.
+- **L1 Testnet RPC:** `https://rpc.testnet.initia.xyz`
+- **L1 Testnet LCD:** `https://lcd.testnet.initia.xyz`
+- **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
 
 ---
 
 # 3. Submission Summary (Add to your README)
 
-To help our technical reviewers understand your project, please include this summary in your project's `README.md`:
+To help our technical reviewers understand your project, please include this
+summary in your project's `README.md`:
 
-| Feature | Details |
-| :--- | :--- |
-| **Rollup Chain ID** | (e.g., `my-game-1`) |
-| **Contract/Module Address** | (The address of your deployed smart contract) |
-| **L2 Interaction TX** | [Link to a transaction that *calls your contract*] |
-| **Frontend Stack** | InterwovenKit |
-| **Native Feature(s)** | (e.g., Auto-signing / Indexer / Oracle / Usernames) |
+| Feature                     | Details                                             |
+| :-------------------------- | :-------------------------------------------------- |
+| **Rollup Chain ID**         | (e.g., `my-game-1`)                                 |
+| **Contract/Module Address** | (The address of your deployed smart contract)       |
+| **L2 Interaction TX**       | [Link to a transaction that *calls your contract*]  |
+| **Frontend Stack**          | InterwovenKit                                       |
+| **Native Feature(s)**       | (e.g., Auto-signing / Indexer / Oracle / Usernames) |

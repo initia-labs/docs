@@ -4,13 +4,17 @@ title: 'Your First Appchain: A Step-by-Step Guide'
 
 ## Build a Sovereign Blockchain with Your AI Co-pilot
 
-Welcome to the hackathon! This guide will walk you through building a sovereign blockchain from scratch. You'll go from a simple idea to a functioning appchain with a frontend in record time.
+Welcome to the hackathon! This guide will walk you through building a sovereign
+blockchain from scratch. You'll go from a simple idea to a functioning appchain
+with a frontend in record time.
 
 ---
 
 ## Step 1: Prepare Your Workspace
 
-Before installing tools or initializing your appchain, create a dedicated directory for your project. This keeps your configuration files, VM binaries, and smart contracts organized in one place.
+Before installing tools or initializing your appchain, create a dedicated
+directory for your project. This keeps your configuration files, VM binaries,
+and smart contracts organized in one place.
 
 **Run the following commands in your terminal:**
 
@@ -23,7 +27,8 @@ cd my-initia-project
 
 ## Step 2: Install Your AI Skill [Terminal]
 
-Your AI assistant needs the **Initia Appchain Dev** skill to help you manage your appchain, write smart contracts, and build your frontend.
+Your AI assistant needs the **Initia Appchain Dev** skill to help you manage
+your appchain, write smart contracts, and build your frontend.
 
 **Run the following command in your terminal:**
 
@@ -35,70 +40,77 @@ npx skills add initia-labs/hackathon-skills
 
 ## 🖥️ Recommended Setup
 
-To get the most out of this guide, we recommend having two terminal tabs or a split-screen setup:
+To get the most out of this guide, we recommend having two terminal tabs or a
+split-screen setup:
 
-1.  **AI Co-pilot**: For high-level tasks, contract generation, and troubleshooting.
-2.  **Standard Terminal**: For interactive CLI commands (like `weave init`) and long-running builds.
+1.  **AI Co-pilot**: For high-level tasks, contract generation, and
+    troubleshooting.
+2.  **Standard Terminal**: For interactive CLI commands (like `weave init`) and
+    long-running builds.
 
 ---
 
 ## Step 3: Choose Your Track & VM [Planning]
 
-Before installing tools, decide what you want to build. This choice determines which **Virtual Machine (VM)** you will need for your appchain.
+Before installing tools, decide what you want to build. This choice determines
+which **Virtual Machine (VM)** you will need for your appchain.
 
-| Track | Recommended VM | Why? |
-| :--- | :--- | :--- |
-| **Gaming / Consumer** | `Move` | Best for complex on-chain logic and object-oriented assets. |
-| **DeFi / Institutional** | `EVM` (Solidity) | Best for leveraging existing Ethereum tooling and libraries. |
-| **Agents / Tooling** | `Wasm` (Rust) | Best for performance-critical logic and Rust ecosystem integration. |
+| Track                    | Recommended VM   | Why?                                                                |
+| :----------------------- | :--------------- | :------------------------------------------------------------------ |
+| **Gaming / Consumer**    | `Move`           | Best for complex on-chain logic and object-oriented assets.         |
+| **DeFi / Institutional** | `EVM` (Solidity) | Best for leveraging existing Ethereum tooling and libraries.        |
+| **Agents / Tooling**     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
 
 ---
 
 ## Step 4: Install Required Tools
 
 <Warning>
-  **Docker Desktop must be running.** Ensure it is installed and active before running the installation command. If you don't have it, **[download Docker Desktop here](https://www.docker.com/products/docker-desktop/)**.
+  **Docker Desktop must be running.** Ensure it is installed and active before
+  running the installation command. If you don't have it, **[download Docker
+  Desktop here](https://www.docker.com/products/docker-desktop/)**.
 </Warning>
 
 ### 4.1 Install the Core CLI Tools [AI Assistant]
-The fastest way to install the core CLIs (`weave`, `initiad`, `jq`) is to ask your AI assistant. It will handle the environment setup for you.
+
+The fastest way to install the core CLIs (`weave`, `initiad`, `jq`) is to ask
+your AI assistant. It will handle the environment setup for you.
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please install the core tools for Initia development.
 ```
 
 ### 4.2 Install Your Appchain VM [Terminal]
-Because each Virtual Machine (`Move`, `EVM`, `Wasm`) requires building a specific `minitiad` binary from source, this step can take **5-15 minutes**. Run the commands for your chosen VM directly in your standard terminal:
+
+Because each Virtual Machine (`Move`, `EVM`, `Wasm`) requires building a
+specific `minitiad` binary from source, this step can take **5-15 minutes**. Run
+the commands for your chosen VM directly in your standard terminal:
 
 <Tabs>
   <Tab title="MoveVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/minimove.git
-    cd minimove && make install
-    cd .. && rm -rf minimove
-    ```
+    ```bash wrap git clone --depth 1 https://github.com/initia-labs/minimove.git
+    cd minimove && make install cd .. && rm -rf minimove ```
   </Tab>
   <Tab title="EVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/minievm.git
-    cd minievm && make install
-    cd .. && rm -rf minievm
-    ```
+    ```bash wrap git clone --depth 1 https://github.com/initia-labs/minievm.git
+    cd minievm && make install cd .. && rm -rf minievm ```
   </Tab>
   <Tab title="WasmVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/miniwasm.git
-    cd miniwasm && make install
-    cd .. && rm -rf miniwasm
-    ```
+    ```bash wrap git clone --depth 1 https://github.com/initia-labs/miniwasm.git
+    cd miniwasm && make install cd .. && rm -rf miniwasm ```
   </Tab>
 </Tabs>
 
 ### 4.3 Verify Installation & PATH [AI Assistant]
-After the build completes, your AI assistant can ensure the tools are accessible from anywhere in your system. This is especially helpful if you aren't sure how to configure your `PATH` for your specific shell (Zsh, Bash, etc.).
+
+After the build completes, your AI assistant can ensure the tools are accessible
+from anywhere in your system. This is especially helpful if you aren't sure how
+to configure your `PATH` for your specific shell (Zsh, Bash, etc.).
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please verify that `minitiad` is properly installed and accessible. If it isn't in my PATH, help me add the Go binary directory to my shell configuration.
 ```
@@ -107,7 +119,9 @@ Using the `initia-appchain-dev` skill, please verify that `minitiad` is properly
 
 ## Step 5: Initial Setup with `weave init` [Terminal]
 
-Your AI assistant is your partner in this hackathon, but the `weave` CLI requires an initial interactive setup to prepare your environment and launch your first appchain. This is a one-time process.
+Your AI assistant is your partner in this hackathon, but the `weave` CLI
+requires an initial interactive setup to prepare your environment and launch
+your first appchain. This is a one-time process.
 
 **Run the following command in your terminal:**
 
@@ -147,6 +161,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Action:**
     Type `continue` and press Enter.
+
   </Step>
 
   <Step title="Phase 2: Rollup Identity">
@@ -207,6 +222,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Action:**
     Press `Tab` for default (`operator`).
+
   </Step>
 
   <Step title="Phase 3: Network & Infrastructure">
@@ -245,6 +261,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Action:**
     Select `Enable`.
+
   </Step>
 
   <Step title="Phase 4: Security & Genesis">
@@ -301,6 +318,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Action:**
     Select `No`.
+
   </Step>
 
   <Step title="Phase 5: Launch">
@@ -323,6 +341,7 @@ Here's a guide on how to navigate the interactive setup:
     Type `y` and press Enter.
 
 Your appchain will now launch and start producing blocks!
+
   </Step>
 </Steps>
 
@@ -330,21 +349,27 @@ Your appchain will now launch and start producing blocks!
 
 ## Step 6: Setup Interwoven Bots [Terminal]
 
-To enable the Optimistic bridge and cross-chain communication (IBC) between Initia L1 and your appchain, you need to start the **OPinit Executor** and the **IBC Relayer**. These bots handle the "interweaving" of your chain.
+To enable the Optimistic bridge and cross-chain communication (IBC) between
+Initia L1 and your appchain, you need to start the **OPinit Executor** and the
+**IBC Relayer**. These bots handle the "interweaving" of your chain.
 
 <Note>
-  **Prerequisite:** Your appchain must be running in another terminal (via `weave init` or `weave start`) before configuring these bots.
+  **Prerequisite:** Your appchain must be running in another terminal (via
+  `weave init` or `weave start`) before configuring these bots.
 </Note>
 
 ### 6.1 Start the OPinit Executor
+
 The executor handles the submission of rollup data and bridge operations.
 
 **Run the following command:**
+
 ```bash wrap
 weave opinit init executor
 ```
 
 Follow the interactive guide:
+
 <Steps>
   <Step title="1. Use Detected Keys">
     **Prompt:** 
@@ -352,8 +377,9 @@ Follow the interactive guide:
     ? Existing keys in config.json detected. Would you like to add these to the keyring before proceeding?
     ```
 
-    **Action:** 
+    **Action:**
     Select `Yes, use detected keys`.
+
   </Step>
   <Step title="2. System Key for Oracle">
     **Prompt:** 
@@ -361,8 +387,9 @@ Follow the interactive guide:
     ? Please select an option for the system key for Oracle Bridge Executor
     ```
 
-    **Action:** 
+    **Action:**
     Select `Generate new system key`.
+
   </Step>
   <Step title="3. Pre-fill Data">
     **Prompt:** 
@@ -370,8 +397,9 @@ Follow the interactive guide:
     ? Existing config.json detected. Would you like to use the data in this file to pre-fill some fields?
     ```
 
-    **Action:** 
+    **Action:**
     Select `Yes, prefill`.
+
   </Step>
   <Step title="4. Listen Address">
     **Prompt:** 
@@ -379,8 +407,9 @@ Follow the interactive guide:
     ? Specify listen address of the bot
     ```
 
-    **Action:** 
+    **Action:**
     Press `Tab` to use `localhost:3000` (ensure nothing else is running on this port).
+
   </Step>
   <Step title="5. Finalize Configuration">
     **Action:** 
@@ -395,18 +424,20 @@ Follow the interactive guide:
 </Steps>
 
 ### 6.2 Start the IBC Relayer
-The relayer enables asset transfers (like INIT) between the L1 and your appchain.
 
-<Warning>
-  **Docker Desktop** must be running to launch the relayer.
-</Warning>
+The relayer enables asset transfers (like INIT) between the L1 and your
+appchain.
+
+<Warning>**Docker Desktop** must be running to launch the relayer.</Warning>
 
 **Run the following command:**
+
 ```bash wrap
 weave relayer init
 ```
 
 Follow the interactive guide:
+
 <Steps>
   <Step title="1. Select Rollup">
     **Prompt:** 
@@ -414,8 +445,9 @@ Follow the interactive guide:
     ? Select the type of Interwoven rollup you want to relay
     ```
 
-    **Action:** 
+    **Action:**
     Select `Local Rollup (your-chain-id)`.
+
   </Step>
   <Step title="2. Endpoints">
     **Action:** 
@@ -427,8 +459,9 @@ Follow the interactive guide:
     ? Select method to setup IBC channels for the relayer
     ```
 
-    **Action:** 
+    **Action:**
     Select `Subscribe to only transfer and nft-transfer IBC Channels (minimal setup)`.
+
   </Step>
   <Step title="4. Select Channels">
     **Prompt:** 
@@ -436,8 +469,9 @@ Follow the interactive guide:
     ? Select the IBC channels you would like to relay
     ```
 
-    **Action:** 
+    **Action:**
     Press `Space` to select all (transfer and nft-transfer), then press `Enter`.
+
   </Step>
   <Step title="5. Challenger Key">
     **Prompt:** 
@@ -445,8 +479,9 @@ Follow the interactive guide:
     ? Do you want to setup relayer with the challenger key
     ```
 
-    **Action:** 
+    **Action:**
     Select `Yes (recommended)`.
+
   </Step>
   <Step title="6. Start Relayer">
     Start the relayer process:
@@ -457,6 +492,7 @@ Follow the interactive guide:
     <Note>
       You can view relayer logs at any time by running `weave relayer log` in your terminal.
     </Note>
+
   </Step>
 </Steps>
 
@@ -464,9 +500,13 @@ Follow the interactive guide:
 
 ## Step 7: Final Key Setup [Terminal]
 
-💡 **Why:** The **Gas Station** account acts as your **Universal Developer Key**. Importing it allows you to sign transactions manually via the CLI, and it enables your AI co-pilot to deploy contracts and interact with your appchain.
+💡 **Why:** The **Gas Station** account acts as your **Universal Developer
+Key**. Importing it allows you to sign transactions manually via the CLI, and it
+enables your AI co-pilot to deploy contracts and interact with your appchain.
 
-**Action:** Run these commands to import your account into both the L1 (`initiad`) and L2 (`minitiad`) keychains:
+**Action:** Run these commands to import your account into both the L1
+(`initiad`) and L2 (`minitiad`) keychains:
+
 ```bash wrap
 # Extract your mnemonic from the weave config
 MNEMONIC=$(jq -r '.common.gas_station.mnemonic' ~/.weave/config.json)
@@ -478,7 +518,9 @@ initiad keys add gas-station --recover --keyring-backend test --coin-type 60 --k
 minitiad keys add gas-station --recover --keyring-backend test --coin-type 60 --key-type eth_secp256k1 --source <(echo -n "$MNEMONIC")
 ```
 
-**Action:** Verify the import by listing your keys to ensure `gas-station` appears in both:
+**Action:** Verify the import by listing your keys to ensure `gas-station`
+appears in both:
+
 ```bash wrap
 # Verify L1 keys
 initiad keys list --keyring-backend test
@@ -494,6 +536,7 @@ minitiad keys list --keyring-backend test
 After completing the infrastructure setup, verify that everything is healthy.
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please verify that my appchain is running and that my Gas Station account has a balance.
 ```
@@ -502,13 +545,16 @@ Using the `initia-appchain-dev` skill, please verify that my appchain is running
 
 ## Step 9: Funding Your Personal Wallet [AI Assistant]
 
-To interact with your appchain using a browser wallet (like **Keplr** or **Leap**), you'll need to send tokens from your **gas station** to your personal address.
+To interact with your appchain using a browser wallet (like **Keplr** or
+**Leap**), you'll need to send tokens from your **gas station** to your personal
+address.
 
 **1. Copy your personal address from your wallet.**
 
 **2. Ask your assistant to fund you:**
 
 **Prompt:**
+
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_INIT1_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
@@ -517,13 +563,17 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_INIT
 
 ## Step 10: Next Steps
 
-Congratulations! You have successfully launched your first appchain. You now understand the basic workflow of using your AI assistant to manage your own blockchain.
+Congratulations! You have successfully launched your first appchain. You now
+understand the basic workflow of using your AI assistant to manage your own
+blockchain.
 
-Now that you have the basics down, you can dive into a full example or start building your own idea.
+Now that you have the basics down, you can dive into a full example or start
+building your own idea.
 
 ### Option 1: Follow the BlockForge Example
 
-See a complete working example of a game economy with a smart contract and frontend.
+See a complete working example of a game economy with a smart contract and
+frontend.
 
 **[→ Go to BlockForge Example](./example-appchain-tutorial)**
 
@@ -537,8 +587,13 @@ Jump straight into building your hackathon project.
 
 ## 🚨 Security & Production Note
 
-The workflows described in this guide are optimized for **rapid prototyping during a hackathon or testnet development**.
+The workflows described in this guide are optimized for **rapid prototyping
+during a hackathon or testnet development**.
 
-*   **Key Storage:** Storing mnemonics in `config.json` and using the `--keyring-backend test` flag is convenient but insecure for production.
-*   **Mainnet Deployment:** When moving to Mainnet, you must use a secure keyring (like your OS keychain or a hardware wallet) and never share or store your mnemonics in plaintext.
-*   **Account Roles:** For production rollups, it is best practice to use separate accounts for the Gas Station, Validator, and Developer roles.
+- **Key Storage:** Storing mnemonics in `config.json` and using the
+  `--keyring-backend test` flag is convenient but insecure for production.
+- **Mainnet Deployment:** When moving to Mainnet, you must use a secure keyring
+  (like your OS keychain or a hardware wallet) and never share or store your
+  mnemonics in plaintext.
+- **Account Roles:** For production rollups, it is best practice to use separate
+  accounts for the Gas Station, Validator, and Developer roles.
