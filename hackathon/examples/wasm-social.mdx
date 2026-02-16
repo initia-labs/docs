@@ -2,35 +2,48 @@
 title: 'Wasm Tutorial: MemoBoard'
 ---
 
-**Prerequisite:** Before starting this tutorial, you should have completed the **[Your First Appchain: A Step-by-Step Guide](../hackathon-landing)** and have a Wasm-compatible appchain running locally.
+**Prerequisite:** Before starting this tutorial, you should have completed the
+**[Your First Appchain: A Step-by-Step Guide](../hackathon-landing)** and have a
+Wasm-compatible appchain running locally.
 
 ---
 
-This tutorial will guide you through building a lightning-fast on-chain guestbook called **MemoBoard**. Users can post short public messages (memos), and anyone can read the board.
+This tutorial will guide you through building a lightning-fast on-chain
+guestbook called **MemoBoard**. Users can post short public messages (memos),
+and anyone can read the board.
 
 By the end of this tutorial, you will have:
-- Generated and published a Rust smart contract for the guestbook.
+
+- Generated and verified a Rust smart contract for the guestbook.
+- Deployed the contract to your live appchain.
 - Scaffolded and connected a React frontend.
-- Tested the messaging functionality.
+- Verified the on-chain functionality.
 
 ---
 
-## Step 1: Create the Board's Smart Contract
+## Step 1: Create and Verify the Smart Contract
 
-Instruct your AI assistant to create the Rust (Wasm) contract using the `initia-appchain-dev` skill.
+Instruct your AI assistant to create the Rust (Wasm) contract using the
+`initia-appchain-dev` skill. Your assistant will generate the contract and
+automatically run unit tests to ensure the logic is sound.
 
 **Example Prompt:**
+
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Rust smart contract for our MemoBoard. The contract should:
+Using the `initia-appchain-dev` skill, please create a Rust smart contract for our MemoBoard in my current directory. The contract should:
 - Allow users to post a message (string).
 - Store a list of all messages with the sender's address.
 - Include a function to query all messages on the board.
+Please also create and run a unit test to verify these features.
 ```
 
-<Accordion title="Manual Approach: The Rust Contract">
-If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate using the standard Wasm contract patterns.
+Your assistant will generate the `memoboard` project and confirm that the Rust
+tests pass.
 
-```rust
+<Accordion title="Manual Approach: The Rust Contract">
+If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. Save your Rust project in your current directory.
+
+```rust wrap
 use cosmwasm_std::{entry_point, DepsMut, Env, MessageInfo, Response, StdResult};
 use cw_storage_plus::Item;
 use serde::{Deserialize, Serialize};
@@ -61,41 +74,93 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
     }
 }
 ```
+
 </Accordion>
 
 ---
 
-## Step 2: Build and Play with the Board
+## Step 2: Deploy to your Appchain
 
-Now, build and publish the contract to your appchain using the gas station account.
+Now that the logic is verified, build and publish the contract to your appchain
+using the gas station account.
 
-**1. Build and Publish:**
+**Prompt:**
+
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract located in my current directory to my appchain using my gas station account.
 ```
 
-**2. Interact with the Board:**
+<Accordion title="Manual Approach: Deploy via CLI">
+**1. Store the Code:**
+```bash wrap
+minitiad tx wasm store ./target/wasm32-unknown-unknown/release/memoboard.wasm \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+**2. Instantiate the Contract:**
+
+```bash wrap
+minitiad tx wasm instantiate <code-id> '{}' \
+  --label "memoboard" \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
+  --no-admin --yes
+```
+
+</Accordion>
+
+---
+
+## Step 3: Fund your Browser Wallet
+
+Ensure your personal wallet has tokens to pay for the transaction to post a
+memo.
+
+**Prompt:**
+
 ```terminal wrap
-Using my gas station account on my appchain, please do the following:
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+```
+
+---
+
+## Step 4: Create a Frontend
+
+Let's create a UI to display and post messages.
+
+**1. Scaffold the Frontend:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named memoboard-frontend in my current directory. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
+```
+
+**2. Connect to Appchain:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, modify the Board.jsx component in my current directory to connect to our MemoBoard contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
+```
+
+---
+
+## Step 5: On-Chain Verification
+
+Finally, ask your AI assistant to interact with your **live** appchain to prove
+the deployed contract works as expected.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, I want to verify our live MemoBoard contract. Using my gas station account on my appchain, please:
 1. Post a memo: "Hello from Initia!"
 2. Query the board to see all messages.
 ```
 
-<Accordion title="Manual Approach: Build and Interact with Wasm">
-Here are the equivalent `minitiad` commands to manage your Rust (Wasm) contract.
-
-**1. Build and Publish:**
-```bash wrap
-# Replace `your-chain-id` with your appchain ID
-minitiad wasm deploy \
-  --from gas-station \
-  --keyring-backend test \
-  --chain-id your-chain-id \
-  --path ./target/wasm32-unknown-unknown/release/memoboard.wasm \
-  --gas auto --gas-adjustment 1.4 --yes
-```
-
-**2. Interact (Post Memo):**
+<Accordion title="Manual Approach: On-Chain Interaction">
+**Post Memo:**
 ```bash wrap
 minitiad tx wasm execute <contract-address> '{"post_memo":{"content":"Hello!"}}' \
   --from gas-station \
@@ -107,75 +172,9 @@ minitiad tx wasm execute <contract-address> '{"post_memo":{"content":"Hello!"}}'
 
 ---
 
-## Step 3: Fund your Browser Wallet
+## Next Steps
 
-Ensure your personal wallet has tokens to pay for the transaction to post a memo.
+Now that you've mastered a Wasm application, you're ready to build your own
+idea!
 
-**Prompt:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
-```
-
----
-
-## Step 4: Create a Frontend
-
-Let's create a UI to display and post messages.
-
-**1. Scaffold the Frontend:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a React application for our MemoBoard using Vite. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
-```
-
-**2. Connect to Appchain:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, modify Board.jsx to connect to our MemoBoard contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
-```
-
-<Accordion title="Manual Approach: Interwoven Kit for Wasm">
-For Wasm contracts, you use the `MsgExecute` message from the Wasm module.
-
-**Example snippet:**
-```javascript wrap
-const messages = [
-  {
-    typeUrl: "/initia.wasm.v1.MsgExecute",
-    value: MsgExecute.fromPartial({
-      sender: initiaAddress,
-      contractAddress: CONTRACT_ADDRESS,
-      msg: Buffer.from(JSON.stringify({ post_memo: { content: "Hello!" } })),
-      funds: [],
-    }),
-  },
-];
-```
-</Accordion>
-
----
-
-## Step 5: Testing
-
-Verify that your messages are being recorded on-chain.
-
-**Example Prompt:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our MemoBoard contract. Please:
-1. Inspect the MemoBoard contract to find the execution entry points.
-2. Generate a test script that posts 3 different messages from the gas station account.
-3. Query the contract state to prove all 3 messages are stored correctly.
-```
-
-<Accordion title="Manual Approach: Test Script">
-```bash wrap
-#!/bin/bash
-# 1. Post Memo
-minitiad tx wasm execute $ADDR '{"post_memo":{"content":"Message 1"}}' --from gas-station --yes
-# 2. Query Board
-minitiad query wasm contract-state smart $ADDR '{"get_messages":{}}'
-```
-</Accordion>
-
----
-
-## Conclusion
-You've built an on-chain guestbook using Rust and Wasm! This tutorial highlights the performance and flexibility of using Wasm for social and data-driven applications on Initia.
+**[→ Go to Builder Guide](../builder-guide)**

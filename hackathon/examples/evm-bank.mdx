@@ -2,36 +2,49 @@
 title: 'EVM Tutorial: MiniBank'
 ---
 
-**Prerequisite:** Before starting this tutorial, you should have completed the **[Your First Appchain: A Step-by-Step Guide](../hackathon-landing)** and have an EVM-compatible appchain running locally.
+**Prerequisite:** Before starting this tutorial, you should have completed the
+**[Your First Appchain: A Step-by-Step Guide](../hackathon-landing)** and have
+an EVM-compatible appchain running locally.
 
 ---
 
-This tutorial will guide you through building a simple digital Piggy Bank on your EVM appchain. Users can deposit tokens, withdraw them, and check their savings balance.
+This tutorial will guide you through building a simple digital piggy bank on
+your EVM appchain. Users can deposit tokens, withdraw them, and check their
+savings balance.
 
 By the end of this tutorial, you will have:
-- Generated and published a Solidity smart contract for the bank logic.
+
+- Generated and verified a Solidity smart contract for the bank logic.
+- Deployed the contract to your live appchain.
 - Scaffolded and connected a React frontend.
-- Tested the bank's functionality.
+- Verified the on-chain functionality.
 
 ---
 
-## Step 1: Create the Bank's Smart Contract
+## Step 1: Create and Verify the Smart Contract
 
-Instruct your AI assistant to create the Solidity contract using the `initia-appchain-dev` skill.
+Instruct your AI assistant to create the Solidity contract using the
+`initia-appchain-dev` skill. Your assistant will generate the contract and
+automatically run unit tests to ensure the logic is sound.
 
 **Example Prompt:**
+
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Solidity smart contract for our MiniBank. The contract should:
+Using the `initia-appchain-dev` skill, please create a Solidity smart contract for our MiniBank in my current directory. The contract should:
 - Allow users to deposit native tokens.
 - Allow users to withdraw their own deposited tokens.
 - Keep track of each user's total savings.
 - Include a function to view the caller's current balance.
+Please also create and run a unit test to verify these features.
 ```
 
-<Accordion title="Manual Approach: The Solidity Contract">
-If you prefer to create the contract manually, here is the Solidity code your assistant would generate.
+Your assistant will generate the `minibank` project and confirm that the tests
+(likely using Foundry or Hardhat) pass successfully.
 
-```solidity
+<Accordion title="Manual Approach: The Solidity Contract">
+If you prefer to create the contract manually, here is the Solidity code your assistant would generate. Save this as MiniBank.sol in your current directory.
+
+```solidity wrap
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
@@ -54,48 +67,84 @@ contract MiniBank {
         emit Withdrawal(msg.sender, amount);
     }
 
-    function getBalance(address user) public view returns (uint256) {
-        return balances[user];
+    function getBalance() public view returns (uint256) {
+        return balances[msg.sender];
     }
 }
 ```
+
 </Accordion>
 
 ---
 
-## Step 2: Build and Play the Bank
+## Step 2: Deploy to your Appchain
 
-Now, build and publish the contract to your appchain using the gas station account.
+Now that the logic is verified, build and publish the contract to your live
+appchain using the gas station account.
 
-**1. Build and Publish:**
+**Prompt:**
+
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract located in my current directory to my appchain using my gas station account.
 ```
 
-**2. Interact with the Bank:**
+<Accordion title="Manual Approach: Deploy via CLI">
+  ```bash wrap
+  # Replace `your-chain-id` with your appchain ID minitiad evm
+  deploy \ --from gas-station \ --keyring-backend test \ --chain-id
+  your-chain-id \ --path ./MiniBank.sol \ --gas auto --gas-adjustment 1.4 --yes
+  ```
+</Accordion>
+
+---
+
+## Step 3: Fund your Browser Wallet
+
+Ensure your personal wallet has tokens to interact with the bank.
+
+**Prompt:**
+
 ```terminal wrap
-Using my gas station account on my appchain, please do the following:
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+```
+
+---
+
+## Step 4: Create a Frontend
+
+Let's create a simple UI to interact with our bank.
+
+**1. Scaffold the Frontend:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named minibank-frontend in my current directory. Create a component named Bank.jsx with Deposit and Withdraw buttons and an input field for the amount.
+```
+
+**2. Connect to Appchain:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, modify the Bank.jsx component in my current directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
+```
+
+---
+
+## Step 5: On-Chain Verification
+
+Finally, ask your AI assistant to interact with your **live** appchain to prove
+the deployed contract works as expected.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contract. Using my gas station account on my appchain, please:
 1. Deposit 5 tokens.
 2. Check my balance.
 3. Withdraw 2 tokens.
 4. Check my balance again.
 ```
 
-<Accordion title="Manual Approach: Build and Interact with Solidity">
-Here are the equivalent `minitiad` commands to manage your Solidity contract.
-
-**1. Build and Publish:**
-```bash wrap
-# Replace `your-chain-id` with your appchain ID
-minitiad evm deploy \
-  --from gas-station \
-  --keyring-backend test \
-  --chain-id your-chain-id \
-  --path ./MiniBank.sol \
-  --gas auto --gas-adjustment 1.4 --yes
-```
-
-**2. Interact (Deposit):**
+<Accordion title="Manual Approach: On-Chain Interaction">
+**Interact (Deposit):**
 ```bash wrap
 minitiad tx evm call <contract-address> "deposit()" \
   --from gas-station \
@@ -108,77 +157,9 @@ minitiad tx evm call <contract-address> "deposit()" \
 
 ---
 
-## Step 3: Fund your Browser Wallet
+## Next Steps
 
-Before using the frontend, ensure your personal wallet has tokens.
+Now that you've mastered an EVM application, you're ready to build your own
+idea!
 
-**Prompt:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
-```
-
----
-
-## Step 4: Create a Frontend
-
-Let's create a simple UI to interact with our bank.
-
-**1. Scaffold the Frontend:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a React application for our MiniBank using Vite. Create a component named Bank.jsx with Deposit and Withdraw buttons and an input field for the amount.
-```
-
-**2. Connect to Appchain:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, modify Bank.jsx to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
-```
-
-<Accordion title="Manual Approach: Interwoven Kit for EVM">
-When using Interwoven Kit with EVM, you use standard Ethereum providers or the Initia `MsgExecute` for EVM.
-
-**Example snippet for an EVM call:**
-```javascript wrap
-const messages = [
-  {
-    typeUrl: "/initia.evm.v1.MsgExecute",
-    value: MsgExecute.fromPartial({
-      sender: initiaAddress,
-      contractAddress: CONTRACT_ADDRESS,
-      data: encodedData, // ABI encoded function call
-      value: "1000000",
-    }),
-  },
-];
-```
-</Accordion>
-
----
-
-## Step 5: Testing
-
-Verify that the logic is working as expected.
-
-**Example Prompt:**
-```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our MiniBank contract. Please:
-1. Inspect the MiniBank contract to find the function signatures.
-2. Generate a test script that deposits 10 tokens, withdraws 5, and verifies the final balance is 5.
-3. Run the script and show me the output.
-```
-
-<Accordion title="Manual Approach: Test Script">
-```bash wrap
-#!/bin/bash
-# 1. Deposit
-minitiad tx evm call $ADDR "deposit()" --from gas-station --value 10 --yes
-# 2. Withdraw
-minitiad tx evm call $ADDR "withdraw(uint256)" --args "[5]" --from gas-station --yes
-# 3. Query Balance
-minitiad query evm call $ADDR "getBalance(address)" --args "[\"$SENDER\"]"
-```
-</Accordion>
-
----
-
-## Conclusion
-You've successfully built an EVM-powered digital bank! This demonstrates how easily you can deploy standard Solidity logic onto an Initia appchain while leveraging Interwoven features for a seamless user experience.
+**[→ Go to Builder Guide](../builder-guide)**
