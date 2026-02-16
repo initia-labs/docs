@@ -536,6 +536,21 @@
             "pages": ["/resources/security/audits"]
           }
         ]
+      },
+      {
+        "tab": "Hackathon",
+        "hidden": true,
+        "groups": [
+          {
+            "group": "Hackathon 2026",
+            "pages": [
+              "hackathon/hackathon-landing",
+              "hackathon/builder-guide",
+              "hackathon/example-appchain-tutorial",
+              "hackathon/submission-requirements"
+            ]
+          }
+        ]
       }
     ],
     "global": {

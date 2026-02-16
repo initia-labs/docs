@@ -1,0 +1,541 @@
+---
+title: 'Example Tutorial: BlockForge Game'
+---
+
+**Prerequisite:** Before starting this tutorial, you should have completed the **[Your First Appchain: A Step-by-Step Guide](./hackathon-landing.mdx)** and have your own appchain running locally.
+
+---
+
+This tutorial will guide you through building a complete, functioning appchain project on top of your existing appchain: **BlockForge**, a tiny on-chain game engine where players can mint and craft items.
+
+By the end of this tutorial, you will have instructed your AI assistant to:
+
+*   Generate and publish a Move smart contract for the game's logic on your appchain.
+*   Scaffold and connect a React frontend for players to interact with the game.
+*   Test the game's functionality.
+
+---
+
+## Step 1: Create the Game's Smart Contract
+
+Instead of writing the code yourself, instruct your assistant to do it for you using the `initia-appchain-dev` skill. We will build this on your existing appchain.
+
+**Example Prompt:**
+
+```
+Using the `initia-appchain-dev` skill, please create a Move module for our BlockForge game. The module should be named `items` inside a `blockforge` project. The game has the following rules:
+- Players can mint basic items called "Shards".
+- Players can craft "Relics" by burning 2 "Shards".
+- Players should have an inventory to store their items.
+- I need a way to view a player's inventory.
+```
+Your assistant will now generate the necessary `Move.toml` file and the `items.move` module with the complete game logic.
+
+<Accordion title="Manual Approach: Create the Move Module and Project">
+If you prefer to create the Move module and project manually, follow these steps. This is what your AI assistant would generate for you.
+
+First, create a new Move package named `blockforge`:
+
+```bash wrap
+minitiad move new blockforge
+```
+
+To ensure fast builds and access to the latest Initia features, we recommend setting up local dependencies by cloning the `movevm` repository into a `deps` folder:
+
+```bash wrap
+mkdir -p blockforge/deps && cd blockforge/deps
+git clone --depth 1 https://github.com/initia-labs/movevm.git
+cd ../..
+```
+
+Now, update the `Move.toml` file to use these local dependencies and enable Move 2.1 features. Replace the content of `blockforge/Move.toml` with the following:
+
+```toml
+[package]
+name = "blockforge"
+version = "0.0.1"
+edition = "2024.alpha"
+
+[dependencies]
+InitiaStdlib = { local = "deps/movevm/precompile/modules/initia_stdlib" }
+MoveStdlib = { local = "deps/movevm/precompile/modules/move_stdlib" }
+
+[addresses]
+blockforge = "0x2" # Use a placeholder hex address for local builds
+std = "0x1"
+```
+
+Next, delete the default `blockforge.move` file and create a new file named `blockforge/sources/items.move` with the following content. This module implements the game logic for minting shards and crafting relics using standard Move 2.1 patterns.
+
+```move
+module blockforge::items {
+    use std::signer;
+
+    /// Error codes
+    const E_INSUFFICIENT_SHARDS: u64 = 1;
+
+    struct Inventory has key {
+        shards: u64,
+        relics: u64,
+    }
+
+    /// Mint basic items called "Shards". 
+    /// Automatically initializes inventory if it doesn't exist.
+    public entry fun mint_shard(account: &signer) acquires Inventory {
+        let addr = signer::address_of(account);
+        if (!exists<Inventory>(addr)) {
+            move_to(account, Inventory { shards: 1, relics: 0 });
+        } else {
+            let inventory = borrow_global_mut<Inventory>(addr);
+            inventory.shards = inventory.shards + 1;
+        }
+    }
+
+    /// Craft a "Relic" by burning 2 "Shards"
+    public entry fun craft_relic(account: &signer) acquires Inventory {
+        let addr = signer::address_of(account);
+        assert!(exists<Inventory>(addr), E_INSUFFICIENT_SHARDS);
+        
+        let inventory = borrow_global_mut<Inventory>(addr);
+        assert!(inventory.shards >= 2, E_INSUFFICIENT_SHARDS);
+        
+        inventory.shards = inventory.shards - 2;
+        inventory.relics = inventory.relics + 1;
+    }
+
+    #[view]
+    /// View a player's inventory
+    public fun view_inventory(addr: address): (u64, u64) acquires Inventory {
+        if (exists<Inventory>(addr)) {
+            let inventory = borrow_global<Inventory>(addr);
+            (inventory.shards, inventory.relics)
+        } else {
+            (0, 0)
+        }
+    }
+}
+```
+
+Once the files are created, you can verify everything is correct by building the project. **Note:** You may see a warning about an "unknown field name" for `edition`. This is normal for Move 2.1 projects and can be safely ignored.
+
+```bash wrap
+minitiad move build --language-version=2.1 --named-addresses blockforge=0x2
+```
+If you see `BUILDING blockforge`, then **BlockForge was built successfully! 🛠️**
+</Accordion>
+
+---
+
+## Step 2: Build and Play the Game
+
+Now, let's build and publish the smart contract to your appchain, and then play the game by interacting with it. We will use the gas station account that was created and funded during `weave init`.
+
+**1. Build and Publish:**
+```terminal wrap
+Using the `initia-appchain-dev` skill, please build and publish the `blockforge` Move module to my appchain using my gas station account.
+```
+
+**2. Play the Game:**
+```terminal wrap
+Using the `initia-appchain-dev` skill and my gas station account on my appchain, please do the following:
+1. Mint 3 shards.
+2. Check my inventory.
+3. Craft a relic.
+4. Check my inventory again.
+```
+Your assistant will execute the transactions and show you the results. You've just built and played an on-chain game!
+
+<Accordion title="Manual Approach: Build and Interact with the Move Module">
+
+Here are the equivalent `minitiad` commands to build the module, publish it, and interact with it on your appchain.
+
+
+**1. Build and Publish:**
+
+Before publishing, you must ensure the address in the compiled module matches your signing account's hex address. The easiest way to do this without manually editing `Move.toml` is to use the `--named-addresses` flag.
+
+<Tip>
+  **Find your Chain ID:** If you aren't sure what your appchain's ID is, run `minitiad status | jq .node_info.network`.
+</Tip>
+
+First, get your gas station's hex address:
+
+```bash wrap
+# Get the hex address
+minitiad keys show gas-station -a --keyring-backend test | xargs minitiad keys parse
+```
+
+<Note>
+  **Compatibility Error:** If you see `BACKWARD_INCOMPATIBLE_MODULE_UPDATE`, it means you've already deployed a different version of this module to the same account. In this case, either create a new account or revert your changes to be compatible.
+</Note>
+
+Then, build and publish the compiled module to your appchain, substituting `0xYOUR_HEX_ADDRESS` with the value from the previous step:
+
+```bash wrap
+cd blockforge
+
+# Replace `your-chain-id` with your appchain's ID
+minitiad move deploy \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
+  --named-addresses blockforge=0xYOUR_HEX_ADDRESS \
+  --gas auto --gas-adjustment 1.4 --yes \
+  --build --force
+```
+
+**2. Play the Game (Interact with the Contract):**
+
+Now, let's call the functions on the published module.
+
+**Mint 3 shards:**
+```bash wrap
+# Note: Since mint_shard is now 1 at a time, we run it 3 times or use a loop
+for i in {1..3}; do
+  minitiad tx move execute <module-address> items mint_shard \
+    --from gas-station \
+    --keyring-backend test \
+    --chain-id your-chain-id \
+    --gas auto --gas-adjustment 1.4 --yes
+  sleep 2
+done
+```
+
+**Check your inventory (View function):**
+You can use a `query` command to call the `view_inventory` function. Remember to prefix the address argument with `address:`.
+
+```bash wrap
+# Get your account address
+GAS_STATION_ADDRESS=$(minitiad keys show gas-station -a --keyring-backend test)
+
+minitiad query move view <module-address> items view_inventory \
+    --args "[\"address:${GAS_STATION_ADDRESS}\"]"
+```
+
+**Craft a relic:**
+This requires burning 2 shards.
+
+```bash wrap
+minitiad tx move execute <module-address> items craft_relic \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+**Check your inventory again:**
+Run the same query command as before to see the updated inventory.
+
+```bash wrap
+minitiad query move view <module-address> items get_inventory \
+    --args "[\"address:${GAS_STATION_ADDRESS}\"]"
+```
+
+These commands allow you to build and interact with your smart contract directly, giving you a deeper understanding of the development process.
+
+</Accordion>
+
+
+---
+
+## Step 3: Fund your Browser Wallet
+
+Before you can interact with the game through a frontend, your browser wallet (like **Keplr** or **Leap**) needs tokens to pay for transaction fees. Since we only funded the **gas station** during genesis, we need to send some tokens from the gas station to your personal address.
+
+**1. Get your Wallet Address:**
+Open your browser wallet and copy your address (it starts with `init1...`).
+
+**2. Send Tokens from Gas Station:**
+The easiest way is to ask your assistant to fund you on both layers!
+
+**Prompt:**
+```terminal wrap
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+```
+
+Your assistant will use the gas station account to send both L1 tokens (INIT) and your rollup's native tokens. Once the transactions are confirmed, you're ready to build the UI!
+
+---
+
+## Step 4: Create a Frontend for the Game
+
+A game needs a user interface. Let's create one using the `initia-appchain-dev` skill.
+
+**1. Scaffold the Frontend:**
+```
+Using the `initia-appchain-dev` skill, please scaffold a new React application for our BlockForge game using Vite. Then, create a simple component named `Game.jsx`. This component should have two buttons: "Mint Shard" and "Craft Relic". For now, make the buttons log a message to the console when clicked. Finally, add the `Game` component to the main `App.jsx` file.
+```
+
+**2. Connect the Frontend to the Appchain:**
+```
+Now, using the `initia-appchain-dev`, please modify the `Game.jsx` component to interact with our deployed "blockforge" smart contract on my appchain.
+
+The "Mint Shard" button should call the `mint_shard` function, and the "Craft Relic" button should call the `craft_relic` function. Also, please display the player's current inventory of shards and relics. Finally, add a button to enable/disable the native auto-signing feature for a smoother game experience.
+```
+Your assistant will use the `@initia/interwoven-kit` to connect your new frontend to your appchain and its smart contract.
+
+<Accordion title="Manual Approach: Connect the Frontend with Interwoven Kit">
+
+The **Interwoven Kit** is the most powerful way to connect your frontend to the Initia ecosystem. It provides a unified interface for wallet management and transaction signing across all Initia rollups.
+
+First, install the necessary libraries and polyfills (required for browser compatibility with Initia SDKs):
+
+```bash wrap
+npm install @initia/interwovenkit-react @initia/initia.js @initia/initia.proto @tanstack/react-query @privy-io/react-auth wagmi buffer util
+npm install --save-dev vite-plugin-node-polyfills
+```
+
+Update your `vite.config.js` to include the polyfills:
+
+```javascript
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    nodePolyfills({ protocolImports: true }),
+  ],
+})
+```
+
+Next, set up the polyfills and providers in your main application file.
+
+**`main.jsx`:**
+```jsx
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: {} }
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import "@initia/interwovenkit-react/styles.css";
+import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
+
+// Inject styles for the widget
+injectStyles(InterwovenKitStyles);
+
+const queryClient = new QueryClient();
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+});
+
+// Define your local appchain configuration
+const customChain = {
+  chain_id: 'your-chain-id',
+  chain_name: 'mygame',
+  pretty_name: 'BlockForge Appchain',
+  network_type: 'testnet',
+  bech32_prefix: 'init',
+  apis: {
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }], // Required placeholder
+  },
+  fees: {
+    fee_tokens: [{ denom: 'umin', fixed_min_gas_price: 0.015 }],
+  },
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider 
+          {...TESTNET} 
+          defaultChainId="your-chain-id" 
+          customChain={customChain} 
+          theme="dark"
+        >
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>
+);
+```
+
+Now, update your `Game.jsx` to use the `useInterwovenKit` hook. We use `RESTClient` for queries and `MsgExecute` for transactions.
+
+**`Game.jsx`:**
+```jsx
+import React, { useState, useEffect } from 'react';
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+import { RESTClient, bcs } from '@initia/initia.js';
+import { MsgExecute } from "@initia/initia.proto/initia/move/v1/tx";
+
+const CHAIN_ID = 'your-chain-id';
+const REST_URL = 'http://localhost:1317';
+const MODULE_ADDRESS = '0x00...'; // PASTE YOUR MODULE HEX ADDRESS HERE
+
+function Game() {
+  const { address, initiaAddress, openConnect, requestTxBlock, autoSign } = useInterwovenKit();
+  const [inventory, setInventory] = useState({ shards: 0, relics: 0 });
+  const [loading, setLoading] = useState(false);
+
+  const rest = new RESTClient(REST_URL, { chainID: CHAIN_ID });
+
+  const fetchInventory = async () => {
+    if (!initiaAddress) return;
+    try {
+      // Query the Resource directly for best reliability
+      const structTag = `${MODULE_ADDRESS}::items::Inventory`;
+      const res = await rest.move.resource(initiaAddress, structTag);
+      if (res && res.data) {
+        setInventory({ 
+          shards: parseInt(res.data.shards || 0), 
+          relics: parseInt(res.data.relics || 0) 
+        });
+      }
+    } catch (e) {
+      console.log("Inventory not found (player hasn't minted yet)");
+    }
+  };
+
+  useEffect(() => { fetchInventory(); }, [initiaAddress]);
+
+  const handleAction = async (functionName, args = []) => {
+    if (!initiaAddress) return;
+    setLoading(true);
+    
+    const messages = [
+      {
+        typeUrl: "/initia.move.v1.MsgExecute",
+        value: MsgExecute.fromPartial({
+          sender: initiaAddress,
+          moduleAddress: MODULE_ADDRESS,
+          moduleName: "items",
+          functionName: functionName,
+          args: args,
+          typeArgs: [],
+        }),
+      },
+    ];
+
+    try {
+      await requestTxBlock({ messages, chainId: CHAIN_ID });
+      setTimeout(fetchInventory, 2000);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!address) return <button onClick={openConnect}>Connect Wallet</button>;
+
+  const isAutoSignEnabled = autoSign?.isEnabledByChain[CHAIN_ID];
+
+  return (
+    <div>
+      <h2>BlockForge Game</h2>
+      <p>Address: {initiaAddress}</p>
+      
+      <div>
+        <button onClick={() => isAutoSignEnabled ? autoSign.disable(CHAIN_ID) : autoSign.enable(CHAIN_ID)}>
+          {isAutoSignEnabled ? 'Disable Auto-Sign' : 'Enable Auto-Sign'}
+        </button>
+      </div>
+
+      <div>
+        <h3>Your Inventory</h3>
+        <p>Shards: {inventory.shards} | Relics: {inventory.relics}</p>
+      </div>
+      
+      <button 
+        onClick={() => handleAction('mint_shards', [bcs.u64().serialize(1).toBytes()])}
+        disabled={loading}
+      >
+        Mint Shard
+      </button>
+      
+      <button 
+        onClick={() => handleAction('craft_relic')} 
+        disabled={loading || inventory.shards < 2}
+      >
+        Craft Relic (Costs 2 Shards)
+      </button>
+    </div>
+  );
+}
+
+export default Game;
+```
+
+This guide uses the modern **Interwoven Kit** patterns for the best user experience on Initia.
+
+</Accordion>
+
+---
+
+## Step 5: Testing Your Project
+
+Testing is crucial to ensure your game logic is sound. Instead of writing a test script yourself, instruct your AI assistant to act as your QA team. It will analyze the contract it just wrote and verify the logic.
+
+**Example Prompt:**
+```terminal wrap
+Using the `initia-appchain-dev` skill, I want to verify our BlockForge game. Please:
+1. Inspect the `items.move` module to understand the function names and arguments.
+2. Generate a bash test script that mints 5 shards, crafts 2 relics, and verifies the final inventory balance.
+3. Run the script and show me the output.
+```
+
+<Tip>
+  **AI-Driven QA:** Because your AI assistant generated the code, it is the best tool to test it. It will automatically adjust the test script if it used different function names (like `mint_shards` instead of `mint_shard`) or logic during Step 1.
+</Tip>
+
+<Accordion title="Manual Approach: Create a Test Script">
+If you want to write a manual test script, you can use `minitiad` to automate transactions. **Note:** Ensure the function names and arguments match your specific contract.
+
+```bash wrap
+#!/bin/bash
+set -ex
+
+# --- Configuration ---
+CHAIN_ID="your-chain-id"
+MODULE_ADDRESS="0x00..." # Your module hex address
+GAS_STATION_ADDRESS=$(minitiad keys show gas-station -a --keyring-backend test)
+
+# --- Test Execution ---
+echo "Starting test..."
+
+# 1. Mint 5 Shards
+echo "🛠️ Minting 5 shards..."
+for i in {1..5}; do
+  minitiad tx move execute "$MODULE_ADDRESS" items mint_shard \
+    --from gas-station \
+    --keyring-backend test \
+    --chain-id "$CHAIN_ID" \
+    --gas auto --gas-adjustment 1.4 --yes
+  sleep 2
+done
+
+# 2. Craft 2 Relics (One at a time, each costs 2 shards)
+for i in {1..2}; do
+  echo "⚒️ Crafting relic $i..."
+  minitiad tx move execute "$MODULE_ADDRESS" items craft_relic \
+    --from gas-station \
+    --keyring-backend test \
+    --chain-id "$CHAIN_ID" \
+    --gas auto --gas-adjustment 1.4 --yes
+  sleep 2
+done
+
+# 3. Verify Final Inventory
+minitiad query move view "$MODULE_ADDRESS" items view_inventory \
+    --args "[\"address:${GAS_STATION_ADDRESS}\"]"
+```
+</Accordion>
+
+---
+
+## You've Built a Full-Stack dApp!
+
+Congratulations! You have successfully launched a dedicated appchain, created a smart contract, and built a frontend to interact with it. You've experienced the full development loop, from idea to a working decentralized application. Now you can apply these skills to your own hackathon project.
