@@ -89,11 +89,13 @@ function AutosignStatus({ chainId }: { chainId: string }) {
 
 Map of chain IDs to their expiration dates.
 
-<ParamField path="expiredAtByChain" type="Record<string, Date | null | undefined>">
-  Returns an object mapping chain IDs to expiration dates. Values can be:
-  - `Date`: The date when autosign expires
-  - `null`: Autosign is not enabled for this chain
-  - `undefined`: Autosign is enabled with no expiration (permanent)
+<ParamField
+  path="expiredAtByChain"
+  type="Record<string, Date | null | undefined>"
+>
+  Returns an object mapping chain IDs to expiration dates. Values can be: -
+  `Date`: The date when autosign expires - `null`: Autosign is not enabled for
+  this chain - `undefined`: Autosign is enabled with no expiration (permanent)
 </ParamField>
 
 **Example:**
@@ -139,7 +141,9 @@ function MultiChainStatus() {
         return (
           <div key={chainId}>
             {chainId}: {isEnabled ? 'Enabled' : 'Disabled'}
-            {isEnabled && expiration && ` (until ${expiration.toLocaleString()})`}
+            {isEnabled &&
+              expiration &&
+              ` (until ${expiration.toLocaleString()})`}
           </div>
         )
       })}
