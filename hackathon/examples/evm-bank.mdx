@@ -21,6 +21,18 @@ By the end of this tutorial, you will have:
 
 ---
 
+## 📂 Recommended Project Structure
+
+To keep your workspace organized, we recommend the following structure inside your `my-initia-project` directory:
+
+```text
+my-initia-project/
+├── minibank/           # Solidity smart contract project
+└── minibank-frontend/  # React frontend application
+```
+
+---
+
 ## Step 1: Create and Verify the Smart Contract
 
 Instruct your AI assistant to create the Solidity contract using the
@@ -30,7 +42,7 @@ automatically run unit tests to ensure the logic is sound.
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Solidity smart contract for our MiniBank in my current directory. The contract should:
+Using the `initia-appchain-dev` skill, please create a Solidity smart contract project for our MiniBank in a new directory named `minibank`. The contract should:
 - Allow users to deposit native tokens.
 - Allow users to withdraw their own deposited tokens.
 - Keep track of each user's total savings.
@@ -41,34 +53,97 @@ Please also create and run a unit test to verify these features.
 Your assistant will generate the `minibank` project and confirm that the tests
 (likely using Foundry or Hardhat) pass successfully.
 
-<Accordion title="Manual Approach: The Solidity Contract">
-If you prefer to create the contract manually, here is the Solidity code your assistant would generate. Save this as MiniBank.sol in your current directory.
+<Accordion title="Manual Approach: Unit Testing with Foundry">
+To verify your contract's logic, create a test file named `MiniBank.t.sol` in the `test` directory.
+
+> **Pro Tip**: `testFail` is deprecated in newer versions of Foundry. Use `vm.expectRevert()` for failure testing.
 
 ```solidity wrap
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
+
+import "forge-std/Test.sol";
+import "../src/MiniBank.sol";
+
+contract MiniBankTest is Test {
+    MiniBank public bank;
+    address public user = address(0x123);
+
+    function setUp() public {
+        bank = new MiniBank();
+        vm.deal(user, 10 ether);
+    }
+
+    function testDeposit() public {
+        vm.prank(user);
+        bank.deposit{value: 1 ether}();
+        assertEq(bank.getBalanceOf(user), 1 ether);
+    }
+
+    function testWithdraw() public {
+        vm.startPrank(user);
+        bank.deposit{value: 2 ether}();
+        bank.withdraw(1 ether);
+        assertEq(bank.getBalanceOf(user), 1 ether);
+        vm.stopPrank();
+    }
+
+    function testWithdrawInsufficientBalance() public {
+        vm.prank(user);
+        bank.deposit{value: 1 ether}();
+        
+        vm.prank(user);
+        vm.expectRevert("Insufficient balance");
+        bank.withdraw(2 ether);
+    }
+}
+```
+
+Run your tests:
+```bash wrap
+forge test
+```
+</Accordion>
+
+<Accordion title="Manual Approach: The Solidity Contract">
+If you prefer to create the contract manually, here is the Solidity code your assistant would generate. Save this as MiniBank.sol in your `minibank` directory.
+
+```solidity wrap
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
 contract MiniBank {
     mapping(address => uint256) private balances;
 
-    event Deposit(address indexed user, uint256 amount);
-    event Withdrawal(address indexed user, uint256 amount);
+    event Deposited(address indexed user, uint256 amount);
+    event Withdrawn(address indexed user, uint256 amount);
 
     function deposit() public payable {
         require(msg.value > 0, "Cannot deposit 0");
         balances[msg.sender] += msg.value;
-        emit Deposit(msg.sender, msg.value);
+        emit Deposited(msg.sender, msg.value);
     }
 
     function withdraw(uint256 amount) public {
+        require(amount > 0, "Withdrawal amount must be greater than zero");
         require(balances[msg.sender] >= amount, "Insufficient balance");
+
         balances[msg.sender] -= amount;
-        payable(msg.sender).transfer(amount);
-        emit Withdrawal(msg.sender, amount);
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "Transfer failed");
+
+        emit Withdrawn(msg.sender, amount);
     }
 
     function getBalance() public view returns (uint256) {
+        // NOTE: This returns the balance for the CALLER (msg.sender).
+        // In tests or frontend calls, ensure the correct account is the caller.
         return balances[msg.sender];
+    }
+
+    function getBalanceOf(address user) public view returns (uint256) {
+        // Helper to check the balance of any user without needing a 'from' address.
+        return balances[user];
     }
 }
 ```
@@ -85,14 +160,46 @@ appchain using the gas station account.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract located in my current directory to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract located in the `minibank` directory to my appchain using my gas station account.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
+  First, compile your contract and extract the hex bytecode:
   ```bash wrap
-  # Replace `your-chain-id` with your appchain ID minitiad evm
-  deploy \ --from gas-station \ --keyring-backend test \ --chain-id
-  your-chain-id \ --path ./MiniBank.sol \ --gas auto --gas-adjustment 1.4 --yes
+  # Navigate to the contract directory
+  cd minibank
+
+  # Compile with Foundry
+  forge build
+
+  # Extract bytecode (requires jq)
+  jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | sed 's/^0x//' | tr -d '\n' > minibank.bin
+  ```
+
+  Then deploy the binary. **Find your Chain ID first** if you don't know it:
+  ```bash wrap
+  # Option 1: Using the skill's health check script (Recommended)
+  bash .agents/skills/initia-appchain-dev/scripts/verify-appchain.sh --gas-station --bots
+
+  # Option 2: Direct CLI query
+  minitiad status 2>&1 | jq -r '.NodeInfo.network'
+  ```
+
+  Now deploy:
+  ```bash wrap
+  # Replace `your-chain-id` with the ID from the command above
+  minitiad tx evm create minibank.bin \
+    --from gas-station \
+    --keyring-backend test \
+    --chain-id your-chain-id \
+    --gas auto --gas-adjustment 1.4 --yes --output json
+  ```
+
+  **Retrieve your contract address:**
+  The output will provide a `txhash`. Wait a few seconds for indexing, then find your contract address:
+  ```bash wrap
+  sleep 5
+  minitiad q tx <your-tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
   ```
 </Accordion>
 
@@ -102,10 +209,14 @@ Using the `initia-appchain-dev` skill, please build and publish the MiniBank Sol
 
 Ensure your personal wallet has tokens to interact with the bank.
 
+**1. Get your EVM Address:** Open your browser wallet (like Keplr or Leap) and copy your Ethereum-style address (it starts with `0x...`).
+
+**2. Send Tokens from Gas Station:** Replace `<YOUR_EVM_ADDRESS>` in the prompt below with the address you just copied.
+
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_EVM_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
 ---
@@ -117,14 +228,387 @@ Let's create a simple UI to interact with our bank.
 **1. Scaffold the Frontend:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named minibank-frontend in my current directory. Create a component named Bank.jsx with Deposit and Withdraw buttons and an input field for the amount.
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `minibank-frontend` in my current directory. Create a component named Bank.jsx with Deposit and Withdraw buttons and an input field for the amount.
 ```
 
 **2. Connect to Appchain:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Bank.jsx component in my current directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
 ```
+
+<Accordion title="Manual Approach: Scaffold and Connect">
+If you prefer to set up the frontend manually, follow these steps:
+
+**1. Create the Project and Install Dependencies:**
+```bash wrap
+npm create vite@latest minibank-frontend -- --template react
+cd minibank-frontend
+npm install
+npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js @initia/initia.proto
+npm install --save-dev vite-plugin-node-polyfills
+npm install buffer util
+```
+
+**2. Create index.html:**
+Create `index.html` in the root of your `minibank-frontend` directory:
+```html wrap
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MiniBank Frontend</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+```
+
+**3. Configure Vite Polyfills:**
+Update `vite.config.js` to include the Node polyfills:
+```javascript wrap
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+      },
+    }),
+  ],
+})
+```
+
+**3. Set up Providers in `main.jsx`:**
+```javascript wrap
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import "@initia/interwovenkit-react/styles.css";
+import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from './App.jsx'
+
+injectStyles(InterwovenKitStyles);
+
+const queryClient = new QueryClient();
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+});
+
+const customChain = {
+  chain_id: "your-chain-id",
+  chain_name: "minibank",
+  pretty_name: "MiniBank Appchain",
+  network_type: "testnet",
+  bech32_prefix: "init",
+  logo_URIs: {
+    png: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png",
+    svg: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg"
+  },
+  apis: {
+    rpc: [{ address: "http://localhost:26657" }],
+    rest: [{ address: "http://localhost:1317" }],
+    indexer: [{ address: "http://localhost:8080" }],
+    "json-rpc": [{ address: "http://localhost:8545" }]
+  },
+  fees: {
+    fee_tokens: [{ 
+      denom: "GAS", 
+      fixed_min_gas_price: 0,
+      low_gas_price: 0,
+      average_gas_price: 0,
+      high_gas_price: 0
+    }],
+  },
+  staking: {
+    staking_tokens: [{ denom: "GAS" }]
+  },
+  metadata: {
+    minitia: { type: "minievm" },
+    is_evm: true
+  }
+};
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider 
+          {...TESTNET}
+          defaultChainId="your-chain-id"
+          customChain={customChain}
+        >
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+**4. Create the `App.jsx` Layout:**
+```javascript wrap
+import React from 'react'
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+import Bank from './Bank';
+
+function App() {
+  const { address, openConnect, openWallet } = useInterwovenKit();
+
+  const containerStyle = {
+    fontFamily: 'system-ui, -apple-system, sans-serif',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f1f5f9',
+    padding: '20px'
+  };
+
+  const cardStyle = {
+    backgroundColor: '#ffffff',
+    borderRadius: '16px',
+    boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+    padding: '40px',
+    width: '100%',
+    maxWidth: '500px',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center'
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#3b82f6',
+    color: 'white',
+    border: 'none',
+    padding: '12px 24px',
+    borderRadius: '8px',
+    fontSize: '16px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    width: '100%'
+  };
+
+  const secondaryButtonStyle = {
+    backgroundColor: '#f1f5f9',
+    border: '1px solid #e2e8f0',
+    color: '#64748b',
+    padding: '12px 24px',
+    borderRadius: '10px',
+    fontSize: '14px',
+    fontWeight: '600',
+    cursor: 'pointer',
+    marginTop: '20px',
+    width: '100%'
+  };
+
+  return (
+    <div style={containerStyle}>
+      <div style={cardStyle}>
+        <h1 style={{ fontSize: '32px', fontWeight: '800', marginBottom: '8px' }}>MiniBank</h1>
+        
+        {!address ? (
+          <>
+            <p style={{ color: '#64748b', marginBottom: '32px' }}>
+              Connect your wallet to manage your savings.
+            </p>
+            <button onClick={openConnect} style={buttonStyle}>Connect Wallet</button>
+          </>
+        ) : (
+          <>
+            <Bank />
+            <button onClick={openWallet} style={secondaryButtonStyle}>Open Wallet</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+export default App
+```
+
+**5. Create the `Bank.jsx` Component:**
+Create `src/Bank.jsx` and add the contract interaction logic. 
+
+> **Pro Tip**: For `view` functions that depend on `msg.sender` (like `getBalance`), you MUST provide a `from` address in your `eth_call` parameters so the appchain knows whose balance to check.
+
+```javascript wrap
+import React, { useState, useEffect } from 'react';
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+import { encodeFunctionData, parseEther, formatEther } from "viem";
+import { AccAddress } from "@initia/initia.js";
+
+const MINI_BANK_ADDRESS = "YOUR_CONTRACT_ADDRESS";
+const MINI_BANK_ABI = [
+  { name: "deposit", type: "function", stateMutability: "payable", inputs: [] },
+  { name: "withdraw", type: "function", inputs: [{ name: "amount", type: "uint256" }] },
+  { name: "getBalance", type: "function", stateMutability: "view", inputs: [], outputs: [{ type: "uint256" }] },
+  { name: "getBalanceOf", type: "function", stateMutability: "view", inputs: [{ name: "user", type: "address" }], outputs: [{ type: "uint256" }] },
+];
+
+const Bank = () => {
+  const [amount, setAmount] = useState('');
+  const [balance, setBalance] = useState('0');
+  const [isPending, setIsPending] = useState(false);
+  const { address, initiaAddress, requestTxBlock } = useInterwovenKit();
+
+  const fetchBalance = async () => {
+    if (!address) return;
+    try {
+      const fromAddress = address.startsWith("0x") ? address : AccAddress.toHex(address);
+      const data = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: "getBalance" });
+      const response = await fetch("http://localhost:8545", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_call",
+          params: [{ from: fromAddress, to: MINI_BANK_ADDRESS, data }, "latest"],
+          id: 1,
+        }),
+      });
+      const result = await response.json();
+      if (result.result && result.result !== "0x") {
+        setBalance(formatEther(BigInt(result.result)));
+      }
+    } catch (error) {
+      console.error("Error fetching balance:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBalance();
+    const interval = setInterval(fetchBalance, 10000);
+    return () => clearInterval(interval);
+  }, [address]);
+
+  const handleDeposit = async () => {
+    if (!amount || !initiaAddress) return;
+    const data = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: "deposit" });
+    setIsPending(true);
+    try {
+      await requestTxBlock({
+        chainId: "your-chain-id",
+        messages: [{
+          typeUrl: "/minievm.evm.v1.MsgCall",
+          value: { 
+            sender: initiaAddress, 
+            contractAddr: MINI_BANK_ADDRESS, 
+            input: data, 
+            value: parseEther(amount).toString(),
+            accessList: [],
+          },
+        }],
+        onSuccess: () => {
+          alert("Deposit successful!");
+          setAmount('');
+          fetchBalance();
+        },
+        onError: () => alert("Transaction failed or was cancelled.")
+      });
+    } catch (error) {
+      console.error("Deposit error:", error);
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    if (!amount || !initiaAddress) return;
+    const data = encodeFunctionData({
+      abi: MINI_BANK_ABI,
+      functionName: "withdraw",
+      args: [parseEther(amount)],
+    });
+    setIsPending(true);
+    try {
+      await requestTxBlock({
+        chainId: "your-chain-id",
+        messages: [{
+          typeUrl: "/minievm.evm.v1.MsgCall",
+          value: { 
+            sender: initiaAddress, 
+            contractAddr: MINI_BANK_ADDRESS, 
+            input: data, 
+            value: "0",
+            accessList: [],
+          },
+        }],
+        onSuccess: () => {
+          alert("Withdrawal successful!");
+          setAmount('');
+          fetchBalance();
+        },
+        onError: () => alert("Transaction failed or was cancelled.")
+      });
+    } catch (error) {
+      console.error("Withdraw error:", error);
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  const balanceContainerStyle = { backgroundColor: '#f1f5f9', padding: '30px', borderRadius: '16px', marginBottom: '30px', border: '1px solid #e2e8f0' };
+  const balanceValueStyle = { fontSize: '42px', fontWeight: '800', color: '#2563eb', margin: '10px 0', fontFamily: 'monospace' };
+  const inputStyle = { width: '100%', padding: '14px', marginBottom: '20px', borderRadius: '10px', border: '2px solid #e2e8f0', fontSize: '16px', boxSizing: 'border-box' };
+  const buttonContainerStyle = { display: 'flex', gap: '15px' };
+  const actionButtonStyle = { flex: 1, padding: '14px', borderRadius: '10px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer', color: 'white' };
+
+  return (
+    <div style={{ width: '100%', marginTop: '20px' }}>
+      <div style={balanceContainerStyle}>
+        <div style={{ fontSize: '14px', color: '#64748b', textTransform: 'uppercase' }}>Your Savings Balance</div>
+        <div style={balanceValueStyle}>{balance} GAS</div>
+      </div>
+      <input
+        type="number"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder="0.00"
+        style={inputStyle}
+      />
+      <div style={buttonContainerStyle}>
+        <button 
+          onClick={handleDeposit} 
+          style={{ ...actionButtonStyle, backgroundColor: '#10b981', opacity: isPending ? 0.5 : 1 }}
+          disabled={!address || isPending}
+        >
+          {isPending ? "Pending..." : "Deposit"}
+        </button>
+        <button 
+          onClick={handleWithdraw} 
+          style={{ ...actionButtonStyle, backgroundColor: '#ef4444', opacity: isPending ? 0.5 : 1 }}
+          disabled={!address || isPending}
+        >
+          {isPending ? "Pending..." : "Withdraw"}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default Bank;
+```
+
+</Accordion>
 
 ---
 
@@ -137,20 +621,53 @@ the deployed contract works as expected.
 
 ```terminal wrap
 Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contract. Using my gas station account on my appchain, please:
-1. Deposit 5 tokens.
+1. Deposit 1 token.
 2. Check my balance.
-3. Withdraw 2 tokens.
+3. Withdraw 0.5 tokens.
 4. Check my balance again.
 ```
 
 <Accordion title="Manual Approach: On-Chain Interaction">
-**Interact (Deposit):**
+
+**1. Find your hex address:**
+To use `eth_call`, you need your account's hex address. Run the following:
 ```bash wrap
-minitiad tx evm call <contract-address> "deposit()" \
+# Replace <scripts-path> with the path to the skill's scripts directory
+minitiad keys show gas-station -a --keyring-backend test | xargs -I {} python3 <scripts-path>/to_hex.py {}
+```
+
+**2. Interact (Deposit 1 token):**
+We'll use `cast sig` to generate the function selector and `10^18` units for "1 token".
+```bash wrap
+SIG=$(cast sig "deposit()")
+minitiad tx evm call <contract-address> $SIG \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
-  --value 5000000 \
+  --value 1000000000000000000 \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+**3. Query Balance:**
+Querying a function that uses `msg.sender` requires a `from` address in the JSON-RPC call.
+```bash wrap
+SIG=$(cast sig "getBalance()")
+# Replace <your-hex-address> with the address from step 1
+HEX_RESULT=$(curl -s -X POST -H "Content-Type: application/json" \
+  --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"from":"<your-hex-address>","to":"<contract-address>","data":"'$SIG'"},"latest"],"id":1}' \
+  http://localhost:8545 | jq -r '.result')
+
+# Convert hex to decimal tokens
+cast --from-wei $HEX_RESULT
+```
+
+**4. Withdraw (0.5 tokens):**
+```bash wrap
+DATA=$(cast calldata "withdraw(uint256)" 500000000000000000)
+minitiad tx evm call <contract-address> $DATA \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
   --gas auto --gas-adjustment 1.4 --yes
 ```
 </Accordion>

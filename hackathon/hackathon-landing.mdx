@@ -180,6 +180,12 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Launch a new rollup`.
 
+    <Warning>
+      **Switching VMs?** If you are switching from one Virtual Machine to another (e.g., from Wasm to Move), you **must** reinstall the correct `minitiad` binary as described in [**Step 4.2**](#4-2-install-your-appchain-vm-[terminal]). The new installation will override your previous one.
+
+      If you have existing rollup data, you will be prompted to delete it. Type `confirm` to proceed with the new launch.
+    </Warning>
+
     ### 4. Select L1 Network
     **Prompt:**
     ```terminal wrap
@@ -314,7 +320,7 @@ Here's a guide on how to navigate the interactive setup:
     ```
 
     **Action:**
-    Enter `1000000000`.
+    Enter `1000000000000000000000000` (10^24). This ensures you have plenty of tokens for testing, especially if you are on the EVM track.
 
     ### 18. Add Additional Genesis Accounts
     **Prompt:**
@@ -360,8 +366,7 @@ Initia L1 and your appchain, you need to start the **OPinit Executor** and the
 **IBC Relayer**. These bots handle the "interweaving" of your chain.
 
 <Note>
-  **Prerequisite:** Your appchain must be running in another terminal (via
-  `weave init` or `weave start`) before configuring these bots.
+  **Prerequisite:** Your appchain must be running before configuring these bots. Because `weave init` (and `weave rollup start`) runs your chain in the background, you can continue using the same terminal window.
 </Note>
 
 ### 6.1 Start the OPinit Executor
@@ -492,7 +497,7 @@ Follow the interactive guide:
   <Step title="6. Start Relayer">
     Start the relayer process:
     ```bash wrap
-    weave relayer start
+    weave relayer start -d
     ```
 
     <Note>
@@ -501,6 +506,19 @@ Follow the interactive guide:
 
   </Step>
 </Steps>
+
+<Tip>
+  **Persistence After Restart:**
+  If you shut down your computer, the **Relayer** will stay active (it's managed by Docker), but you will need to manually restart your **Rollup full node** and **Executor bot** using these commands:
+  
+  ```bash wrap
+  # Restart the rollup full node
+  weave rollup start -d
+  
+  # Restart the OPinit executor bot
+  weave opinit start executor -d
+  ```
+</Tip>
 
 ---
 
@@ -544,32 +562,12 @@ After completing the infrastructure setup, verify that everything is healthy.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please verify that my appchain is running and that my Gas Station account has a balance.
+Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
 ---
 
-## Step 9: Funding Your Personal Wallet [AI Assistant]
-
-To interact with your appchain using a browser wallet (like **Keplr** or
-**Leap**), you'll need to send tokens from your **gas station** to your personal
-address.
-
-**1. Copy your personal address from your wallet.**
-
-**2. Ask your assistant to fund you:**
-
-Replace `<YOUR_WALLET_ADDRESS>` in the prompt below with the address you just copied from your browser wallet.
-
-**Prompt:**
-
-```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
-```
-
----
-
-## Step 10: Next Steps
+## Step 9: Next Steps
 
 Congratulations! You have successfully launched your first appchain. You now
 understand the basic workflow of using your AI assistant to manage your own

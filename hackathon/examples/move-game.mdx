@@ -21,6 +21,18 @@ By the end of this tutorial, you will have instructed your AI assistant to:
 
 ---
 
+## 📂 Recommended Project Structure
+
+To keep your workspace organized, we recommend the following structure inside your `my-initia-project` directory:
+
+```text
+my-initia-project/
+├── blockforge/           # Move smart contract project
+└── blockforge-frontend/  # React frontend application
+```
+
+---
+
 ## Step 1: Create and Verify the Smart Contract
 
 Instead of writing the code yourself, instruct your assistant to do it for you
@@ -30,7 +42,7 @@ and automatically run unit tests to ensure the logic is sound.
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Move module for our BlockForge game in my current directory. The module should be named items inside a blockforge project. The game has the following rules:
+Using the `initia-appchain-dev` skill, please create a Move module project for our BlockForge game in a new directory named `blockforge`. The module should be named items inside a blockforge project. The game has the following rules:
 - Players can mint basic items called shards.
 - Players can craft relics by burning 2 shards.
 - Players should have an inventory to store their items.
@@ -41,8 +53,8 @@ Please also create and run a unit test to verify these rules.
 Your assistant will generate the `blockforge` project, including the
 `items.move` module and a test script, and confirm that everything passes.
 
-<Accordion title="Manual Approach: Create the Move Module and Project">
-If you prefer to create the Move module and project manually, follow these steps in your current project directory. This is what your AI assistant would generate for you.
+<Accordion title="Manual Approach: The Move Module">
+If you prefer to create the Move module and project manually, follow these steps in your `blockforge` directory. This is what your AI assistant would generate for you.
 
 First, create a new Move package named `blockforge`:
 
@@ -151,7 +163,7 @@ appchain using the gas station account.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the blockforge Move module located in my current directory to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the blockforge Move module located in the `blockforge` directory to my appchain using my gas station account.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
@@ -189,18 +201,18 @@ needs tokens to pay for transaction fees.
 **1. Get your Wallet Address:** Open your browser wallet and copy your address
 (it starts with `init1...`).
 
-**2. Send Tokens from Gas Station:** Replace `<YOUR_ADDRESS>` in the prompt
+**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the prompt
 below with the address you just copied.
 
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
 ---
 
-## Step 4: Create a Frontend for the Game
+## Step 4: Create a Frontend
 
 A game needs a user interface. Let's create one using the `initia-appchain-dev`
 skill.
@@ -208,18 +220,18 @@ skill.
 **1. Scaffold the Frontend:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named blockforge-frontend in my current directory. Then, create a component named Game.jsx with Mint Shard and Craft Relic buttons and add it to the main App.jsx file.
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `blockforge-frontend` in my current directory. Then, create a component named Game.jsx with Mint Shard and Craft Relic buttons and add it to the main App.jsx file.
 ```
 
 **2. Connect the Frontend to the Appchain:**
 
 ```terminal wrap
-Now, using the `initia-appchain-dev`, please modify the Game.jsx component in my current directory to interact with our deployed blockforge smart contract on my appchain.
+Now, using the `initia-appchain-dev`, please modify the Game.jsx component in the `blockforge-frontend` directory to interact with our deployed blockforge smart contract on my appchain.
 
 The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics. Finally, add a button to enable/disable the native auto-signing feature for a smoother game experience.
 ```
 
-<Accordion title="Manual Approach: Connect with Interwoven Kit">
+<Accordion title="Manual Approach: Scaffold and Connect">
   Refer to the [Interwoven Kit Documentation](../../interwovenkit/introduction)
   for detailed snippets on connecting your frontend to an appchain.
 </Accordion>

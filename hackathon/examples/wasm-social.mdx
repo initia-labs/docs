@@ -21,6 +21,18 @@ By the end of this tutorial, you will have:
 
 ---
 
+## 📂 Recommended Project Structure
+
+To keep your workspace organized, we recommend the following structure inside your `my-initia-project` directory:
+
+```text
+my-initia-project/
+├── memoboard/           # Rust smart contract project
+└── memoboard-frontend/  # React frontend application
+```
+
+---
+
 ## Step 1: Create and Verify the Smart Contract
 
 Instruct your AI assistant to create the Rust (Wasm) contract using the
@@ -30,7 +42,7 @@ automatically run unit tests to ensure the logic is sound.
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Rust smart contract for our MemoBoard in my current directory. The contract should:
+Using the `initia-appchain-dev` skill, please create a Rust smart contract project for our MemoBoard in a new directory named `memoboard`. The contract should:
 - Allow users to post a message (string).
 - Store a list of all messages with the sender's address.
 - Include a function to query all messages on the board.
@@ -41,7 +53,7 @@ Your assistant will generate the `memoboard` project and confirm that the Rust
 tests pass.
 
 <Accordion title="Manual Approach: The Rust Contract">
-If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. Save your Rust project in your current directory.
+If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. Save your Rust project in the `memoboard` directory.
 
 ```rust wrap
 use cosmwasm_std::{entry_point, DepsMut, Env, MessageInfo, Response, StdResult};
@@ -87,7 +99,7 @@ using the gas station account.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract located in my current directory to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract located in the `memoboard` directory to my appchain using my gas station account.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
@@ -120,10 +132,14 @@ minitiad tx wasm instantiate <code-id> '{}' \
 Ensure your personal wallet has tokens to pay for the transaction to post a
 memo.
 
+**1. Get your Wallet Address:** Open your browser wallet and copy your address (it starts with `init1...`).
+
+**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the prompt below with the address you just copied.
+
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
 ---
@@ -135,14 +151,120 @@ Let's create a UI to display and post messages.
 **1. Scaffold the Frontend:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named memoboard-frontend in my current directory. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `memoboard-frontend` in my current directory. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
 ```
 
 **2. Connect to Appchain:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Board.jsx component in my current directory to connect to our MemoBoard contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Board.jsx component in the `memoboard-frontend` directory to connect to our MemoBoard contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
 ```
+
+<Accordion title="Manual Approach: Scaffold and Connect">
+If you prefer to set up the frontend manually, follow these steps:
+
+**1. Create the Project and Install Dependencies:**
+```bash wrap
+npm create vite@latest memoboard-frontend -- --template react
+cd memoboard-frontend
+npm install
+npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js @initia/initia.proto
+npm install --save-dev vite-plugin-node-polyfills
+npm install buffer util
+```
+
+**2. Configure Vite Polyfills:**
+Update `vite.config.js` to include the Node polyfills:
+```javascript wrap
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+      },
+    }),
+  ],
+})
+```
+
+**3. Set up Providers in `main.jsx`:**
+```javascript wrap
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import "@initia/interwovenkit-react/styles.css";
+import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from './App.jsx'
+
+injectStyles(InterwovenKitStyles);
+
+const queryClient = new QueryClient();
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+});
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider {...TESTNET}>
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+**4. Create the `Board.jsx` Component:**
+Create `src/Board.jsx` and add the contract interaction logic:
+```javascript wrap
+import React, { useState } from 'react';
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+
+const MEMO_BOARD_ADDRESS = "YOUR_CONTRACT_ADDRESS";
+
+const Board = () => {
+  const [content, setContent] = useState('');
+  const { address, requestTxBlock } = useInterwovenKit();
+
+  const handlePostMemo = async () => {
+    await requestTxBlock({
+      messages: [{
+        typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
+        value: { 
+          sender: address, 
+          contract: MEMO_BOARD_ADDRESS, 
+          msg: btoa(JSON.stringify({ post_memo: { content } })),
+          funds: [] 
+        },
+      }],
+    });
+  };
+
+  return (
+    <div>
+      <input type="text" value={content} onChange={(e) => setContent(e.target.value)} />
+      <button onClick={handlePostMemo}>Post Memo</button>
+    </div>
+  );
+};
+
+export default Board;
+```
+</Accordion>
 
 ---
 
