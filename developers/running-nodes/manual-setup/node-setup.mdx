@@ -65,9 +65,7 @@ opened by a process to 1024. It is recomemneded that you increase this amount.
 To do so, modify `/etc/security/limits.conf` to increase the amount. The
 `nofile` is the number of files a process may open at a time.
 
-<Tip>
-  If you are using a non-root user, replace `*` with the username of the user.
-</Tip>
+<Tip>If you are using a non-root user, replace `*` with the username of the user.</Tip>
 
 ```sh limits.conf
 * soft nofile 65535

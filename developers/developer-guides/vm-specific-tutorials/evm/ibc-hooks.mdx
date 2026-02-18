@@ -279,14 +279,7 @@ After the contract is deployed and the ACL is set, we can execute the IBC hooks
 message to call the contract.
 
 ```typescript
-import {
-  Coin,
-  Height,
-  RESTClient,
-  MnemonicKey,
-  MsgTransfer,
-  Wallet,
-} from '@initia/initia.js'
+import { Coin, Height, RESTClient, MnemonicKey, MsgTransfer, Wallet } from '@initia/initia.js'
 import { ethers } from 'ethers'
 import * as fs from 'fs'
 
@@ -310,9 +303,7 @@ async function main() {
 
   const amount = '1000'
 
-  const contractInfo = JSON.parse(
-    fs.readFileSync('./bin/Counter.json').toString(),
-  )
+  const contractInfo = JSON.parse(fs.readFileSync('./bin/Counter.json').toString())
   const abi = contractInfo.abi
 
   const contractAddress = '0x4cb5cE12e3bB85348791A3cDd4dc3A5b7836270e'

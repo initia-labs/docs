@@ -9,9 +9,8 @@ information, UI controls, transaction utilities, and AutoSign functionality for
 interacting with the Initia blockchain.
 
 <Note>
-  This hook must be used within a component wrapped by `InterwovenKitProvider`
-  to access wallet functionality. For simple reads, prefer smaller hooks
-  (`useAddress`, `useUsernameQuery`) to avoid overhead.
+  This hook must be used within a component wrapped by `InterwovenKitProvider` to access wallet functionality. For
+  simple reads, prefer smaller hooks (`useAddress`, `useUsernameQuery`) to avoid overhead.
 </Note>
 
 ## Prerequisites
@@ -31,17 +30,13 @@ import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 function ConnectButton() {
   const { isConnected, openConnect, openWallet } = useInterwovenKit()
-  return (
-    <button onClick={isConnected ? openWallet : openConnect}>
-      {isConnected ? 'Open wallet' : 'Connect'}
-    </button>
-  )
+  return <button onClick={isConnected ? openWallet : openConnect}>{isConnected ? 'Open wallet' : 'Connect'}</button>
 }
 ```
 
 <Note>
-  This example assumes providers are already set up. For complete setup
-  configurations, see [Provider Setup](../setup/providers).
+  This example assumes providers are already set up. For complete setup configurations, see [Provider
+  Setup](../setup/providers).
 </Note>
 
 ## Account Information
@@ -50,24 +45,21 @@ The hook provides multiple address formats and account details for the currently
 connected wallet:
 
 <ParamField path="address" type="string">
-  Current address in either Bech32 or hex format, depending on the configured
-  chain type (hex for `minievm`, bech32 for others). Returns an empty string
-  when not connected.
+  Current address in either Bech32 or hex format, depending on the configured chain type (hex for `minievm`, bech32 for
+  others). Returns an empty string when not connected.
 </ParamField>
 
 <ParamField path="initiaAddress" type="string">
-  Bech32-formatted Initia wallet address of the connected account. Returns an
-  empty string when not connected.
+  Bech32-formatted Initia wallet address of the connected account. Returns an empty string when not connected.
 </ParamField>
 
 <ParamField path="hexAddress" type="string">
-  Hex-encoded Ethereum-compatible address of the connected account. Returns an
-  empty string when not connected.
+  Hex-encoded Ethereum-compatible address of the connected account. Returns an empty string when not connected.
 </ParamField>
 
 <ParamField path="username" type="string | null | undefined">
-  Optional username linked to the account. Returns `null` if no username is
-  associated, or `undefined` before the query has produced a value.
+  Optional username linked to the account. Returns `null` if no username is associated, or `undefined` before the query
+  has produced a value.
 </ParamField>
 
 <ParamField path="offlineSigner" type="OfflineAminoSigner">
@@ -84,8 +76,7 @@ connected wallet:
 
 ```tsx
 function AccountInfo() {
-  const { address, initiaAddress, hexAddress, username, isConnected } =
-    useInterwovenKit()
+  const { address, initiaAddress, hexAddress, username, isConnected } = useInterwovenKit()
 
   if (!isConnected) return <div>Not connected</div>
 
@@ -112,10 +103,7 @@ The hook provides methods for controlling wallet-related UI components:
   Opens the main wallet drawer showing balances for the connected account.
 </ParamField>
 
-<ParamField
-  path="openBridge"
-  type="(defaultValues?: Partial<FormValues>) => void"
->
+<ParamField path="openBridge" type="(defaultValues?: Partial<FormValues>) => void">
   Opens the bridge drawer to onboard assets with optional pre-populated values.
 </ParamField>
 
@@ -179,8 +167,7 @@ form:
 </ParamField>
 
 <Tip>
-  All bridge form values are optional. You can pre-populate any subset of fields
-  to improve the user experience.
+  All bridge form values are optional. You can pre-populate any subset of fields to improve the user experience.
 </Tip>
 
 ```tsx
@@ -259,54 +246,42 @@ transactions on the blockchain:
   path="simulateTx"
   type="(tx: Pick&lt;TxRequest, 'messages' | 'memo' | 'chainId'&gt;) => Promise&lt;unknown&gt;"
 >
-  Simulates a transaction without broadcasting, returning the transaction
-  result.
+  Simulates a transaction without broadcasting, returning the transaction result.
 </ParamField>
 
-<ParamField
-  path="requestTxSync"
-  type="(tx: TxRequest) => Promise&lt;string&gt;"
->
-  Signs and broadcasts a transaction, returning the transaction hash immediately
-  without waiting for block inclusion. Shows transaction approval UI before
-  signing.
+<ParamField path="requestTxSync" type="(tx: TxRequest) => Promise&lt;string&gt;">
+  Signs and broadcasts a transaction, returning the transaction hash immediately without waiting for block inclusion.
+  Shows transaction approval UI before signing.
 </ParamField>
 
 <ParamField
   path="requestTxBlock"
   type="(tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
 >
-  Signs, broadcasts, and waits for block inclusion, returning the complete
-  transaction response. Shows transaction approval UI before signing. Defaults
-  to `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
+  Signs, broadcasts, and waits for block inclusion, returning the complete transaction response. Shows transaction
+  approval UI before signing. Defaults to `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
 </ParamField>
 
 <ParamField path="submitTxSync" type="(tx: TxParams) => Promise&lt;string&gt;">
-  Signs and broadcasts a transaction with pre-calculated fee, returning the
-  transaction hash immediately without waiting for block inclusion. Does not
-  show UI.
+  Signs and broadcasts a transaction with pre-calculated fee, returning the transaction hash immediately without waiting
+  for block inclusion. Does not show UI.
 </ParamField>
 
 <ParamField
   path="submitTxBlock"
   type="(tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise&lt;DeliverTxResponse&gt;"
 >
-  Signs, broadcasts, and waits for block inclusion with pre-calculated fee,
-  returning the complete transaction response. Does not show UI. Defaults to
-  `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
+  Signs, broadcasts, and waits for block inclusion with pre-calculated fee, returning the complete transaction response.
+  Does not show UI. Defaults to `timeoutMs: 30000` (30 seconds) and `intervalMs: 500` (0.5 seconds).
 </ParamField>
 
-<ParamField
-  path="waitForTxConfirmation"
-  type="(options: WaitForTxOptions) => Promise&lt;IndexedTx&gt;"
->
+<ParamField path="waitForTxConfirmation" type="(options: WaitForTxOptions) => Promise&lt;IndexedTx&gt;">
   Polls for transaction confirmation on-chain using a transaction hash.
 </ParamField>
 
 <Tip>
-  Use `requestTxSync` for better UX when you want to show immediate feedback,
-  then use `waitForTxConfirmation` to track the final transaction status. Use
-  `requestTxBlock` when you need the complete transaction result immediately.
+  Use `requestTxSync` for better UX when you want to show immediate feedback, then use `waitForTxConfirmation` to track
+  the final transaction status. Use `requestTxBlock` when you need the complete transaction result immediately.
 </Tip>
 
 ### Transaction Request Interface
@@ -323,8 +298,7 @@ include gas estimation:
 </ParamField>
 
 <ParamField path="chainId" type="string">
-  Target chain ID for the transaction. Defaults to the provider's
-  `defaultChainId`.
+  Target chain ID for the transaction. Defaults to the provider's `defaultChainId`.
 </ParamField>
 
 <ParamField path="gasAdjustment" type="number" default="1.4">
@@ -357,8 +331,7 @@ fees:
 </ParamField>
 
 <ParamField path="chainId" type="string">
-  Target chain ID for the transaction. Defaults to the provider's
-  `defaultChainId`.
+  Target chain ID for the transaction. Defaults to the provider's `defaultChainId`.
 </ParamField>
 
 <ParamField path="fee" type="StdFee" required>
@@ -379,13 +352,11 @@ confirmation:
 </ParamField>
 
 <ParamField path="timeoutMs" type="number" default="30000">
-  Maximum time in milliseconds to wait for transaction confirmation before
-  failing. Defaults to 30000 (30 seconds).
+  Maximum time in milliseconds to wait for transaction confirmation before failing. Defaults to 30000 (30 seconds).
 </ParamField>
 
 <ParamField path="intervalMs" type="number" default="500">
-  Polling interval in milliseconds for checking transaction status. Defaults to
-  500 (0.5 seconds).
+  Polling interval in milliseconds for checking transaction status. Defaults to 500 (0.5 seconds).
 </ParamField>
 
 ### Transaction Examples
@@ -395,8 +366,7 @@ import { useInterwovenKit } from '@initia/interwovenkit-react'
 import type { EncodeObject, StdFee } from '@cosmjs/stargate'
 
 function SendTransaction() {
-  const { requestTxBlock, submitTxSync, waitForTxConfirmation } =
-    useInterwovenKit()
+  const { requestTxBlock, submitTxSync, waitForTxConfirmation } = useInterwovenKit()
 
   // Example: Request transaction with UI approval
   const handleRequestTx = async (messages: EncodeObject[]) => {
@@ -457,10 +427,7 @@ function SendTransaction() {
 The hook provides AutoSign state and control methods for automatic transaction
 signing:
 
-<ParamField
-  path="autoSign.expiredAtByChain"
-  type="Record<string, Date | null | undefined>"
->
+<ParamField path="autoSign.expiredAtByChain" type="Record<string, Date | null | undefined>">
   Expiration dates for AutoSign permissions by chain ID.
 </ParamField>
 
@@ -473,19 +440,18 @@ signing:
 </ParamField>
 
 <ParamField path="autoSign.enable" type="(chainId?: string) => Promise<void>">
-  Opens UI to enable AutoSign for a chain. Optionally specify a chain ID, or
-  defaults to the provider's `defaultChainId` if omitted.
+  Opens UI to enable AutoSign for a chain. Optionally specify a chain ID, or defaults to the provider's `defaultChainId`
+  if omitted.
 </ParamField>
 
 <ParamField path="autoSign.disable" type="(chainId?: string) => Promise<void>">
-  Disables AutoSign for a chain. Optionally specify a chain ID, or defaults to
-  the provider's `defaultChainId` if omitted.
+  Disables AutoSign for a chain. Optionally specify a chain ID, or defaults to the provider's `defaultChainId` if
+  omitted.
 </ParamField>
 
 <Tip>
-  AutoSign requires Privy integration. See [AutoSign
-  setup](../setup/providers#autosign-setup-requires-privy) for complete AutoSign
-  configuration.
+  AutoSign requires Privy integration. See [AutoSign setup](../setup/providers#autosign-setup-requires-privy) for
+  complete AutoSign configuration.
 </Tip>
 
 ```tsx
@@ -499,21 +465,12 @@ function AutoSignControls() {
         <div>Loading AutoSign status...</div>
       ) : (
         <>
-          <div>
-            AutoSign enabled:{' '}
-            {autoSign.isEnabledByChain[chainId] ? 'Yes' : 'No'}
-          </div>
+          <div>AutoSign enabled: {autoSign.isEnabledByChain[chainId] ? 'Yes' : 'No'}</div>
           {autoSign.expiredAtByChain[chainId] && (
-            <div>
-              Expires: {autoSign.expiredAtByChain[chainId]?.toLocaleString()}
-            </div>
+            <div>Expires: {autoSign.expiredAtByChain[chainId]?.toLocaleString()}</div>
           )}
-          <button onClick={() => autoSign.enable(chainId)}>
-            Enable AutoSign
-          </button>
-          <button onClick={() => autoSign.disable(chainId)}>
-            Disable AutoSign
-          </button>
+          <button onClick={() => autoSign.enable(chainId)}>Enable AutoSign</button>
+          <button onClick={() => autoSign.disable(chainId)}>Disable AutoSign</button>
         </>
       )}
     </div>
@@ -547,24 +504,12 @@ type InterwovenKitResult = {
   openBridge: (defaultValues?: Partial<FormValues>) => void
   disconnect: () => void
   autoSign: AutoSignState
-  estimateGas: (
-    tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>,
-  ) => Promise<number>
-  simulateTx: (
-    tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>,
-  ) => Promise<unknown>
+  estimateGas: (tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>) => Promise<number>
+  simulateTx: (tx: Pick<TxRequest, 'messages' | 'memo' | 'chainId'>) => Promise<unknown>
   requestTxSync: (tx: TxRequest) => Promise<string>
-  requestTxBlock: (
-    tx: TxRequest,
-    timeoutMs?: number,
-    intervalMs?: number,
-  ) => Promise<DeliverTxResponse>
+  requestTxBlock: (tx: TxRequest, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
   submitTxSync: (tx: TxParams) => Promise<string>
-  submitTxBlock: (
-    tx: TxParams,
-    timeoutMs?: number,
-    intervalMs?: number,
-  ) => Promise<DeliverTxResponse>
+  submitTxBlock: (tx: TxParams, timeoutMs?: number, intervalMs?: number) => Promise<DeliverTxResponse>
   waitForTxConfirmation: (options: WaitForTxOptions) => Promise<IndexedTx>
 }
 

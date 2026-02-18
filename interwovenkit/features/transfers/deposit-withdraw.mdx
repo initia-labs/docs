@@ -20,20 +20,8 @@ function TransferButtons() {
 
   return (
     <>
-      <button
-        onClick={() =>
-          openDeposit({ denoms: ['uinit'], chainId: 'interwoven-1' })
-        }
-      >
-        Open deposit
-      </button>
-      <button
-        onClick={() =>
-          openWithdraw({ denoms: ['uinit'], chainId: 'interwoven-1' })
-        }
-      >
-        Open withdraw
-      </button>
+      <button onClick={() => openDeposit({ denoms: ['uinit'], chainId: 'interwoven-1' })}>Open deposit</button>
+      <button onClick={() => openWithdraw({ denoms: ['uinit'], chainId: 'interwoven-1' })}>Open withdraw</button>
     </>
   )
 }

@@ -34,9 +34,8 @@ const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
 
 <Note>
   {' '}
-  Adjust gasPrices and gasAdjustment according to current
-  [network](/resources/developer/initia-l1) conditions for optimal transaction
-  processing.{' '}
+  Adjust gasPrices and gasAdjustment according to current [network](/resources/developer/initia-l1) conditions for
+  optimal transaction processing.{' '}
 </Note>
 
 Next, we will create a function to query the balance of an account. This
@@ -118,9 +117,7 @@ VM-agnostic queries are queries that can be used across all VMs.
 - `balance()` : query the balance of an account
 
 ```typescript
-const balances = await restClient.bank.balance(
-  'init14l3c2vxrdvu6y0sqykppey930s4kufsvt97aeu',
-)
+const balances = await restClient.bank.balance('init14l3c2vxrdvu6y0sqykppey930s4kufsvt97aeu')
 ```
 
 - `blockInfo()`: query the block information
@@ -132,9 +129,7 @@ const blockInfo = await restClient.tendermint.blockInfo(10000) // If no height i
 - `txInfo()`: query the transaction information
 
 ```typescript
-const txInfo = await restClient.tx.txInfo(
-  '6DFEE8E4BFC38341E8AADBD74A23588D8DE94FA38052CB5721DDA780A24F8B1D',
-)
+const txInfo = await restClient.tx.txInfo('6DFEE8E4BFC38341E8AADBD74A23588D8DE94FA38052CB5721DDA780A24F8B1D')
 ```
 
 - `price()`: query the oracle price
@@ -165,14 +160,7 @@ const res = await restClient.move.viewFunction(
   'object', // name of the module
   'owner', // function name
   ['0x1::object::ObjectCore'], // type arguments
-  [
-    bcs
-      .object()
-      .serialize(
-        '0xc4f0b3c2300c99b0d7717ce43cd76821407a34c79587542919876a8c241a2f94',
-      )
-      .toBase64(),
-  ], // arguments
+  [bcs.object().serialize('0xc4f0b3c2300c99b0d7717ce43cd76821407a34c79587542919876a8c241a2f94').toBase64()], // arguments
 )
 ```
 
@@ -205,8 +193,7 @@ const module = await restClient.move.module('0x1', 'object')
 - `tableInfo()`: query the move contract table info
 
 ```typescript
-const tableHandle =
-  '0xc8c40eef193fc150fcb54264419bd3e39339c2ee8ba5834aed7826a9841cfb53'
+const tableHandle = '0xc8c40eef193fc150fcb54264419bd3e39339c2ee8ba5834aed7826a9841cfb53'
 const entryKeyBytes = 'A0vD7ATVOvfCWo1T7H8Pz2MOt5k6rvsScYEGgXe0QDw='
 
 const tableInfo = await restClient.move.tableInfo(tableHandle)

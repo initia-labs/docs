@@ -1,7 +1,6 @@
 ---
 title: Introduction
-description:
-  Learn how to install and get started with the minitiad command-line interface
+description: Learn how to install and get started with the minitiad command-line interface
   for interacting with Initia rollups
 ---
 
@@ -27,8 +26,8 @@ With minitiad, you can:
   rollup chains
 
 <Info>
-  minitiad is built using the Cosmos SDK and provides a familiar interface for
-  users of other Cosmos-based chains, specifically optimized for Initia rollups.
+  minitiad is built using the Cosmos SDK and provides a familiar interface for users of other Cosmos-based chains,
+  specifically optimized for Initia rollups.
 </Info>
 
 ## VM Types and Repositories
@@ -43,10 +42,7 @@ requires a specific minitiad implementation:
 - **EVM**: [minievm](https://github.com/initia-labs/minievm) - For rollups
   running Ethereum Virtual Machine smart contracts
 
-<Tip>
-  Check your rollup chain's documentation to determine which VM type it uses
-  before installation.
-</Tip>
+<Tip>Check your rollup chain's documentation to determine which VM type it uses before installation.</Tip>
 
 ## Prerequisites
 
@@ -56,9 +52,7 @@ Before installing minitiad, ensure you have the following requirements:
 - **Git**: For cloning the repository
 - **Make**: For building the binary
 
-<Tip>
-  You can verify your Go installation by running `go version` in your terminal.
-</Tip>
+<Tip>You can verify your Go installation by running `go version` in your terminal.</Tip>
 
 ## Installation
 
@@ -74,9 +68,7 @@ cd minimove
 ```
 </Tab>
 
-<Tab title="Wasm">
-  ```bash git clone https://github.com/initia-labs/miniwasm.git cd miniwasm ```
-</Tab>
+<Tab title="Wasm">```bash git clone https://github.com/initia-labs/miniwasm.git cd miniwasm ```</Tab>
 
 <Tab title="EVM">
 ```bash
@@ -120,8 +112,7 @@ git checkout $VERSION
 </Tabs>
 
 <Warning>
-  Always use a specific version tag rather than the main branch for production
-  environments to ensure stability.
+  Always use a specific version tag rather than the main branch for production environments to ensure stability.
 </Warning>
 
 <Note>
@@ -145,10 +136,7 @@ This will build the binary and install it to your `$GOPATH/bin` directory.
 
 After installation, verify that minitiad is correctly installed and accessible:
 
-<Note>
-  The CLI binary is always named `minitiad` regardless of which VM-specific
-  repository you cloned.
-</Note>
+<Note>The CLI binary is always named `minitiad` regardless of which VM-specific repository you cloned.</Note>
 
 ### Check CLI Version
 
@@ -189,8 +177,8 @@ minitiad config node $CHAIN_RPC_ENDPOINT
 ```
 
 <Warning>
-  Make sure to use the correct endpoints for your specific rollup chain. Each
-  Initia rollup has its own unique endpoints and chain ID.
+  Make sure to use the correct endpoints for your specific rollup chain. Each Initia rollup has its own unique endpoints
+  and chain ID.
 </Warning>
 
 ## Next Steps
@@ -199,7 +187,4 @@ Now that you have minitiad installed and configured, you can start building and
 deploying applications on Initia rollup chains. The specific workflow will
 depend on your rollup's VM type (Move, Wasm, or EVM).
 
-<Info>
-  Additional minitiad CLI documentation pages are currently being developed and
-  will be available soon.
-</Info>
+<Info>Additional minitiad CLI documentation pages are currently being developed and will be available soon.</Info>

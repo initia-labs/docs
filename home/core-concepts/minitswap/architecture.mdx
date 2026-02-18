@@ -2,13 +2,7 @@
 title: Minitswap Architecture
 ---
 
-import {
-  INIT,
-  IbcOpINIT,
-  FullyRecoveredRatio,
-  MaxRatio,
-  Flexibility,
-} from '/snippets/terminology.mdx'
+import { INIT, IbcOpINIT, FullyRecoveredRatio, MaxRatio, Flexibility } from '/snippets/terminology.mdx'
 
 ## Goals
 
@@ -26,9 +20,8 @@ import {
 Minitswap itself is designed as a virtual pool DEX between
 
 <Tooltip tip={INIT}>INIT</Tooltip> and the various
-<Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the rollups. The
-exchange rates on each swap are determined by the
-[StableSwap](https://docs.curve.finance/stableswap-exchange/overview/) formula.
+<Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the rollups. The exchange rates on each swap are
+determined by the [StableSwap](https://docs.curve.finance/stableswap-exchange/overview/) formula.
 
 To achieve the above goals, two main improvements are made to the base
 StableSwap pool design:
@@ -163,9 +156,7 @@ $$
 
 #### Peg Keeper Swaps
 
-<Frame caption="Peg Keeper Swaps">
-  ![Peg Keeper Swaps](/images/minitswap/minitswap_peg_keeper_swaps.png)
-</Frame>
+<Frame caption="Peg Keeper Swaps">![Peg Keeper Swaps](/images/minitswap/minitswap_peg_keeper_swaps.png)</Frame>
 
 The Peg Keeper Swap is a mechanism designed to keep the exchange rate between
 $INIT$ and $IbcOpINIT$ close to 1:1. This ensures that users always receive the

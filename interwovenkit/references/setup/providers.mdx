@@ -14,8 +14,8 @@ title: Provider Setup
 For apps that don't need AutoSign or embedded wallets.
 
 <Note>
-  This setup uses `initiaPrivyWalletConnector` as a wagmi connector option, but
-  does not require `PrivyProvider` at runtime.
+  This setup uses `initiaPrivyWalletConnector` as a wagmi connector option, but does not require `PrivyProvider` at
+  runtime.
 </Note>
 
 ```tsx
@@ -25,12 +25,7 @@ import { PropsWithChildren, useEffect } from 'react'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  initiaPrivyWalletConnector,
-  injectStyles,
-  InterwovenKitProvider,
-  MAINNET,
-} from '@initia/interwovenkit-react'
+import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider, MAINNET } from '@initia/interwovenkit-react'
 import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const wagmiConfig = createConfig({
@@ -75,13 +70,7 @@ import {
   PRIVY_APP_ID,
 } from '@initia/interwovenkit-react'
 import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
-import {
-  PrivyProvider,
-  useCreateWallet,
-  useLoginWithSiwe,
-  usePrivy,
-  useWallets,
-} from '@privy-io/react-auth'
+import { PrivyProvider, useCreateWallet, useLoginWithSiwe, usePrivy, useWallets } from '@privy-io/react-auth'
 
 const wagmiConfig = createConfig({
   connectors: [initiaPrivyWalletConnector],

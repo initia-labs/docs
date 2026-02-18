@@ -73,8 +73,8 @@ dashboard to ensure security and proper functionality:
    - Any staging domains you use
 
 <Warning>
-  Privy services will only work on domains you've explicitly allowed. Add all
-  domains where your application will run, including localhost for development.
+  Privy services will only work on domains you've explicitly allowed. Add all domains where your application will run,
+  including localhost for development.
 </Warning>
 
 </Step>
@@ -100,17 +100,8 @@ wallets and autosign:
   prevent autosign from working.
 
 ```tsx providers.tsx
-import {
-  PrivyProvider,
-  useCreateWallet,
-  useLoginWithSiwe,
-  usePrivy,
-  useWallets,
-} from '@privy-io/react-auth'
-import {
-  InterwovenKitProvider,
-  PRIVY_APP_ID,
-} from '@initia/interwovenkit-react'
+import { PrivyProvider, useCreateWallet, useLoginWithSiwe, usePrivy, useWallets } from '@privy-io/react-auth'
+import { InterwovenKitProvider, PRIVY_APP_ID } from '@initia/interwovenkit-react'
 
 function InterwovenKitWrapper({ children }) {
   const privy = usePrivy()
@@ -194,10 +185,9 @@ intentionally restrictive.
 ```
 
 <Info>
-  If you later need to support token transfers, staking, or multiple chains, you
-  must switch from the boolean configuration to the per-chain configuration in
-  the [Advanced Configuration](#advanced-configuration-explicit-permissions)
-  section.
+  If you later need to support token transfers, staking, or multiple chains, you must switch from the boolean
+  configuration to the per-chain configuration in the [Advanced
+  Configuration](#advanced-configuration-explicit-permissions) section.
 </Info>
 
 When using boolean configuration, InterwovenKit automatically:
@@ -246,6 +236,6 @@ The `enableAutoSign` prop accepts an object where:
 - **Staking**: `/cosmos.staking.v1beta1.MsgDelegate`
 
 <Warning>
-  Only grant permissions for message types that your application actually needs.
-  Granting overly broad permissions increases security risk.
+  Only grant permissions for message types that your application actually needs. Granting overly broad permissions
+  increases security risk.
 </Warning>

@@ -63,11 +63,7 @@ import { PropsWithChildren, useEffect } from 'react'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  initiaPrivyWalletConnector,
-  injectStyles,
-  InterwovenKitProvider,
-} from '@initia/interwovenkit-react'
+import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider } from '@initia/interwovenkit-react'
 import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const wagmiConfig = createConfig({
@@ -86,9 +82,7 @@ export default function Providers({ children }: PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">
-          {children}
-        </InterwovenKitProvider>
+        <InterwovenKitProvider defaultChainId="YOUR_CHAIN_ID">{children}</InterwovenKitProvider>
       </WagmiProvider>
     </QueryClientProvider>
   )
@@ -96,14 +90,11 @@ export default function Providers({ children }: PropsWithChildren) {
 ```
 
 <Info>
-  **Chain Configuration**: Replace `YOUR_CHAIN_ID` with your target blockchain
-  network: - `"interwoven-1"` for Initia mainnet (default) - `"initiation-2"`
-  for Initia testnet - Or any valid chain ID from the
-  [initia-registry](https://registry.initia.xyz) This sets the primary network
-  for transactions, balance queries, and serves as the default for all
-  operations. See the [InterwovenKitProvider
-  reference](/interwovenkit/references/components/interwovenkit-provider) for
-  details.
+  **Chain Configuration**: Replace `YOUR_CHAIN_ID` with your target blockchain network: - `"interwoven-1"` for Initia
+  mainnet (default) - `"initiation-2"` for Initia testnet - Or any valid chain ID from the
+  [initia-registry](https://registry.initia.xyz) This sets the primary network for transactions, balance queries, and
+  serves as the default for all operations. See the [InterwovenKitProvider
+  reference](/interwovenkit/references/components/interwovenkit-provider) for details.
 </Info>
 
  </Step>
@@ -144,8 +135,7 @@ import { truncate } from '@initia/utils'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 export default function WalletConnection() {
-  const { address, username, isConnected, openConnect, openWallet } =
-    useInterwovenKit()
+  const { address, username, isConnected, openConnect, openWallet } = useInterwovenKit()
 
   if (!isConnected) {
     return (
@@ -238,8 +228,8 @@ You can provide fees in two ways:
 - `Estimated`: Use estimateGas to simulate the required fee.
 
 <Note>
-  Since this skips the standard fee selection UI, ensure the fee is displayed
-  somewhere else in your app to maintain transparency for users.
+  Since this skips the standard fee selection UI, ensure the fee is displayed somewhere else in your app to maintain
+  transparency for users.
 </Note>
 
 ```tsx components/TransactionExampleWithFee.tsx

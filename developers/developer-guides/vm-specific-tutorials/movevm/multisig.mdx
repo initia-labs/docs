@@ -48,11 +48,7 @@ const msgCreateNonWeightedMultisigAccount = new MsgExecute(
     bcs.string().serialize(multisigName), // name
     bcs
       .vector(bcs.address())
-      .serialize([
-        multisigCreator.key.accAddress,
-        multisigMember1.key.accAddress,
-        multisigMember2.key.accAddress,
-      ]), // members
+      .serialize([multisigCreator.key.accAddress, multisigMember1.key.accAddress, multisigMember2.key.accAddress]), // members
     bcs.u64().serialize(2), // threshold
   ].map((v) => v.toBase64()),
 )
@@ -105,11 +101,7 @@ const msgMiultiSigProposal1 = new MsgSend(
 // Proposal 2. send token with `0x1::coin::transfer` function
 const msgMiultiSigProposal2Args = [
   bcs.address().serialize(recipient), // recipient
-  bcs
-    .object()
-    .serialize(
-      '0x8e4733bdabcf7d4afc3d14f0dd46c9bf52fb0fce9e4b996c939e195b8bc891d9',
-    ), // coin metadata
+  bcs.object().serialize('0x8e4733bdabcf7d4afc3d14f0dd46c9bf52fb0fce9e4b996c939e195b8bc891d9'), // coin metadata
   bcs.u64().serialize(1_000_000), // amount
 ]
 
@@ -130,9 +122,7 @@ const msgCreateProposal = new MsgExecute(
         [
           ...bcs
             .vector(bcs.u8())
-            .serialize(
-              Buffer.from(JSON.stringify(msgMiultiSigProposal1.toData())),
-            )
+            .serialize(Buffer.from(JSON.stringify(msgMiultiSigProposal1.toData())))
             .toBytes(),
         ],
       ],
@@ -167,11 +157,9 @@ const msgVoteProposal1 = new MsgExecute(
   'multisig_v2',
   'vote_proposal',
   [],
-  [
-    bcs.address().serialize(multisigAddress),
-    bcs.u64().serialize(1),
-    bcs.bool().serialize(true),
-  ].map((v) => v.toBase64()),
+  [bcs.address().serialize(multisigAddress), bcs.u64().serialize(1), bcs.bool().serialize(true)].map((v) =>
+    v.toBase64(),
+  ),
 )
 ```
 
@@ -198,10 +186,9 @@ const msgExecuteProposal = new MsgExecute(
   'multisig_v2',
   'execute_proposal',
   [],
-  [
-    bcs.address().serialize(AccAddress.toHex(multisigAddress)),
-    bcs.u64().serialize(proposalId),
-  ].map((v) => v.toBase64()),
+  [bcs.address().serialize(AccAddress.toHex(multisigAddress)), bcs.u64().serialize(proposalId)].map((v) =>
+    v.toBase64(),
+  ),
 )
 ```
 
