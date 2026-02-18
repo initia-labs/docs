@@ -23,7 +23,8 @@ By the end of this tutorial, you will have:
 
 ## 📂 Recommended Project Structure
 
-To keep your workspace organized, we recommend the following structure inside your `my-initia-project` directory:
+To keep your workspace organized, we recommend the following structure inside
+your `my-initia-project` directory:
 
 ```text
 my-initia-project/
@@ -55,7 +56,9 @@ tests pass.
 <Accordion title="Manual Approach: The Rust Contract">
 If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
 
-**Important:** Ensure your `Cargo.toml` includes the following `[lib]` section to correctly generate the Wasm binary:
+**Important:** Ensure your `Cargo.toml` includes the following `[lib]` section
+to correctly generate the Wasm binary:
+
 ```toml
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -133,7 +136,7 @@ mod tests {
     fn test_post_and_query() {
         let mut deps = mock_dependencies();
         let env = mock_env();
-        
+
         // Instantiate
         let info = message_info(&Addr::unchecked("creator"), &[]);
         instantiate(deps.as_mut(), env.clone(), info, InstantiateMsg {}).unwrap();
@@ -171,9 +174,11 @@ Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Ru
 <Accordion title="Manual Approach: Deploy via CLI">
 **1. Build and Store the Code:**
 
-Standard `cargo build` binaries often fail validation on-chain. For WasmVM deployment, it is strongly recommended to use the **CosmWasm Optimizer**.
+Standard `cargo build` binaries often fail validation on-chain. For WasmVM
+deployment, it is strongly recommended to use the **CosmWasm Optimizer**.
 
-**Note for Apple Silicon (M1/M2/M3):** Use the `cosmwasm/optimizer-arm64:0.16.1` image variant.
+**Note for Apple Silicon (M1/M2/M3):** Use the `cosmwasm/optimizer-arm64:0.16.1`
+image variant.
 
 ```bash wrap
 # Run from the root of your project
@@ -183,7 +188,8 @@ docker run --rm -v "$(pwd)/memoboard":/code \
   cosmwasm/optimizer:0.16.1
 ```
 
-The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`. Now, store the code:
+The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`.
+Now, store the code:
 
 ```bash wrap
 # If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
@@ -197,11 +203,13 @@ minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
 **2. Retrieve the Code ID and Instantiate:**
 
 If the `code_id` is not returned directly, query the transaction hash:
+
 ```bash wrap
 minitiad q tx <TX_HASH>
 ```
 
 Then, instantiate the contract:
+
 ```bash wrap
 minitiad tx wasm instantiate <code-id> '{}' \
   --label "memoboard" \
@@ -221,9 +229,11 @@ minitiad tx wasm instantiate <code-id> '{}' \
 Ensure your personal wallet has tokens to pay for the transaction to post a
 memo.
 
-**1. Get your Wallet Address:** Open your browser wallet and copy your address (it starts with `init1...`).
+**1. Get your Wallet Address:** Open your browser wallet and copy your address
+(it starts with `init1...`).
 
-**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the prompt below with the address you just copied.
+**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
+prompt below with the address you just copied.
 
 **Prompt:**
 
@@ -253,6 +263,7 @@ Using the `initia-appchain-dev` skill, modify the Board.jsx component in the `me
 If you prefer to set up the frontend manually, follow these steps:
 
 **1. Create the Project and Install Dependencies:**
+
 ```bash wrap
 npm create vite@latest memoboard-frontend -- --template react
 cd memoboard-frontend
@@ -262,8 +273,9 @@ npm install --save-dev vite-plugin-node-polyfills
 npm install buffer util
 ```
 
-**2. Configure Vite Polyfills:**
-Update `vite.config.js` to include the Node polyfills:
+**2. Configure Vite Polyfills:** Update `vite.config.js` to include the Node
+polyfills:
+
 ```javascript wrap
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
@@ -282,6 +294,7 @@ export default defineConfig({
 ```
 
 **3. Set up Providers in `main.jsx`:**
+
 ```javascript wrap
 import { Buffer } from 'buffer'
 window.Buffer = Buffer
@@ -289,51 +302,55 @@ window.process = { env: { NODE_ENV: 'development' } }
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import "@initia/interwovenkit-react/styles.css";
-import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
-import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
-import { WagmiProvider, createConfig, http } from "wagmi";
-import { mainnet } from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import '@initia/interwovenkit-react/styles.css'
+import {
+  injectStyles,
+  InterwovenKitProvider,
+  TESTNET,
+} from '@initia/interwovenkit-react'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import { WagmiProvider, createConfig, http } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.jsx'
 
-injectStyles(InterwovenKitStyles);
+injectStyles(InterwovenKitStyles)
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 const wagmiConfig = createConfig({
   chains: [mainnet],
   transports: { [mainnet.id]: http() },
-});
+})
 
 const customChain = {
-  chain_id: "your-chain-id",
-  chain_name: "social",
-  pretty_name: "Social Rollup",
-  network_type: "testnet",
-  bech32_prefix: "init",
+  chain_id: 'your-chain-id',
+  chain_name: 'social',
+  pretty_name: 'Social Rollup',
+  network_type: 'testnet',
+  bech32_prefix: 'init',
   logo_URIs: {
-    png: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png",
-    svg: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg"
+    png: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png',
+    svg: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg',
   },
   apis: {
-    rpc: [{ address: "http://localhost:26657" }],
-    rest: [{ address: "http://localhost:1317" }],
-    indexer: [{ address: "http://localhost:8080" }],
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }],
   },
   fees: {
-    fee_tokens: [{ denom: "umin", fixed_min_gas_price: 0 }]
+    fee_tokens: [{ denom: 'umin', fixed_min_gas_price: 0 }],
   },
   metadata: {
-    minitia: { type: "miniwasm" }
-  }
-};
+    minitia: { type: 'miniwasm' },
+  },
+}
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InterwovenKitProvider 
-          {...TESTNET} 
+        <InterwovenKitProvider
+          {...TESTNET}
           defaultChainId="your-chain-id"
           customChain={customChain}
         >
@@ -345,80 +362,157 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 ```
 
-**4. Create the `Board.jsx` Component:**
-Create `src/Board.jsx` and `src/Board.css` with the following content:
+**4. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
+`src/Board.css` with the following content:
 
 **src/Board.css:**
+
 ```css wrap
-.board-container { max-width: 600px; margin: 40px auto; padding: 32px; font-family: sans-serif; }
-.board-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 24px; text-align: center; }
-.section-header { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 16px; display: block; }
-.auth-section { display: flex; justify-content: center; margin-bottom: 24px; }
-.wallet-info { background: #f0f0f0; padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; width: 100%; }
-.message-card { background: white; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
-.message-sender { font-family: monospace; font-size: 0.75rem; color: #999; }
-.input-group { display: flex; gap: 12px; margin-top: 16px; }
-.memo-input { flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-.btn-primary { background: #000; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.board-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px;
+  font-family: sans-serif;
+}
+.board-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.section-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+  margin-bottom: 16px;
+  display: block;
+}
+.auth-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.wallet-info {
+  background: #f0f0f0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.message-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.message-sender {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #999;
+}
+.input-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.memo-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+.btn-primary {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
 ```
 
 **src/Board.jsx:**
-```javascript wrap
-import React, { useState, useEffect } from 'react';
-import { useInterwovenKit } from "@initia/interwovenkit-react";
-import { RESTClient } from "@initia/initia.js";
-import './Board.css';
 
-const MEMO_BOARD_ADDRESS = "YOUR_CONTRACT_ADDRESS";
-const rest = new RESTClient("http://localhost:1317", { chainId: "your-chain-id" });
+```javascript wrap
+import React, { useState, useEffect } from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import { RESTClient } from '@initia/initia.js'
+import './Board.css'
+
+const MEMO_BOARD_ADDRESS = 'YOUR_CONTRACT_ADDRESS'
+const rest = new RESTClient('http://localhost:1317', {
+  chainId: 'your-chain-id',
+})
 
 const Board = () => {
-  const [messages, setMessages] = useState([]);
-  const [content, setContent] = useState('');
-  const { initiaAddress, requestTxBlock, openWallet, openConnect } = useInterwovenKit();
+  const [messages, setMessages] = useState([])
+  const [content, setContent] = useState('')
+  const { initiaAddress, requestTxBlock, openWallet, openConnect } =
+    useInterwovenKit()
 
   const fetchMessages = async () => {
     // Encode query to base64 for the REST path
-    const queryData = btoa(JSON.stringify({ all_messages: {} }));
-    const res = await rest.wasm.smartContractState(MEMO_BOARD_ADDRESS, queryData);
+    const queryData = btoa(JSON.stringify({ all_messages: {} }))
+    const res = await rest.wasm.smartContractState(
+      MEMO_BOARD_ADDRESS,
+      queryData,
+    )
     // Use optional chaining for resilience
-    setMessages((res?.messages || []).reverse());
-  };
+    setMessages((res?.messages || []).reverse())
+  }
 
   useEffect(() => {
-    fetchMessages();
-  }, []);
+    fetchMessages()
+  }, [])
 
   const handlePostMessage = async () => {
     // Encode execute msg to Uint8Array (bytes)
-    const msg = new TextEncoder().encode(JSON.stringify({ post_message: { message: content } }));
+    const msg = new TextEncoder().encode(
+      JSON.stringify({ post_message: { message: content } }),
+    )
 
     await requestTxBlock({
-      chainId: "your-chain-id",
-      messages: [{
-        typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
-        value: { 
-          sender: initiaAddress, 
-          contract: MEMO_BOARD_ADDRESS, 
-          msg,
-          funds: [] 
+      chainId: 'your-chain-id',
+      messages: [
+        {
+          typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+          value: {
+            sender: initiaAddress,
+            contract: MEMO_BOARD_ADDRESS,
+            msg,
+            funds: [],
+          },
         },
-      }],
-    });
-  };
+      ],
+    })
+  }
 
   return (
     <div className="board-container">
       <h1 className="board-title">MemoBoard</h1>
       {!initiaAddress ? (
         <div className="auth-section">
-          <button onClick={openConnect} className="btn-primary">Connect Wallet</button>
+          <button onClick={openConnect} className="btn-primary">
+            Connect Wallet
+          </button>
         </div>
       ) : (
         <div className="auth-section">
           <div className="wallet-info">
-            <span>{initiaAddress.slice(0, 10)}...{initiaAddress.slice(-6)}</span>
-            <button onClick={openWallet} className="btn-primary">Open Wallet</button>
+            <span>
+              {initiaAddress.slice(0, 10)}...{initiaAddress.slice(-6)}
+            </span>
+            <button onClick={openWallet} className="btn-primary">
+              Open Wallet
+            </button>
           </div>
         </div>
       )}
@@ -426,8 +520,15 @@ const Board = () => {
         <div style={{ marginBottom: '32px' }}>
           <h3 className="section-header">Post a Memo</h3>
           <div className="input-group">
-            <input className="memo-input" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write a memo..." />
-            <button onClick={handlePostMessage} className="btn-primary">Post Message</button>
+            <input
+              className="memo-input"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write a memo..."
+            />
+            <button onClick={handlePostMessage} className="btn-primary">
+              Post Message
+            </button>
           </div>
         </div>
       )}
@@ -441,11 +542,12 @@ const Board = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Board;
+export default Board
 ```
+
 </Accordion>
 
 ---
@@ -475,10 +577,12 @@ minitiad tx wasm execute <contract-address> '{"post_message":{"message":"Hello!"
 ```
 
 **Query Messages:**
+
 ```bash wrap
 # Note: minitiad query commands typically do not support the --chain-id flag
 minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}'
 ```
+
 </Accordion>
 
 ---
