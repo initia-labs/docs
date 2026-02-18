@@ -31,7 +31,13 @@ const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
 })
 
 restClient.move
-  .view(moduleAddress, 'usernames', 'get_address_from_name', [], [bcs.string().serialize(name).toBase64()])
+  .view(
+    moduleAddress,
+    'usernames',
+    'get_address_from_name',
+    [],
+    [bcs.string().serialize(name).toBase64()],
+  )
   .then(console.log)
 
 // Response:
@@ -63,7 +69,13 @@ const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
 })
 
 restClient.move
-  .view(moduleAddress, 'usernames', 'get_name_from_address', [], [bcs.address().serialize(address).toBase64()])
+  .view(
+    moduleAddress,
+    'usernames',
+    'get_name_from_address',
+    [],
+    [bcs.address().serialize(address).toBase64()],
+  )
   .then(console.log)
 
 // Response:

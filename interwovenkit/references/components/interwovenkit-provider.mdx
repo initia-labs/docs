@@ -32,7 +32,12 @@ import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
-import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider, MAINNET } from '@initia/interwovenkit-react'
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  MAINNET,
+} from '@initia/interwovenkit-react'
 import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const queryClient = new QueryClient()
@@ -58,8 +63,8 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 ```
 
 <Note>
-  This example shows the provider structure. For complete setup configurations, see [Provider
-  Setup](../setup/providers).
+  This example shows the provider structure. For complete setup configurations,
+  see [Provider Setup](../setup/providers).
 </Note>
 
 ## Props
@@ -115,7 +120,11 @@ const MY_ROLLUP: Chain = {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <InterwovenKitProvider {...MAINNET} defaultChainId={MY_ROLLUP.chain_id} customChain={MY_ROLLUP}>
+    <InterwovenKitProvider
+      {...MAINNET}
+      defaultChainId={MY_ROLLUP.chain_id}
+      customChain={MY_ROLLUP}
+    >
       {children}
     </InterwovenKitProvider>
   )
@@ -123,8 +132,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ```
 
 <Note>
-  This example shows only the `InterwovenKitProvider` configuration. For complete provider setup including
-  `QueryClientProvider`, `WagmiProvider`, and `injectStyles`, see [Provider Setup](../setup/providers).
+  This example shows only the `InterwovenKitProvider` configuration. For
+  complete provider setup including `QueryClientProvider`, `WagmiProvider`, and
+  `injectStyles`, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Notes

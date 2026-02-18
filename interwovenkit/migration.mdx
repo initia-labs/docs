@@ -1,6 +1,7 @@
 ---
 title: Migrating from Wallet Widget
-description: Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
+description:
+  Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
 icon: up
 ---
 
@@ -10,8 +11,9 @@ This comprehensive guide will help you migrate from the legacy
 improved TypeScript support, and a more intuitive API.
 
 <Note>
-  **Migration Benefits** - No more SSR configuration required - Better TypeScript support - Improved performance and
-  bundle size - Simplified API with consistent naming - Enhanced error handling
+  **Migration Benefits** - No more SSR configuration required - Better
+  TypeScript support - Improved performance and bundle size - Simplified API
+  with consistent naming - Enhanced error handling
 </Note>
 
 ## Step-by-Step Migration
@@ -231,8 +233,8 @@ export default function Home() {
 </CodeGroup>
 
 <Note>
-  Bridge configuration has moved from the provider level to individual method calls, providing more flexibility and
-  better user experience.
+  Bridge configuration has moved from the provider level to individual method
+  calls, providing more flexibility and better user experience.
 </Note>
 
 #### Removed Provider Props
@@ -245,7 +247,8 @@ The following props are no longer supported:
 ```
 
 <Info>
-  To customize wallet options, use [wagmi connectors](https://wagmi.sh/react/api/connectors) in your wagmi configuration
+  To customize wallet options, use [wagmi
+  connectors](https://wagmi.sh/react/api/connectors) in your wagmi configuration
   instead.
 </Info>
 
@@ -339,9 +342,11 @@ export default function TransactionComponent() {
 </CodeGroup>
 
 <Tip>
-  For more granular control over transaction states, use `requestTxSync()` to get the transaction hash immediately, then
-  `waitForTxConfirmation()` to wait for blockchain confirmation. See the [useInterwovenKit
-  reference](./references/hooks/use-interwovenkit#transaction-methods) for details.
+  For more granular control over transaction states, use `requestTxSync()` to
+  get the transaction hash immediately, then `waitForTxConfirmation()` to wait
+  for blockchain confirmation. See the [useInterwovenKit
+  reference](./references/hooks/use-interwovenkit#transaction-methods) for
+  details.
 </Tip>
 
 ## Advanced Integration
@@ -410,14 +415,15 @@ export default function SendTransaction() {
   </Accordion>
 
 <Accordion title="✅ Configuration Cleanup">
-  - [ ] Removed SSR-related imports - [ ] Removed build configuration changes - [ ] Removed CDN scripts - [ ] Updated
-  provider configuration
+  - [ ] Removed SSR-related imports - [ ] Removed build configuration changes -
+  [ ] Removed CDN scripts - [ ] Updated provider configuration
 </Accordion>
 
 <Accordion title="✅ API Updates">
-  - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider` - [ ] Updated `useWallet` to `useInterwovenKit` - [
-  ] Migrated method calls (`onboard` → `openConnect`, etc.) - [ ] Updated transaction handling (`requestTx` →
-  `requestTxBlock`)
+  - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider` - [ ]
+  Updated `useWallet` to `useInterwovenKit` - [ ] Migrated method calls
+  (`onboard` → `openConnect`, etc.) - [ ] Updated transaction handling
+  (`requestTx` → `requestTxBlock`)
 </Accordion>
 
   <Accordion title="✅ Testing">
@@ -429,6 +435,7 @@ export default function SendTransaction() {
 </AccordionGroup>
 
 <Note>
-  Need help with migration? Check out the [Getting Started guide](./getting-started) for complete implementation
-  examples, or refer to the [API Reference](./references/index) for detailed method documentation.
+  Need help with migration? Check out the [Getting Started
+  guide](./getting-started) for complete implementation examples, or refer to
+  the [API Reference](./references/index) for detailed method documentation.
 </Note>

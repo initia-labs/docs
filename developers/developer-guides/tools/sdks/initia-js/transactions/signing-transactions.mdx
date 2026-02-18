@@ -19,7 +19,14 @@ First, we need to import the necessary classes and functions.
 - `Wallet`: A class that represents a wallet.
 
 ```ts
-import { Coins, Fee, RESTClient, MnemonicKey, MsgSend, Wallet } from '@initia/initia.js'
+import {
+  Coins,
+  Fee,
+  RESTClient,
+  MnemonicKey,
+  MsgSend,
+  Wallet,
+} from '@initia/initia.js'
 import crypto from 'crypto'
 ```
 
@@ -42,7 +49,10 @@ data into a transaction hash hex string.
 
 ```ts
 export function getTxHash(tx: Uint8Array): string {
-  const s256Buffer = crypto.createHash(`sha256`).update(Buffer.from(tx)).digest()
+  const s256Buffer = crypto
+    .createHash(`sha256`)
+    .update(Buffer.from(tx))
+    .digest()
   const txbytes = new Uint8Array(s256Buffer)
   return Buffer.from(txbytes.slice(0, 32)).toString(`hex`).toUpperCase()
 }
@@ -87,7 +97,9 @@ const msg = new MsgSend(key.accAddress, key.accAddress, '100uinit')
 
 // use fixed fee to not estimate gas
 const gasLimit = 500000
-const feeAmount = new Coins(offlineRestClient.config.gasPrices).toArray()[0].mul(gasLimit)
+const feeAmount = new Coins(offlineRestClient.config.gasPrices)
+  .toArray()[0]
+  .mul(gasLimit)
 const fee = new Fee(gasLimit, new Coins([feeAmount]))
 ```
 
@@ -132,7 +144,14 @@ console.log(txHash === broadcastRes.txhash)
 ### Full Example
 
 ```ts src/signing-transaction.ts
-import { Coins, Fee, RESTClient, MnemonicKey, MsgSend, Wallet } from '@initia/initia.js'
+import {
+  Coins,
+  Fee,
+  RESTClient,
+  MnemonicKey,
+  MsgSend,
+  Wallet,
+} from '@initia/initia.js'
 import crypto from 'crypto'
 
 const mnemonic = process.env.MNEMONIC
@@ -141,7 +160,10 @@ const restUrl = process.env.REST_URL || 'https://rest.testnet.initia.xyz'
 const gasPrices = process.env.GAS_PRICES || '0.015uinit' // Will be INIT for mainnet
 
 export function getTxHash(tx: Uint8Array): string {
-  const s256Buffer = crypto.createHash(`sha256`).update(Buffer.from(tx)).digest()
+  const s256Buffer = crypto
+    .createHash(`sha256`)
+    .update(Buffer.from(tx))
+    .digest()
   const txbytes = new Uint8Array(s256Buffer)
   return Buffer.from(txbytes.slice(0, 32)).toString(`hex`).toUpperCase()
 }
@@ -171,7 +193,9 @@ async function offlineSingingTest() {
 
   // use fixed fee to not estimate gas
   const gasLimit = 500000
-  const feeAmount = new Coins(offlineRestClient.config.gasPrices).toArray()[0].mul(gasLimit)
+  const feeAmount = new Coins(offlineRestClient.config.gasPrices)
+    .toArray()[0]
+    .mul(gasLimit)
 
   const fee = new Fee(gasLimit, new Coins([feeAmount]))
 

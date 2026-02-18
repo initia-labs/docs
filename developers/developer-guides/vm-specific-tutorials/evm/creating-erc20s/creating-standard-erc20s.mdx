@@ -95,8 +95,9 @@ ERC20_FACTORY_ADDRESS={{FACTORY_CONTRACT_ADDRESS}}
 ```
 
 <Warning>
-  Never share your `.env` file or private key. Anyone with this key can control your account. Keep it local and **add
-  `.env` to your `.gitignore`** so it is never committed to Git.
+  Never share your `.env` file or private key. Anyone with this key can control
+  your account. Keep it local and **add `.env` to your `.gitignore`** so it is
+  never committed to Git.
 </Warning>
 
 ## Development
@@ -147,7 +148,13 @@ touch src/index.js
 Start with the imports:
 
 ```js
-const { createPublicClient, createWalletClient, decodeEventLog, getContract, http } = require('viem')
+const {
+  createPublicClient,
+  createWalletClient,
+  decodeEventLog,
+  getContract,
+  http,
+} = require('viem')
 const { privateKeyToAccount } = require('viem/accounts')
 const erc20Abi = require('../abis/erc20Abi.json')
 const erc20FactoryAbi = require('../abis/erc20FactoryAbi.json')
@@ -157,7 +164,8 @@ const miniEVM = require('./chain')
 Load the environment variables:
 
 <Note>
-  You can also find factory addresses on the [Networks](/resources/developer/initia-l1) page or by calling the
+  You can also find factory addresses on the
+  [Networks](/resources/developer/initia-l1) page or by calling the
   `/minievm/evm/v1/contracts/erc20_factory` endpoint on any MiniEVM rollup.
 </Note>
 
@@ -168,7 +176,9 @@ const rawPrivateKey = process.env.PRIVATE_KEY
 if (!rawPrivateKey) {
   throw new Error('PRIVATE_KEY environment variable is not set.')
 }
-const privateKey = rawPrivateKey.startsWith('0x') ? rawPrivateKey : `0x${rawPrivateKey}`
+const privateKey = rawPrivateKey.startsWith('0x')
+  ? rawPrivateKey
+  : `0x${rawPrivateKey}`
 
 const erc20FactoryAddress = process.env.ERC20_FACTORY_ADDRESS
 if (!erc20FactoryAddress) {
@@ -266,7 +276,13 @@ createERC20()
 Here is the entire script for reference:
 
 ```js
-const { createPublicClient, createWalletClient, decodeEventLog, getContract, http } = require('viem')
+const {
+  createPublicClient,
+  createWalletClient,
+  decodeEventLog,
+  getContract,
+  http,
+} = require('viem')
 const { privateKeyToAccount } = require('viem/accounts')
 const erc20Abi = require('../abis/erc20Abi.json')
 const erc20FactoryAbi = require('../abis/erc20FactoryAbi.json')
@@ -278,7 +294,9 @@ const rawPrivateKey = process.env.PRIVATE_KEY
 if (!rawPrivateKey) {
   throw new Error('PRIVATE_KEY environment variable is not set.')
 }
-const privateKey = rawPrivateKey.startsWith('0x') ? rawPrivateKey : `0x${rawPrivateKey}`
+const privateKey = rawPrivateKey.startsWith('0x')
+  ? rawPrivateKey
+  : `0x${rawPrivateKey}`
 
 const erc20FactoryAddress = process.env.ERC20_FACTORY_ADDRESS
 if (!erc20FactoryAddress) {

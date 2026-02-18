@@ -14,8 +14,9 @@ approach allows you to:
 - Maintain seamless connectivity between different blockchain environments
 
 <Info>
-  **Non-EVM chains**: If your chain is not EVM-based, you can leave the default chain set to mainnet. Initia Wallet
-  won't actually connect to Ethereum—it only uses an arbitrary signer to sign amino messages.
+  **Non-EVM chains**: If your chain is not EVM-based, you can leave the default
+  chain set to mainnet. Initia Wallet won't actually connect to Ethereum—it only
+  uses an arbitrary signer to sign amino messages.
 </Info>
 
 ## Setup Guide
@@ -34,7 +35,12 @@ provider.
 import { PropsWithChildren, useEffect } from 'react'
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { initiaPrivyWalletConnector, injectStyles, InterwovenKitProvider, TESTNET } from '@initia/interwovenkit-react'
+import {
+  initiaPrivyWalletConnector,
+  injectStyles,
+  InterwovenKitProvider,
+  TESTNET,
+} from '@initia/interwovenkit-react'
 import interwovenKitStyles from '@initia/interwovenkit-react/styles.js'
 
 const minievm = {
@@ -86,10 +92,12 @@ export default function Providers({ children }: PropsWithChildren) {
   for Minievm testnet)
 
 <Info>
-  **Chain ID Configuration**: The `defaultChainId` parameter sets the primary blockchain for Initia Wallet operations.
-  For EVM rollups, use your rollup's chain ID (like `"minievm-2"`), not the EVM chain ID. This ensures proper balance
-  display and bridging functionality. See [InterwovenKitProvider
-  reference](/interwovenkit/references/components/interwovenkit-provider) for more details.
+  **Chain ID Configuration**: The `defaultChainId` parameter sets the primary
+  blockchain for Initia Wallet operations. For EVM rollups, use your rollup's
+  chain ID (like `"minievm-2"`), not the EVM chain ID. This ensures proper
+  balance display and bridging functionality. See [InterwovenKitProvider
+  reference](/interwovenkit/references/components/interwovenkit-provider) for
+  more details.
 </Info>
 
 </Step>
@@ -120,7 +128,12 @@ to:
 'use client'
 
 import { parseEther } from 'viem'
-import { useAccount, useChainId, useSendTransaction, useSwitchChain } from 'wagmi'
+import {
+  useAccount,
+  useChainId,
+  useSendTransaction,
+  useSwitchChain,
+} from 'wagmi'
 import { truncate } from '@initia/utils'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 

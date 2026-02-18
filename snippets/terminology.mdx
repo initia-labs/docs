@@ -8,7 +8,8 @@ snippet: true
 
 export const INIT = 'The vanilla Initia INIT tokens on the Initia L1'
 export const m = 'The destination rollup that the user wants to bridge to'
-export const OpINIT = 'The variation of the INIT tokens bridged directly from the Initia L1 to the destination rollup m'
+export const OpINIT =
+  'The variation of the INIT tokens bridged directly from the Initia L1 to the destination rollup m'
 export const IbcOpINIT =
   'The variation of the INIT token that was bridged from Initia L1 to the rollup m through OP Bridge, then subsequently back to the L1 through IBC'
 
@@ -23,7 +24,8 @@ export const LiquidityProvider =
   'A user that provides INIT token liquidity to the Minitswap DEX. Unlike conventional DEXes, Minitswap only allows for single-sided INIT token deposits.'
 export const PegKeeper =
   'A virtual market participant implemented into the DEX that automatically swaps INIT tokens for IbcOpINIT tokens directly before or after all user swaps. The aim of the peg keeper is to maintain a swap price close to 1 before fees.'
-export const User = 'The end user using the Minitswap DEX who seeks to swap IbcOpINIT tokens into INIT.'
+export const User =
+  'The end user using the Minitswap DEX who seeks to swap IbcOpINIT tokens into INIT.'
 
 export const VirtualPoolSize =
   'Virtual Pool size: An on-chain governance-set parameter that defines the size of the virtual liquidity pool. A larger value increases the total available swap liquidity for Minitswap and helps facilitate a larger swap volume, all else being equal.'
@@ -33,6 +35,7 @@ export const VirtualPoolImbalance =
   'This is defined to be the ratio of the Virtual Pool size V and the Peg Keeper balance B. The ratio measures how far the virtual pool currently deviates from the initial state. When there is a large volume of swaps in only one direction, the ratio increases.'
 export const FullyRecoveredRatio =
   'Defines the ideal proportion of IbcOpInit vs. INIT in the virtual pool. For example, a ratio of 0.6 implies that the ratio of IbcOpInit to INIT is 6:4. When a user performs a swap, the pool ratio is compared to the Fully Recovered Ratio. If the current pool is greater, the Peg Keeper will swap the IbcOpInit tokens for INIT tokens.'
-export const MaxRatio = 'A governance-controlled value that dictates the largest Fully Recovered Ratio value allowed.'
+export const MaxRatio =
+  'A governance-controlled value that dictates the largest Fully Recovered Ratio value allowed.'
 export const Flexibility =
   "A governance-controlled variable that modifies the Peg Keeper's tolerance towards imbalance. A higher flexibility means that a low target ratio can be maintained even with a high imbalance. When the flexibility is low, the Peg Keeper will interfere less frequently compared to high flexibility, ceteris paribus."

@@ -42,8 +42,8 @@ interface AutoSign {
 Indicates whether autosign status is currently being checked.
 
 <ParamField path="isLoading" type="boolean">
-  Returns `true` when autosign status is being initialized or checked, `false` otherwise. Use this to show loading
-  indicators in your UI.
+  Returns `true` when autosign status is being initialized or checked, `false`
+  otherwise. Use this to show loading indicators in your UI.
 </ParamField>
 
 **Example:**
@@ -65,8 +65,9 @@ function AutosignButton() {
 Expiration date for autosign on the default chain.
 
 <ParamField path="expiration" type="Date | null">
-  Returns a `Date` object representing when autosign expires on the default chain, or `null` if autosign is not enabled.
-  Use this to display expiration information and check if autosign is currently active.
+  Returns a `Date` object representing when autosign expires on the default
+  chain, or `null` if autosign is not enabled. Use this to display expiration
+  information and check if autosign is currently active.
 </ParamField>
 
 **Example:**
@@ -88,8 +89,10 @@ function ExpirationDisplay() {
 Map of chain IDs to expiration timestamps for all configured chains.
 
 <ParamField path="expirations" type="Record<string, number | null>">
-  Returns an object mapping chain IDs to expiration timestamps (in milliseconds since epoch). Use this for multi-chain
-  applications to check autosign status across multiple chains. Returns `null` for chains where autosign is not enabled.
+  Returns an object mapping chain IDs to expiration timestamps (in milliseconds
+  since epoch). Use this for multi-chain applications to check autosign status
+  across multiple chains. Returns `null` for chains where autosign is not
+  enabled.
 </ParamField>
 
 **Example:**

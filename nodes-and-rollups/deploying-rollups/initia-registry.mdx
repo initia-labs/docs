@@ -367,9 +367,16 @@ import { RESTClient } from '@initia/initia.js'
  * @param {string} l1_denom - The L1 denomination (e.g., "uinit").
  * @returns {Promise<string>} - The corresponding L2 denomination (e.g., "l2/...").
  */
-export async function opDenomByL1Denom(uri: string, bridge_id: number, l1_denom: string): Promise<string> {
+export async function opDenomByL1Denom(
+  uri: string,
+  bridge_id: number,
+  l1_denom: string,
+): Promise<string> {
   const restClient = new RESTClient(uri)
-  const tokenPair = await restClient.ophost.tokenPairByL1Denom(bridge_id, l1_denom)
+  const tokenPair = await restClient.ophost.tokenPairByL1Denom(
+    bridge_id,
+    l1_denom,
+  )
   return tokenPair.l2_denom
 }
 
@@ -383,9 +390,16 @@ export async function opDenomByL1Denom(uri: string, bridge_id: number, l1_denom:
  * @param {string} l2_denom - The L2 denomination (e.g., "l2/xyz...").
  * @returns {Promise<string>} - The corresponding L1 denomination (e.g., "uinit").
  */
-export async function opDenomByL2Denom(uri: string, bridge_id: number, l2_denom: string): Promise<string> {
+export async function opDenomByL2Denom(
+  uri: string,
+  bridge_id: number,
+  l2_denom: string,
+): Promise<string> {
   const restClient = new RESTClient(uri)
-  const tokenPair = await restClient.ophost.tokenPairByL2Denom(bridge_id, l2_denom)
+  const tokenPair = await restClient.ophost.tokenPairByL2Denom(
+    bridge_id,
+    l2_denom,
+  )
   return tokenPair.l1_denom
 }
 
@@ -395,7 +409,8 @@ async function main() {
   const bridge_id = 1
 
   const l1_denom = 'uinit'
-  const l2_denom = 'l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145'
+  const l2_denom =
+    'l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145'
 
   const l2_denom_for_l1_denom = await opDenomByL1Denom(uri, bridge_id, l1_denom)
   console.log(`L2 denom for L1 denom "${l1_denom}":`, l2_denom_for_l1_denom)
@@ -445,12 +460,17 @@ function makeIBCHash(fullTrace: string): string {
  * @param {string} denom - The IBC denom (must start with "ibc/").
  * @returns {Promise<string>} - The combined path and base denom (e.g., "transfer/channel-0/uinit").
  */
-async function getFullTrace(restClient: RESTClient, denom: string): Promise<string> {
+async function getFullTrace(
+  restClient: RESTClient,
+  denom: string,
+): Promise<string> {
   if (!denom.startsWith('ibc/')) {
     throw Error('Not an IBC denom')
   }
 
-  const trace = await restClient.apiRequester.get<DenomTrace>(`/ibc/apps/transfer/v1/denom_traces/${denom}`)
+  const trace = await restClient.apiRequester.get<DenomTrace>(
+    `/ibc/apps/transfer/v1/denom_traces/${denom}`,
+  )
   return `${trace.denom_trace.path}/${trace.denom_trace.base_denom}`
 }
 
@@ -503,7 +523,9 @@ export async function ibcDenom(
   }
 
   // If it starts with "transfer/", convert to an IBC hash; otherwise, return as is
-  const denomInChainB = fullTraceOnChainB.startsWith('transfer/') ? makeIBCHash(fullTraceOnChainB) : fullTraceOnChainB
+  const denomInChainB = fullTraceOnChainB.startsWith('transfer/')
+    ? makeIBCHash(fullTraceOnChainB)
+    : fullTraceOnChainB
 
   return denomInChainB
 }
@@ -515,7 +537,12 @@ async function main() {
   const channelA = 'channel-132' // Example channel ID for chain A
   const channelB = 'channel-0' // Example channel ID for chain B
 
-  const ibcDenomStr = await ibcDenom(restClientChainA, denom, channelA, channelB)
+  const ibcDenomStr = await ibcDenom(
+    restClientChainA,
+    denom,
+    channelA,
+    channelB,
+  )
   console.log('Calculated IBC Denom:', ibcDenomStr)
 }
 

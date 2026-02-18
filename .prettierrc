@@ -2,14 +2,6 @@
   "singleQuote": true,
   "semi": false,
   "trailingComma": "all",
-  "printWidth": 100,
-  "overrides": [
-    {
-      "files": ["*.md", "*.mdx"],
-      "options": {
-        "proseWrap": "preserve",
-        "printWidth": 120
-      }
-    }
-  ]
+  "printWidth": 80,
+  "proseWrap": "always"
 }

@@ -1,6 +1,7 @@
 ---
 title: Introduction
-description: Learn how to install and get started with the initiad command-line interface
+description:
+  Learn how to install and get started with the initiad command-line interface
   for interacting with Initia L1
 ---
 
@@ -24,7 +25,8 @@ With initiad, you can:
   local)
 
 <Info>
-  initiad is built using the Cosmos SDK and provides a familiar interface for users of other Cosmos-based chains.
+  initiad is built using the Cosmos SDK and provides a familiar interface for
+  users of other Cosmos-based chains.
 </Info>
 
 ## Prerequisites
@@ -35,7 +37,9 @@ Before installing initiad, ensure you have the following requirements:
 - **Git**: For cloning the repository
 - **Make**: For building the binary
 
-<Tip>You can verify your Go installation by running `go version` in your terminal.</Tip>
+<Tip>
+  You can verify your Go installation by running `go version` in your terminal.
+</Tip>
 
 ## Installation
 
@@ -64,9 +68,10 @@ git checkout $VERSION
 </Tab>
 
 <Tab title="Testnet">
-  ```bash # Get the current testnet version and checkout export VERSION=$(curl -s
-  https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep
-  -oE 'v[0-9]+\.[0-9]+\.[0-9]+') echo "Checking out version: $VERSION" git checkout $VERSION ```
+  ```bash # Get the current testnet version and checkout export VERSION=$(curl
+  -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info |
+  jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+  echo "Checking out version: $VERSION" git checkout $VERSION ```
 </Tab>
 
 <Tab title="Manual">
@@ -80,7 +85,8 @@ git checkout $VERSION
 </Tabs>
 
 <Warning>
-  Always use a specific version tag rather than the main branch for production environments to ensure stability.
+  Always use a specific version tag rather than the main branch for production
+  environments to ensure stability.
 </Warning>
 
 <Note>
@@ -138,7 +144,8 @@ initiad config node https://rpc.initia.xyz:443
 </Tab>
 
 <Tab title="Testnet">
-  ```bash initiad config chain-id initiation-1 initiad config node https://rpc.testnet.initia.xyz:443 ```
+  ```bash initiad config chain-id initiation-1 initiad config node
+  https://rpc.testnet.initia.xyz:443 ```
 </Tab>
 
 <Tab title="Local Node">
@@ -158,7 +165,10 @@ Now that you have initiad installed and configured, you can:
 Set up accounts for sending transactions and managing assets
 </Card>
 
-<Card title="Query Blockchain Data" href="/developers/developer-guides/tools/clis/initiad-cli/querying-data">
+<Card
+  title="Query Blockchain Data"
+  href="/developers/developer-guides/tools/clis/initiad-cli/querying-data"
+>
   Learn how to query balances, transactions, and network information
 </Card>
 

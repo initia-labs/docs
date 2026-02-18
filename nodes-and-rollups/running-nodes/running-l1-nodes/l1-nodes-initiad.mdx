@@ -20,8 +20,10 @@ Before proceeding, ensure your system meets the following requirements:
 | High        | 8 cores | 32GB RAM | 2 TB NVMe/SSD with write throughput > 1000 MiBps | 100 Mbps bandwidth |
 
 <Note>
-  We strongly recommend running Initia nodes on a Linux-based operating system. While it may be possible to run on other
-  operating systems, we have not tested them and cannot guarantee the same environment settings and running conditions.
+  We strongly recommend running Initia nodes on a Linux-based operating system.
+  While it may be possible to run on other operating systems, we have not tested
+  them and cannot guarantee the same environment settings and running
+  conditions.
 </Note>
 
 ## Installation
@@ -71,7 +73,8 @@ initiad version
 ```
 
 <Warning>
-  If `initiad` is not found, check your `$PATH` environment variable to ensure it includes `$GOBIN` or `$GOPATH/bin`.
+  If `initiad` is not found, check your `$PATH` environment variable to ensure
+  it includes `$GOBIN` or `$GOPATH/bin`.
 </Warning>
 
 </Step>
@@ -115,8 +118,9 @@ Note that:
 
 <Warning>
   Your private key is generated during initialization and stored in `${HOME}
-  /.initia/config/priv_validator_key.json`. **IMPORTANT**: Always back up your private key, especially for validator
-  nodes. Loss of the private key may result in permanent node inaccessibility.
+  /.initia/config/priv_validator_key.json`. **IMPORTANT**: Always back up your
+  private key, especially for validator nodes. Loss of the private key may
+  result in permanent node inaccessibility.
 </Warning>
 
 ### Network Configuration
@@ -132,7 +136,9 @@ An Initia node provides multiple endpoints that you can enable or disable.
 | RPC           | Tendermint/CometBFT API | `~/.initia/config/config.toml` |
 | P2P           | Gossip P2P Network      | `~/.initia/config/config.toml` |
 
-<Info>Validator nodes are not recommended to expose these endpoints publicly.</Info>
+<Info>
+  Validator nodes are not recommended to expose these endpoints publicly.
+</Info>
 
 #### Configuration Examples
 
@@ -186,7 +192,8 @@ To fully connect to the network, you first need to download the genesis file,
 configure your peers, and sync the node.
 
 <Note>
-  You can find information on the genesis file, peers, and state sync for the network you want to join on the [networks
+  You can find information on the genesis file, peers, and state sync for the
+  network you want to join on the [networks
   page](/resources/developer/initia-l1)
 </Note>
 

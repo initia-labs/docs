@@ -11,14 +11,16 @@ The total rewards are first distributed to each rollup, then subsequently to the
 rollup's users and operators.
 
 <Note>
-  Before a rollup can qualify for VIP rewards, it must first achieve a minimum INIT TVL and then be whitelisted by the
-  Initia L1 governance through an on-chain proposal. See the [VIP Eligibility](/home/core-concepts/vip/eligibility) page
-  for more details.
+  Before a rollup can qualify for VIP rewards, it must first achieve a minimum
+  INIT TVL and then be whitelisted by the Initia L1 governance through an
+  on-chain proposal. See the [VIP
+  Eligibility](/home/core-concepts/vip/eligibility) page for more details.
 </Note>
 
 <Note>
-  For details on the specific VIP parameters such as stage and cycle duration, see the [VIP
-  Parameters](/resources/developer/initia-l1#vip-parameters) section.
+  For details on the specific VIP parameters such as stage and cycle duration,
+  see the [VIP Parameters](/resources/developer/initia-l1#vip-parameters)
+  section.
 </Note>
 
 ## Rewards Distribution
@@ -38,7 +40,9 @@ At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed
 amongst each rollup ecosystem. The total rewards are then split into two pools:
 the **Balance Pool $R_B$** and the **Weight Pool $R_W$**.
 
-<Frame caption="VIP Rewards Distribution">![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.png)</Frame>
+<Frame caption="VIP Rewards Distribution">
+  ![VIP Rewards Distribution](/images/vip/vip_rewards_distribution.png)
+</Frame>
 
 These two pools aim to incentivize and reward different aspects of rollup
 operations. The ratio between $R_B$ and $R_W$, called `poolSplitRatio`, is set
@@ -134,7 +138,8 @@ active and useful, they can set an `operatorCommissionRate`, $c$. This rate
 allows them to take a portion of the rewards for their rollup.
 
 <Frame caption="VIP Operator Rewards Distribution">
-  ![VIP Operator Rewards Distribution](/images/vip/vip_distribution_operators.png)
+  ![VIP Operator Rewards
+  Distribution](/images/vip/vip_distribution_operators.png)
 </Frame>
 
 The rewards for an operator $o$ of rollup $m$ during a stage are:
@@ -168,7 +173,9 @@ These tokens are initially non-transferable and can be vested in two ways:
 2. **Convert into LP Lock-Staked Position:** Convert the escrowed tokens into a
    whitelisted INIT:TOKEN staking position.
 
-<Frame caption="VIP Rollup User Vesting">![VIP User Vesting](/images/vip/vip_rewards_vesting_users.png)</Frame>
+<Frame caption="VIP Rollup User Vesting">
+  ![VIP User Vesting](/images/vip/vip_rewards_vesting_users.png)
+</Frame>
 
 #### Maintaining a VIP Score
 

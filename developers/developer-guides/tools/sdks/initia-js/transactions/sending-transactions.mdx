@@ -6,7 +6,14 @@ Sending transactions using InitiaJS is straightforward. First, we need to import
 the necessary classes and functions.
 
 ```ts
-import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js'
+import {
+  Wallet,
+  RESTClient,
+  MnemonicKey,
+  MsgSend,
+  Tx,
+  WaitTxBroadcastResult,
+} from '@initia/initia.js'
 ```
 
 Next, we need to set up our environment variables. We will need the following:
@@ -28,8 +35,10 @@ const mnemonic = process.env.MNEMONIC
 const restUrl = process.env.REST_URL || 'https://rest.testnet.initia.xyz'
 const gasPrices = process.env.GAS_PRICES || '0.015uinit' // Will be INIT for mainnet
 
-const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
-const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
+const senderAddress =
+  process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
+const recipientAddress =
+  process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
 const amount = process.env.AMOUNT || '1000uinit'
 ```
 
@@ -63,7 +72,8 @@ async function sendTransaction(): Promise<WaitTxBroadcastResult> {
       memo: 'memo',
     })
 
-    const result: WaitTxBroadcastResult = await restClient.tx.broadcast(signedTx)
+    const result: WaitTxBroadcastResult =
+      await restClient.tx.broadcast(signedTx)
     console.log('Transaction successful')
     console.log('Transaction hash:', result.txhash)
     return result
@@ -97,14 +107,23 @@ Transaction hash: 4F0B810D15FA7D6A2B9EC2B98B263B0A20E791A8DABCB549620445941B25C6
 ### Full Example
 
 ```ts src/sending-transactions.ts
-import { Wallet, RESTClient, MnemonicKey, MsgSend, Tx, WaitTxBroadcastResult } from '@initia/initia.js'
+import {
+  Wallet,
+  RESTClient,
+  MnemonicKey,
+  MsgSend,
+  Tx,
+  WaitTxBroadcastResult,
+} from '@initia/initia.js'
 
 const mnemonic = process.env.MNEMONIC
 const restUrl = process.env.REST_URL || 'https://rest.testnet.initia.xyz'
 const gasPrices = process.env.GAS_PRICES || '0.015uinit' // Will be INIT for mainnet
 
-const senderAddress = process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
-const recipientAddress = process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
+const senderAddress =
+  process.env.SENDER_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
+const recipientAddress =
+  process.env.RECIPIENT_ADDRESS || 'init1w4cqq6udjqtvl5xx0x6gjeyzgwtze8c05kysnu'
 const amount = process.env.AMOUNT || '1000uinit'
 
 const key: MnemonicKey = new MnemonicKey({ mnemonic })
@@ -120,7 +139,8 @@ async function sendTransaction(): Promise<WaitTxBroadcastResult> {
       memo: 'memo',
     })
 
-    const result: WaitTxBroadcastResult = await restClient.tx.broadcast(signedTx)
+    const result: WaitTxBroadcastResult =
+      await restClient.tx.broadcast(signedTx)
     console.log('Transaction successful')
     console.log('Transaction hash:', result.txhash)
     return result

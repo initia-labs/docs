@@ -21,7 +21,10 @@ initiad keys add $ACCOUNT_NAME
 # glass easy miracle sign tent anchor position cluster shift calm march elite menu must nose inform antique reason meadow relief layer term crush gesture
 ```
 
-<Warning>The mnemonic key is the only way to recover your account if you forget your password.</Warning>
+<Warning>
+  The mnemonic key is the only way to recover your account if you forget your
+  password.
+</Warning>
 
 If you want to create an EVM account, you can use the following command:
 
@@ -33,8 +36,9 @@ initiad keys add $ACCOUNT_NAME --key-type $ETH_KEY_TYPE --coin-type $ETH_COIN_TY
 ```
 
 <Note>
-  Even with the same mnemonic phrase, the derived addresses differ because the method of generating the public key
-  varies, leading to each account being treated separately.
+  Even with the same mnemonic phrase, the derived addresses differ because the
+  method of generating the public key varies, leading to each account being
+  treated separately.
 </Note>
 
 ## Importing an Account
@@ -72,8 +76,9 @@ initiad keys export $ACCOUNT_NAME > key.json
 ```
 
 <Note>
-  The exported private key is encrypted with a passphrase. So, you can only import it using `initiad` CLI. It is not
-  possible to import it directly on Wallet Apps.
+  The exported private key is encrypted with a passphrase. So, you can only
+  import it using `initiad` CLI. It is not possible to import it directly on
+  Wallet Apps.
 </Note>
 
 To import the account using the exported private key, run:

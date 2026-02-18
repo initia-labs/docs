@@ -16,10 +16,19 @@ Fee Token as an ERC20 token.
 
 Use validator (admin) account to update the chain parameter.
 
-<Warning>The deployed ERC20 token must inherit the `InitiaERC20` contract.</Warning>
+<Warning>
+  The deployed ERC20 token must inherit the `InitiaERC20` contract.
+</Warning>
 
 ```ts
-import { EvmParams, RESTClient, MnemonicKey, MsgUpdateEvmParams, Wallet, MsgExecuteMessages } from '@initia/initia.js'
+import {
+  EvmParams,
+  RESTClient,
+  MnemonicKey,
+  MsgUpdateEvmParams,
+  Wallet,
+  MsgExecuteMessages,
+} from '@initia/initia.js'
 
 /**
  * main() demonstrates how to update EVM-related chain parameters (such as fee denom, allowed publishers, etc.).

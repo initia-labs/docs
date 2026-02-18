@@ -310,7 +310,15 @@ After the contract is deployed and the ACL is set, we can execute the IBC hooks
 message to call the contract.
 
 ```typescript
-import { bcs, Coin, Height, RESTClient, MnemonicKey, MsgTransfer, Wallet } from '@initia/initia.js'
+import {
+  bcs,
+  Coin,
+  Height,
+  RESTClient,
+  MnemonicKey,
+  MsgTransfer,
+  Wallet,
+} from '@initia/initia.js'
 
 function createHook(params: object) {
   const hook = { move: { message: params } }
@@ -323,10 +331,14 @@ async function main() {
     gasPrices: '0.015uinit',
   })
 
-  const l2RestClient = new RESTClient('https://rest-move-1.anvil.asia-southeast.initia.xyz', {
-    gasAdjustment: '1.75',
-    gasPrices: '0.15l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145', // set l2 gas price
-  })
+  const l2RestClient = new RESTClient(
+    'https://rest-move-1.anvil.asia-southeast.initia.xyz',
+    {
+      gasAdjustment: '1.75',
+      gasPrices:
+        '0.15l2/07b129ceb9c4b0bdef7db171ce1e22f90d34bc930058b23e21adf8cc938d8145', // set l2 gas price
+    },
+  )
 
   const sender = new Wallet(
     l2RestClient,

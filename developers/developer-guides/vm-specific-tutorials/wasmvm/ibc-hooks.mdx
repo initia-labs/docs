@@ -63,9 +63,10 @@ So we detail where we want to get each of these fields from:
   representation.
 
 <Hint>
-  Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the packet forward middleware, we cannot trust
-  the sender from chains that use PFM. Until that is fixed, we recommend chains to not trust the sender on contracts
-  executed via IBC hooks.
+  Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the
+  packet forward middleware, we cannot trust the sender from chains that use
+  PFM. Until that is fixed, we recommend chains to not trust the sender on
+  contracts executed via IBC hooks.
 </Hint>
 
 ```go
@@ -299,7 +300,15 @@ After the contract is deployed and the ACL is set, we can execute the IBC hooks
 message to call the contract.
 
 ```typescript
-import { Coin, Height, RESTClient, MnemonicKey, MsgTransfer, sha256, Wallet } from '@initia/initia.js'
+import {
+  Coin,
+  Height,
+  RESTClient,
+  MnemonicKey,
+  MsgTransfer,
+  sha256,
+  Wallet,
+} from '@initia/initia.js'
 
 function createHook(params: object) {
   const hook = { wasm: { message: params } }
@@ -341,7 +350,8 @@ async function main() {
       new Height(0, 0),
       ((new Date().valueOf() + 100000) * 1000000).toString(),
       createHook({
-        contract: 'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8',
+        contract:
+          'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8',
         msg: {
           simple_transfer: {
             amount: Number(amount),
