@@ -53,36 +53,102 @@ Your assistant will generate the `memoboard` project and confirm that the Rust
 tests pass.
 
 <Accordion title="Manual Approach: The Rust Contract">
-If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. Save your Rust project in the `memoboard` directory.
+If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
+
+**Important:** Ensure your `Cargo.toml` includes the following `[lib]` section to correctly generate the Wasm binary:
+```toml
+[lib]
+crate-type = ["cdylib", "rlib"]
+```
 
 ```rust wrap
-use cosmwasm_std::{entry_point, DepsMut, Env, MessageInfo, Response, StdResult};
+use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
 use cw_storage_plus::Item;
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
-pub struct Memo {
-    pub sender: String,
-    pub content: String,
+#[cw_serde]
+pub struct Message {
+    pub sender: Addr,
+    pub message: String,
 }
 
-pub const BOARD: Item<Vec<Memo>> = Item::new("board");
+pub const MESSAGES: Item<Vec<Message>> = Item::new("messages");
 
-#[entry_point]
-pub fn instantiate(_deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> StdResult<Response> {
-    BOARD.save(_deps.storage, &vec![])?;
+#[cw_serde]
+pub struct InstantiateMsg {}
+
+#[cw_serde]
+pub enum ExecuteMsg {
+    PostMessage { message: String },
+}
+
+#[cw_serde]
+#[derive(QueryResponses)]
+pub enum QueryMsg {
+    #[returns(AllMessagesResponse)]
+    AllMessages {},
+}
+
+#[cw_serde]
+pub struct AllMessagesResponse {
+    pub messages: Vec<Message>,
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> StdResult<Response> {
+    MESSAGES.save(deps.storage, &vec![])?;
     Ok(Response::default())
 }
 
-#[entry_point]
+#[cfg_attr(not(feature = "library"), entry_point)]
 pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> StdResult<Response> {
     match msg {
-        ExecuteMsg::PostMemo { content } => {
-            let mut board = BOARD.load(deps.storage)?;
-            board.push(Memo { sender: info.sender.to_string(), content });
-            BOARD.save(deps.storage, &board)?;
-            Ok(Response::new().add_attribute("action", "post_memo"))
+        ExecuteMsg::PostMessage { message } => {
+            MESSAGES.update(deps.storage, |mut messages| -> StdResult<_> {
+                messages.push(Message { sender: info.sender, message });
+                Ok(messages)
+            })?;
+            Ok(Response::new().add_attribute("action", "post_message"))
         }
+    }
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::AllMessages {} => {
+            let messages = MESSAGES.load(deps.storage)?;
+            to_json_binary(&AllMessagesResponse { messages })
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env};
+    use cosmwasm_std::from_json;
+
+    #[test]
+    fn test_post_and_query() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+        
+        // Instantiate
+        let info = message_info(&Addr::unchecked("creator"), &[]);
+        instantiate(deps.as_mut(), env.clone(), info, InstantiateMsg {}).unwrap();
+
+        // Post Message
+        let info = message_info(&Addr::unchecked("user1"), &[]);
+        let msg = ExecuteMsg::PostMessage { message: "Hello!".to_string() };
+        execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+
+        // Query
+        let res = query(deps.as_ref(), env, QueryMsg::AllMessages {}).unwrap();
+        let val: AllMessagesResponse = from_json(&res).unwrap();
+        assert_eq!(val.messages.len(), 1);
+        assert_eq!(val.messages[0].message, "Hello!");
+        assert_eq!(val.messages[0].sender, "user1");
     }
 }
 ```
@@ -103,23 +169,46 @@ Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Ru
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
-**1. Store the Code:**
+**1. Build and Store the Code:**
+
+Standard `cargo build` binaries often fail validation on-chain. For WasmVM deployment, it is strongly recommended to use the **CosmWasm Optimizer**.
+
+**Note for Apple Silicon (M1/M2/M3):** Use the `cosmwasm/optimizer-arm64:0.16.1` image variant.
+
 ```bash wrap
-minitiad tx wasm store ./target/wasm32-unknown-unknown/release/memoboard.wasm \
+# Run from the root of your project
+docker run --rm -v "$(pwd)/memoboard":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  cosmwasm/optimizer:0.16.1
+```
+
+The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`. Now, store the code:
+
+```bash wrap
+# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
+minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
   --gas auto --gas-adjustment 1.4 --yes
 ```
 
-**2. Instantiate the Contract:**
+**2. Retrieve the Code ID and Instantiate:**
 
+If the `code_id` is not returned directly, query the transaction hash:
+```bash wrap
+minitiad q tx <TX_HASH>
+```
+
+Then, instantiate the contract:
 ```bash wrap
 minitiad tx wasm instantiate <code-id> '{}' \
   --label "memoboard" \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
+  --gas auto --gas-adjustment 1.4 \
   --no-admin --yes
 ```
 
@@ -196,6 +285,7 @@ export default defineConfig({
 ```javascript wrap
 import { Buffer } from 'buffer'
 window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
 
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -215,11 +305,38 @@ const wagmiConfig = createConfig({
   transports: { [mainnet.id]: http() },
 });
 
+const customChain = {
+  chain_id: "your-chain-id",
+  chain_name: "social",
+  pretty_name: "Social Rollup",
+  network_type: "testnet",
+  bech32_prefix: "init",
+  logo_URIs: {
+    png: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png",
+    svg: "https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg"
+  },
+  apis: {
+    rpc: [{ address: "http://localhost:26657" }],
+    rest: [{ address: "http://localhost:1317" }],
+    indexer: [{ address: "http://localhost:8080" }],
+  },
+  fees: {
+    fee_tokens: [{ denom: "umin", fixed_min_gas_price: 0 }]
+  },
+  metadata: {
+    minitia: { type: "miniwasm" }
+  }
+};
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InterwovenKitProvider {...TESTNET}>
+        <InterwovenKitProvider 
+          {...TESTNET} 
+          defaultChainId="your-chain-id"
+          customChain={customChain}
+        >
           <App />
         </InterwovenKitProvider>
       </QueryClientProvider>
@@ -229,25 +346,61 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 ```
 
 **4. Create the `Board.jsx` Component:**
-Create `src/Board.jsx` and add the contract interaction logic:
+Create `src/Board.jsx` and `src/Board.css` with the following content:
+
+**src/Board.css:**
+```css wrap
+.board-container { max-width: 600px; margin: 40px auto; padding: 32px; font-family: sans-serif; }
+.board-title { font-size: 2.5rem; font-weight: 800; margin-bottom: 24px; text-align: center; }
+.section-header { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 16px; display: block; }
+.auth-section { display: flex; justify-content: center; margin-bottom: 24px; }
+.wallet-info { background: #f0f0f0; padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; width: 100%; }
+.message-card { background: white; padding: 16px; border-radius: 12px; border: 1px solid #eee; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+.message-sender { font-family: monospace; font-size: 0.75rem; color: #999; }
+.input-group { display: flex; gap: 12px; margin-top: 16px; }
+.memo-input { flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+.btn-primary { background: #000; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+```
+
+**src/Board.jsx:**
 ```javascript wrap
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useInterwovenKit } from "@initia/interwovenkit-react";
+import { RESTClient } from "@initia/initia.js";
+import './Board.css';
 
 const MEMO_BOARD_ADDRESS = "YOUR_CONTRACT_ADDRESS";
+const rest = new RESTClient("http://localhost:1317", { chainId: "your-chain-id" });
 
 const Board = () => {
+  const [messages, setMessages] = useState([]);
   const [content, setContent] = useState('');
-  const { address, requestTxBlock } = useInterwovenKit();
+  const { initiaAddress, requestTxBlock, openWallet, openConnect } = useInterwovenKit();
 
-  const handlePostMemo = async () => {
+  const fetchMessages = async () => {
+    // Encode query to base64 for the REST path
+    const queryData = btoa(JSON.stringify({ all_messages: {} }));
+    const res = await rest.wasm.smartContractState(MEMO_BOARD_ADDRESS, queryData);
+    // Use optional chaining for resilience
+    setMessages((res?.messages || []).reverse());
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  const handlePostMessage = async () => {
+    // Encode execute msg to Uint8Array (bytes)
+    const msg = new TextEncoder().encode(JSON.stringify({ post_message: { message: content } }));
+
     await requestTxBlock({
+      chainId: "your-chain-id",
       messages: [{
         typeUrl: "/cosmwasm.wasm.v1.MsgExecuteContract",
         value: { 
-          sender: address, 
+          sender: initiaAddress, 
           contract: MEMO_BOARD_ADDRESS, 
-          msg: btoa(JSON.stringify({ post_memo: { content } })),
+          msg,
           funds: [] 
         },
       }],
@@ -255,9 +408,38 @@ const Board = () => {
   };
 
   return (
-    <div>
-      <input type="text" value={content} onChange={(e) => setContent(e.target.value)} />
-      <button onClick={handlePostMemo}>Post Memo</button>
+    <div className="board-container">
+      <h1 className="board-title">MemoBoard</h1>
+      {!initiaAddress ? (
+        <div className="auth-section">
+          <button onClick={openConnect} className="btn-primary">Connect Wallet</button>
+        </div>
+      ) : (
+        <div className="auth-section">
+          <div className="wallet-info">
+            <span>{initiaAddress.slice(0, 10)}...{initiaAddress.slice(-6)}</span>
+            <button onClick={openWallet} className="btn-primary">Open Wallet</button>
+          </div>
+        </div>
+      )}
+      {initiaAddress && (
+        <div style={{ marginBottom: '32px' }}>
+          <h3 className="section-header">Post a Memo</h3>
+          <div className="input-group">
+            <input className="memo-input" value={content} onChange={(e) => setContent(e.target.value)} placeholder="Write a memo..." />
+            <button onClick={handlePostMessage} className="btn-primary">Post Message</button>
+          </div>
+        </div>
+      )}
+      <div className="messages-list">
+        <h3 className="section-header">Board Feed</h3>
+        {messages.map((m, i) => (
+          <div key={i} className="message-card">
+            <div className="message-sender">{m.sender}</div>
+            <div className="message-content">{m.message}</div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
@@ -277,18 +459,25 @@ the deployed contract works as expected.
 
 ```terminal wrap
 Using the `initia-appchain-dev` skill, I want to verify our live MemoBoard contract. Using my gas station account on my appchain, please:
-1. Post a memo: "Hello from Initia!"
+1. Post a message: "Hello from Initia!"
 2. Query the board to see all messages.
 ```
 
 <Accordion title="Manual Approach: On-Chain Interaction">
-**Post Memo:**
+**Post Message:**
 ```bash wrap
-minitiad tx wasm execute <contract-address> '{"post_memo":{"content":"Hello!"}}' \
+# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
+minitiad tx wasm execute <contract-address> '{"post_message":{"message":"Hello!"}}' \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
   --gas auto --gas-adjustment 1.4 --yes
+```
+
+**Query Messages:**
+```bash wrap
+# Note: minitiad query commands typically do not support the --chain-id flag
+minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}'
 ```
 </Accordion>
 
