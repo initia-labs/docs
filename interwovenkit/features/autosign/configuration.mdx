@@ -5,22 +5,18 @@ icon: gear
 
 ## Overview
 
-Configuring autosign requires two main steps: setting up Privy for embedded
-wallet management and configuring autosign permissions in your
-`InterwovenKitProvider`. This guide walks you through both processes.
+Configuring autosign requires setting up the `enableAutoSign` prop in your
+`InterwovenKitProvider`. InterwovenKit handles ghost wallet creation and
+management automatically—no external wallet provider setup is required.
 
 ## Prerequisites
 
 Before configuring autosign, ensure you have:
 
-- A Privy account and application ID
 - InterwovenKit already integrated into your application
 - An understanding of which transaction types you need to auto-sign
 
 ## Setting Up Autosign
-
-Autosign uses an embedded Privy wallet connector that's built into InterwovenKit. 
-No separate Privy configuration is required.
 
 <Steps>
 <Step title="Install Dependencies">
@@ -50,14 +46,13 @@ bun add @initia/interwovenkit-react @tanstack/react-query wagmi viem
 
 <Step title="Configure InterwovenKitProvider">
 
-Configure your providers with the `initiaPrivyWalletConnector` and enable autosign:
+Add the `enableAutoSign` prop to your `InterwovenKitProvider`:
 
 ```tsx providers.tsx
 import { createConfig, http, WagmiProvider } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
-  initiaPrivyWalletConnector,
   injectStyles,
   InterwovenKitProvider,
 } from '@initia/interwovenkit-react'
@@ -67,9 +62,7 @@ import type { PropsWithChildren } from 'react'
 
 injectStyles(css)
 
-const connectors = [initiaPrivyWalletConnector]
 const wagmiConfig = createConfig({
-  connectors,
   chains: [mainnet],
   transports: { [mainnet.id]: http() },
 })
@@ -135,11 +128,7 @@ This option only enables autosign for default contract execution messages and is
 intentionally restrictive.
 
 ```tsx
-<InterwovenKitProvider
-  privyContext={{ privy, siwe, createWallet, wallets }}
-  enableAutoSign
-  // ... other config
->
+<InterwovenKitProvider enableAutoSign>
   {children}
 </InterwovenKitProvider>
 ```
