@@ -138,8 +138,8 @@ weave init
 Here's a guide on how to navigate the interactive setup:
 
 <Steps>
-  <Step title="Phase 1: Foundation & Funding">
-    ### 1. Generate Gas Station Account
+  <Step title="Foundation & Funding">
+    ### Generate Gas Station Account
     The Gas Station is an account on the Initia L1 that will fund your rollup's infrastructure.
 
     **Prompt:**
@@ -153,7 +153,7 @@ Here's a guide on how to navigate the interactive setup:
     **Result:**
     You will see your new Gas Station Address. 💡 **Copy this address.**
 
-    ### 2. Fund Your Gas Station Account
+    ### Fund Your Gas Station Account
     **Action:**
     Go to the **[Initia Testnet Faucet](https://app.testnet.initia.xyz/faucet)**.
 
@@ -170,8 +170,8 @@ Here's a guide on how to navigate the interactive setup:
 
   </Step>
 
-  <Step title="Phase 2: Rollup Identity">
-    ### 3. Choose Your Action
+  <Step title="Rollup Identity">
+    ### Choose Your Action
     **Prompt:**
     ```terminal wrap
     ? What do you want to do?
@@ -186,7 +186,7 @@ Here's a guide on how to navigate the interactive setup:
       If you have existing rollup data, you will be prompted to delete it. Type `confirm` to proceed with the new launch.
     </Warning>
 
-    ### 4. Select L1 Network
+    ### Select L1 Network
     **Prompt:**
     ```terminal wrap
     ? Select the Initia L1 network
@@ -195,7 +195,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Testnet (initiation-2)`.
 
-    ### 5. Select Virtual Machine (VM)
+    ### Select Virtual Machine (VM)
     **Prompt:**
     ```terminal wrap
     ? Select the Virtual Machine (VM)
@@ -204,7 +204,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select your desired VM (e.g., `Move`).
 
-    ### 6. Specify Rollup Chain ID
+    ### Specify Rollup Chain ID
     **Prompt:**
     ```terminal wrap
     ? Specify rollup chain ID
@@ -217,7 +217,7 @@ Here's a guide on how to navigate the interactive setup:
       **Save your Chain ID!** You will need to provide this unique identifier in your final hackathon submission.
     </Tip>
 
-    ### 7. Specify Rollup Gas Denom
+    ### Specify Rollup Gas Denom
     **Prompt:**
     ```terminal wrap
     ? Specify rollup gas denom
@@ -226,7 +226,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Press `Tab` for default (`umin`) or enter your own.
 
-    ### 8. Specify Rollup Node Moniker
+    ### Specify Rollup Node Moniker
     **Prompt:**
     ```terminal wrap
     ? Specify rollup node moniker
@@ -237,8 +237,8 @@ Here's a guide on how to navigate the interactive setup:
 
   </Step>
 
-  <Step title="Phase 3: Network & Infrastructure">
-    ### 9. Submission Interval
+  <Step title="Network & Infrastructure">
+    ### Submission Interval
     **Prompt:**
     ```terminal wrap
     ? Specify OP bridge config: Submission Interval
@@ -247,7 +247,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Press `Tab` for default (`1m`).
 
-    ### 10. Finalization Period
+    ### Finalization Period
     **Prompt:**
     ```terminal wrap
     ? Specify OP bridge config: Output Finalization Period
@@ -256,7 +256,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Press `Tab` for default (`168h`).
 
-    ### 11. Data Availability
+    ### Data Availability
     **Prompt:**
     ```terminal wrap
     ? Where should the rollup blocks data be submitted?
@@ -265,7 +265,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Initia L1`.
 
-    ### 12. Enable Oracle Price Feed
+    ### Enable Oracle Price Feed
     **Prompt:**
     ```terminal wrap
     ? Would you like to enable oracle price feed from L1?
@@ -276,8 +276,8 @@ Here's a guide on how to navigate the interactive setup:
 
   </Step>
 
-  <Step title="Phase 4: Security & Genesis">
-    ### 13. Setup Method for System Keys
+  <Step title="Security & Genesis">
+    ### Setup Method for System Keys
     **Prompt:**
     ```terminal wrap
     ? Select a setup method for the system keys
@@ -286,7 +286,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Generate new system keys`.
 
-    ### 14. System Accounts Funding Option
+    ### System Accounts Funding Option
     **Prompt:**
     ```terminal wrap
     ? Select system accounts funding option
@@ -295,7 +295,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Use the default preset`.
 
-    ### 15. Specify Fee Whitelist Addresses
+    ### Specify Fee Whitelist Addresses
     **Prompt:**
     ```terminal wrap
     ? Specify fee whitelist addresses
@@ -304,7 +304,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Press `Enter` to leave empty.
 
-    ### 16. Add Gas Station Account to Genesis
+    ### Add Gas Station Account to Genesis
     **Prompt:**
     ```terminal wrap
     ? Would you like to add the gas station account to genesis accounts?
@@ -313,7 +313,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Select `Yes`.
 
-    ### 17. Specify Genesis Balance
+    ### Specify Genesis Balance
     **Prompt:**
     ```terminal wrap
     ? Specify the genesis balance for the gas station account
@@ -322,7 +322,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Enter `1000000000000000000000000` (10^24). This ensures you have plenty of tokens for testing, especially if you are on the EVM track.
 
-    ### 18. Add Additional Genesis Accounts
+    ### Add Additional Genesis Accounts
     **Prompt:**
     ```terminal wrap
     ? Would you like to add genesis accounts?
@@ -333,8 +333,8 @@ Here's a guide on how to navigate the interactive setup:
 
   </Step>
 
-  <Step title="Phase 5: Launch">
-    ### 19. Verify System Keys & Continue
+  <Step title="Launch">
+    ### Verify System Keys & Continue
     **Prompt:**
     ```terminal wrap
     ? Type 'continue' to proceed.
@@ -343,7 +343,7 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Type `continue` and press Enter.
 
-    ### 20. Confirm Transactions
+    ### Confirm Transactions
     **Prompt:**
     ```terminal wrap
     ? Confirm to proceed with signing and broadcasting the following transactions? [y]:
@@ -382,7 +382,7 @@ weave opinit init executor
 Follow the interactive guide:
 
 <Steps>
-  <Step title="1. Use Detected Keys">
+  <Step title="Use Detected Keys">
     **Prompt:** 
     ```terminal wrap
     ? Existing keys in config.json detected. Would you like to add these to the keyring before proceeding?
@@ -392,7 +392,7 @@ Follow the interactive guide:
     Select `Yes, use detected keys`.
 
   </Step>
-  <Step title="2. System Key for Oracle">
+  <Step title="System Key for Oracle">
     **Prompt:** 
     ```terminal wrap
     ? Please select an option for the system key for Oracle Bridge Executor
@@ -402,7 +402,7 @@ Follow the interactive guide:
     Select `Generate new system key`.
 
   </Step>
-  <Step title="3. Pre-fill Data">
+  <Step title="Pre-fill Data">
     **Prompt:** 
     ```terminal wrap
     ? Existing config.json detected. Would you like to use the data in this file to pre-fill some fields?
@@ -412,7 +412,7 @@ Follow the interactive guide:
     Select `Yes, prefill`.
 
   </Step>
-  <Step title="4. Listen Address">
+  <Step title="Listen Address">
     **Prompt:** 
     ```terminal wrap
     ? Specify listen address of the bot
@@ -422,11 +422,11 @@ Follow the interactive guide:
     Press `Tab` to use `localhost:3000` (ensure nothing else is running on this port).
 
   </Step>
-  <Step title="5. Finalize Configuration">
+  <Step title="Finalize Configuration">
     **Action:** 
     Press `Enter` for **L1 RPC**, **Chain ID**, and **Gas Denom**. For **Rollup RPC**, press `Tab` to use `http://localhost:26657`.
   </Step>
-  <Step title="6. Start the Bot">
+  <Step title="Start the Bot">
     Once initialized, start the bot in the background:
     ```bash wrap
     weave opinit start executor -d
@@ -450,7 +450,7 @@ weave relayer init
 Follow the interactive guide:
 
 <Steps>
-  <Step title="1. Select Rollup">
+  <Step title="Select Rollup">
     **Prompt:** 
     ```terminal wrap
     ? Select the type of Interwoven rollup you want to relay
@@ -460,11 +460,11 @@ Follow the interactive guide:
     Select `Local Rollup (your-chain-id)`.
 
   </Step>
-  <Step title="2. Endpoints">
+  <Step title="Endpoints">
     **Action:** 
     Press `Tab` for both **RPC** (`http://localhost:26657`) and **REST** (`http://localhost:1317`) endpoints.
   </Step>
-  <Step title="3. Channel Method">
+  <Step title="Channel Method">
     **Prompt:** 
     ```terminal wrap
     ? Select method to setup IBC channels for the relayer
@@ -474,7 +474,7 @@ Follow the interactive guide:
     Select `Subscribe to only transfer and nft-transfer IBC Channels (minimal setup)`.
 
   </Step>
-  <Step title="4. Select Channels">
+  <Step title="Select Channels">
     **Prompt:** 
     ```terminal wrap
     ? Select the IBC channels you would like to relay
@@ -484,7 +484,7 @@ Follow the interactive guide:
     Press `Space` to select all (transfer and nft-transfer), then press `Enter`.
 
   </Step>
-  <Step title="5. Challenger Key">
+  <Step title="Challenger Key">
     **Prompt:** 
     ```terminal wrap
     ? Do you want to setup relayer with the challenger key
@@ -494,7 +494,7 @@ Follow the interactive guide:
     Select `Yes (recommended)`.
 
   </Step>
-  <Step title="6. Start Relayer">
+  <Step title="Start Relayer">
     Start the relayer process:
     ```bash wrap
     weave relayer start -d
