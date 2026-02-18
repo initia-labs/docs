@@ -70,12 +70,12 @@ use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, Mess
 use cw_storage_plus::Item;
 
 #[cw_serde]
-pub struct Message {
+pub struct Memo {
     pub sender: Addr,
     pub message: String,
 }
 
-pub const MESSAGES: Item<Vec<Message>> = Item::new("messages");
+pub const MESSAGES: Item<Vec<Memo>> = Item::new("messages");
 
 #[cw_serde]
 pub struct InstantiateMsg {}
@@ -94,23 +94,22 @@ pub enum QueryMsg {
 
 #[cw_serde]
 pub struct AllMessagesResponse {
-    pub messages: Vec<Message>,
+    pub messages: Vec<Memo>,
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> StdResult<Response> {
+pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> Result<Response, ContractError> {
     MESSAGES.save(deps.storage, &vec![])?;
     Ok(Response::default())
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
-pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> StdResult<Response> {
+pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> Result<Response, ContractError> {
     match msg {
         ExecuteMsg::PostMessage { message } => {
-            MESSAGES.update(deps.storage, |mut messages| -> StdResult<_> {
-                messages.push(Message { sender: info.sender, message });
-                Ok(messages)
-            })?;
+            let mut messages = MESSAGES.load(deps.storage)?;
+            messages.push(Memo { sender: info.sender, message });
+            MESSAGES.save(deps.storage, &messages)?;
             Ok(Response::new().add_attribute("action", "post_message"))
         }
     }
@@ -151,7 +150,7 @@ mod tests {
         let val: AllMessagesResponse = from_json(&res).unwrap();
         assert_eq!(val.messages.len(), 1);
         assert_eq!(val.messages[0].message, "Hello!");
-        assert_eq!(val.messages[0].sender, "user1");
+        assert_eq!(val.messages[0].sender.as_str(), "user1");
     }
 }
 ```
@@ -177,15 +176,19 @@ Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Ru
 Standard `cargo build` binaries often fail validation on-chain. For WasmVM
 deployment, it is strongly recommended to use the **CosmWasm Optimizer**.
 
-**Note for Apple Silicon (M1/M2/M3):** Use the `cosmwasm/optimizer-arm64:0.16.1`
-image variant.
+**Note for Apple Silicon (M1/M2/M3):** You **MUST** use the
+`cosmwasm/optimizer-arm64:0.16.1` image variant or the build will be extremely
+slow and may fail.
 
 ```bash wrap
 # Run from the root of your project
+# Use 'optimizer' for x86_64 or 'optimizer-arm64' for Apple Silicon
+OPTIMIZER_IMAGE="cosmwasm/optimizer-arm64:0.16.1"
+
 docker run --rm -v "$(pwd)/memoboard":/code \
   --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
   --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
-  cosmwasm/optimizer:0.16.1
+  $OPTIMIZER_IMAGE
 ```
 
 The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`.
@@ -202,10 +205,11 @@ minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
 
 **2. Retrieve the Code ID and Instantiate:**
 
-If the `code_id` is not returned directly, query the transaction hash:
+If the `code_id` is not returned directly, wait for 5 seconds for indexing and then query the transaction hash:
 
 ```bash wrap
-minitiad q tx <TX_HASH>
+# Retrieve Code ID
+minitiad q tx <TX_HASH> --output json | jq -r '.events[] | select(.type=="store_code") | .attributes[] | select(.key=="code_id") | .value'
 ```
 
 Then, instantiate the contract:
@@ -218,6 +222,15 @@ minitiad tx wasm instantiate <code-id> '{}' \
   --chain-id your-chain-id \
   --gas auto --gas-adjustment 1.4 \
   --no-admin --yes
+```
+
+**3. Retrieve the Contract Address:**
+
+Wait for 5 seconds for indexing and then query the transaction hash:
+
+```bash wrap
+# Retrieve Contract Address
+minitiad q tx <TX_HASH> --output json | jq -r '.events[] | select(.type=="instantiate") | .attributes[] | select(.key=="_contract_address") | .value'
 ```
 
 </Accordion>
@@ -416,6 +429,10 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   font-size: 0.75rem;
   color: #999;
 }
+.message-content {
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
 .input-group {
   display: flex;
   gap: 12px;
@@ -455,44 +472,57 @@ const rest = new RESTClient('http://localhost:1317', {
 const Board = () => {
   const [messages, setMessages] = useState([])
   const [content, setContent] = useState('')
-  const { initiaAddress, requestTxBlock, openWallet, openConnect } =
+  const { initiaAddress, requestTxBlock, openWallet, openConnect, username } =
     useInterwovenKit()
 
+  const truncate = (addr) => `${addr.slice(0, 10)}...${addr.slice(-6)}`
+
   const fetchMessages = async () => {
-    // Encode query to base64 for the REST path
-    const queryData = btoa(JSON.stringify({ all_messages: {} }))
-    const res = await rest.wasm.smartContractState(
-      MEMO_BOARD_ADDRESS,
-      queryData,
-    )
-    // Use optional chaining for resilience
-    setMessages((res?.messages || []).reverse())
+    try {
+      // Wasm queries via REST MUST be base64 encoded
+      const queryData = Buffer.from(JSON.stringify({ all_messages: {} })).toString('base64')
+      const res = await rest.wasm.smartContractState(MEMO_BOARD_ADDRESS, queryData)
+      setMessages((res?.messages || []).reverse())
+    } catch (e) {
+      console.error("Failed to fetch messages", e)
+    }
   }
 
   useEffect(() => {
     fetchMessages()
+    // Poll for new messages every 5 seconds
+    const interval = setInterval(fetchMessages, 5000)
+    return () => clearInterval(interval)
   }, [])
 
   const handlePostMessage = async () => {
+    if (!content) return
+
     // Encode execute msg to Uint8Array (bytes)
     const msg = new TextEncoder().encode(
       JSON.stringify({ post_message: { message: content } }),
     )
 
-    await requestTxBlock({
-      chainId: 'your-chain-id',
-      messages: [
-        {
-          typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-          value: {
-            sender: initiaAddress,
-            contract: MEMO_BOARD_ADDRESS,
-            msg,
-            funds: [],
+    try {
+      await requestTxBlock({
+        chainId: 'your-chain-id',
+        messages: [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: initiaAddress,
+              contract: MEMO_BOARD_ADDRESS,
+              msg,
+              funds: [],
+            },
           },
-        },
-      ],
-    })
+        ],
+      })
+      setContent('')
+      fetchMessages()
+    } catch (e) {
+      console.error("Transaction failed", e)
+    }
   }
 
   return (
@@ -508,7 +538,7 @@ const Board = () => {
         <div className="auth-section">
           <div className="wallet-info">
             <span>
-              {initiaAddress.slice(0, 10)}...{initiaAddress.slice(-6)}
+              {truncate(initiaAddress)}
             </span>
             <button onClick={openWallet} className="btn-primary">
               Open Wallet
@@ -536,7 +566,9 @@ const Board = () => {
         <h3 className="section-header">Board Feed</h3>
         {messages.map((m, i) => (
           <div key={i} className="message-card">
-            <div className="message-sender">{m.sender}</div>
+            <div className="message-sender">
+              {truncate(m.sender)}
+            </div>
             <div className="message-content">{m.message}</div>
           </div>
         ))}
@@ -583,6 +615,54 @@ minitiad tx wasm execute <contract-address> '{"post_message":{"message":"Hello!"
 minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}'
 ```
 
+</Accordion>
+
+---
+
+# ⚡ Power-Up: Initia Usernames
+
+To make your MemoBoard "Interwoven-native," you can replace long, complex
+addresses with human-readable **Initia Usernames** (e.g., `vitalik.init`).
+
+### Step 0: Register your .init Name
+
+Before updating your code, you should register a primary username for your wallet
+on the Initia testnet.
+
+1.  Navigate to [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
+    and connect your browser wallet (e.g., Leap or Keplr).
+2.  In the **Find a username** search box, enter your desired name. If it is
+    available, you will see a green **Available** checkmark.
+3.  **Crucial:** Ensure the **Set as primary name** checkbox is selected.
+4.  Click **Register** and approve the transaction. Once resolved, your new
+    `.init` name will appear in the top-right corner of the Initia App.
+
+### 1. Update the Frontend
+
+Your AI assistant knows how to integrate Initia Usernames. Simply ask it to
+update your board.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please add Initia username support to my MemoBoard.
+```
+
+<Accordion title="Manual Approach: Username Resolution">
+The `useInterwovenKit()` hook provides the `username` for the currently connected wallet. You can use it to personalize the UI:
+
+```tsx
+const { initiaAddress, username } = useInterwovenKit();
+
+// In your render:
+<div className="message-sender">
+  {m.sender === initiaAddress && username ? username : truncate(m.sender)}
+</div>
+```
+
+<Tip>
+  **Pro Tip:** For other addresses in the feed, continue using the truncated hex address until a public multi-address resolver is available.
+</Tip>
 </Accordion>
 
 ---

@@ -229,12 +229,33 @@ Using the `initia-appchain-dev` skill, please scaffold a new Vite + React applic
 ```terminal wrap
 Now, using the `initia-appchain-dev`, please modify the Game.jsx component in the `blockforge-frontend` directory to interact with our deployed blockforge smart contract on my appchain.
 
-The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics. Finally, add a button to enable/disable the native auto-signing feature for a smoother game experience.
+The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics.
 ```
 
 <Accordion title="Manual Approach: Scaffold and Connect">
+  ### 1. Project Setup
   Refer to the [Interwoven Kit Documentation](../../interwovenkit/introduction)
-  for detailed snippets on connecting your frontend to an appchain.
+  for initial project scaffolding instructions.
+
+  ### 2. Configure Providers
+  Wrap your application with `InterwovenKitProvider` to enable wallet
+  connectivity.
+
+  ```tsx main.jsx
+  import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+
+  // ... other imports
+
+  ReactDOM.createRoot(document.getElementById("root")).render(
+    <React.StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider {...TESTNET}>
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </React.StrictMode>
+  );
+  ```
 </Accordion>
 
 ---
@@ -279,6 +300,72 @@ minitiad query move view <module-address> items view_inventory \
     --args "[\"address:${GAS_STATION_ADDRESS}\"]"
 ```
 
+</Accordion>
+
+---
+
+# ⚡ Power-Up: Auto-signing (Session UX)
+
+To make your BlockForge game "Interwoven-native," you can enable **Auto-signing**
+to create a frictionless experience where players don't see wallet popups for
+every game action.
+
+### 1. How it Works
+
+When a user enables Auto-sign, InterwovenKit performs three steps:
+1.  **Ghost Wallet Derivation**: The user signs a one-time message
+    (`personal_sign`) to derive a unique, application-specific HD wallet.
+2.  **Authz Grant**: The user's primary wallet grants permission to this ghost
+    wallet to execute specific Move functions (`MsgExecute`) on their behalf.
+3.  **Feegrant**: The primary wallet authorizes the ghost wallet to use its
+    balance to pay for transaction fees.
+
+### 2. Update the Frontend
+
+You can enable session-based signing by modifying your provider configuration
+and adding a toggle in your UI.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please modify my InterwovenKit configuration in `main.jsx` to enable `enableAutoSign`. Then, update `Game.jsx` to include a button that toggles auto-signing on and off for the player using the `autoSign` methods from `useInterwovenKit`.
+```
+
+<Accordion title="Manual Approach: Auto-signing Logic">
+First, enable the feature in your provider:
+
+```tsx main.jsx
+<InterwovenKitProvider
+  {...TESTNET}
+  // Enables auto-signing for MoveVM transactions
+  enableAutoSign={true} 
+>
+  <App />
+</InterwovenKitProvider>
+```
+
+Then, use the `useInterwovenKit` hook in your component to manage the session:
+
+```tsx Game.jsx
+const { autoSign } = useInterwovenKit();
+const chainId = "your-chain-id";
+
+// Check if auto-sign is active for this chain
+const isAutoSignEnabled = autoSign.isEnabledByChain[chainId];
+
+return (
+  <button 
+    onClick={() => isAutoSignEnabled ? autoSign.disable(chainId) : autoSign.enable(chainId)}
+    disabled={autoSign.isLoading}
+  >
+    {isAutoSignEnabled ? "Disable Auto-sign" : "Enable Auto-sign"}
+  </button>
+);
+```
+
+<Tip>
+  **Pro Tip:** You can check the exact expiration of the current session using `autoSign.expiredAtByChain[chainId]`.
+</Tip>
 </Accordion>
 
 ---

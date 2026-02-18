@@ -104,78 +104,53 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
   user interacting with it. Save these as soon as you have a working version!
 </Tip>
 
-# Part 2: Project Inspiration
+# Part 2: Choose Your Blueprint Pattern
 
-Not sure where to start? Map your vision to the Initia stack. Here are three
-high-value paths that leverage the unique Interwoven capabilities of your
-appchain:
+To build a winning hackathon project, don't just write a contract—implement an
+**Interwoven Blueprint**. These patterns leverage Initia's native features to
+create experiences that are impossible on other chains.
 
-### 🎮 High-Speed Gaming (Move/EVM)
+<CardGroup cols={1}>
+  <Card title="Blueprint 1: The 'Invisible' App (Frictionless UX)" icon="wand-magic-sparkles">
+    **The Goal:** A high-frequency application where the blockchain handles logic silently in the background. Users never see a wallet popup after the initial session start.
+    - **Native Feature:** [Auto-signing](/interwovenkit/features/autosign/introduction)
+    - **Best for:** Gaming, Social tipping, High-frequency trading.
+    - **Reference Implementation:** [BlockForge (Move)](/hackathon/examples/move-game)
+    
+    **AI Power-Up Prompt:**
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, please modify my InterwovenKit frontend to enable auto-signing for 1 hour so my users can interact with my contract without constant popups.
+    ```
+  </Card>
 
-- **The Idea**: A fast-paced survival or strategy game where every action
-  (crafting, moving, attacking) is recorded on-chain.
-- **Key Integration**: Use Auto-signing so players never see a wallet popup
-  during gameplay.
-- **The Goal**: A Web2-feeling experience where the blockchain handles the logic
-  silently in the background.
+  <Card title="Blueprint 2: The 'Enshrined' App (Data-Rich Logic)" icon="database">
+    **The Goal:** An application that makes decisions based on real-time, high-fidelity external data provided directly by the chain infrastructure.
+    - **Native Feature:** [Connect Oracle](/developers/developer-guides/tools/oracles/connect/introduction) or [Built-in Indexer](/developers/developer-guides/tools/indexers/indexer-introduction)
+    - **Best for:** DeFi Lending, Automated Agents, Analytics Dashboards.
+    - **Reference Implementation:** [MiniBank (EVM)](/hackathon/examples/evm-bank)
+    
+    **AI Power-Up Prompt:**
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, show me how to use the native Oracle precompile in my smart contract to fetch the live price of ETH/USD.
+    ```
+  </Card>
 
-### 📈 Data-Rich DeFi (EVM/Wasm)
-
-- **The Idea**: A localized lending market or an automated trading bot
-  specifically for your rollup's native tokens.
-- **Key Integration**: Use the Connect Oracle for real-time price feeds and the
-  Built-in Indexer to build a Leaderboard or Analytics Dashboard for your users.
-- **The Goal**: A deep, transparent financial primitive that provides
-  professional-grade data to retail users.
-
-### 👤 Social & Consumer (Move)
-
-- **The Idea**: A decentralized achievement system or a social tipping platform
-  for creators.
-- **Key Integration**: Integrate Initia Usernames to let people send assets or
-  rewards to name.init instead of long hex addresses.
-- **The Goal**: A user-friendly application that prioritizes onboarding and
-  human-readable identities.
-
----
-
-# Part 3: Power-Up with Native Features
-
-To qualify for the prize pool, you must implement at least **one** of these.
-
-### 1. Built-in Indexer (Rich Data)
-
-Query transaction history and NFT holdings via REST APIs.
-
-**Prompt:**
-
-```terminal wrap
-Using the `initia-appchain-dev` skill, how do I query the built-in indexer to show my transaction history in my React frontend?
-```
-
-### 2. Connect Oracle (Skip/Slinky)
-
-Access fast, enshrined price data directly in your smart contracts.
-
-**Prompt:**
-
-```terminal wrap
-Using the `initia-appchain-dev` skill, show me how to use the `initia_std::oracle` to get the current price of ETH in my Move module.
-```
-
-### 3. Auto-signing (Web2 UX)
-
-Enable frictionless, session-based signing for high-frequency interactions.
-
-**Prompt:**
-
-```terminal wrap
-Using the `initia-appchain-dev` skill, modify my InterwovenKit frontend to enable auto-signing for 1 hour.
-```
+  <Card title="Blueprint 3: The 'Human' App (Social Onboarding)" icon="user-group">
+    **The Goal:** An application that prioritizes human-readable identities and seamless onboarding, making crypto feel like a standard Web2 app.
+    - **Native Feature:** [Initia Usernames](/home/core-applications/initia-usernames)
+    - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
+    - **Reference Implementation:** [MemoBoard (Wasm)](/hackathon/examples/wasm-social)
+    
+    **AI Power-Up Prompt:**
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, modify my React frontend to use the `useUsernameQuery` hook so I can display the .init names of my users instead of their hex addresses.
+    ```
+  </Card>
+</CardGroup>
 
 ---
 
-# Part 4: Making It Demo-Ready
+# Part 3: Making It Demo-Ready
 
 Judges want to see **On-chain Proof**. Use this checklist before submitting.
 
