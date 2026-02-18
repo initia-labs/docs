@@ -17,137 +17,88 @@ Before configuring autosign, ensure you have:
 - InterwovenKit already integrated into your application
 - An understanding of which transaction types you need to auto-sign
 
-## Setting Up Privy
+## Setting Up Autosign
 
-Autosign requires Privy to manage embedded wallets. Privy provides secure key
-management and wallet creation for ghost wallets.
+Autosign uses an embedded Privy wallet connector that's built into InterwovenKit. 
+No separate Privy configuration is required.
 
 <Steps>
-<Step title="Create a Privy Account">
+<Step title="Install Dependencies">
 
-1. Visit [Privy's website](https://privy.io) and create an account
-2. Create a new application in the Privy dashboard
-3. Copy your application ID from the dashboard
-
-</Step>
-
-<Step title="Install Privy Dependencies">
-
-Install the required Privy packages in your application. This guide assumes
-InterwovenKit is already installed:
+Ensure you have InterwovenKit and the required peer dependencies installed:
 
 <CodeGroup>
 ```bash npm
-npm install @privy-io/react-auth
+npm install @initia/interwovenkit-react @tanstack/react-query wagmi viem
 ```
 
 ```bash yarn
-yarn add @privy-io/react-auth
+yarn add @initia/interwovenkit-react @tanstack/react-query wagmi viem
 ```
 
 ```bash pnpm
-pnpm add @privy-io/react-auth
+pnpm add @initia/interwovenkit-react @tanstack/react-query wagmi viem
 ```
 
 ```bash bun
-bun add @privy-io/react-auth
+bun add @initia/interwovenkit-react @tanstack/react-query wagmi viem
 ```
 
 </CodeGroup>
 
 </Step>
 
-<Step title="Configure Allowed Domains">
+<Step title="Configure InterwovenKitProvider">
 
-Before configuring your application, set up allowed domains in the Privy
-dashboard to ensure security and proper functionality:
-
-1. **Access Privy Dashboard**: Log in to your Privy account
-2. **Click Into Application**: Click into the application you would like Privy
-   to work with
-3. **Navigate to Allowed Domains**: Click **App settings** on the left sidebar
-   and then click on the **Domains** tab
-4. **Add Domains**: Under **Allowed Origins**, add:
-   - Your production domain (e.g., `app.example.com`)
-   - Your development domain (e.g., `localhost:3000`)
-   - Any staging domains you use
-
-<Warning>
-  Privy services will only work on domains you've explicitly allowed. Add all
-  domains where your application will run, including localhost for development.
-</Warning>
-
-</Step>
-
-<Step title="Configure Privy and Integrate with InterwovenKit">
-
-The following configuration wires Privy into InterwovenKit to enable embedded
-wallets and autosign:
-
-1. Wrap your app with `PrivyProvider` to enable authentication and embedded
-   wallet management.
-2. Use Privy hooks (`usePrivy`, `useLoginWithSiwe`, `useCreateWallet`,
-   `useWallets`) to access wallet and auth state.
-3. Pass those hooks into `InterwovenKitProvider` via `privyContext`.
-4. Enable autosign for supported message types using `enableAutoSign`.
-
-**Required Configuration for Autosign:**
-
-- `appId`: Your Privy application ID
-- `embeddedWallets.ethereum.createOnLogin: "all-users"`: **Required for
-  autosign**. Ensures an embedded (ghost) wallet is created at login. Privy’s
-  default behavior may not create an embedded wallet automatically, which will
-  prevent autosign from working.
+Configure your providers with the `initiaPrivyWalletConnector` and enable autosign:
 
 ```tsx providers.tsx
+import { createConfig, http, WagmiProvider } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
-  PrivyProvider,
-  useCreateWallet,
-  useLoginWithSiwe,
-  usePrivy,
-  useWallets,
-} from '@privy-io/react-auth'
-import {
+  initiaPrivyWalletConnector,
+  injectStyles,
   InterwovenKitProvider,
-  PRIVY_APP_ID,
 } from '@initia/interwovenkit-react'
+import css from '@initia/interwovenkit-react/styles.css?inline'
 
-function InterwovenKitWrapper({ children }) {
-  const privy = usePrivy()
-  const siwe = useLoginWithSiwe()
-  const { createWallet } = useCreateWallet()
-  const { wallets } = useWallets()
+import type { PropsWithChildren } from 'react'
 
+injectStyles(css)
+
+const connectors = [initiaPrivyWalletConnector]
+const wagmiConfig = createConfig({
+  connectors,
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+const queryClient = new QueryClient()
+
+const chainId = 'your-chain-id'
+
+function InterwovenKitWrapper({ children }: PropsWithChildren) {
   return (
     <InterwovenKitProvider
-      privyContext={{ privy, siwe, createWallet, wallets }}
-      // Enables autosign only for default contract execution messages
-      enableAutoSign
+      enableAutoSign={{
+        [chainId]: [
+          '/cosmos.bank.v1beta1.MsgSend',
+          '/initia.move.v1.MsgExecute',
+        ],
+      }}
     >
       {children}
     </InterwovenKitProvider>
   )
 }
 
-export default function Providers() {
+export default function Providers({ children }: PropsWithChildren) {
   return (
-    <PrivyProvider
-      appId="YOUR_PRIVY_APP_ID"
-      config={{
-        appearance: {
-          theme: 'dark',
-        },
-        embeddedWallets: {
-          ethereum: { createOnLogin: 'all-users' },
-          showWalletUIs: false,
-        },
-        loginMethodsAndOrder: {
-          primary: [`privy:${PRIVY_APP_ID}`, 'detected_ethereum_wallets'],
-        },
-      }}
-    >
-      <InterwovenKitWrapper>{/* Your app */}</InterwovenKitWrapper>
-    </PrivyProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitWrapper>{children}</InterwovenKitWrapper>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 ```

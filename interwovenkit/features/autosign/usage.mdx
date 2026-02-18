@@ -33,32 +33,45 @@ confirm the autosign setup and select an expiration duration.
 The following examples show client components for enabling and disabling
 autosign. You can adapt this logic to your own UI or component structure.
 
-### Example: EnableAutosignButton
+### Example: ToggleAutosignButton
 
 ```tsx
-'use client'
-
-import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 
-export default function EnableAutosignButton() {
-  const { autoSign } = useInterwovenKit()
-  const [isEnabling, setIsEnabling] = useState(false)
+const chainId = 'your-chain-id'
 
-  const handleEnable = async () => {
-    try {
-      setIsEnabling(true)
-      await autoSign.enable() // Uses defaultChainId
-      console.log('Autosign enabled successfully!')
-    } catch (error) {
-      console.error('Failed to enable autosign:', error)
-    } finally {
-      setIsEnabling(false)
-    }
+export default function ToggleAutosignButton() {
+  const { autoSign, address } = useInterwovenKit()
+
+  const enable = useMutation({
+    mutationFn: () => autoSign.enable(chainId),
+    onError: (error) => console.error('Failed to enable:', error),
+  })
+
+  const disable = useMutation({
+    mutationFn: () => autoSign.disable(chainId),
+    onError: (error) => console.error('Failed to disable:', error),
+  })
+
+  if (!address) return null
+
+  if (autoSign.isEnabledByChain[chainId]) {
+    return (
+      <button
+        onClick={() => disable.mutate()}
+        disabled={autoSign.isLoading || disable.isPending}
+      >
+        Disable Autosign
+      </button>
+    )
   }
 
   return (
-    <button onClick={handleEnable} disabled={isEnabling || autoSign.isLoading}>
+    <button
+      onClick={() => enable.mutate()}
+      disabled={autoSign.isLoading || enable.isPending}
+    >
       Enable Autosign
     </button>
   )
@@ -110,33 +123,32 @@ or rejects if the user cancels or an error occurs.
 Users can disable autosign at any time. This revokes all grants for the selected
 chain and prevents further automatic signing.
 
-### Example: DisableAutosignButton
+### Checking Autosign Status
+
+Use the `isEnabledByChain` property to check if autosign is active for a chain:
 
 ```tsx
-'use client'
-
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 
-export default function DisableAutosignButton() {
+function AutosignStatus({ chainId }: { chainId: string }) {
   const { autoSign } = useInterwovenKit()
 
-  const handleDisable = async () => {
-    try {
-      await autoSign.disable() // Uses defaultChainId
-      console.log('Autosign disabled successfully!')
-    } catch (error) {
-      console.error('Failed to disable autosign:', error)
-    }
+  if (autoSign.isLoading) {
+    return <span>Loading...</span>
   }
 
-  return <button onClick={handleDisable}>Disable Autosign</button>
+  const isEnabled = autoSign.isEnabledByChain[chainId]
+  const expiration = autoSign.expiredAtByChain[chainId]
+
+  if (!isEnabled) {
+    return <span>Autosign disabled</span>
+  }
+
+  return (
+    <span>
+      Autosign enabled
+      {expiration && ` (expires ${expiration.toLocaleString()})`}
+    </span>
+  )
 }
-```
-
-### Disabling for a Specific Chain
-
-Specify a chain ID to disable autosign for a particular chain:
-
-```tsx
-await autoSign.disable('interwoven-1')
 ```

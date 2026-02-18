@@ -30,8 +30,9 @@ interface AutoSign {
   isLoading: boolean
   enable: (chainId?: string) => Promise<void>
   disable: (chainId?: string) => Promise<void>
-  expiration: Date | null
-  expirations: Record<string, number | null>
+  expiredAtByChain: Record<string, Date | null | undefined>
+  isEnabledByChain: Record<string, boolean>
+  granteeByChain: Record<string, string | undefined>
 }
 ```
 
@@ -60,39 +61,68 @@ function AutosignButton() {
 }
 ```
 
-### expiration
+### isEnabledByChain
 
-Expiration date for autosign on the default chain.
+Map of chain IDs to their autosign enabled status.
 
-<ParamField path="expiration" type="Date | null">
-  Returns a `Date` object representing when autosign expires on the default
-  chain, or `null` if autosign is not enabled. Use this to display expiration
-  information and check if autosign is currently active.
+<ParamField path="isEnabledByChain" type="Record<string, boolean>">
+  Returns an object mapping chain IDs to boolean values indicating whether
+  autosign is currently enabled for each chain. Use this to check autosign
+  status and conditionally render UI elements.
 </ParamField>
 
 **Example:**
 
 ```tsx
-function ExpirationDisplay() {
+function AutosignStatus({ chainId }: { chainId: string }) {
   const { autoSign } = useInterwovenKit()
 
-  if (autoSign.expiration && autoSign.expiration > new Date()) {
-    return <p>Autosign expires: {autoSign.expiration.toLocaleString()}</p>
+  if (autoSign.isEnabledByChain[chainId]) {
+    return <p>Autosign is enabled for {chainId}</p>
   }
 
   return <p>Autosign is not enabled</p>
 }
 ```
 
-### expirations
+### expiredAtByChain
 
-Map of chain IDs to expiration timestamps for all configured chains.
+Map of chain IDs to their expiration dates.
 
-<ParamField path="expirations" type="Record<string, number | null>">
-  Returns an object mapping chain IDs to expiration timestamps (in milliseconds
-  since epoch). Use this for multi-chain applications to check autosign status
-  across multiple chains. Returns `null` for chains where autosign is not
-  enabled.
+<ParamField path="expiredAtByChain" type="Record<string, Date | null | undefined>">
+  Returns an object mapping chain IDs to expiration dates. Values can be:
+  - `Date`: The date when autosign expires
+  - `null`: Autosign is not enabled for this chain
+  - `undefined`: Autosign is enabled with no expiration (permanent)
+</ParamField>
+
+**Example:**
+
+```tsx
+function ExpirationDisplay({ chainId }: { chainId: string }) {
+  const { autoSign } = useInterwovenKit()
+  const expiration = autoSign.expiredAtByChain[chainId]
+
+  if (expiration === null) {
+    return <p>Autosign is not enabled</p>
+  }
+
+  if (expiration === undefined) {
+    return <p>Autosign is enabled (no expiration)</p>
+  }
+
+  return <p>Autosign expires: {expiration.toLocaleString()}</p>
+}
+```
+
+### granteeByChain
+
+Map of chain IDs to grantee addresses (ghost wallet addresses).
+
+<ParamField path="granteeByChain" type="Record<string, string | undefined>">
+  Returns an object mapping chain IDs to the grantee addresses that have been
+  authorized to sign transactions. Use this for debugging or displaying which
+  address is authorized for autosign.
 </ParamField>
 
 **Example:**
@@ -103,16 +133,13 @@ function MultiChainStatus() {
 
   return (
     <div>
-      {Object.entries(autoSign.expirations).map(([chainId, timestamp]) => {
-        if (!timestamp) return null
-
-        const expiration = new Date(timestamp)
-        const isActive = expiration > new Date()
+      {Object.entries(autoSign.isEnabledByChain).map(([chainId, isEnabled]) => {
+        const expiration = autoSign.expiredAtByChain[chainId]
 
         return (
           <div key={chainId}>
-            {chainId}: {isActive ? 'Active' : 'Expired'}
-            {isActive && ` (until ${expiration.toLocaleString()})`}
+            {chainId}: {isEnabled ? 'Enabled' : 'Disabled'}
+            {isEnabled && expiration && ` (until ${expiration.toLocaleString()})`}
           </div>
         )
       })}
