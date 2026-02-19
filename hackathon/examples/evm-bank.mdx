@@ -53,7 +53,50 @@ Please also create and run a unit test to verify these features.
 Your assistant will generate the `minibank` project and confirm that the tests
 (likely using Foundry or Hardhat) pass successfully.
 
-<Accordion title="Manual Approach: Unit Testing with Foundry">
+<Accordion title="Manual Approach: The Solidity Contract">
+If you prefer to create the contract manually, here is the Solidity code your assistant would generate. Save this as MiniBank.sol in your `minibank/src` directory.
+
+```solidity wrap
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract MiniBank {
+    mapping(address => uint256) private balances;
+
+    event Deposited(address indexed user, uint256 amount);
+    event Withdrawn(address indexed user, uint256 amount);
+
+    function deposit() public payable {
+        require(msg.value > 0, "Cannot deposit 0");
+        balances[msg.sender] += msg.value;
+        emit Deposited(msg.sender, msg.value);
+    }
+
+    function withdraw(uint256 amount) public {
+        require(amount > 0, "Withdrawal amount must be greater than zero");
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        balances[msg.sender] -= amount;
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "Transfer failed");
+
+        emit Withdrawn(msg.sender, amount);
+    }
+
+    function getBalance() public view returns (uint256) {
+        // NOTE: This returns the balance for the CALLER (msg.sender).
+        // In tests or frontend calls, ensure the correct account is the caller.
+        return balances[msg.sender];
+    }
+
+    function getBalanceOf(address user) public view returns (uint256) {
+        // Helper to check the balance of any user without needing a 'from' address.
+        return balances[user];
+    }
+}
+```
+
+### Unit Testing with Foundry
 To verify your contract's logic, create a test file named `MiniBank.t.sol` in the `test` directory.
 
 > **Pro Tip**: `testFail` is deprecated in newer versions of Foundry. Use `vm.expectRevert()` for failure testing.
@@ -105,51 +148,6 @@ forge test
 ```
 </Accordion>
 
-<Accordion title="Manual Approach: The Solidity Contract">
-If you prefer to create the contract manually, here is the Solidity code your assistant would generate. Save this as MiniBank.sol in your `minibank` directory.
-
-```solidity wrap
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
-contract MiniBank {
-    mapping(address => uint256) private balances;
-
-    event Deposited(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 amount);
-
-    function deposit() public payable {
-        require(msg.value > 0, "Cannot deposit 0");
-        balances[msg.sender] += msg.value;
-        emit Deposited(msg.sender, msg.value);
-    }
-
-    function withdraw(uint256 amount) public {
-        require(amount > 0, "Withdrawal amount must be greater than zero");
-        require(balances[msg.sender] >= amount, "Insufficient balance");
-
-        balances[msg.sender] -= amount;
-        (bool success, ) = payable(msg.sender).call{value: amount}("");
-        require(success, "Transfer failed");
-
-        emit Withdrawn(msg.sender, amount);
-    }
-
-    function getBalance() public view returns (uint256) {
-        // NOTE: This returns the balance for the CALLER (msg.sender).
-        // In tests or frontend calls, ensure the correct account is the caller.
-        return balances[msg.sender];
-    }
-
-    function getBalanceOf(address user) public view returns (uint256) {
-        // Helper to check the balance of any user without needing a 'from' address.
-        return balances[user];
-    }
-}
-```
-
-</Accordion>
-
 ---
 
 ## Step 2: Deploy to your Appchain
@@ -164,43 +162,43 @@ Using the `initia-appchain-dev` skill, please build and publish the MiniBank Sol
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
-  First, compile your contract and extract the hex bytecode:
-  ```bash wrap
-  # Navigate to the contract directory
-  cd minibank
+First, compile your contract and extract the hex bytecode:
+```bash wrap
+# Navigate to the contract directory
+cd minibank
 
-  # Compile with Foundry
-  forge build
+# Compile with Foundry
+forge build
 
-  # Extract bytecode (requires jq)
-  jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | sed 's/^0x//' | tr -d '\n' > minibank.bin
-  ```
+# Extract bytecode (requires jq)
+jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | sed 's/^0x//' | tr -d '\n' > minibank.bin
+```
 
-  Then deploy the binary. **Find your Chain ID first** if you don't know it:
-  ```bash wrap
-  # Option 1: Using the skill's health check script (Recommended)
-  bash .agents/skills/initia-appchain-dev/scripts/verify-appchain.sh --gas-station --bots
+Then deploy the binary. **Find your Chain ID first** if you don't know it:
+```bash wrap
+# Option 1: Using the skill's health check script (Recommended)
+bash .agents/skills/initia-appchain-dev/scripts/verify-appchain.sh --gas-station --bots
 
-  # Option 2: Direct CLI query
-  minitiad status 2>&1 | jq -r '.NodeInfo.network'
-  ```
+# Option 2: Direct CLI query
+minitiad status 2>&1 | jq -r '.NodeInfo.network'
+```
 
-  Now deploy:
-  ```bash wrap
-  # Replace `your-chain-id` with the ID from the command above
-  minitiad tx evm create minibank.bin \
-    --from gas-station \
-    --keyring-backend test \
-    --chain-id your-chain-id \
-    --gas auto --gas-adjustment 1.4 --yes --output json
-  ```
+Now deploy:
+```bash wrap
+# Replace `your-chain-id` with the ID from the command above
+minitiad tx evm create minibank.bin \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id your-chain-id \
+  --gas auto --gas-adjustment 1.4 --yes --output json
+```
 
-  **Retrieve your contract address:**
-  The output will provide a `txhash`. Wait a few seconds for indexing, then find your contract address:
-  ```bash wrap
-  sleep 5
-  minitiad q tx <your-tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
-  ```
+**Retrieve your contract address:**
+The output will provide a `txhash`. Wait a few seconds for indexing, then find your contract address:
+```bash wrap
+sleep 5
+minitiad q tx <your-tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
+```
 </Accordion>
 
 ---

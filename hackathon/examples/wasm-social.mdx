@@ -100,7 +100,7 @@ pub struct AllMessagesResponse {
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> Result<Response, ContractError> {
     MESSAGES.save(deps.storage, &vec![])?;
-    Ok(Response::default())
+    Ok(Response::new().add_attribute("action", "instantiate"))
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -108,9 +108,12 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
     match msg {
         ExecuteMsg::PostMessage { message } => {
             let mut messages = MESSAGES.load(deps.storage)?;
+            let sender = info.sender.clone();
             messages.push(Memo { sender: info.sender, message });
             MESSAGES.save(deps.storage, &messages)?;
-            Ok(Response::new().add_attribute("action", "post_message"))
+            Ok(Response::new()
+                .add_attribute("action", "post_message")
+                .add_attribute("sender", sender.as_str()))
         }
     }
 }
@@ -327,6 +330,7 @@ import { mainnet } from 'wagmi/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.jsx'
 
+// Inject styles for the InterwovenKit drawer
 injectStyles(InterwovenKitStyles)
 
 const queryClient = new QueryClient()
@@ -348,13 +352,23 @@ const customChain = {
   apis: {
     rpc: [{ address: 'http://localhost:26657' }],
     rest: [{ address: 'http://localhost:1317' }],
-    indexer: [{ address: 'http://localhost:8080' }],
+    indexer: [{ address: 'http://localhost:8080' }], // Placeholder REQUIRED for stability
   },
   fees: {
-    fee_tokens: [{ denom: 'umin', fixed_min_gas_price: 0 }],
+    fee_tokens: [{ 
+      denom: 'umin', 
+      fixed_min_gas_price: 0.15,
+      low_gas_price: 0.15,
+      average_gas_price: 0.15,
+      high_gas_price: 0.15
+    }],
+  },
+  staking: {
+    staking_tokens: [{ denom: 'umin' }]
   },
   metadata: {
     minitia: { type: 'miniwasm' },
+    is_l1: false // REQUIRED for local appchains
   },
 }
 
@@ -373,6 +387,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </WagmiProvider>
   </React.StrictMode>,
 )
+```
 ```
 
 **4. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
@@ -462,18 +477,21 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 import React, { useState, useEffect } from 'react'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { RESTClient } from '@initia/initia.js'
+import { useDisconnect } from 'wagmi'
 import './Board.css'
 
 const MEMO_BOARD_ADDRESS = 'YOUR_CONTRACT_ADDRESS'
+// RESTClient is the primary client for queries in initia.js v1.0+
 const rest = new RESTClient('http://localhost:1317', {
-  chainId: 'your-chain-id',
+  chainId: 'social-1',
 })
 
 const Board = () => {
   const [messages, setMessages] = useState([])
   const [content, setContent] = useState('')
-  const { initiaAddress, requestTxBlock, openWallet, openConnect, username } =
+  const { initiaAddress, requestTxSync, openConnect, openWallet } =
     useInterwovenKit()
+  const { disconnect } = useDisconnect()
 
   const truncate = (addr) => `${addr.slice(0, 10)}...${addr.slice(-6)}`
 
@@ -496,7 +514,7 @@ const Board = () => {
   }, [])
 
   const handlePostMessage = async () => {
-    if (!content) return
+    if (!content || !initiaAddress) return
 
     // Encode execute msg to Uint8Array (bytes)
     const msg = new TextEncoder().encode(
@@ -504,8 +522,10 @@ const Board = () => {
     )
 
     try {
-      await requestTxBlock({
-        chainId: 'your-chain-id',
+      // Use requestTxSync for local development transactions
+      // ALWAYS include the chainId to avoid RPC routing errors
+      await requestTxSync({
+        chainId: 'social-1',
         messages: [
           {
             typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
@@ -519,7 +539,8 @@ const Board = () => {
         ],
       })
       setContent('')
-      fetchMessages()
+      // Small delay to allow block inclusion
+      setTimeout(fetchMessages, 2000)
     } catch (e) {
       console.error("Transaction failed", e)
     }
@@ -537,11 +558,11 @@ const Board = () => {
       ) : (
         <div className="auth-section">
           <div className="wallet-info">
-            <span>
+            <button onClick={openWallet} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
               {truncate(initiaAddress)}
-            </span>
-            <button onClick={openWallet} className="btn-primary">
-              Open Wallet
+            </button>
+            <button onClick={() => disconnect()} className="btn-secondary" style={{ marginLeft: '12px' }}>
+              Disconnect
             </button>
           </div>
         </div>
@@ -624,7 +645,7 @@ minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}
 To make your MemoBoard "Interwoven-native," you can replace long, complex
 addresses with human-readable **Initia Usernames** (e.g., `vitalik.init`).
 
-### Step 0: Register your .init Name
+## Step 6: Register your .init Name
 
 Before updating your code, you should register a primary username for your wallet
 on the Initia testnet.
@@ -637,7 +658,7 @@ on the Initia testnet.
 4.  Click **Register** and approve the transaction. Once resolved, your new
     `.init` name will appear in the top-right corner of the Initia App.
 
-### 1. Update the Frontend
+## Step 7: Update the Frontend
 
 Your AI assistant knows how to integrate Initia Usernames. Simply ask it to
 update your board.
@@ -649,19 +670,30 @@ Using the `initia-appchain-dev` skill, please add Initia username support to my 
 ```
 
 <Accordion title="Manual Approach: Username Resolution">
-The `useInterwovenKit()` hook provides the `username` for the currently connected wallet. You can use it to personalize the UI:
+The `useInterwovenKit()` hook provides the `username` for the currently connected wallet. To implement this, update your `src/Board.jsx` to extract the `username` and update the render logic:
 
-```tsx
-const { initiaAddress, username } = useInterwovenKit();
+```tsx wrap
+// 1. Extract username from the hook
+const { initiaAddress, username, openConnect, openWallet, requestTxSync } = useInterwovenKit();
 
-// In your render:
+// 2. Update the Header to show the username
+<div className="wallet-info">
+  <button onClick={openWallet} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+    {username ? username : truncate(initiaAddress)}
+  </button>
+  <button onClick={() => disconnect()} className="btn-secondary">
+    Disconnect
+  </button>
+</div>
+
+// 3. Update the Feed to show the username for the current user's posts
 <div className="message-sender">
   {m.sender === initiaAddress && username ? username : truncate(m.sender)}
 </div>
 ```
 
 <Tip>
-  **Pro Tip:** For other addresses in the feed, continue using the truncated hex address until a public multi-address resolver is available.
+  **Pro Tip:** This pattern ensures that the connected user sees their identity reflected immediately in the application (in both the header and their own posts). For other participants in the feed, we continue to show the truncated address until a global resolver is implemented.
 </Tip>
 </Accordion>
 
