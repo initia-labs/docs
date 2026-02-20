@@ -37,8 +37,8 @@ hackathon.
 
 ### <a name="key-import"></a>Local Keyring Import
 
-The **Gas Station** account acts as your **Universal Developer Key**. Run these
-commands in your terminal to import it into your local keychains so you can sign
+The Gas Station account acts as your Universal Developer Key. Run these commands
+in your terminal to import it into your local keychains so you can sign
 transactions via the CLI.
 
 ```bash wrap
@@ -61,15 +61,15 @@ Master the **Describe → Build → Test** cycle. This is how you win the hackat
 ### 💰 Funding Your Personal Wallet
 
 Before you can interact with your appchain via a browser wallet (like Keplr,
-Leap, or MetaMask), you need to fund your personal address from your **Gas
-Station**.
+Leap, or MetaMask), you need to fund your personal address from your Gas
+Station.
 
-**1. Copy your wallet address:**
+1. Copy your wallet address:
 
-- **Move / Wasm Track**: Copy your `init1...` address.
-- **EVM Track**: Copy your `0x...` address.
+- Move / Wasm Track: Copy your `init1...` address.
+- EVM Track: Copy your `0x...` address.
 
-**2. Ask your AI Assistant to fund you:**
+2. Ask your AI Assistant to fund you:
 
 **Prompt:**
 
@@ -99,16 +99,16 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
 4.  **Verify State**: Ask the AI to query the chain to prove the logic works.
 
 <Tip>
-  **Submission Receipt:** To qualify for the hackathon prizes, you must provide
-  the **Contract Address** of your primary logic and a **Transaction Hash** of a
-  user interacting with it. Save these as soon as you have a working version!
+  Submission Receipt: To qualify for the hackathon prizes, you must provide the
+  Contract Address of your primary logic and a Transaction Hash of a user
+  interacting with it. Save these as soon as you have a working version!
 </Tip>
 
 # Part 2: Choose Your Blueprint Pattern
 
 To build a winning hackathon project, don't just write a contract, implement an
-**Interwoven Blueprint**. These patterns leverage Initia's native features to
-create experiences that are impossible on other chains.
+Interwoven Blueprint. These patterns leverage Initia's native features to create
+experiences that are impossible on other chains.
 
 <CardGroup cols={1}>
   <Card title="Blueprint 1: The Invisible App (Frictionless UX)" icon="wand-magic-sparkles">
@@ -123,31 +123,29 @@ create experiences that are impossible on other chains.
     ```
   </Card>
 
-<Card title="Blueprint 2: The Enshrined App (Data-Rich Logic)" icon="database">
-  **The Goal:** An application that makes decisions based on real-time,
-  high-fidelity external data provided directly by the chain infrastructure. -
-  **Native Feature:** [Connect
-  Oracle](/developers/developer-guides/tools/oracles/connect/introduction) or
-  [Built-in
-  Indexer](/developers/developer-guides/tools/indexers/indexer-introduction) -
-  **Best for:** DeFi Lending, Automated Agents, Analytics Dashboards. -
-  **Reference Implementation:** [MiniBank (EVM)](/hackathon/examples/evm-bank)
-  **AI Power-Up Prompt:** ```terminal wrap Using the `initia-appchain-dev`
-  skill, show me how to use the native Oracle precompile in my smart contract to
-  fetch the live price of ETH/USD. ```
+<Card title="Blueprint 2: The Interwoven App (Native Bridging)" icon="bridge">
+  **The Goal:** An application that allows users to move assets between the
+  broader Initia L1 and your appchain without leaving your interface. - **Native
+  Feature:** [Interwoven Bridging](/interwovenkit/features/bridging) via
+  `openBridge` - **Best for:** DeFi Lending, Cross-chain storefronts,
+  Multi-chain games. - **Reference Implementation:** [MiniBank
+  (EVM)](/hackathon/examples/evm-bank) **AI Power-Up Prompt:** ```terminal wrap
+  Using the `initia-appchain-dev` skill, please add Interwoven Bridge support to
+  my app so I can move funds between Initia L1 and my appchain directly from my
+  UI. ```
 </Card>
 
-  <Card title="Blueprint 3: The Human App (Social Onboarding)" icon="user-group">
-    **The Goal:** An application that prioritizes human-readable identities and seamless onboarding, making crypto feel like a standard Web2 app.
-    - **Native Feature:** [Initia Usernames](/home/core-applications/initia-usernames)
-    - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
-    - **Reference Implementation:** [MemoBoard (Wasm)](/hackathon/examples/wasm-social)
-    
-    **AI Power-Up Prompt:**
-    ```terminal wrap
-    Using the `initia-appchain-dev` skill, modify my React frontend to use the `useUsernameQuery` hook so I can display the .init names of my users instead of their hex addresses.
-    ```
-  </Card>
+<Card title="Blueprint 3: The Human App (Identity)" icon="user-group">
+  **The Goal:** An application that prioritizes human-readable identities, replacing complex hex addresses with personal usernames.
+  - **Native Feature:** [Initia Usernames](/home/core-applications/initia-usernames)
+  - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
+  - **Reference Implementation:** [MemoBoard (Wasm)](/hackathon/examples/wasm-social)
+  
+  **AI Power-Up Prompt:**
+  ```terminal wrap
+  Using the `initia-appchain-dev` skill, update my frontend to display the user's .init username in the header instead of their wallet address.
+  ```
+</Card>
 </CardGroup>
 
 ---
