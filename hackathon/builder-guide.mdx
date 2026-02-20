@@ -29,11 +29,11 @@ Before proceeding, ensure you have completed these milestones:
 Use these common commands and AI prompts to manage your project during the
 hackathon.
 
-| Task                | Command / AI Prompt                                                                                                             |
-| :------------------ | :------------------------------------------------------------------------------------------------------------------------------ |
-| **Resume Appchain** | `weave start`                                                                                                                   |
-| **Health Check**    | _"Using the `initia-appchain-dev` skill, please verify that my appchain is producing blocks and show my gas-station balances."_ |
-| **Key Import**      | See the [Local Keyring Import](#key-import) section below.                                                                      |
+| Task                | Command / AI Prompt                                                                                                           |
+| :------------------ | :---------------------------------------------------------------------------------------------------------------------------- |
+| **Resume Appchain** | `weave start`                                                                                                                 |
+| **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain is producing blocks and show my gas-station balances._ |
+| **Key Import**      | See the [Local Keyring Import](#key-import) section below.                                                                    |
 
 ### <a name="key-import"></a>Local Keyring Import
 
@@ -106,12 +106,12 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
 
 # Part 2: Choose Your Blueprint Pattern
 
-To build a winning hackathon project, don't just write a contract—implement an
+To build a winning hackathon project, don't just write a contract, implement an
 **Interwoven Blueprint**. These patterns leverage Initia's native features to
 create experiences that are impossible on other chains.
 
 <CardGroup cols={1}>
-  <Card title="Blueprint 1: The 'Invisible' App (Frictionless UX)" icon="wand-magic-sparkles">
+  <Card title="Blueprint 1: The Invisible App (Frictionless UX)" icon="wand-magic-sparkles">
     **The Goal:** A high-frequency application where the blockchain handles logic silently in the background. Users never see a wallet popup after the initial session start.
     - **Native Feature:** [Auto-signing](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
@@ -123,19 +123,21 @@ create experiences that are impossible on other chains.
     ```
   </Card>
 
-  <Card title="Blueprint 2: The 'Enshrined' App (Data-Rich Logic)" icon="database">
-    **The Goal:** An application that makes decisions based on real-time, high-fidelity external data provided directly by the chain infrastructure.
-    - **Native Feature:** [Connect Oracle](/developers/developer-guides/tools/oracles/connect/introduction) or [Built-in Indexer](/developers/developer-guides/tools/indexers/indexer-introduction)
-    - **Best for:** DeFi Lending, Automated Agents, Analytics Dashboards.
-    - **Reference Implementation:** [MiniBank (EVM)](/hackathon/examples/evm-bank)
-    
-    **AI Power-Up Prompt:**
-    ```terminal wrap
-    Using the `initia-appchain-dev` skill, show me how to use the native Oracle precompile in my smart contract to fetch the live price of ETH/USD.
-    ```
-  </Card>
+<Card title="Blueprint 2: The Enshrined App (Data-Rich Logic)" icon="database">
+  **The Goal:** An application that makes decisions based on real-time,
+  high-fidelity external data provided directly by the chain infrastructure. -
+  **Native Feature:** [Connect
+  Oracle](/developers/developer-guides/tools/oracles/connect/introduction) or
+  [Built-in
+  Indexer](/developers/developer-guides/tools/indexers/indexer-introduction) -
+  **Best for:** DeFi Lending, Automated Agents, Analytics Dashboards. -
+  **Reference Implementation:** [MiniBank (EVM)](/hackathon/examples/evm-bank)
+  **AI Power-Up Prompt:** ```terminal wrap Using the `initia-appchain-dev`
+  skill, show me how to use the native Oracle precompile in my smart contract to
+  fetch the live price of ETH/USD. ```
+</Card>
 
-  <Card title="Blueprint 3: The 'Human' App (Social Onboarding)" icon="user-group">
+  <Card title="Blueprint 3: The Human App (Social Onboarding)" icon="user-group">
     **The Goal:** An application that prioritizes human-readable identities and seamless onboarding, making crypto feel like a standard Web2 app.
     - **Native Feature:** [Initia Usernames](/home/core-applications/initia-usernames)
     - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
@@ -160,6 +162,44 @@ Judges want to see **On-chain Proof**. Use this checklist before submitting.
 - [ ] **Frontend**: You are using **InterwovenKit** for the wallet connection.
 - [ ] **Native Feature**: You've pointed to the code implementing an
       Initia-native feature.
+
+---
+
+# Part 4: Debugging & Troubleshooting
+
+Speed is everything in a hackathon, and debugging is where most time is lost.
+Use these professional workflows to unblock yourself, even when following the
+standard examples.
+
+### ⚡️ High-Signal AI Debugging
+
+Whether you are building from scratch or running a blueprint example, errors are
+inevitable.
+
+1.  **Open the Browser Console**: Press `F12` or `Cmd+Option+J` to see the exact
+    error logs.
+2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is **opened in
+    your project root**. This allows it to reference your `package.json`, your
+    `interwovenkit` initialization, and your specific chain configuration.
+3.  **The Perfect Debugging Prompt**: Provide the **console error** alongside
+    the **relevant file**.
+    > _Prompt Example: "I'm following the MiniBank example and getting this
+    > `RPC Error: ...` in the console. Here is my `App.tsx`. Why is my
+    > transaction failing?"_
+
+### 📚 Deep Dives & Source Truth
+
+If your AI agent is stuck or you need to see the source of truth:
+
+- **Official Docs**: Visit [docs.initia.xyz](https://docs.initia.xyz/) for
+  architectural details and API references.
+- **Initia Examples**: Reference the
+  [initia-labs/examples](https://github.com/initia-labs/examples) repository for
+  working code across all VMs (EVM, Move, Wasm).
+- **Core Repositories**: Explore [initia-labs](https://github.com/initia-labs)
+  on GitHub to see the underlying implementation of the SDKs and CLI tools.
+
+---
 
 > **Mandatory:** Review the
 > **[Submission & Technical Requirements](/hackathon/submission-requirements)**

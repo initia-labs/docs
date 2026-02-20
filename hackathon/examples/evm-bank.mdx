@@ -171,7 +171,8 @@ cd minibank
 forge build
 
 # Extract bytecode (requires jq)
-jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | sed 's/^0x//' | tr -d '\n' > minibank.bin
+# Ensure NO '0x' prefix and NO trailing newlines
+jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0x//' > minibank.bin
 ```
 
 Then deploy the binary. **Find your Chain ID first** if you don't know it:
@@ -190,28 +191,32 @@ minitiad tx evm create minibank.bin \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
-  --gas auto --gas-adjustment 1.4 --yes --output json
+  --gas auto --gas-adjustment 1.4 --yes --output json > deploy.json
 ```
 
 **Retrieve your contract address:**
 The output will provide a `txhash`. Wait a few seconds for indexing, then find your contract address:
 ```bash wrap
-sleep 5
-minitiad q tx <your-tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
+# Replace <tx-hash> with the hash from deploy.json
+minitiad q tx <tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
 ```
 </Accordion>
 
 ---
 
-## Step 3: Fund your Browser Wallet (L1)
+## Step 3: Fund your Browser Wallet
 
-To interact with your appchain, you first need testnet tokens on the Initia L1. In the next step, we will use the **Interwoven Bridge** to move these tokens to your appchain.
+Ensure your personal wallet has tokens to pay for the gas and initial deposits on your appchain.
 
-**1. Get your Address:** Open your browser wallet (like Keplr or Leap) and copy your address.
+**1. Get your Wallet Address:** Open your browser wallet and copy your address (it starts with `init1...`).
 
-**2. Use the Faucet:** Visit the **[Initia Testnet Faucet](https://app.testnet.initia.xyz/faucet)**, paste your address, and request testnet `INIT` tokens.
+**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the prompt below with the address you just copied.
 
-**3. Verify Balance:** Ensure you see your `INIT` balance in your wallet on the `Initia Testnet` network.
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 100 of my appchain's native tokens on L2.
+```
 
 ---
 
@@ -334,7 +339,8 @@ const customChain = {
   },
   metadata: {
     minitia: { type: "minievm" },
-    is_evm: true
+    is_evm: true,
+    is_l1: false
   }
 };
 
@@ -442,6 +448,12 @@ export default App
 **5. Create the `Bank.jsx` Component:**
 Create `src/Bank.jsx` and add the contract interaction logic. 
 
+> **Pro Tip**: For a cleaner UI, hide the numeric "up/down" arrows in your CSS:
+> ```css
+> input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+> input[type=number] { -moz-appearance: textfield; }
+> ```
+
 > **Pro Tip**: For `view` functions that depend on `msg.sender` (like `getBalance`), you MUST provide a `from` address in your `eth_call` parameters so the appchain knows whose balance to check.
 
 ```javascript wrap
@@ -463,7 +475,7 @@ const Bank = () => {
   const [amount, setAmount] = useState('');
   const [balance, setBalance] = useState('0');
   const [isPending, setIsPending] = useState(false);
-  const { address, initiaAddress, requestTxBlock, openDeposit, openWithdraw } = useInterwovenKit();
+  const { address, initiaAddress, requestTxBlock } = useInterwovenKit();
 
   const fetchBalance = async () => {
     if (!address) return;
@@ -495,20 +507,6 @@ const Bank = () => {
     return () => clearInterval(interval);
   }, [address]);
 
-  const handleBridgeIn = () => {
-    openDeposit({
-      denoms: ["uinit"], // Bridge L1 INIT
-      chainId: CHAIN_ID, // To our Appchain
-    });
-  };
-
-  const handleBridgeOut = () => {
-    openWithdraw({
-      denoms: ["uinit"], // Move L2 INIT
-      chainId: CHAIN_ID, // From our Appchain (to L1)
-    });
-  };
-
   const handleDeposit = async () => {
     if (!amount || !initiaAddress) return;
     const data = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: "deposit" });
@@ -516,7 +514,7 @@ const Bank = () => {
     try {
       await requestTxBlock({
         chainId: CHAIN_ID,
-        messages: [{
+        msgs: [{
           typeUrl: "/minievm.evm.v1.MsgCall",
           value: { 
             sender: initiaAddress, 
@@ -524,6 +522,7 @@ const Bank = () => {
             input: data, 
             value: parseEther(amount).toString(),
             accessList: [],
+            authList: [],
           },
         }],
         onSuccess: () => {
@@ -551,7 +550,7 @@ const Bank = () => {
     try {
       await requestTxBlock({
         chainId: CHAIN_ID,
-        messages: [{
+        msgs: [{
           typeUrl: "/minievm.evm.v1.MsgCall",
           value: { 
             sender: initiaAddress, 
@@ -559,6 +558,7 @@ const Bank = () => {
             input: data, 
             value: "0",
             accessList: [],
+            authList: [],
           },
         }],
         onSuccess: () => {
@@ -575,25 +575,14 @@ const Bank = () => {
     }
   };
 
-  const bridgeContainerStyle = { backgroundColor: '#fef3c7', padding: '20px', borderRadius: '16px', marginBottom: '20px', border: '1px solid #fde68a', textAlign: 'left' };
   const balanceContainerStyle = { backgroundColor: '#f1f5f9', padding: '30px', borderRadius: '16px', marginBottom: '30px', border: '1px solid #e2e8f0' };
   const balanceValueStyle = { fontSize: '42px', fontWeight: '800', color: '#2563eb', margin: '10px 0', fontFamily: 'monospace' };
   const inputStyle = { width: '100%', padding: '14px', marginBottom: '20px', borderRadius: '10px', border: '2px solid #e2e8f0', fontSize: '16px', boxSizing: 'border-box' };
   const buttonContainerStyle = { display: 'flex', gap: '15px' };
   const actionButtonStyle = { flex: 1, padding: '14px', borderRadius: '10px', border: 'none', fontWeight: '700', fontSize: '16px', cursor: 'pointer', color: 'white' };
-  const bridgeButtonStyle = { backgroundColor: '#d97706', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: '600' };
 
   return (
     <div style={{ width: '100%', marginTop: '20px' }}>
-      <div style={bridgeContainerStyle}>
-        <div style={{ fontWeight: '700', marginBottom: '4px' }}>Interwoven Bridge</div>
-        <p style={{ fontSize: '14px', color: '#92400e', margin: '0 0 12px 0' }}>Move funds between Initia L1 and your Appchain.</p>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button onClick={handleBridgeIn} style={bridgeButtonStyle}>Deposit from L1</button>
-          <button onClick={handleBridgeOut} style={{ ...bridgeButtonStyle, backgroundColor: 'transparent', border: '1px solid #d97706', color: '#d97706' }}>Withdraw to L1</button>
-        </div>
-      </div>
-
       <div style={balanceContainerStyle}>
         <div style={{ fontSize: '14px', color: '#64748b', textTransform: 'uppercase' }}>Your Savings Balance</div>
         <div style={balanceValueStyle}>{balance} GAS</div>
@@ -669,16 +658,11 @@ minitiad tx evm call <contract-address> $SIG \
 ```
 
 **3. Query Balance:**
-Querying a function that uses `msg.sender` requires a `from` address in the JSON-RPC call.
+Querying a function that uses `msg.sender` requires a `from` address in the query call.
 ```bash wrap
 SIG=$(cast sig "getBalance()")
-# Replace <your-hex-address> with the address from step 1
-HEX_RESULT=$(curl -s -X POST -H "Content-Type: application/json" \
-  --data '{"jsonrpc":"2.0","method":"eth_call","params":[{"from":"<your-hex-address>","to":"<contract-address>","data":"'$SIG'"},"latest"],"id":1}' \
-  http://localhost:8545 | jq -r '.result')
-
-# Convert hex to decimal tokens
-cast --from-wei $HEX_RESULT
+# Replace <your-bech32-address> and <contract-address>
+minitiad q evm call <your-bech32-address> <contract-address> 0x$SIG --output json
 ```
 
 **4. Withdraw (0.5 tokens):**
@@ -694,60 +678,91 @@ minitiad tx evm call <contract-address> $DATA \
 
 ---
 
-# ⚡ Power-Up: Connect Oracle (Price Feeds)
+# ⚡ Power-Up: Interwoven Bridge
 
-To make your MiniBank "Interwoven-native," you can use the **Connect Oracle** to
-show users the real-time USD value of their savings.
+Adding bridge support allows users to bring liquidity from the broader Initia 
+ecosystem into your rollup. This is essential for onboarding users from L1, 
+enabling exit liquidity, and ensuring your app is mainnet-ready.
 
-### 1. Update the Contract
+<Tip>
+  **Local Dev Limitation:** The Interwoven UI requires a registered chain ID to 
+  resolve assets. While it may appear empty for your local-only appchain, adding 
+  this button prepares your app for its public launch.
+</Tip>
 
-The oracle is a pre-deployed contract on your appchain. You can query it to get the
-latest price of any asset (e.g., `INIT/USD`).
+### Step 6: Update the Frontend
+
+The `useInterwovenKit()` hook provides `openDeposit` and `openWithdraw`
+functions that open a specialized modal for bridging assets.
 
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please modify my MiniBank contract to use the `ConnectOracle` contract. Add a function `getSavingsInUSD()` that fetches the current price of INIT and returns the user's balance multiplied by that price.
+Using the `initia-appchain-dev` skill, please enable Interwoven Bridge support in my MiniBank so I can move funds between chains on Initia.
 ```
 
-<Accordion title="Manual Approach: Oracle Integration">
-The `ConnectOracle` interface is built-in. Here is how your contract interacts
-with it:
+<Accordion title="Manual Approach: Bridge Integration">
+To implement this, update your `src/Bank.jsx` to include the bridge logic and
+UI:
 
-```solidity wrap
-interface IConnectOracle {
-    struct Price {
-        uint256 price;
-        uint256 timestamp;
-        uint64 height;
-        uint64 nonce;
-        uint64 decimal;
-        uint64 id;
-    }
-    function get_price(string memory pair_id) external view returns (Price memory);
-}
+```tsx wrap
+// 1. Extract bridge functions from the hook
+const { address, openBridge } = useInterwovenKit();
 
-contract MiniBank {
-    // The oracle address can be queried from the chain RPC 
-    // (minievm.evm.v1.Query/ConnectOracle)
-    IConnectOracle public oracle;
+// 2. Add bridge handler
+const handleBridge = () => {
+  openBridge({
+    srcChainId: 'initiation-2', // Public testnet ID
+    srcDenom: 'uinit'           // Native INIT
+  });
+};
 
-    constructor(address _oracle) {
-        oracle = IConnectOracle(_oracle);
-    }
+// 3. Add the Bridge UI section to your render (conditionally)
+const bridgeContainerStyle = { 
+  marginTop: '2rem', 
+  padding: '1.5rem', 
+  backgroundColor: '#fffbeb', 
+  borderRadius: '24px', 
+  border: '1px solid #fef3c7',
+  textAlign: 'left'
+};
 
-    // ... existing balance logic ...
+const bridgeButtonStyle = { 
+  width: '100%',
+  padding: '0.85rem', 
+  backgroundColor: '#d97706', 
+  color: 'white', 
+  border: 'none', 
+  borderRadius: '14px', 
+  fontSize: '13px', 
+  fontWeight: '800', 
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0.5rem'
+};
 
-    function getSavingsInUSD() public view returns (uint256) {
-        IConnectOracle.Price memory priceData = oracle.get_price("INIT/USD");
-        return (balances[msg.sender] * priceData.price) / (10**priceData.decimal);
-    }
-}
+// Inside return (showing it only when connected)...
+{address && (
+  <div style={bridgeContainerStyle}>
+    <div style={{ fontWeight: '700', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#92400e', marginBottom: '4px' }}>
+      Interwoven Ecosystem
+    </div>
+    <p style={{ fontSize: '13px', color: '#b45309', margin: '0 0 12px 0' }}>
+      Access the broader Initia network to move assets between chains.
+    </p>
+    <button onClick={handleBridge} style={bridgeButtonStyle}>
+      Bridge Assets
+    </button>
+  </div>
+)}
 ```
 
 <Tip>
-  **Pro Tip:** You can find your appchain's Oracle address by asking your AI
-  assistant to run the `ConnectOracle` query against your local node.
+  **Pro Tip:** This allows users to tap into L1 liquidity (like INIT from the
+  faucet) and bring it into your appchain's economy seamlessly while keeping 
+  the landing page focused.
 </Tip>
 </Accordion>
 

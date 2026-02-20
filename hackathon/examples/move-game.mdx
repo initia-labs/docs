@@ -87,7 +87,7 @@ InitiaStdlib = { local = "deps/movevm/precompile/modules/initia_stdlib" }
 MoveStdlib = { local = "deps/movevm/precompile/modules/move_stdlib" }
 
 [addresses]
-blockforge = "0x2" # Use a placeholder hex address for local builds
+blockforge = "_" # Use a placeholder to be set during build
 std = "0x1"
 ```
 
@@ -97,13 +97,17 @@ Next, delete the default `blockforge.move` file and create a new file named
 ```move wrap
 module blockforge::items {
     use std::signer;
+    use std::vector;
 
     /// Error codes
     const E_INSUFFICIENT_SHARDS: u64 = 1;
 
+    struct Shard has key, store, copy, drop {}
+    struct Relic has key, store, copy, drop {}
+
     struct Inventory has key {
-        shards: u64,
-        relics: u64,
+        shards: vector<Shard>,
+        relics: vector<Relic>,
     }
 
     /// Mint basic items called shards.
@@ -111,11 +115,14 @@ module blockforge::items {
     public entry fun mint_shard(account: &signer) acquires Inventory {
         let addr = signer::address_of(account);
         if (!exists<Inventory>(addr)) {
-            move_to(account, Inventory { shards: 1, relics: 0 });
+            move_to(account, Inventory {
+                shards: vector::singleton(Shard {}),
+                relics: vector::empty<Relic>()
+            });
         } else {
             let inventory = borrow_global_mut<Inventory>(addr);
-            inventory.shards = inventory.shards + 1;
-        }
+            vector::push_back(&mut inventory.shards, Shard {});
+        };
     }
 
     /// Craft a relic by burning 2 shards
@@ -124,30 +131,32 @@ module blockforge::items {
         assert!(exists<Inventory>(addr), E_INSUFFICIENT_SHARDS);
 
         let inventory = borrow_global_mut<Inventory>(addr);
-        assert!(inventory.shards >= 2, E_INSUFFICIENT_SHARDS);
+        assert!(vector::length(&inventory.shards) >= 2, E_INSUFFICIENT_SHARDS);
 
-        inventory.shards = inventory.shards - 2;
-        inventory.relics = inventory.relics + 1;
+        // Burn 2 shards
+        vector::pop_back(&mut inventory.shards);
+        vector::pop_back(&mut inventory.shards);
+
+        // Add 1 relic
+        vector::push_back(&mut inventory.relics, Relic {});
     }
 
-    #[view]
-    /// View a player's inventory
-    public fun view_inventory(addr: address): (u64, u64) acquires Inventory {
-        if (exists<Inventory>(addr)) {
-            let inventory = borrow_global<Inventory>(addr);
-            (inventory.shards, inventory.relics)
-        } else {
-            (0, 0)
-        }
+    /// Returns (shards, relics) for the given address.
+    public fun get_inventory(addr: address): (u64, u64) acquires Inventory {
+        if (!exists<Inventory>(addr)) {
+            return (0, 0)
+        };
+        let inventory = borrow_global<Inventory>(addr);
+        (vector::length(&inventory.shards), vector::length(&inventory.relics))
     }
 }
 ```
 
 Once the files are created, you can verify everything is correct by building the
-project.
+project. Replace `0xYOUR_HEX_ADDRESS` with your deployment address hex (0x...).
 
 ```bash wrap
-minitiad move build --language-version=2.1 --named-addresses blockforge=0x2
+minitiad move build --named-addresses blockforge=0xYOUR_HEX_ADDRESS
 ```
 
 If you see `BUILDING blockforge`, then **BlockForge was built successfully! 🛠️**
@@ -171,23 +180,25 @@ Using the `initia-appchain-dev` skill, please build and publish the blockforge M
 First, get your gas station's hex address:
 
 ```bash wrap
-minitiad keys show gas-station -a --keyring-backend test | xargs minitiad keys parse
+# Use the to_hex.py script to convert bech32 to hex
+python3 scripts/to_hex.py $(minitiad keys show gas-station -a --keyring-backend test)
 ```
 
-Then, build and publish the compiled module to your appchain, substituting
+Then, build and publish the compiled module to your appchain. Substitute
 `0xYOUR_HEX_ADDRESS` with the value from the previous step:
 
 ```bash wrap
 cd blockforge
 
-# Replace `your-chain-id` with your appchain's ID
-minitiad move deploy \
+# 1. Build the module with the correct hex named address
+minitiad move build --named-addresses blockforge=0xYOUR_HEX_ADDRESS
+
+# 2. Publish the compiled bytecode
+minitiad tx move publish build/blockforge/bytecode_modules/items.mv \
   --from gas-station \
   --keyring-backend test \
   --chain-id your-chain-id \
-  --named-addresses blockforge=0xYOUR_HEX_ADDRESS \
-  --gas auto --gas-adjustment 1.4 --yes \
-  --build --force
+  --gas auto --gas-adjustment 1.4 --yes --upgrade-policy COMPATIBLE
 ```
 
 </Accordion>
@@ -237,25 +248,90 @@ The Mint Shard button should call the mint_shard function, and the Craft Relic b
   Refer to the [Interwoven Kit Documentation](../../interwovenkit/introduction)
   for initial project scaffolding instructions.
 
-  ### 2. Configure Providers
-  Wrap your application with `InterwovenKitProvider` to enable wallet
-  connectivity.
+### 2. Configure Providers
 
-  ```tsx main.jsx
-  import { InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+Wrap your application with `InterwovenKitProvider` to enable wallet
+connectivity. Ensure the `customChain` includes `fee_tokens` and
+`bech32_prefix`.
 
-  // ... other imports
+```tsx main.jsx
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
 
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { WagmiProvider, createConfig, http } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import {
+  InterwovenKitProvider,
+  TESTNET,
+  injectStyles,
+} from '@initia/interwovenkit-react'
+import '@initia/interwovenkit-react/styles.css'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import App from './App.jsx'
+
+injectStyles(InterwovenKitStyles)
+
+const queryClient = new QueryClient()
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: {
+    [mainnet.id]: http(),
+  },
+})
+
+const customChain = {
+  chain_id: 'your-appchain-id',
+  chain_name: 'BlockForge Appchain',
+  bech32_prefix: 'init',
+  network_type: 'testnet',
+  apis: {
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }],
+  },
+  fees: {
+    fee_tokens: [
+      {
+        denom: 'umin', // Replace with your appchain's native denom
+        fixed_min_gas_price: 0.15,
+      },
+    ],
+  },
+  metadata: {
+    is_l1: false,
+  },
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <InterwovenKitProvider {...TESTNET}>
+        <InterwovenKitProvider
+          {...TESTNET}
+          defaultChainId="your-appchain-id"
+          customChain={customChain}
+        >
           <App />
         </InterwovenKitProvider>
       </QueryClientProvider>
-    </React.StrictMode>
-  );
-  ```
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+  <Tip>
+    **Pro Tip: Move View Function Encoding:** Address arguments for `rest.move.view` MUST be 32-byte padded hex and Base64 encoded:
+    ```javascript
+    const b64Addr = Buffer.from(
+      AccAddress.toHex(address).replace('0x', '').padStart(64, '0'), 
+      'hex'
+    ).toString('base64');
+    ```
+  </Tip>
 </Accordion>
 
 ---
@@ -286,7 +362,8 @@ for i in {1..3}; do
     --from gas-station \
     --keyring-backend test \
     --chain-id your-chain-id \
-    --gas auto --gas-adjustment 1.4 --yes
+    --gas auto --gas-adjustment 1.4 --yes \
+    --args '[]' --type-args '[]'
   sleep 2
 done
 ```
@@ -294,10 +371,8 @@ done
 **Check your inventory:**
 
 ```bash wrap
-GAS_STATION_ADDRESS=$(minitiad keys show gas-station -a --keyring-backend test)
-
-minitiad query move view <module-address> items view_inventory \
-    --args "[\"address:${GAS_STATION_ADDRESS}\"]"
+minitiad query move view <module-address> items get_inventory \
+    --args '["address:init1..."]'
 ```
 
 </Accordion>
@@ -306,13 +381,14 @@ minitiad query move view <module-address> items view_inventory \
 
 # ⚡ Power-Up: Auto-signing (Session UX)
 
-To make your BlockForge game "Interwoven-native," you can enable **Auto-signing**
-to create a frictionless experience where players don't see wallet popups for
-every game action.
+To make your BlockForge game natively integrated with the Initia stack, you can
+enable **Auto-signing** to create a frictionless experience where players don't
+see wallet popups for every game action.
 
 ### 1. How it Works
 
 When a user enables Auto-sign, InterwovenKit performs three steps:
+
 1.  **Ghost Wallet Derivation**: The user signs a one-time message
     (`personal_sign`) to derive a unique, application-specific HD wallet.
 2.  **Authz Grant**: The user's primary wallet grants permission to this ghost
@@ -338,7 +414,7 @@ First, enable the feature in your provider:
 <InterwovenKitProvider
   {...TESTNET}
   // Enables auto-signing for MoveVM transactions
-  enableAutoSign={true} 
+  enableAutoSign={true}
 >
   <App />
 </InterwovenKitProvider>
@@ -347,20 +423,22 @@ First, enable the feature in your provider:
 Then, use the `useInterwovenKit` hook in your component to manage the session:
 
 ```tsx Game.jsx
-const { autoSign } = useInterwovenKit();
-const chainId = "your-chain-id";
+const { autoSign } = useInterwovenKit()
+const chainId = 'your-chain-id'
 
 // Check if auto-sign is active for this chain
-const isAutoSignEnabled = autoSign.isEnabledByChain[chainId];
+const isAutoSignEnabled = autoSign.isEnabledByChain[chainId]
 
 return (
-  <button 
-    onClick={() => isAutoSignEnabled ? autoSign.disable(chainId) : autoSign.enable(chainId)}
+  <button
+    onClick={() =>
+      isAutoSignEnabled ? autoSign.disable(chainId) : autoSign.enable(chainId)
+    }
     disabled={autoSign.isLoading}
   >
-    {isAutoSignEnabled ? "Disable Auto-sign" : "Enable Auto-sign"}
+    {isAutoSignEnabled ? 'Disable Auto-sign' : 'Enable Auto-sign'}
   </button>
-);
+)
 ```
 
 <Tip>

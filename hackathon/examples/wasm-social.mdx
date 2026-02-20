@@ -208,7 +208,8 @@ minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
 
 **2. Retrieve the Code ID and Instantiate:**
 
-If the `code_id` is not returned directly, wait for 5 seconds for indexing and then query the transaction hash:
+If the `code_id` is not returned directly, wait for 5 seconds for indexing and
+then query the transaction hash:
 
 ```bash wrap
 # Retrieve Code ID
@@ -355,20 +356,22 @@ const customChain = {
     indexer: [{ address: 'http://localhost:8080' }], // Placeholder REQUIRED for stability
   },
   fees: {
-    fee_tokens: [{ 
-      denom: 'umin', 
-      fixed_min_gas_price: 0.15,
-      low_gas_price: 0.15,
-      average_gas_price: 0.15,
-      high_gas_price: 0.15
-    }],
+    fee_tokens: [
+      {
+        denom: 'umin',
+        fixed_min_gas_price: 0.15,
+        low_gas_price: 0.15,
+        average_gas_price: 0.15,
+        high_gas_price: 0.15,
+      },
+    ],
   },
   staking: {
-    staking_tokens: [{ denom: 'umin' }]
+    staking_tokens: [{ denom: 'umin' }],
   },
   metadata: {
     minitia: { type: 'miniwasm' },
-    is_l1: false // REQUIRED for local appchains
+    is_l1: false, // REQUIRED for local appchains
   },
 }
 
@@ -388,7 +391,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>,
 )
 ```
-```
+
+````
 
 **4. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
 `src/Board.css` with the following content:
@@ -469,7 +473,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   font-weight: 600;
   cursor: pointer;
 }
-```
+````
 
 **src/Board.jsx:**
 
@@ -498,11 +502,16 @@ const Board = () => {
   const fetchMessages = async () => {
     try {
       // Wasm queries via REST MUST be base64 encoded
-      const queryData = Buffer.from(JSON.stringify({ all_messages: {} })).toString('base64')
-      const res = await rest.wasm.smartContractState(MEMO_BOARD_ADDRESS, queryData)
+      const queryData = Buffer.from(
+        JSON.stringify({ all_messages: {} }),
+      ).toString('base64')
+      const res = await rest.wasm.smartContractState(
+        MEMO_BOARD_ADDRESS,
+        queryData,
+      )
       setMessages((res?.messages || []).reverse())
     } catch (e) {
-      console.error("Failed to fetch messages", e)
+      console.error('Failed to fetch messages', e)
     }
   }
 
@@ -542,7 +551,7 @@ const Board = () => {
       // Small delay to allow block inclusion
       setTimeout(fetchMessages, 2000)
     } catch (e) {
-      console.error("Transaction failed", e)
+      console.error('Transaction failed', e)
     }
   }
 
@@ -558,10 +567,17 @@ const Board = () => {
       ) : (
         <div className="auth-section">
           <div className="wallet-info">
-            <button onClick={openWallet} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+            <button
+              onClick={openWallet}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            >
               {truncate(initiaAddress)}
             </button>
-            <button onClick={() => disconnect()} className="btn-secondary" style={{ marginLeft: '12px' }}>
+            <button
+              onClick={() => disconnect()}
+              className="btn-secondary"
+              style={{ marginLeft: '12px' }}
+            >
               Disconnect
             </button>
           </div>
@@ -587,9 +603,7 @@ const Board = () => {
         <h3 className="section-header">Board Feed</h3>
         {messages.map((m, i) => (
           <div key={i} className="message-card">
-            <div className="message-sender">
-              {truncate(m.sender)}
-            </div>
+            <div className="message-sender">{truncate(m.sender)}</div>
             <div className="message-content">{m.message}</div>
           </div>
         ))}
@@ -642,15 +656,17 @@ minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}
 
 # ⚡ Power-Up: Initia Usernames
 
-To make your MemoBoard "Interwoven-native," you can replace long, complex
-addresses with human-readable **Initia Usernames** (e.g., `vitalik.init`).
+To make your MemoBoard natively integrated with the Initia stack, you can
+replace long, complex addresses with human-readable **Initia Usernames** (e.g.,
+`vitalik.init`).
 
 ## Step 6: Register your .init Name
 
-Before updating your code, you should register a primary username for your wallet
-on the Initia testnet.
+Before updating your code, you should register a primary username for your
+wallet on the Initia testnet.
 
-1.  Navigate to [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
+1.  Navigate to
+    [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
     and connect your browser wallet (e.g., Leap or Keplr).
 2.  In the **Find a username** search box, enter your desired name. If it is
     available, you will see a green **Available** checkmark.
