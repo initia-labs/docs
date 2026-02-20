@@ -48,6 +48,14 @@ function TransferButtons() {
 - A wallet must be connected, or the call throws an error.
 - `denoms` must be a non-empty array.
 
+<Tip>
+  **Local Development:** Bridge modals rely on the Skip Go router to resolve
+  asset paths. Since local appchains are not in the public Skip registry, these
+  modals may appear blank when using a local `chainId`. For testing or demos in
+  local environments, use a public testnet chain ID (e.g., `initiation-2`) to
+  verify the UI.
+</Tip>
+
 ## Optional asset options
 
 Use `srcOptions` or `dstOptions` to limit the asset list shown in the modal.

@@ -5,283 +5,276 @@ icon: wand-magic-sparkles
 ---
 
 <Steps>
-<Step title="Install Weave">
+  <Step title="Install Weave">
+    To get started, you need to first install our
+    [Weave CLI](https://github.com/initia-labs/weave).
 
-To get started, you need to first install our
-[Weave CLI](https://github.com/initia-labs/weave).
+    <CodeGroup>
+      ```bash macOS
+      brew install initia-labs/tap/weave
+      ```
+      ```bash Linux (AMD64)
+      VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+      wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-amd64.tar.gz
+      tar -xvf weave-$VERSION-linux-amd64.tar.gz
+      ```
+      ```bash Linux (ARM64)
+      VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+      wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-arm64.tar.gz
+      tar -xvf weave-$VERSION-linux-arm64.tar.gz
+      ```
+      ```bash From Source
+      git clone https://github.com/initia-labs/weave.git
+      cd weave
+      git checkout tags/v0.0.2
+      VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
+      git checkout tags/v$VERSION
+      make install
+      ```
+    </CodeGroup>
+  </Step>
 
-<CodeGroup>
-```bash macOS
-brew install initia-labs/tap/weave
-```
-```bash Linux (AMD64)
-VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
-wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-amd64.tar.gz
-tar -xvf weave-$VERSION-linux-amd64.tar.gz
-```
-```bash Linux (ARM64)
-VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
-wget https://github.com/initia-labs/weave/releases/download/v$VERSION/weave-$VERSION-linux-arm64.tar.gz
-tar -xvf weave-$VERSION-linux-arm64.tar.gz
-```
-```bash From Source
-git clone https://github.com/initia-labs/weave.git
-cd weave
-git checkout tags/v0.0.2
-VERSION=$(curl -s https://api.github.com/repos/initia-labs/weave/releases/latest | grep '"tag_name":' | cut -d'"' -f4 | cut -c 2-)
-git checkout tags/v$VERSION
-make install
-```
-</CodeGroup>
-</Step>
+  <Step title="Configure Weave and Gas Station Account">
+    With Weave installed, you need to set up and fund your
+    [gas station account](/developers/developer-guides/tools/clis/weave-cli/gas-station).
+    This account will be used to fund the various bots and processes involved in the
+    rollup's operations.
 
-<Step title="Configure Weave and Gas Station Account">
+    ```sh
+    weave init
+    ```
 
-With Weave installed, you need to set up and fund your
-[gas station account](/developers/developer-guides/tools/clis/weave-cli/gas-station).
-This account will be used to fund the various bots and processes involved in the
-rollup's operations.
+    This will prompt you to either generate a new account to use as your gas station
+    account or import an existing account's mnemonic. Once you have created your
+    account, you then need to fund it with some INIT tokens (for OPinit bots
+    bridging transactions) and TIA (for submitting data to Celestia).
+  </Step>
 
-```sh
-weave init
-```
+  <Step title="Deploy the Rollup">
+    Now that you have configured your gas station account, you can proceed to deploy
+    your rollup.
 
-This will prompt you to either generate a new account to use as your gas station
-account or import an existing account's mnemonic. Once you have created your
-account, you then need to fund it with some INIT tokens (for OPinit bots
-bridging transactions) and TIA (for submitting data to Celestia).
+    ```sh
+    weave rollup launch
+    ```
 
-</Step>
-<Step title="Deploy the Rollup">
+    From the provided options, you can:
 
-Now that you have configured your gas station account, you can proceed to deploy
-your rollup.
+    - Select your VM
+    - Choose your Chain ID and default gas token denomination
+    - Choose your DA layer
+    - Enable the price oracle
+    - Set genesis accounts
 
-```sh
-weave rollup launch
-```
+    If you want more information about a specific option, access the tooltip by
+    pressing `ctrl+T`. If you want to go back to the previous step, press `ctrl+Z`.
 
-From the provided options, you can:
+    <Warning>
+      To ensure that you have tokens available to send transactions on your rollup,
+      you should add at least 1 address you control to the list of genesis accounts
+      when prompted.
+    </Warning>
 
-- Select your VM
-- Choose your Chain ID and default gas token denomination
-- Choose your DA layer
-- Enable the price oracle
-- Set genesis accounts
+    Once you have selected all the options, Weave will automatically start the
+    rollup. When everything is complete, you will see the rollup's endpoint
+    information, which includes the REST, RPC, and, for EVM rollups, JSON-RPC
+    endpoints. The CLI will also create a magic link that you can use to add your
+    rollup to InitiaScan.
 
-If you want more information about a specific option, access the tooltip by
-pressing `ctrl+T`. If you want to go back to the previous step, press `ctrl+Z`.
+    ```sh
+    # Example output
+    Rollup Endpoints:
+    • REST API: http://localhost:1317
+    • RPC: http://localhost:26657
+    • RPC-WS: ws://localhost:26657/websocket
+    • gRPC: http://localhost:9090
 
-<Warning>
-  To ensure that you have tokens available to send transactions on your rollup,
-  you should add at least 1 address you control to the list of genesis accounts
-  when prompted.
-</Warning>
+    ✨ Explore your new rollup here 🪄 (We already started the rollup app for you)
+    https://scan.testnet.initia.xyz/custom-network/add/link?config=eyJ2bSI6Im1vdmUiLCJjaGFpbklkIjoiZGVtby0zMTQiLCJtaW5HYXNQcmljZSI6MCwiZGVub20iOiJ1bWluIiwibGNkIjoiaHR0cDovL2xvY2FsaG9zdDoxMzE3IiwicnBjIjoiaHR0cDovL2xvY2FsaG9zdDoyNjY1NyJ9
 
-Once you have selected all the options, Weave will automatically start the
-rollup. When everything is complete, you will see the rollup's endpoint
-information, which includes the REST, RPC, and, for EVM rollups, JSON-RPC
-endpoints. The CLI will also create a magic link that you can use to add your
-rollup to InitiaScan.
+    i Important
+    We recommend opening this in Chrome because some browsers may not support localhost access from a different host, or you can edit your browser's settings to allow it if necessary.
+    ```
 
-```sh
-# Example output
-Rollup Endpoints:
-• REST API: http://localhost:1317
-• RPC: http://localhost:26657
-• RPC-WS: ws://localhost:26657/websocket
-• gRPC: http://localhost:9090
+    At this point, you can now interact with your rollup, send transactions, and
+    deploy contracts on the rollup. However, for full functionality, you will also
+    need to run the OPinit Executor and Challenger bots as well as the IBC Relayer.
 
-✨ Explore your new rollup here 🪄 (We already started the rollup app for you)
-https://scan.testnet.initia.xyz/custom-network/add/link?config=eyJ2bSI6Im1vdmUiLCJjaGFpbklkIjoiZGVtby0zMTQiLCJtaW5HYXNQcmljZSI6MCwiZGVub20iOiJ1bWluIiwibGNkIjoiaHR0cDovL2xvY2FsaG9zdDoxMzE3IiwicnBjIjoiaHR0cDovL2xvY2FsaG9zdDoyNjY1NyJ9
+    <Note>
+      At this stage, you can interact with your rollup and deploy contracts, as well
+      as send transactions. However, to enable bridging INIT and other tokens from
+      L1, setting up DA, and more, you will also need to run the OPinit Executor,
+      Challenger bots, and the IBC Relayer. To do this, follow the steps below.
+    </Note>
+  </Step>
 
-i Important
-We recommend opening this in Chrome because some browsers may not support localhost access from a different host, or you can edit your browser's settings to allow it if necessary.
-```
+  <Step title="Start the OPinit Executor">
+    The OPinit Executor bot is responsible for executing INIT bridging transactions
+    between the Initia L1 and your rollup, submitting the rollup state output to the
+    L1, submitting DA data to Celestia, and more. To start the bot, run:
 
-At this point, you can now interact with your rollup, send transactions, and
-deploy contracts on the rollup. However, for full functionality, you will also
-need to run the OPinit Executor and Challenger bots as well as the IBC Relayer.
+    ```sh
+    weave opinit init
+    ```
 
-<Note>
-  At this stage, you can interact with your rollup and deploy contracts, as well
-  as send transactions. However, to enable bridging INIT and other tokens from
-  L1, setting up DA, and more, you will also need to run the OPinit Executor,
-  Challenger bots, and the IBC Relayer. To do this, follow the steps below.
-</Note>
+    This will prompt you to set up the bot's configuration through a series of
+    questions.
 
-</Step>
+    ```sh
+    ✓ Existing keys in /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to add these to the keyring before proceeding? > Yes, use detected keys
+    ✓ Which bot would you like to run? > Executor
+    ✓ Please select an option for the system key for Oracle Bridge Executor > Generate new system key
+    ✓ Existing /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to use the data in this file to pre-fill some fields? > Yes, prefill
+    ✓ Specify listen address of the bot ... localhost:3000
+    ✓ Specify L1 RPC endpoint ... https://rpc.testnet.initia.xyz:443/
+    ✓ Specify rollup chain ID ... demo-314
+    ✓ Specify rollup RPC endpoint ... http://localhost:26657
+    ✓ Specify rollup gas denom ... umin
+    ✓ OPInit bot setup successfully. Config file is saved at /Users/tansawit/.opinit/executor.json. Feel free to modify it as needed.
+    ✓ You can start the bot by running `weave opinit start executor`
+    ```
 
-<Step title="Start the OPinit Executor">
+    Once all of that is complete, you can start the bot by running the following
+    command.
 
-The OPinit Executor bot is responsible for executing INIT bridging transactions
-between the Initia L1 and your rollup, submitting the rollup state output to the
-L1, submitting DA data to Celestia, and more. To start the bot, run:
+    ```sh
+    weave opinit start executor
+    ```
 
-```sh
-weave opinit init
-```
+    You should see the bot running in the terminal.
 
-This will prompt you to set up the bot's configuration through a series of
-questions.
+    ```sh
+    Streaming logs from launchd com.opinitd.executor.daemon
+    2025-02-11T17:28:42.094+0700	INFO	executor	executor/executor.go:80	bridge info	{"id": 659, "submission_interval": 60}
+    2025-02-11T17:28:42.508+0700	INFO	executor	node/node.go:118	initialize height
+    2025-02-11T17:28:42.525+0700	INFO	executor	node/node.go:118	initialize height
+    2025-02-11T17:28:42.631+0700	INFO	executor	node/node.go:118	initialize height
+    2025-02-11T17:28:43.844+0700	INFO	executor	node/node.go:118	initialize height
+    2025-02-11T17:28:43.845+0700	INFO	executor	host/host.go:88	host start	{"height": 5315486}
+    2025-02-11T17:28:43.845+0700	INFO	executor	child/child.go:200	child start	{"height": 1}
+    2025-02-11T17:28:43.845+0700	INFO	executor	batchsubmitter/batch_submitter.go:153	batch start	{"height": 1}
+    2025-02-11T17:28:43.845+0700	INFO	executor	node/node.go:173	tx checker looper stopped
+    2025-02-11T17:28:43.845+0700	INFO	executor	celestia/celestia.go:98	celestia start
+    2025-02-11T17:28:43.950+0700	INFO	executor	child/child.go:138	initialize tree	{"index": 1}
 
-```sh
-✓ Existing keys in /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to add these to the keyring before proceeding? > Yes, use detected keys
-✓ Which bot would you like to run? > Executor
-✓ Please select an option for the system key for Oracle Bridge Executor > Generate new system key
-✓ Existing /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to use the data in this file to pre-fill some fields? > Yes, prefill
-✓ Specify listen address of the bot ... localhost:3000
-✓ Specify L1 RPC endpoint ... https://rpc.testnet.initia.xyz:443/
-✓ Specify rollup chain ID ... demo-314
-✓ Specify rollup RPC endpoint ... http://localhost:26657
-✓ Specify rollup gas denom ... umin
-✓ OPInit bot setup successfully. Config file is saved at /Users/tansawit/.opinit/executor.json. Feel free to modify it as needed.
-✓ You can start the bot by running `weave opinit start executor`
-```
+     ┌───────────────────────────────────────────────────┐
+     │                   Fiber v2.52.5                   │
+     │               http://127.0.0.1:3000               │
+     │                                                   │
+     │ Handlers ............. 9  Processes ........... 1 │
+     │ Prefork ....... Disabled  PID ............. 17969 │
+     └───────────────────────────────────────────────────┘
 
-Once all of that is complete, you can start the bot by running the following
-command.
+    2025-02-11T17:28:46.207+0700	INFO	executor	batchsubmitter/batch.go:173	finalize batch	{"height": 54, "batch start": 1, "batch end": 54, "batch size": 47462, "chunks": 1, "txs": 2}
+    2025-02-11T17:28:52.584+0700	INFO	executor	child/withdraw.go:174	finalize working tree	{"tree_index": 1, "height": 54, "start_leaf_index": 1, "num_leaves": 0, "storage_root": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="}
+    ```
+  </Step>
 
-```sh
-weave opinit start executor
-```
+  <Step title="Start the OPinit Challenger">
+    <Warning>
+      For production use, we recommend setting up the Challenger bot on a separate
+      machine from the Executor bot.
+    </Warning>
 
-You should see the bot running in the terminal.
+    The OPinit Challenger bot is responsible for monitoring the Executor bot's
+    output proposal and ensuring its validity. To start the bot, run:
 
-```sh
-Streaming logs from launchd com.opinitd.executor.daemon
-2025-02-11T17:28:42.094+0700	INFO	executor	executor/executor.go:80	bridge info	{"id": 659, "submission_interval": 60}
-2025-02-11T17:28:42.508+0700	INFO	executor	node/node.go:118	initialize height
-2025-02-11T17:28:42.525+0700	INFO	executor	node/node.go:118	initialize height
-2025-02-11T17:28:42.631+0700	INFO	executor	node/node.go:118	initialize height
-2025-02-11T17:28:43.844+0700	INFO	executor	node/node.go:118	initialize height
-2025-02-11T17:28:43.845+0700	INFO	executor	host/host.go:88	host start	{"height": 5315486}
-2025-02-11T17:28:43.845+0700	INFO	executor	child/child.go:200	child start	{"height": 1}
-2025-02-11T17:28:43.845+0700	INFO	executor	batchsubmitter/batch_submitter.go:153	batch start	{"height": 1}
-2025-02-11T17:28:43.845+0700	INFO	executor	node/node.go:173	tx checker looper stopped
-2025-02-11T17:28:43.845+0700	INFO	executor	celestia/celestia.go:98	celestia start
-2025-02-11T17:28:43.950+0700	INFO	executor	child/child.go:138	initialize tree	{"index": 1}
+    ```sh
+    weave opinit init
+    ```
 
- ┌───────────────────────────────────────────────────┐
- │                   Fiber v2.52.5                   │
- │               http://127.0.0.1:3000               │
- │                                                   │
- │ Handlers ............. 9  Processes ........... 1 │
- │ Prefork ....... Disabled  PID ............. 17969 │
- └───────────────────────────────────────────────────┘
+    Again, you'll be guided through a series of questions similar to the Executor.
+    The main difference is that you'll be setting up the Challenger instead of the
+    Executor.
 
-2025-02-11T17:28:46.207+0700	INFO	executor	batchsubmitter/batch.go:173	finalize batch	{"height": 54, "batch start": 1, "batch end": 54, "batch size": 47462, "chunks": 1, "txs": 2}
-2025-02-11T17:28:52.584+0700	INFO	executor	child/withdraw.go:174	finalize working tree	{"tree_index": 1, "height": 54, "start_leaf_index": 1, "num_leaves": 0, "storage_root": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="}
-```
+    ```sh
+    ✓ Existing keys in /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to add these to the keyring before proceeding? > Yes, use detected keys
+    ✓ Which bot would you like to run? > Challenger
+    ✓ Existing /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to use the data in this file to pre-fill some fields? > Yes, prefill
+    ✓ Specify listen address of the bot ... localhost:3001
+    ✓ Specify L1 RPC endpoint ... https://rpc.testnet.initia.xyz:443/
+    ✓ Specify rollup chain ID ... demo-314
+    ✓ Specify rollup RPC endpoint ... http://localhost:26657
+    ✓ OPInit bot setup successfully. Config file is saved at /Users/tansawit/.opinit/challenger.json. Feel free to modify it as needed.
+    ✓ You can start the bot by running `weave opinit start challenger`
+    ```
 
-</Step>
-<Step title="Start the OPinit Challenger">
+    Once all of that is complete, you can start the bot by running the following
+    command.
 
-<Warning>
-  For production use, we recommend setting up the Challenger bot on a separate
-  machine from the Executor bot.
-</Warning>
+    ```sh
+    weave opinit start challenger
+    ```
 
-The OPinit Challenger bot is responsible for monitoring the Executor bot's
-output proposal and ensuring its validity. To start the bot, run:
+    You should see the bot running in the terminal.
 
-```sh
-weave opinit init
-```
+    ```sh
+    Streaming logs from launchd com.opinitd.challenger.daemon
+    2025-02-11T17:31:59.060+0700	INFO	challenger	challenger/challenger.go:94	bridge info	{"id": 659, "submission_interval": 60}
+    2025-02-11T17:31:59.200+0700	INFO	challenger	node/node.go:118	initialize height
+    2025-02-11T17:31:59.346+0700	INFO	challenger	node/node.go:118	initialize height
+    2025-02-11T17:31:59.347+0700	INFO	challenger	host/host.go:88	host start	{"height": 5315486}
+    2025-02-11T17:31:59.347+0700	INFO	challenger	child/child.go:200	child start	{"height": 1}
 
-Again, you'll be guided through a series of questions similar to the Executor.
-The main difference is that you'll be setting up the Challenger instead of the
-Executor.
+    2025-02-11T17:31:59.347+0700	INFO	challenger	node/node.go:173	tx checker looper stopped
+     ┌───────────────────────────────────────────────────┐
+    2025-02-11T17:31:59.347+0700	INFO	challenger	node/node.go:173	tx checker looper stopped
+     │                   Fiber v2.52.5                   │
+    2025-02-11T17:31:59.452+0700	INFO	challenger	child/child.go:138	initialize tree	{"index": 1}
+     │               http://127.0.0.1:3001               │
+     │                                                   │
+     │ Handlers ............ 11  Processes ........... 1 │
+     │ Prefork ....... Disabled  PID ............. 20592 │
+     └───────────────────────────────────────────────────┘
+    ```
 
-```sh
-✓ Existing keys in /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to add these to the keyring before proceeding? > Yes, use detected keys
-✓ Which bot would you like to run? > Challenger
-✓ Existing /Users/tansawit/.minitia/artifacts/config.json detected. Would you like to use the data in this file to pre-fill some fields? > Yes, prefill
-✓ Specify listen address of the bot ... localhost:3001
-✓ Specify L1 RPC endpoint ... https://rpc.testnet.initia.xyz:443/
-✓ Specify rollup chain ID ... demo-314
-✓ Specify rollup RPC endpoint ... http://localhost:26657
-✓ OPInit bot setup successfully. Config file is saved at /Users/tansawit/.opinit/challenger.json. Feel free to modify it as needed.
-✓ You can start the bot by running `weave opinit start challenger`
-```
+    If everything is working correctly, you will now have both the Executor and
+    Challenger bots running.
+  </Step>
 
-Once all of that is complete, you can start the bot by running the following
-command.
+  <Step title="Start the IBC Relayer">
+    Finally, you need to set up the IBC Relayer bot. This bot relays IBC messages
+    between the Initia L1 and your rollup. It is essential for oracle price updates
+    and managing IBC bridging transactions, including Minitswap compatibility.
 
-```sh
-weave opinit start challenger
-```
+    ```sh
+    weave relayer init
+    ```
 
-You should see the bot running in the terminal.
+    By default, Weave also allows you to set up the relayer for any whitelisted
+    rollup. However, in this case, set up the relayer for your local rollup.
 
-```sh
-Streaming logs from launchd com.opinitd.challenger.daemon
-2025-02-11T17:31:59.060+0700	INFO	challenger	challenger/challenger.go:94	bridge info	{"id": 659, "submission_interval": 60}
-2025-02-11T17:31:59.200+0700	INFO	challenger	node/node.go:118	initialize height
-2025-02-11T17:31:59.346+0700	INFO	challenger	node/node.go:118	initialize height
-2025-02-11T17:31:59.347+0700	INFO	challenger	host/host.go:88	host start	{"height": 5315486}
-2025-02-11T17:31:59.347+0700	INFO	challenger	child/child.go:200	child start	{"height": 1}
+    ```sh
+    ✓ Select the type of Interwoven rollup you want to relay > Local Rollup (demo-314)
+    ✓ L1 network is auto-detected > initiation-2
+    ✓ Specify rollup RPC endpoint ... http://localhost:26657
+    ✓ Specify rollup GRPC endpoint ... http://localhost:9090
+    ✓ Specify rollup WebSocket endpoint ... ws://localhost:26657/websocket
+    ✓ Select method to setup IBC channels for the relayer. > Subscribe to only `transfer` and `nft-transfer` IBC Channels (minimal setup)
+    ✓ Select the IBC channels you would like to relay ... 2 IBC channels subscribed
+    ✓ Do you want to setup relayer with the challenger key > Yes (recommended, open the tooltip to see the details)
+    ✓ Relayer setup successfully. Config file is saved at /Users/tansawit/.hermes/config.toml. Feel free to modify it as needed.
+    ✓ You can start the relayer by running `weave relayer start`
+    ```
 
-2025-02-11T17:31:59.347+0700	INFO	challenger	node/node.go:173	tx checker looper stopped
- ┌───────────────────────────────────────────────────┐
-2025-02-11T17:31:59.347+0700	INFO	challenger	node/node.go:173	tx checker looper stopped
- │                   Fiber v2.52.5                   │
-2025-02-11T17:31:59.452+0700	INFO	challenger	child/child.go:138	initialize tree	{"index": 1}
- │               http://127.0.0.1:3001               │
- │                                                   │
- │ Handlers ............ 11  Processes ........... 1 │
- │ Prefork ....... Disabled  PID ............. 20592 │
- └───────────────────────────────────────────────────┘
-```
+    Once all of that is complete, you can start the bot by running the following
+    command.
 
-If everything is working correctly, you will now have both the Executor and
-Challenger bots running.
+    ```sh
+    weave relayer start
+    ```
 
-</Step>
-<Step title="Start the IBC Relayer">
-Finally, you need to set up the IBC Relayer bot. This bot relays IBC messages
-between the Initia L1 and your rollup. It is essential for oracle price updates
-and managing IBC bridging transactions, including Minitswap compatibility.
+    You should see the bot running in the terminal.
 
-```sh
-weave relayer init
-```
-
-By default, Weave also allows you to set up the relayer for any whitelisted
-rollup. However, in this case, set up the relayer for your local rollup.
-
-```sh
-✓ Select the type of Interwoven rollup you want to relay > Local Rollup (demo-314)
-✓ L1 network is auto-detected > initiation-2
-✓ Specify rollup RPC endpoint ... http://localhost:26657
-✓ Specify rollup GRPC endpoint ... http://localhost:9090
-✓ Specify rollup WebSocket endpoint ... ws://localhost:26657/websocket
-✓ Select method to setup IBC channels for the relayer. > Subscribe to only `transfer` and `nft-transfer` IBC Channels (minimal setup)
-✓ Select the IBC channels you would like to relay ... 2 IBC channels subscribed
-✓ Do you want to setup relayer with the challenger key > Yes (recommended, open the tooltip to see the details)
-✓ Relayer setup successfully. Config file is saved at /Users/tansawit/.hermes/config.toml. Feel free to modify it as needed.
-✓ You can start the relayer by running `weave relayer start`
-```
-
-Once all of that is complete, you can start the bot by running the following
-command.
-
-```sh
-weave relayer start
-```
-
-You should see the bot running in the terminal.
-
-```sh
-Updating IBC client: 07-tendermint-1 of network: demo-314
-Successfully updated IBC client: 07-tendermint-1 of network: demo-314
-Updating IBC client: 07-tendermint-0 of network: demo-314
-Successfully updated IBC client: 07-tendermint-0 of network: demo-314
-Streaming logs from launchd com.hermes.daemon
-2025-02-11T10:36:06.546411Z  INFO ThreadId(01) using default configuration from '/Users/tansawit/.hermes/config.toml'
-2025-02-11T10:36:06.547351Z  INFO ThreadId(01) running Hermes v1.10.4+542e14f
-2025-02-11T10:36:06.749253Z  INFO ThreadId(16) REST service running, exposing REST API at http://127.0.0.1:7010
-```
-
-</Step>
+    ```sh
+    Updating IBC client: 07-tendermint-1 of network: demo-314
+    Successfully updated IBC client: 07-tendermint-1 of network: demo-314
+    Updating IBC client: 07-tendermint-0 of network: demo-314
+    Successfully updated IBC client: 07-tendermint-0 of network: demo-314
+    Streaming logs from launchd com.hermes.daemon
+    2025-02-11T10:36:06.546411Z  INFO ThreadId(01) using default configuration from '/Users/tansawit/.hermes/config.toml'
+    2025-02-11T10:36:06.547351Z  INFO ThreadId(01) running Hermes v1.10.4+542e14f
+    2025-02-11T10:36:06.749253Z  INFO ThreadId(16) REST service running, exposing REST API at http://127.0.0.1:7010
+    ```
+  </Step>
 </Steps>

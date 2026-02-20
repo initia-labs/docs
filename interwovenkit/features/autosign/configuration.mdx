@@ -19,84 +19,79 @@ Before configuring autosign, ensure you have:
 ## Setting Up Autosign
 
 <Steps>
-<Step title="Install Dependencies">
+  <Step title="Install Dependencies">
+    Ensure you have InterwovenKit and the required peer dependencies installed:
 
-Ensure you have InterwovenKit and the required peer dependencies installed:
+    <CodeGroup>
+      ```bash npm
+      npm install @initia/interwovenkit-react @tanstack/react-query wagmi viem
+      ```
 
-<CodeGroup>
-```bash npm
-npm install @initia/interwovenkit-react @tanstack/react-query wagmi viem
-```
+      ```bash yarn
+      yarn add @initia/interwovenkit-react @tanstack/react-query wagmi viem
+      ```
 
-```bash yarn
-yarn add @initia/interwovenkit-react @tanstack/react-query wagmi viem
-```
+      ```bash pnpm
+      pnpm add @initia/interwovenkit-react @tanstack/react-query wagmi viem
+      ```
 
-```bash pnpm
-pnpm add @initia/interwovenkit-react @tanstack/react-query wagmi viem
-```
+      ```bash bun
+      bun add @initia/interwovenkit-react @tanstack/react-query wagmi viem
+      ```
+    </CodeGroup>
+  </Step>
 
-```bash bun
-bun add @initia/interwovenkit-react @tanstack/react-query wagmi viem
-```
+  <Step title="Configure InterwovenKitProvider">
+    Add the `enableAutoSign` prop to your `InterwovenKitProvider`:
 
-</CodeGroup>
+    ```tsx providers.tsx
+    import { createConfig, http, WagmiProvider } from 'wagmi'
+    import { mainnet } from 'wagmi/chains'
+    import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+    import {
+      injectStyles,
+      InterwovenKitProvider,
+    } from '@initia/interwovenkit-react'
+    import css from '@initia/interwovenkit-react/styles.css?inline'
 
-</Step>
+    import type { PropsWithChildren } from 'react'
 
-<Step title="Configure InterwovenKitProvider">
+    injectStyles(css)
 
-Add the `enableAutoSign` prop to your `InterwovenKitProvider`:
+    const wagmiConfig = createConfig({
+      chains: [mainnet],
+      transports: { [mainnet.id]: http() },
+    })
+    const queryClient = new QueryClient()
 
-```tsx providers.tsx
-import { createConfig, http, WagmiProvider } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  injectStyles,
-  InterwovenKitProvider,
-} from '@initia/interwovenkit-react'
-import css from '@initia/interwovenkit-react/styles.css?inline'
+    const chainId = 'your-chain-id'
 
-import type { PropsWithChildren } from 'react'
+    function InterwovenKitWrapper({ children }: PropsWithChildren) {
+      return (
+        <InterwovenKitProvider
+          enableAutoSign={{
+            [chainId]: [
+              '/cosmos.bank.v1beta1.MsgSend',
+              '/initia.move.v1.MsgExecute',
+            ],
+          }}
+        >
+          {children}
+        </InterwovenKitProvider>
+      )
+    }
 
-injectStyles(css)
-
-const wagmiConfig = createConfig({
-  chains: [mainnet],
-  transports: { [mainnet.id]: http() },
-})
-const queryClient = new QueryClient()
-
-const chainId = 'your-chain-id'
-
-function InterwovenKitWrapper({ children }: PropsWithChildren) {
-  return (
-    <InterwovenKitProvider
-      enableAutoSign={{
-        [chainId]: [
-          '/cosmos.bank.v1beta1.MsgSend',
-          '/initia.move.v1.MsgExecute',
-        ],
-      }}
-    >
-      {children}
-    </InterwovenKitProvider>
-  )
-}
-
-export default function Providers({ children }: PropsWithChildren) {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiProvider config={wagmiConfig}>
-        <InterwovenKitWrapper>{children}</InterwovenKitWrapper>
-      </WagmiProvider>
-    </QueryClientProvider>
-  )
-}
-```
-
-</Step>
+    export default function Providers({ children }: PropsWithChildren) {
+      return (
+        <QueryClientProvider client={queryClient}>
+          <WagmiProvider config={wagmiConfig}>
+            <InterwovenKitWrapper>{children}</InterwovenKitWrapper>
+          </WagmiProvider>
+        </QueryClientProvider>
+      )
+    }
+    ```
+  </Step>
 </Steps>
 
 ## Configuring Autosign Permissions

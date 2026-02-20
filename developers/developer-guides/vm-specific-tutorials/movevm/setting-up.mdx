@@ -25,20 +25,20 @@ Before getting started, ensure you have:
 You have two main options for interacting with Initia networks:
 
 <AccordionGroup>
-<Accordion title="Command Line Interfaces (CLIs)" icon="terminal">
-CLIs provide direct access to network functionality through terminal commands. Choose based on your target network:
+  <Accordion title="Command Line Interfaces (CLIs)" icon="terminal">
+    CLIs provide direct access to network functionality through terminal commands. Choose based on your target network:
 
-- **initiad**: For Initia L1 development
-- **minitiad**: For Move rollup development
-</Accordion>
+    - **initiad**: For Initia L1 development
+    - **minitiad**: For Move rollup development
+  </Accordion>
 
-<Accordion title="InitiaJS SDK" icon="code">
-A TypeScript/JavaScript SDK that provides programmatic access to Initia networks. Ideal for:
+  <Accordion title="InitiaJS SDK" icon="code">
+    A TypeScript/JavaScript SDK that provides programmatic access to Initia networks. Ideal for:
 
-- Web application integration
-- Automated workflows
-- TypeScript/JavaScript developers
-</Accordion>
+    - Web application integration
+    - Automated workflows
+    - TypeScript/JavaScript developers
+  </Accordion>
 </AccordionGroup>
 
 <Steps>
@@ -83,45 +83,44 @@ You can install multiple tools if you plan to work across different networks or 
 After installing your chosen tools, create an account that you'll use for deploying and testing your Move modules.
 
 <Tabs>
-<Tab title="Initia L1">
-```bash
-initiad keys add example
-```
-</Tab>
-<Tab title="Move Rollups">
-```bash
-minitiad keys add example
-```
-</Tab>
-<Tab title="InitiaJS SDK">
-Generate a new account with a fresh mnemonic:
+  <Tab title="Initia L1">
+    ```bash
+    initiad keys add example
+    ```
+  </Tab>
+  <Tab title="Move Rollups">
+    ```bash
+    minitiad keys add example
+    ```
+  </Tab>
+  <Tab title="InitiaJS SDK">
+    Generate a new account with a fresh mnemonic:
 
-```ts
-import { MnemonicKey } from '@initia/initia.js'
+    ```ts
+    import { MnemonicKey } from '@initia/initia.js'
 
-// Generate a new account with a random mnemonic
-const key = new MnemonicKey()
+    // Generate a new account with a random mnemonic
+    const key = new MnemonicKey()
 
-console.log('mnemonic:', key.mnemonic)
-console.log('private key:', key.privateKey)
-console.log('public key:', key.publicKey)
-console.log('account address:', key.accAddress)
-```
+    console.log('mnemonic:', key.mnemonic)
+    console.log('private key:', key.privateKey)
+    console.log('public key:', key.publicKey)
+    console.log('account address:', key.accAddress)
+    ```
 
-Or import an existing account from a mnemonic:
+    Or import an existing account from a mnemonic:
 
-```ts
-import { MnemonicKey } from '@initia/initia.js'
+    ```ts
+    import { MnemonicKey } from '@initia/initia.js'
 
-// Import existing account from environment variable
-const key = new MnemonicKey({
-  mnemonic: process.env.MNEMONIC,
-})
+    // Import existing account from environment variable
+    const key = new MnemonicKey({
+      mnemonic: process.env.MNEMONIC,
+    })
 
-console.log('account address:', key.accAddress)
-```
-
-</Tab>
+    console.log('account address:', key.accAddress)
+    ```
+  </Tab>
 </Tabs>
 
 ### Expected Output
@@ -129,36 +128,34 @@ console.log('account address:', key.accAddress)
 Your account creation will generate output similar to this:
 
 <Tabs>
-<Tab title="CLI Output">
-```bash
-- address: init1ejr270mhdw260hk4ggp4kwmxd20authfag282m
-  name: example
-  pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AzBfkuS1ojSqNfqztk34Pn86n7D5MbhKobmsUIN372QG"}'
-  type: local
+  <Tab title="CLI Output">
+    ```bash
+    - address: init1ejr270mhdw260hk4ggp4kwmxd20authfag282m
+      name: example
+      pubkey: '{"@type":"/cosmos.crypto.secp256k1.PubKey","key":"AzBfkuS1ojSqNfqztk34Pn86n7D5MbhKobmsUIN372QG"}'
+      type: local
 
-**Important** write this mnemonic phrase in a safe place. It is the only way to
-recover your account if you ever forget your password.
+    **Important** write this mnemonic phrase in a safe place. It is the only way to
+    recover your account if you ever forget your password.
 
-[mnemonic from environment variable]
+    [mnemonic from environment variable]
+    ```
+  </Tab>
+  <Tab title="InitiaJS Output">
+    **For new account generation:**
+    ```bash
+    mnemonic: sunset major dog cat window spider victory ocean crystal repair guard volcano front husband duck prepare pioneer today shift patrol desert friend power master
+    private key: <Buffer a3 f4 c2 9e 7b 5f d8 91 3c 2a 8b 47 9e c1 d5 6b 8f 92 3a 7c 4e 1b 9f 8c 73 2d 9a b5 6e 1f 4c>
+    public key: Z { key: 'A2Bf8uK9RMehfDmBM3AwqZ4Y21r2H+hUMjS6++CSP' }
+    account address: init1d7s3q7nmlzqz9v4tk6ntrvfmavu2vk656gr29j
+    ```
 
-```
-</Tab>
-<Tab title="InitiaJS Output">
-**For new account generation:**
-```bash
-mnemonic: sunset major dog cat window spider victory ocean crystal repair guard volcano front husband duck prepare pioneer today shift patrol desert friend power master
-private key: <Buffer a3 f4 c2 9e 7b 5f d8 91 3c 2a 8b 47 9e c1 d5 6b 8f 92 3a 7c 4e 1b 9f 8c 73 2d 9a b5 6e 1f 4c>
-public key: Z { key: 'A2Bf8uK9RMehfDmBM3AwqZ4Y21r2H+hUMjS6++CSP' }
-account address: init1d7s3q7nmlzqz9v4tk6ntrvfmavu2vk656gr29j
-```
+    **For importing existing account:**
 
-**For importing existing account:**
-
-```bash
-account address: init17mq4sqemx2djc59tda76y20nwp4pfn4943x9ze
-```
-
-</Tab>
+    ```bash
+    account address: init17mq4sqemx2djc59tda76y20nwp4pfn4943x9ze
+    ```
+  </Tab>
 </Tabs>
 
 <Warning>
@@ -203,16 +200,16 @@ For testnet development, use the official Initia faucet to get free tokens:
 After funding, verify your account has received tokens:
 
 <Tabs>
-<Tab title="Initia L1">
-```bash
-initiad query bank balances [your-address]
-```
-</Tab>
-<Tab title="Move Rollups">
-```bash
-minitiad query bank balances [your-address]
-```
-</Tab>
+  <Tab title="Initia L1">
+    ```bash
+    initiad query bank balances [your-address]
+    ```
+  </Tab>
+  <Tab title="Move Rollups">
+    ```bash
+    minitiad query bank balances [your-address]
+    ```
+  </Tab>
 </Tabs>
 </Step>
 </Steps>

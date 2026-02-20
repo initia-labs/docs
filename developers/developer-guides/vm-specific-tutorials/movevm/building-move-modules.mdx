@@ -75,12 +75,12 @@ Initialize your directory as a Move package, which creates the necessary project
 structure.
 
 <CodeGroup>
-```bash Initia L1
-initiad move new hello_world
-```
-```bash Move Rollups
-minitiad move new hello_world
-```
+  ```bash Initia L1
+  initiad move new hello_world
+  ```
+  ```bash Move Rollups
+  minitiad move new hello_world
+  ```
 </CodeGroup>
 
 ### Understanding the Project Structure
@@ -94,20 +94,20 @@ hello_world/
 ```
 
 <AccordionGroup>
-<Accordion title="Move.toml - Package Manifest" icon="file-code">
-The `Move.toml` file serves as your package's configuration center, containing:
-- **Package metadata**: name, version, and description
-- **Dependencies**: external packages your project requires  
-- **Address mappings**: logical names mapped to blockchain addresses
-- **Build settings**: compilation options and flags
-</Accordion>
+  <Accordion title="Move.toml - Package Manifest" icon="file-code">
+    The `Move.toml` file serves as your package's configuration center, containing:
+    - **Package metadata**: name, version, and description
+    - **Dependencies**: external packages your project requires  
+    - **Address mappings**: logical names mapped to blockchain addresses
+    - **Build settings**: compilation options and flags
+  </Accordion>
 
-<Accordion title="sources/ - Source Code Directory" icon="folder">
-The `sources` directory is where you'll write your Move smart contracts:
-- Contains all `.move` source files
-- Organizes your module implementations
-- Houses the core business logic of your application
-</Accordion>
+  <Accordion title="sources/ - Source Code Directory" icon="folder">
+    The `sources` directory is where you'll write your Move smart contracts:
+    - Contains all `.move` source files
+    - Organizes your module implementations
+    - Houses the core business logic of your application
+  </Accordion>
 </AccordionGroup>
 </Step>
 
@@ -141,36 +141,36 @@ module hello::hello_world {
 ### Understanding the Code
 
 <AccordionGroup>
-<Accordion title="Module Declaration" icon="cube">
-```move
-module hello::hello_world {
-```
-Declares a module named `hello_world` under the `hello` address namespace. This establishes the module's identity on the blockchain.
-</Accordion>
+  <Accordion title="Module Declaration" icon="cube">
+    ```move
+    module hello::hello_world {
+    ```
+    Declares a module named `hello_world` under the `hello` address namespace. This establishes the module's identity on the blockchain.
+  </Accordion>
 
-<Accordion title="Resource Structure" icon="database">
-```move
-struct Message has key {
-    content: String,
-}
-```
-Defines a `Message` resource with the `key` ability, allowing it to be stored in account storage. Resources are Move's way of representing owned data.
-</Accordion>
+  <Accordion title="Resource Structure" icon="database">
+    ```move
+    struct Message has key {
+        content: String,
+    }
+    ```
+    Defines a `Message` resource with the `key` ability, allowing it to be stored in account storage. Resources are Move's way of representing owned data.
+  </Accordion>
 
-<Accordion title="Entry Function" icon="arrow-right">
-```move
-public entry fun save_message(account: &signer, message: String) {
-```
-Entry functions can be called directly via transactions. The `&signer` parameter represents the transaction sender's authority.
-</Accordion>
+  <Accordion title="Entry Function" icon="arrow-right">
+    ```move
+    public entry fun save_message(account: &signer, message: String) {
+    ```
+    Entry functions can be called directly via transactions. The `&signer` parameter represents the transaction sender's authority.
+  </Accordion>
 
-<Accordion title="View Function" icon="eye">
-```move
-#[view]
-public fun view_message(account: address): String acquires Message {
-```
-View functions are read-only operations marked with `#[view]`. The `acquires` clause indicates this function accesses the `Message` resource.
-</Accordion>
+  <Accordion title="View Function" icon="eye">
+    ```move
+    #[view]
+    public fun view_message(account: address): String acquires Message {
+    ```
+    View functions are read-only operations marked with `#[view]`. The `acquires` clause indicates this function accesses the `Message` resource.
+  </Accordion>
 </AccordionGroup>
 </Step>
 
@@ -183,12 +183,12 @@ First, retrieve your account's hexadecimal address for the Move.toml
 configuration:
 
 <CodeGroup>
-```bash Initia L1
-initiad keys parse $(initiad keys show example --address)
-```
-```bash Move Rollups
-minitiad keys parse $(minitiad keys show example --address)
-```
+  ```bash Initia L1
+  initiad keys parse $(initiad keys show example --address)
+  ```
+  ```bash Move Rollups
+  minitiad keys parse $(minitiad keys show example --address)
+  ```
 </CodeGroup>
 
 **Expected output:**
@@ -226,12 +226,12 @@ hello = "0xCC86AF3F776B95A7DED542035B3B666A9FDE2EE9" # Replace with your address
 Build your Move module into deployable bytecode:
 
 <CodeGroup>
-```bash Initia L1
-initiad move build
-```
-```bash Move Rollups
-minitiad move build
-```
+  ```bash Initia L1
+  initiad move build
+  ```
+  ```bash Move Rollups
+  minitiad move build
+  ```
 </CodeGroup>
 
 **Successful compilation output:**
@@ -252,7 +252,7 @@ After compilation, you'll find a new `build/` directory containing:
 - Compiled bytecode modules
 - Dependency information
 - Build artifacts and metadata
-</Step>
+  </Step>
 
 <Step title="Deploy Your Module">
 Deploy your compiled module to the blockchain network.
@@ -283,28 +283,35 @@ import { isTxError, MnemonicKey, MsgPublish, RESTClient, Wallet } from '@initia/
 import fs from 'fs'
 import path from 'path'
 
-const REST_URL = 'https://rest.testnet.initia.xyz' const MNEMONIC = '' //
-Replace with your mnemonic
+const REST_URL = 'https://rest.testnet.initia.xyz'
+const MNEMONIC = '' // Replace with your mnemonic
 
-const MODULE_NAME = 'hello_world' const MODULE_PATH = path.join(\_\_dirname,
-`./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
+const MODULE_NAME = 'hello_world'
+const MODULE_PATH = path.join(__dirname, `./build/movevm/bytecode_modules/${MODULE_NAME}.mv`)
 
-function buildMsg(wallet: Wallet): MsgPublish { const packageBytes =
-fs.readFileSync(MODULE_PATH).toString('base64')
+function buildMsg(wallet: Wallet): MsgPublish {
+  const packageBytes = fs.readFileSync(MODULE_PATH).toString('base64')
 
-return new MsgPublish(wallet.key.accAddress, [packageBytes],
-MsgPublish.Policy.COMPATIBLE) }
+  return new MsgPublish(wallet.key.accAddress, [packageBytes], MsgPublish.Policy.COMPATIBLE)
+}
 
-async function main() { const wallet = new Wallet( new RESTClient(REST_URL, {
-gasPrices: '0.015uinit' }), new MnemonicKey({ mnemonic: MNEMONIC }) )
+async function main() {
+  const wallet = new Wallet(
+    new RESTClient(REST_URL, { gasPrices: '0.015uinit' }),
+    new MnemonicKey({ mnemonic: MNEMONIC }),
+  )
 
-const msg = buildMsg(wallet) const signedTx = await wallet.createAndSignTx({
-msgs: [msg] })
+  const msg = buildMsg(wallet)
+  const signedTx = await wallet.createAndSignTx({ msgs: [msg] })
 
-const result = await wallet.rest.tx.broadcast(signedTx) if (isTxError(result)) {
-console.error(`❌  Tx failed (code ${result.code})`, result.raw_log) } else {
-console.log(`✅  Success! Tx hash: ${result.txhash}`) console.log('Result:',
-result) } }
+  const result = await wallet.rest.tx.broadcast(signedTx)
+  if (isTxError(result)) {
+    console.error(`❌  Tx failed (code ${result.code})`, result.raw_log)
+  } else {
+    console.log(`✅  Success! Tx hash: ${result.txhash}`)
+    console.log('Result:', result)
+  }
+}
 
 main().catch(console.error)
 ```
@@ -313,24 +320,24 @@ main().catch(console.error)
 ### Understanding Deployment Options
 
 <AccordionGroup>
-<Accordion title="Upgrade Policies" icon="arrow-up">
-The `--upgrade-policy` flag controls future module updates:
+  <Accordion title="Upgrade Policies" icon="arrow-up">
+    The `--upgrade-policy` flag controls future module updates:
 
-- **`COMPATIBLE`**: Allows backward-compatible upgrades that don't break existing functionality
-- **`IMMUTABLE`**: Prevents any future modifications to the deployed module
+    - **`COMPATIBLE`**: Allows backward-compatible upgrades that don't break existing functionality
+    - **`IMMUTABLE`**: Prevents any future modifications to the deployed module
 
-Choose based on whether you anticipate needing to update your module after deployment.
-</Accordion>
+    Choose based on whether you anticipate needing to update your module after deployment.
+  </Accordion>
 
-<Accordion title="Gas Configuration" icon="fuel-pump">
-Gas settings control transaction costs:
+  <Accordion title="Gas Configuration" icon="fuel-pump">
+    Gas settings control transaction costs:
 
-- `--gas auto`: Automatically estimates required gas
-- `--gas-adjustment 1.5`: Adds 50% buffer to gas estimate
-- `--gas-prices`: Sets the price per unit of gas
+    - `--gas auto`: Automatically estimates required gas
+    - `--gas-adjustment 1.5`: Adds 50% buffer to gas estimate
+    - `--gas-prices`: Sets the price per unit of gas
 
-These settings help ensure your transaction succeeds while managing costs.
-</Accordion>
+    These settings help ensure your transaction succeeds while managing costs.
+  </Accordion>
 </AccordionGroup>
 
 <Tip>
@@ -432,17 +439,22 @@ minitiad query move view $MODULE_ADDRESS hello_world view_message \
 ```ts InitiaJS SDK
 import { bcs, RESTClient } from '@initia/initia.js'
 
-const REST_URL = 'https://rest.testnet.initia.xyz' const MODULE_ADDRESS =
-'0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer
-address const MODULE_NAME = 'hello_world'
+const REST_URL = 'https://rest.testnet.initia.xyz'
+const MODULE_ADDRESS = '0xcc86af3f776b95a7ded542035b3b666a9fde2ee9' // Replace with your deployer address
+const MODULE_NAME = 'hello_world'
 
-async function main() { const restClient = new RESTClient(REST_URL, { gasPrices:
-'0.015uinit' })
+async function main() {
+  const restClient = new RESTClient(REST_URL, { gasPrices: '0.015uinit' })
 
-const result = await restClient.move.view( MODULE_ADDRESS, MODULE_NAME,
-'view_message', [], [
-bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()
-] ) console.log('Result:', result) }
+  const result = await restClient.move.view(
+    MODULE_ADDRESS,
+    MODULE_NAME,
+    'view_message',
+    [],
+    [bcs.address().serialize('0xcc86af3f776b95a7ded542035b3b666a9fde2ee9').toBase64()],
+  )
+  console.log('Result:', result)
+}
 
 main().catch(console.error)
 ```
