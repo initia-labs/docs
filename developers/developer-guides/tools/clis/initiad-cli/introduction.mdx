@@ -44,66 +44,66 @@ Before installing initiad, ensure you have the following requirements:
 ## Installation
 
 <Steps>
-<Step title="Clone the Repository">
-First, clone the initiad repository from GitHub:
+  <Step title="Clone the Repository">
+    First, clone the initiad repository from GitHub:
 
-```bash
-git clone https://github.com/initia-labs/initia.git
-cd initia
-```
+    ```bash
+    git clone https://github.com/initia-labs/initia.git
+    cd initia
+    ```
+  </Step>
 
-</Step>
+  <Step title="Get Version and Checkout">
+    Fetch the current network version and checkout the corresponding tag. Choose the network that matches your intended use case:
 
-<Step title="Get Version and Checkout">
-Fetch the current network version and checkout the corresponding tag. Choose the network that matches your intended use case:
+    <Tabs>
+      <Tab title="Mainnet">
+        ```bash
+        # Get the current mainnet version and checkout
+        export VERSION=$(curl -s https://rest.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+        echo "Checking out version: $VERSION"
+        git checkout $VERSION
+        ```
+      </Tab>
 
-<Tabs>
-<Tab title="Mainnet">
-```bash
-# Get the current mainnet version and checkout
-export VERSION=$(curl -s https://rest.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-</Tab>
+      <Tab title="Testnet">
+        ```bash
+        # Get the current testnet version and checkout
+        export VERSION=$(curl -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+        echo "Checking out version: $VERSION"
+        git checkout $VERSION
+        ```
+      </Tab>
 
-<Tab title="Testnet">
-  ```bash # Get the current testnet version and checkout export VERSION=$(curl
-  -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info |
-  jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-  echo "Checking out version: $VERSION" git checkout $VERSION ```
-</Tab>
+      <Tab title="Manual">
+        ```bash
+        # Manually set a specific version and checkout
+        export VERSION=v0.5.7
+        echo "Checking out version: $VERSION"
+        git checkout $VERSION
+        ```
+      </Tab>
+    </Tabs>
 
-<Tab title="Manual">
-```bash
-# Manually set a specific version and checkout
-export VERSION=v0.5.7
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-</Tab>
-</Tabs>
+    <Warning>
+      Always use a specific version tag rather than the main branch for production
+      environments to ensure stability.
+    </Warning>
 
-<Warning>
-  Always use a specific version tag rather than the main branch for production
-  environments to ensure stability.
-</Warning>
+    <Note>
+      Mainnet and testnet may run different versions, so choose the appropriate network endpoint.
+    </Note>
+  </Step>
 
-<Note>
-Mainnet and testnet may run different versions, so choose the appropriate network endpoint.
-</Note>
-</Step>
+  <Step title="Build and Install">
+    Compile and install the initiad binary:
 
-<Step title="Build and Install">
-Compile and install the initiad binary:
+    ```bash
+    make install
+    ```
 
-```bash
-make install
-```
-
-This will build the binary and install it to your `$GOPATH/bin` directory.
-
-</Step>
+    This will build the binary and install it to your `$GOPATH/bin` directory.
+  </Step>
 </Steps>
 
 ## Verification
@@ -136,24 +136,26 @@ By default, initiad connects to the Initia mainnet. You can configure it to
 connect to different networks:
 
 <Tabs>
-<Tab title="Mainnet">
-```bash
-initiad config chain-id initia-1
-initiad config node https://rpc.initia.xyz:443
-```
-</Tab>
+  <Tab title="Mainnet">
+    ```bash
+    initiad config chain-id initia-1
+    initiad config node https://rpc.initia.xyz:443
+    ```
+  </Tab>
 
-<Tab title="Testnet">
-  ```bash initiad config chain-id initiation-1 initiad config node
-  https://rpc.testnet.initia.xyz:443 ```
-</Tab>
+  <Tab title="Testnet">
+    ```bash
+    initiad config chain-id initiation-1
+    initiad config node https://rpc.testnet.initia.xyz:443
+    ```
+  </Tab>
 
-<Tab title="Local Node">
-```bash
-initiad config chain-id local-initia
-initiad config node tcp://localhost:26657
-```
-</Tab>
+  <Tab title="Local Node">
+    ```bash
+    initiad config chain-id local-initia
+    initiad config node tcp://localhost:26657
+    ```
+  </Tab>
 </Tabs>
 
 ## Next Steps

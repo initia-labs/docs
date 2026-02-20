@@ -1,7 +1,6 @@
 ---
 title: Migrating from Wallet Widget
-description:
-  Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
+description: Complete guide for upgrading from the legacy Wallet Widget to InterwovenKit v2
 icon: up
 ---
 
@@ -23,43 +22,42 @@ improved TypeScript support, and a more intuitive API.
     Replace the legacy wallet widget package with InterwovenKit.
 
     <CodeGroup>
-    ```bash npm
-    # Remove old package
-    npm uninstall @initia/react-wallet-widget
+      ```bash npm
+      # Remove old package
+      npm uninstall @initia/react-wallet-widget
 
-    # Install new package
-    npm install @initia/interwovenkit-react
-    ```
+      # Install new package
+      npm install @initia/interwovenkit-react
+      ```
 
-    ```bash yarn
-    # Remove old package
-    yarn remove @initia/react-wallet-widget
+      ```bash yarn
+      # Remove old package
+      yarn remove @initia/react-wallet-widget
 
-    # Install new package
-    yarn add @initia/interwovenkit-react
-    ```
+      # Install new package
+      yarn add @initia/interwovenkit-react
+      ```
 
-    ```bash pnpm
-    # Remove old package
-    pnpm remove @initia/react-wallet-widget
+      ```bash pnpm
+      # Remove old package
+      pnpm remove @initia/react-wallet-widget
 
-    # Install new package
-    pnpm add @initia/interwovenkit-react
-    ```
+      # Install new package
+      pnpm add @initia/interwovenkit-react
+      ```
 
-    ```bash bun
-    # Remove old package
-    bun remove @initia/react-wallet-widget
+      ```bash bun
+      # Remove old package
+      bun remove @initia/react-wallet-widget
 
-    # Install new package
-    bun add @initia/interwovenkit-react
-    ```
+      # Install new package
+      bun add @initia/interwovenkit-react
+      ```
     </CodeGroup>
 
     <Warning>
       Update all imports from `@initia/react-wallet-widget` to `@initia/interwovenkit-react` throughout your codebase.
     </Warning>
-
   </Step>
 
   <Step title="Clean Up Legacy Configuration">
@@ -86,34 +84,32 @@ improved TypeScript support, and a more intuitive API.
         ```
       </Accordion>
     </AccordionGroup>
-
   </Step>
 
   <Step title="Install Required Peer Dependencies">
     InterwovenKit requires specific peer dependencies for proper functionality.
 
     <CodeGroup>
-    ```bash npm
-    npm install wagmi viem @tanstack/react-query
-    ```
+      ```bash npm
+      npm install wagmi viem @tanstack/react-query
+      ```
 
-    ```bash yarn
-    yarn add wagmi viem @tanstack/react-query
-    ```
+      ```bash yarn
+      yarn add wagmi viem @tanstack/react-query
+      ```
 
-    ```bash pnpm
-    pnpm add wagmi viem @tanstack/react-query
-    ```
+      ```bash pnpm
+      pnpm add wagmi viem @tanstack/react-query
+      ```
 
-    ```bash bun
-    bun add wagmi viem @tanstack/react-query
-    ```
+      ```bash bun
+      bun add wagmi viem @tanstack/react-query
+      ```
     </CodeGroup>
 
     <Info>
       These dependencies enable advanced wallet functionality and improved chain interaction capabilities.
     </Info>
-
   </Step>
 
   <Step title="Update Provider Configuration">
@@ -163,7 +159,6 @@ improved TypeScript support, and a more intuitive API.
     <Tip>
       The new provider structure separates concerns better and provides more flexibility for wallet configuration.
     </Tip>
-
   </Step>
 </Steps>
 
@@ -264,14 +259,22 @@ import { useWallet } from "@initia/react-wallet-widget"
 export default function WalletButton() {
   const { address, onboard, view, bridge, isLoading } = useWallet()
 
-if (!address) { return ( <button onClick={onboard} disabled={isLoading}>
-{isLoading ? "Loading..." : "Connect Wallet"} </button> ) }
+  if (!address) {
+    return (
+      <button onClick={onboard} disabled={isLoading}>
+        {isLoading ? "Loading..." : "Connect Wallet"}
+      </button>
+    )
+  }
 
-return ( <div> <button onClick={bridge}>Open Bridge</button>
-
-<button onClick={view}>{truncate(address)}</button> </div> ) }
-
-````
+  return (
+    <div>
+      <button onClick={bridge}>Open Bridge</button>
+      <button onClick={view}>{truncate(address)}</button>
+    </div>
+  )
+}
+```
 
 ```tsx New (v2)
 import { truncate } from "@initia/utils"
@@ -291,7 +294,7 @@ export default function WalletButton() {
     </div>
   )
 }
-````
+```
 
 </CodeGroup>
 
@@ -308,14 +311,21 @@ import { useWallet } from "@initia/react-wallet-widget"
 export default function TransactionComponent() {
   const { requestTx } = useWallet()
 
-const handleSubmit = async () => { try { const transactionHash = await
-requestTx( { messages: [] }, { chainId: "YOUR_CHAIN_ID" } )
-console.log("Transaction submitted:", transactionHash) } catch (error) {
-console.error("Transaction failed:", error) } }
+  const handleSubmit = async () => {
+    try {
+      const transactionHash = await requestTx(
+        { messages: [] },
+        { chainId: "YOUR_CHAIN_ID" }
+      )
+      console.log("Transaction submitted:", transactionHash)
+    } catch (error) {
+      console.error("Transaction failed:", error)
+    }
+  }
 
-return <button onClick={handleSubmit}>Submit Transaction</button> }
-
-````
+  return <button onClick={handleSubmit}>Submit Transaction</button>
+}
+```
 
 ```tsx New (v2)
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -337,7 +347,7 @@ export default function TransactionComponent() {
 
   return <button onClick={handleSubmit}>Submit Transaction</button>
 }
-````
+```
 
 </CodeGroup>
 
@@ -414,17 +424,19 @@ export default function SendTransaction() {
     - [ ] Updated all import statements
   </Accordion>
 
-<Accordion title="✅ Configuration Cleanup">
-  - [ ] Removed SSR-related imports - [ ] Removed build configuration changes -
-  [ ] Removed CDN scripts - [ ] Updated provider configuration
-</Accordion>
+  <Accordion title="✅ Configuration Cleanup">
+    - [ ] Removed SSR-related imports
+    - [ ] Removed build configuration changes
+    - [ ] Removed CDN scripts
+    - [ ] Updated provider configuration
+  </Accordion>
 
-<Accordion title="✅ API Updates">
-  - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider` - [ ]
-  Updated `useWallet` to `useInterwovenKit` - [ ] Migrated method calls
-  (`onboard` → `openConnect`, etc.) - [ ] Updated transaction handling
-  (`requestTx` → `requestTxBlock`)
-</Accordion>
+  <Accordion title="✅ API Updates">
+    - [ ] Replaced `WalletWidgetProvider` with `InterwovenKitProvider`
+    - [ ] Updated `useWallet` to `useInterwovenKit`
+    - [ ] Migrated method calls (`onboard` → `openConnect`, etc.)
+    - [ ] Updated transaction handling (`requestTx` → `requestTxBlock`)
+  </Accordion>
 
   <Accordion title="✅ Testing">
     - [ ] Wallet connection works correctly

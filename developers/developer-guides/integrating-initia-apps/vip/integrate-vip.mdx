@@ -104,9 +104,10 @@ This guide explains how a rollup can prepare for and integrate Initia's
   <Step title="Deploy the VIP Scoring Contract">
     In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VM.
 
-      The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
-      <Tabs>
-        <Tab title="Mainnet (interwoven-1)">
+    The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
+
+    <Tabs>
+      <Tab title="Mainnet (interwoven-1)">
         ```bash curl
         curl https://rest.initia.xyz/initia/move/v1/accounts/0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789/resources/by_struct_tag?struct_tag=0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789%3A%3Avip%3A%3AModuleStore
         ```
@@ -122,8 +123,8 @@ This guide explains how a rollup can prepare for and integrate Initia's
           return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
         }
         ```
-        </Tab>
-        <Tab title="Testnet (initiation-2)">
+      </Tab>
+      <Tab title="Testnet (initiation-2)">
         ```bash curl
         curl https://rest.testnet.initia.xyz/initia/move/v1/accounts/0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab/resources/by_struct_tag?struct_tag=0xe55cc823efb411bed5eed25aca5277229a54c62ab3769005f86cc44bc0c0e5ab%3A%3Avip%3A%3AModuleStore
         ```
@@ -139,9 +140,8 @@ This guide explains how a rollup can prepare for and integrate Initia's
           return rest.move.resource<any>(L1_VIP_CONTRACT, `${L1_VIP_CONTRACT}::vip::ModuleStore`).then((res) => res.data.stage)
         }
         ```
-        </Tab>
-      </Tabs>
-
+      </Tab>
+    </Tabs>
 
     <Tabs>
       <Tab title="EVM">
