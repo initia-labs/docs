@@ -29,28 +29,10 @@ Before proceeding, ensure you have completed these milestones:
 Use these common commands and AI prompts to manage your project during the
 hackathon.
 
-| Task                | Command / AI Prompt                                                                                                           |
-| :------------------ | :---------------------------------------------------------------------------------------------------------------------------- |
-| **Resume Appchain** | `weave start`                                                                                                                 |
-| **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain is producing blocks and show my gas-station balances._ |
-| **Key Import**      | See the [Local Keyring Import](#key-import) section below.                                                                    |
-
-### <a name="key-import"></a>Local Keyring Import
-
-The Gas Station account acts as your Universal Developer Key. Run these commands
-in your terminal to import it into your local keychains so you can sign
-transactions via the CLI.
-
-```bash wrap
-# 1. Extract your mnemonic from the weave config
-MNEMONIC=$(jq -r '.common.gas_station.mnemonic' ~/.weave/config.json)
-
-# 2. Import into initiad (L1)
-initiad keys add gas-station --recover --keyring-backend test --coin-type 60 --key-type eth_secp256k1 --source <(echo -n "$MNEMONIC")
-
-# 3. Import into minitiad (L2)
-minitiad keys add gas-station --recover --keyring-backend test --coin-type 60 --key-type eth_secp256k1 --source <(echo -n "$MNEMONIC")
-```
+| Task                | Command / AI Prompt                                                                                                                                           |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Resume Appchain** | `weave start`                                                                                                                                                 |
+| **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance._ |
 
 ---
 
@@ -99,8 +81,8 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
 4.  **Verify State**: Ask the AI to query the chain to prove the logic works.
 
 <Tip>
-  Submission Receipt: To qualify for the hackathon prizes, you must provide the
-  Contract Address of your primary logic and a Transaction Hash of a user
+  **Submission Receipt:** To qualify for the hackathon prizes, you must provide
+  the Contract Address of your primary logic and a Transaction Hash of a user
   interacting with it. Save these as soon as you have a working version!
 </Tip>
 
@@ -111,41 +93,25 @@ Interwoven Blueprint. These patterns leverage Initia's native features to create
 experiences that are impossible on other chains.
 
 <CardGroup cols={1}>
-  <Card title="Blueprint 1: The Invisible App (Frictionless UX)" icon="wand-magic-sparkles">
+  <Card title="Blueprint 1: BlockForge Game (Invisible UX)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
     **The Goal:** A high-frequency application where the blockchain handles logic silently in the background. Users never see a wallet popup after the initial session start.
     - **Native Feature:** [Auto-signing](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
-    - **Reference Implementation:** [BlockForge (Move)](/hackathon/examples/move-game)
-    
-    **AI Power-Up Prompt:**
-    ```terminal wrap
-    Using the `initia-appchain-dev` skill, please modify my InterwovenKit frontend to enable auto-signing for 1 hour so my users can interact with my contract without constant popups.
-    ```
   </Card>
 
-<Card title="Blueprint 2: The Interwoven App (Native Bridging)" icon="bridge">
-  **The Goal:** An application that allows users to move assets between the
-  broader Initia L1 and your appchain without leaving your interface. - **Native
-  Feature:** [Interwoven Bridging](/interwovenkit/features/bridging) via
-  `openBridge` - **Best for:** DeFi Lending, Cross-chain storefronts,
-  Multi-chain games. - **Reference Implementation:** [MiniBank
-  (EVM)](/hackathon/examples/evm-bank) **AI Power-Up Prompt:** ```terminal wrap
-  Using the `initia-appchain-dev` skill, please add Interwoven Bridge support to
-  my app so I can move funds between Initia L1 and my appchain directly from my
-  UI. ```
-</Card>
+  <Card title="Blueprint 2: MiniBank (Interwoven Bridge)" icon="bridge" href="/hackathon/examples/evm-bank">
+    **The Goal:** An application that allows users to move assets between the
+    broader Initia L1 and your appchain without leaving your interface. 
+    - **Native Feature:** [Interwoven Bridging](/interwovenkit/features/transfers/deposit-withdraw)
+    - **Best for:** DeFi Lending, Cross-chain storefronts,
+    Multi-chain games. 
+  </Card>
 
-<Card title="Blueprint 3: The Human App (Identity)" icon="user-group">
-  **The Goal:** An application that prioritizes human-readable identities, replacing complex hex addresses with personal usernames.
-  - **Native Feature:** [Initia Usernames](/home/core-applications/initia-usernames)
-  - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
-  - **Reference Implementation:** [MemoBoard (Wasm)](/hackathon/examples/wasm-social)
-  
-  **AI Power-Up Prompt:**
-  ```terminal wrap
-  Using the `initia-appchain-dev` skill, update my frontend to display the user's .init username in the header instead of their wallet address.
-  ```
-</Card>
+  <Card title="Blueprint 3: MemoBoard (Human Identity)" icon="user-group" href="/hackathon/examples/wasm-social">
+    **The Goal:** An application that prioritizes human-readable identities, replacing complex hex addresses with personal usernames.
+    - **Native Feature:** [Initia Usernames](/developers/developer-guides/integrating-initia-apps/usernames)
+    - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
+  </Card>
 </CardGroup>
 
 ---
@@ -179,11 +145,14 @@ inevitable.
 2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is **opened in
     your project root**. This allows it to reference your `package.json`, your
     `interwovenkit` initialization, and your specific chain configuration.
-3.  **The Perfect Debugging Prompt**: Provide the **console error** alongside
-    the **relevant file**.
-    > _Prompt Example: "I'm following the MiniBank example and getting this
-    > `RPC Error: ...` in the console. Here is my `App.tsx`. Why is my
-    > transaction failing?"_
+3.  The Perfect Debugging Prompt: Provide the console error and ask your
+    assistant to find the cause within your project.
+
+    **Prompt:**
+
+    ```terminal wrap
+    I'm getting this [INSERT_CONSOLE_ERROR] in the browser. Looking at my codebase, why is my transaction failing and how do I fix it?
+    ```
 
 ### 📚 Deep Dives & Source Truth
 

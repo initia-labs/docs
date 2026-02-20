@@ -2,9 +2,11 @@
 title: 'EVM Tutorial: MiniBank (Interwoven Bridge)'
 ---
 
-**Prerequisite:** Before starting this tutorial, you should have completed the
-**[Your First Appchain: A Step-by-Step Guide](../hackathon-landing)** and have
-an EVM-compatible appchain running locally.
+<Note>
+  **Prerequisite:** Before starting this tutorial, you should have completed the
+  [Your First Appchain: A Step-by-Step Guide](../hackathon-landing) and have
+  an EVM-compatible appchain running locally.
+</Note>
 
 ---
 
@@ -99,7 +101,9 @@ contract MiniBank {
 ### Unit Testing with Foundry
 To verify your contract's logic, create a test file named `MiniBank.t.sol` in the `test` directory.
 
-> **Pro Tip**: `testFail` is deprecated in newer versions of Foundry. Use `vm.expectRevert()` for failure testing.
+<Tip>
+  **Pro Tip**: `testFail` is deprecated in newer versions of Foundry. Use `vm.expectRevert()` for failure testing.
+</Tip>
 
 ```solidity wrap
 // SPDX-License-Identifier: MIT
@@ -448,13 +452,17 @@ export default App
 **5. Create the `Bank.jsx` Component:**
 Create `src/Bank.jsx` and add the contract interaction logic. 
 
-> **Pro Tip**: For a cleaner UI, hide the numeric "up/down" arrows in your CSS:
-> ```css
-> input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-> input[type=number] { -moz-appearance: textfield; }
-> ```
+<Tip>
+  **Pro Tip:** For a cleaner UI, hide the numeric "up/down" arrows in your CSS:
+  ```css
+  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+  ```
+</Tip>
 
-> **Pro Tip**: For `view` functions that depend on `msg.sender` (like `getBalance`), you MUST provide a `from` address in your `eth_call` parameters so the appchain knows whose balance to check.
+<Tip>
+  **Pro Tip**: For `view` functions that depend on `msg.sender` (like `getBalance`), you MUST provide a `from` address in your `eth_call` parameters so the appchain knows whose balance to check.
+</Tip>
 
 ```javascript wrap
 import React, { useState, useEffect } from 'react';
@@ -771,6 +779,6 @@ const bridgeButtonStyle = {
 ## Next Steps
 
 Now that you've mastered an EVM application, you're ready to build your own
-idea!
+idea! Ensure your project meets all the technical pillars before submitting.
 
-**[→ Go to Builder Guide](../builder-guide)**
+**[→ Review Submission Requirements](../submission-requirements)**
