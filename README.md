@@ -35,3 +35,8 @@ to the default branch. Find the link to install on your dashboard.
 - Mintlify dev isn't running - Run `mintlify install` it'll re-install
   dependencies.
 - Page loads as a 404 - Make sure you are running in a folder with `mint.json`
+
+### Writing Conventions
+
+- Follow `STYLE_GUIDE.md` for MDX formatting rules, especially markdown block
+  spacing inside JSX components.
