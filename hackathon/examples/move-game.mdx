@@ -306,6 +306,9 @@ const customChain = {
   },
   metadata: {
     is_l1: false,
+    minitia: {
+      type: 'minimove',
+    },
   },
 }
 
@@ -327,15 +330,24 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 ```
 
   <Tip>
-    **Pro Tip: Move View Function Encoding:** Address arguments for `rest.move.view` MUST be 32-byte padded hex and Base64 encoded:
+    **Pro Tip: Move View Function Encoding:** Address arguments for `rest.move.view` MUST be 32-byte hex (padded to exactly 64 characters) and then Base64 encoded.
     ```javascript
-    const b64Addr = Buffer.from(
-      AccAddress.toHex(address).replace('0x', '').padStart(64, '0'), 
-      'hex'
-    ).toString('base64');
+    const hexAddr = AccAddress.toHex(address).replace('0x', '').padStart(64, '0');
+    const b64Addr = Buffer.from(hexAddr, 'hex').toString('base64');
     ```
+    Also, remember to include a small delay (e.g., `setTimeout(fetch, 2000)`) after transactions before refreshing the state to allow the indexer to catch up.
   </Tip>
 </Accordion>
+
+<Tip>
+  **Open the Frontend:** After scaffolding, `cd` into the `blockforge-frontend` directory and run `npm run dev` to start the application. Open the provided URL in your browser and connect your wallet extension.
+
+If the app doesn't appear as expected or you encounter issues, check the
+**browser console** (F12 or Right-click > Inspect > Console) for logs. You can
+share these logs with your AI assistant to help troubleshoot errors or further
+customize the UI and functionality to your liking.
+
+</Tip>
 
 ---
 
