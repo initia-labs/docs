@@ -31,7 +31,7 @@ hackathon.
 
 | Task                | Command / AI Prompt                                                                                                                                           |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Resume Appchain** | `weave start`                                                                                                                                                 |
+| **Resume Appchain** | `weave rollup start -d && weave opinit start executor -d` (Restarts both your chain and the bridge bot)                                                       |
 | **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance._ |
 
 ---
@@ -86,29 +86,40 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
   interacting with it. Save these as soon as you have a working version!
 </Tip>
 
-# Part 2: Choose Your Blueprint Pattern
+# Part 2: Choose Your Blueprint (Satisfy Pillar 3)
 
-To build a winning hackathon project, don't just write a contract, implement an
-Interwoven Blueprint. These patterns leverage Initia's native features to create
-experiences that are impossible on other chains.
+To qualify for the hackathon prizes, your project must implement at least one 
+Initia Native Feature (defined as Pillar 3 in the submission 
+requirements). These Blueprints provide the foundation for meeting that 
+requirement.
+
+<Note>
+  **The Custom Implementation:** To win, don't just deploy these examples as-is. 
+  Judges look for your Custom Implementation: the unique code and functionality you 
+  added on top of these base patterns to solve a specific problem.
+</Note>
 
 <CardGroup cols={1}>
-  <Card title="Blueprint 1: BlockForge Game (Invisible UX)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
-    **The Goal:** A high-frequency application where the blockchain handles logic silently in the background. Users never see a wallet popup after the initial session start.
+  <Card title="Blueprint 1: BlockForge Game (Auto-signing)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
+    **Pillar 3: Invisible UX.** A high-frequency application where the 
+    blockchain handles logic silently in the background. Users never see a 
+    wallet popup after the initial session start.
     - **Native Feature:** [Auto-signing](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
   </Card>
 
   <Card title="Blueprint 2: MiniBank (Interwoven Bridge)" icon="bridge" href="/hackathon/examples/evm-bank">
-    **The Goal:** An application that allows users to move assets between the
-    broader Initia L1 and your appchain without leaving your interface. 
+    **Pillar 3: Liquidity & Connectivity.** An application that allows users 
+    to move assets between the broader Initia L1 and your appchain without 
+    leaving your interface. 
     - **Native Feature:** [Interwoven Bridging](/interwovenkit/features/transfers/deposit-withdraw)
-    - **Best for:** DeFi Lending, Cross-chain storefronts,
-    Multi-chain games. 
+    - **Best for:** DeFi Lending, Cross-chain storefronts, Multi-chain games. 
   </Card>
 
-  <Card title="Blueprint 3: MemoBoard (Human Identity)" icon="user-group" href="/hackathon/examples/wasm-social">
-    **The Goal:** An application that prioritizes human-readable identities, replacing complex hex addresses with personal usernames.
+  <Card title="Blueprint 3: MemoBoard (Initia Usernames)" icon="user-group" href="/hackathon/examples/wasm-social">
+    **Pillar 3: Human Identity.** An application that prioritizes 
+    human-readable identities, replacing complex hex addresses with personal 
+    usernames.
     - **Native Feature:** [Initia Usernames](/developers/developer-guides/integrating-initia-apps/usernames)
     - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
   </Card>
