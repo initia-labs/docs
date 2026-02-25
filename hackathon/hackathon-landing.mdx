@@ -66,9 +66,7 @@ which **Virtual Machine (VM)** you will need for your appchain.
 ## Step 4: Install Required Tools
 
 <Warning>
-  **Docker Desktop must be running.** Ensure it is installed and active before
-  running the installation command. If you don't have it, **[download Docker
-  Desktop here](https://www.docker.com/products/docker-desktop/)**.
+  **Docker Desktop must be running.** Ensure it is active before installing or running tools. **[Download here](https://www.docker.com/products/docker-desktop/)**.
 </Warning>
 
 ### 4.1 Install the Core CLI Tools [AI Assistant]
@@ -181,9 +179,7 @@ Here's a guide on how to navigate the interactive setup:
     Select `Launch a new rollup`.
 
     <Warning>
-      **Switching VMs?** If you are switching from one Virtual Machine to another (e.g., from Wasm to Move), you **must** reinstall the correct `minitiad` binary as described in [**Step 4.2**](#4-2-install-your-appchain-vm-[terminal]). The new installation will override your previous one.
-
-      If you have existing rollup data, you will be prompted to delete it. Type `confirm` to proceed with the new launch.
+      **Switching VMs?** You **must** reinstall the correct `minitiad` binary (Step 4.2) to override the previous one. If you have existing rollup data, type `confirm` to delete it and proceed.
     </Warning>
 
     ### Select L1 Network
@@ -214,7 +210,7 @@ Here's a guide on how to navigate the interactive setup:
     Enter a unique ID (e.g., `mygame-1`).
 
     <Tip>
-      **Save your Chain ID!** You will need to provide this unique identifier in your final hackathon submission.
+      **Save your Chain ID!** You'll need this unique identifier for your final submission.
     </Tip>
 
     ### Specify Rollup Gas Denom
@@ -320,10 +316,10 @@ Here's a guide on how to navigate the interactive setup:
     ```
 
     **Action:**
-    Enter `1000000000000000000000000` (10^24). This ensures you have plenty of tokens for testing, especially if you are on the EVM track.
+    Enter `1000000000000000000000000` (10^24). This ensures you have plenty of tokens for testing, especially for EVM.
 
     <Note>
-    If you are on the **Move track**, use `10000000000000000000` (10^19) instead, as Move balances are represented as `u64` and will overflow with larger values.
+      **Move Track:** Use `10000000000000000000` (10^19) to avoid `u64` overflows.
     </Note>
 
     ### Add Additional Genesis Accounts
@@ -558,11 +554,10 @@ minitiad keys list --keyring-backend test
 ```
 
 <Warning>
-  **Security & Production Note:** The workflows described in this guide are optimized for rapid prototyping during a hackathon or testnet development.
-
-  - **Key Storage:** Storing mnemonics in `config.json` and using the `--keyring-backend test` flag is convenient but insecure for production.
-  - **Mainnet Deployment:** When moving to Mainnet, you must use a secure keyring (like your OS keychain or a hardware wallet) and never share or store your mnemonics in plaintext.
-  - **Account Roles:** For production rollups, it is best practice to use separate accounts for the Gas Station, Validator, and Developer roles.
+  **Production Security:** This workflow is for rapid prototyping only.
+  - **Insecure Storage:** `config.json` and `--keyring-backend test` are for convenience, not production.
+  - **Mainnet:** Use secure keyrings (OS keychain, hardware wallet) and never store mnemonics in plaintext.
+  - **Best Practice:** Use separate accounts for Gas Station, Validator, and Developer roles on Mainnet.
 </Warning>
 
 ---
