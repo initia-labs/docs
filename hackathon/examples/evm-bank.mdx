@@ -92,6 +92,10 @@ contract MiniBank {
         // Helper to check the balance of any user without needing a 'from' address.
         return balances[user];
     }
+
+    receive() external payable {
+        deposit();
+    }
 }
 ```
 
@@ -350,6 +354,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {...TESTNET}
           defaultChainId="your-chain-id"
           customChain={customChain}
+          customChains={[customChain]}
         >
           <App />
         </InterwovenKitProvider>
@@ -482,15 +487,20 @@ const Bank = () => {
   const fetchBalance = async () => {
     if (!address) return;
     try {
-      const fromAddress = address.startsWith("0x") ? address : AccAddress.toHex(address);
-      const data = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: "getBalance" });
+      const hex = AccAddress.toHex(address);
+      const userHex = hex.startsWith("0x") ? hex : `0x${hex}`;
+      const data = encodeFunctionData({ 
+        abi: MINI_BANK_ABI, 
+        functionName: "getBalanceOf", 
+        args: [userHex] 
+      });
       const response = await fetch("http://localhost:8545", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           jsonrpc: "2.0",
           method: "eth_call",
-          params: [{ from: fromAddress, to: MINI_BANK_ADDRESS, data }, "latest"],
+          params: [{ to: MINI_BANK_ADDRESS, data }, "latest"],
           id: 1,
         }),
       });
@@ -516,7 +526,7 @@ const Bank = () => {
     try {
       await requestTxBlock({
         chainId: CHAIN_ID,
-        msgs: [{
+        messages: [{
           typeUrl: "/minievm.evm.v1.MsgCall",
           value: { 
             sender: initiaAddress, 
@@ -527,15 +537,13 @@ const Bank = () => {
             authList: [],
           },
         }],
-        onSuccess: () => {
-          alert("Deposit successful!");
-          setAmount('');
-          fetchBalance();
-        },
-        onError: () => alert("Transaction failed or was cancelled.")
       });
+      alert("Deposit successful!");
+      setAmount('');
+      fetchBalance();
     } catch (error) {
       console.error("Deposit error:", error);
+      alert("Transaction failed or was cancelled.");
     } finally {
       setIsPending(false);
     }
@@ -552,7 +560,7 @@ const Bank = () => {
     try {
       await requestTxBlock({
         chainId: CHAIN_ID,
-        msgs: [{
+        messages: [{
           typeUrl: "/minievm.evm.v1.MsgCall",
           value: { 
             sender: initiaAddress, 
@@ -563,15 +571,13 @@ const Bank = () => {
             authList: [],
           },
         }],
-        onSuccess: () => {
-          alert("Withdrawal successful!");
-          setAmount('');
-          fetchBalance();
-        },
-        onError: () => alert("Transaction failed or was cancelled.")
       });
+      alert("Withdrawal successful!");
+      setAmount('');
+      fetchBalance();
     } catch (error) {
       console.error("Withdraw error:", error);
+      alert("Transaction failed or was cancelled.");
     } finally {
       setIsPending(false);
     }
@@ -690,13 +696,14 @@ minitiad tx evm call <contract-address> $DATA \
 
 Adding bridge support allows users to bring liquidity from the broader Initia 
 ecosystem into your rollup. This transforms your appchain from an isolated 
-sandbox into a connected part of the Interwoven Stack, enabling users to move 
-assets between L1 and L2 with a single, native interface.
+sandbox into a connected part of the Interwoven Stack, providing users with a 
+seamless UI to bridge tokens into your application for use.
 
 <Tip>
   **Local Dev Limitation:** The Interwoven UI requires a registered chain ID to 
-  resolve assets. While it may appear empty for your local-only appchain, adding 
-  this button prepares your app for its public launch.
+  resolve assets. While it may appear empty for your local-only appchain, 
+  adding this button allows users the easy process of bridging tokens into 
+  your application for use.
 </Tip>
 
 ## Step 6: Update the Frontend
