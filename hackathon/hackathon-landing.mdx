@@ -557,6 +557,14 @@ initiad keys list --keyring-backend test
 minitiad keys list --keyring-backend test
 ```
 
+<Warning>
+  **Security & Production Note:** The workflows described in this guide are optimized for rapid prototyping during a hackathon or testnet development.
+
+  - **Key Storage:** Storing mnemonics in `config.json` and using the `--keyring-backend test` flag is convenient but insecure for production.
+  - **Mainnet Deployment:** When moving to Mainnet, you must use a secure keyring (like your OS keychain or a hardware wallet) and never share or store your mnemonics in plaintext.
+  - **Account Roles:** For production rollups, it is best practice to use separate accounts for the Gas Station, Validator, and Developer roles.
+</Warning>
+
 ---
 
 ## Step 8: Verifying Your Appchain [AI Assistant]
@@ -581,18 +589,3 @@ The **Builder Guide** will teach you the **Describe → Build → Test** loop us
 your AI co-pilot, which is essential for building a winning hackathon entry.
 
 **[→ Go to the Builder Guide](/hackathon/builder-guide)**
-
----
-
-## 🚨 Security & Production Note
-
-The workflows described in this guide are optimized for **rapid prototyping
-during a hackathon or testnet development**.
-
-- **Key Storage:** Storing mnemonics in `config.json` and using the
-  `--keyring-backend test` flag is convenient but insecure for production.
-- **Mainnet Deployment:** When moving to Mainnet, you must use a secure keyring
-  (like your OS keychain or a hardware wallet) and never share or store your
-  mnemonics in plaintext.
-- **Account Roles:** For production rollups, it is best practice to use separate
-  accounts for the Gas Station, Validator, and Developer roles.
