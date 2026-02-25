@@ -8,8 +8,6 @@ title: 'Wasm Tutorial: MemoBoard (Human Identity)'
   Wasm-compatible appchain running locally.
 </Note>
 
----
-
 This tutorial will guide you through building a lightning-fast on-chain
 guestbook called **MemoBoard**. Users can post public messages, and the
 application prioritizes human-readable identity by resolving `.init` usernames.
@@ -21,8 +19,6 @@ By the end of this tutorial, you will have:
 - Scaffolded and connected a React frontend.
 - Verified the on-chain functionality.
 
----
-
 ## 📂 Recommended Project Structure
 
 To keep your workspace organized, we recommend the following structure inside
@@ -33,8 +29,6 @@ my-initia-project/
 ├── memoboard/           # Rust smart contract project
 └── memoboard-frontend/  # React frontend application
 ```
-
----
 
 ## Step 1: Create and Verify the Smart Contract
 
@@ -162,8 +156,6 @@ mod tests {
 
 </Accordion>
 
----
-
 ## Step 2: Deploy to your Appchain
 
 Now that the logic is verified, build and publish the contract to your appchain
@@ -241,8 +233,6 @@ minitiad q tx <TX_HASH> --output json | jq -r '.events[] | select(.type=="instan
 
 </Accordion>
 
----
-
 ## Step 3: Fund your Browser Wallet
 
 Ensure your personal wallet has tokens to pay for the transaction to post a
@@ -259,8 +249,6 @@ prompt below with the address you just copied.
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
-
----
 
 ## Step 4: Create a Frontend
 
@@ -618,15 +606,9 @@ export default Board
 </Accordion>
 
 <Tip>
-  **Open the Frontend:**
-  ```bash wrap
-  cd memoboard-frontend
-  npm run dev
-  ```
+  **Open the Frontend:** ```bash wrap cd memoboard-frontend npm run dev ```
   Check the **browser console** if you encounter issues.
 </Tip>
-
----
 
 ## Step 5: On-Chain Verification
 
@@ -660,8 +642,6 @@ minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}
 ```
 
 </Accordion>
-
----
 
 # ⚡ Power-Up: Initia Usernames
 
@@ -721,8 +701,6 @@ const { initiaAddress, username, openConnect, openWallet, requestTxSync } = useI
   **Pro Tip:** This pattern ensures that the connected user sees their identity reflected immediately in the application (in both the header and their own posts). For other participants in the feed, we continue to show the truncated address until a global resolver is implemented.
 </Tip>
 </Accordion>
-
----
 
 ## Next Steps
 

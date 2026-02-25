@@ -8,8 +8,6 @@ title: 'Move Tutorial: BlockForge Game (Invisible UX)'
   Move-compatible appchain running locally.
 </Note>
 
----
-
 This tutorial will guide you through building a high-frequency on-chain game on
 your Move appchain. BlockForge is a crafting engine that demonstrates Invisible
 UX: allowing players to interact with the blockchain seamlessly without constant
@@ -22,8 +20,6 @@ By the end of this tutorial, you will have instructed your AI assistant to:
 - Scaffold and connect a React frontend for players to interact with the game.
 - Verify the on-chain functionality.
 
----
-
 ## 📂 Recommended Project Structure
 
 To keep your workspace organized, we recommend the following structure inside
@@ -34,8 +30,6 @@ my-initia-project/
 ├── blockforge/           # Move smart contract project
 └── blockforge-frontend/  # React frontend application
 ```
-
----
 
 ## Step 1: Create and Verify the Smart Contract
 
@@ -166,8 +160,6 @@ If you see `BUILDING blockforge`, then **BlockForge was built successfully! 🛠
 
 </Accordion>
 
----
-
 ## Step 2: Deploy to your Appchain
 
 Now that the logic is verified, build and publish the contract to your live
@@ -206,8 +198,6 @@ minitiad tx move publish build/blockforge/bytecode_modules/items.mv \
 
 </Accordion>
 
----
-
 ## Step 3: Fund your Browser Wallet
 
 Before you can interact with the game through a frontend, your browser wallet
@@ -224,8 +214,6 @@ prompt below with the address you just copied.
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
-
----
 
 ## Step 4: Create a Frontend
 
@@ -340,15 +328,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 </Accordion>
 
 <Tip>
-  **Open the Frontend:**
-  ```bash wrap
-  cd blockforge-frontend
-  npm run dev
-  ```
+  **Open the Frontend:** ```bash wrap cd blockforge-frontend npm run dev ```
   Check the **browser console** if you encounter issues.
 </Tip>
-
----
 
 ## Step 5: On-Chain Verification
 
@@ -391,26 +373,18 @@ minitiad query move view <module-address> items get_inventory \
 
 </Accordion>
 
----
-
 # ⚡ Power-Up: Auto-signing (Session UX)
 
 To make your BlockForge game natively integrated with the Initia stack, you can
 enable **Auto-signing** to create a frictionless experience where players don't
 see wallet popups for every game action.
 
-### 1. How it Works
+Auto-signing works by deriving a unique, application-specific **Ghost Wallet**
+from a one-time signature. Your primary wallet then grants this Ghost Wallet
+permission (**Authz**) to execute specific functions and use its balance for
+fees (**Feegrant**), allowing for seamless, session-based gameplay.
 
-When a user enables Auto-sign, InterwovenKit performs three steps:
-
-1.  **Ghost Wallet Derivation**: The user signs a one-time message
-    (`personal_sign`) to derive a unique, application-specific HD wallet.
-2.  **Authz Grant**: The user's primary wallet grants permission to this ghost
-    wallet to execute specific Move functions (`MsgExecute`) on their behalf.
-3.  **Feegrant**: The primary wallet authorizes the ghost wallet to use its
-    balance to pay for transaction fees.
-
-### 2. Update the Frontend
+## Step 6: Update the Frontend
 
 You can enable session-based signing by modifying your provider configuration
 and adding a toggle in your UI.
@@ -459,8 +433,6 @@ return (
   **Pro Tip:** You can check the exact expiration of the current session using `autoSign.expiredAtByChain[chainId]`.
 </Tip>
 </Accordion>
-
----
 
 ## Next Steps
 
