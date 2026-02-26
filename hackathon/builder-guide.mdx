@@ -6,7 +6,7 @@ title: 'Hackathon Builder Guide'
 
 The Builder Guide is designed for developers who have already completed the
 initial environment setup. If you haven't yet launched your first appchain,
-please start with the **[Step-by-Step Guide](/hackathon/hackathon-landing)**.
+please start with the [Step-by-Step Guide](/hackathon/hackathon-landing).
 
 ### ✅ Readiness Checklist
 
@@ -36,7 +36,7 @@ hackathon.
 
 # Part 1: Development Workflow
 
-Master the **Describe → Build → Test** cycle. This is how you win the hackathon.
+Master the Describe → Build → Test cycle. This is how you win the hackathon.
 
 ### 💰 Funding Your Personal Wallet
 
@@ -65,7 +65,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please write a Move module for a marketplace and a unit test to verify the 'list_item' function.
+    Using the `initia-appchain-dev` skill, please write a Move module for a marketplace and a unit test to verify the `list_item` function.
     ```
 
 3.  **Deploy & Interact**: Instruct the AI to deploy to your appchain.
@@ -73,7 +73,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please deploy this module to my appchain and execute the 'list_item' function.
+    Using the `initia-appchain-dev` skill, please deploy this module to my appchain and execute the `list_item` function.
     ```
 
 4.  **Verify State**: Ask the AI to query the chain to prove the logic works.
@@ -93,7 +93,7 @@ requirement.
 
 <Note>
   **The Custom Implementation:** To win, don't just deploy these examples as-is. 
-  Judges look for your Custom Implementation: the unique code and functionality you 
+  Judges look for your `Custom Implementation`: the unique code and functionality you 
   added on top of these base patterns to solve a specific problem.
 </Note>
 
@@ -102,7 +102,7 @@ requirement.
     **Pillar 3: Invisible UX.** A high-frequency application where the 
     blockchain handles logic silently in the background. Users never see a 
     wallet popup after the initial session start.
-    - **Native Feature:** [Auto-signing](/interwovenkit/features/autosign/introduction)
+    - **Native Feature:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
   </Card>
 
@@ -110,7 +110,7 @@ requirement.
     **Pillar 3: Liquidity & Connectivity.** An application that allows users 
     to move assets between the broader Initia L1 and your appchain without 
     leaving your interface. 
-    - **Native Feature:** [Interwoven Bridging](/interwovenkit/features/transfers/deposit-withdraw)
+    - **Native Feature:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
     - **Best for:** DeFi Lending, Cross-chain storefronts, Multi-chain games. 
   </Card>
 
@@ -118,7 +118,7 @@ requirement.
     **Pillar 3: Human Identity.** An application that prioritizes 
     human-readable identities, replacing complex hex addresses with personal 
     usernames.
-    - **Native Feature:** [Initia Usernames](/developers/developer-guides/integrating-initia-apps/usernames)
+    - **Native Feature:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
     - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
   </Card>
 </CardGroup>
@@ -131,7 +131,7 @@ Judges want to see **On-chain Proof**. Use this checklist before submitting.
 - [ ] **Contract Address**: Your primary logic is deployed.
 - [ ] **Interaction TX**: You have a transaction hash of a user _interacting_
       with your contract.
-- [ ] **Frontend**: You are using **InterwovenKit** for the wallet connection.
+- [ ] **Frontend**: You are using `InterwovenKit` for the wallet connection.
 - [ ] **Native Feature**: You've pointed to the code implementing an
       Initia-native feature.
 
@@ -149,8 +149,8 @@ inevitable.
 
 1.  **Open the Browser Console**: Press `F12` or `Cmd+Option+J` to see the exact
     error logs.
-2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is **opened in
-    your project root**. This allows it to reference your `package.json`, your
+2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is opened in
+    your project root. This allows it to reference your `package.json`, your
     `interwovenkit` initialization, and your specific chain configuration.
 3.  The Perfect Debugging Prompt: Provide the console error and ask your
     assistant to find the cause within your project.
@@ -175,5 +175,5 @@ If your AI agent is stuck or you need to see the source of truth:
 
 
 > **Mandatory:** Review the
-> **[Submission & Technical Requirements](/hackathon/submission-requirements)**
+> [Submission & Technical Requirements](/hackathon/submission-requirements)
 > to ensure you are eligible for prizes.

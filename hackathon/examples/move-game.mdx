@@ -2,12 +2,6 @@
 title: 'Move Tutorial: BlockForge Game (Invisible UX)'
 ---
 
-<Note>
-  **Prerequisite:** Before starting this tutorial, you should have completed the
-  [Your First Appchain: A Step-by-Step Guide](../hackathon-landing) and have a
-  Move-compatible appchain running locally.
-</Note>
-
 This tutorial will guide you through building a high-frequency on-chain game on
 your Move appchain. BlockForge is a crafting engine that demonstrates Invisible
 UX: allowing players to interact with the blockchain seamlessly without constant
@@ -20,15 +14,31 @@ By the end of this tutorial, you will have instructed your AI assistant to:
 - Scaffold and connect a React frontend for players to interact with the game.
 - Verify the on-chain functionality.
 
-## 📂 Recommended Project Structure
+## 📂 Your Project Structure
 
-To keep your workspace organized, we recommend the following structure inside
-your `my-initia-project` directory:
+The following steps will instruct your AI assistant to create these directories 
+inside your `my-initia-project` folder:
 
 ```text
 my-initia-project/
 ├── blockforge/           # Move smart contract project
 └── blockforge-frontend/  # React frontend application
+```
+
+<Note>
+  **Prerequisite:** Ensure you have a Move-compatible appchain running 
+  locally. If you haven't launched one yet, complete the 
+  [Step-by-Step Guide](../hackathon-landing) first.
+</Note>
+
+### ✅ Readiness Check
+
+Before you start, verify that your local infrastructure is healthy.
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
 ## Step 1: Create and Verify the Smart Contract
@@ -156,7 +166,7 @@ project. Replace `0xYOUR_HEX_ADDRESS` with your deployment address hex (0x...).
 minitiad move build --named-addresses blockforge=0xYOUR_HEX_ADDRESS
 ```
 
-If you see `BUILDING blockforge`, then **BlockForge was built successfully! 🛠️**
+If you see `BUILDING blockforge`, then BlockForge was built successfully! 🛠️
 
 </Accordion>
 
@@ -328,13 +338,18 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 </Accordion>
 
 <Tip>
-  **Open the Frontend:** ```bash wrap cd blockforge-frontend npm run dev ```
+  **Open the Frontend:**
+  ```bash wrap
+  cd blockforge frontend
+  npm run dev
+  ```
+  
   Check the **browser console** if you encounter issues.
 </Tip>
 
 ## Step 5: On-Chain Verification
 
-Finally, ask your AI assistant to interact with your **live** appchain to prove
+Finally, ask your AI assistant to interact with your live appchain to prove
 the deployed contract works as expected.
 
 **Example Prompt:**
@@ -376,13 +391,13 @@ minitiad query move view <module-address> items get_inventory \
 # ⚡ Power-Up: Auto-signing (Session UX)
 
 To make your BlockForge game natively integrated with the Initia stack, you can
-enable **Auto-signing** to create a frictionless experience where players don't
+enable Auto-signing to create a frictionless experience where players don't
 see wallet popups for every game action.
 
-Auto-signing works by deriving a unique, application-specific **Ghost Wallet**
-from a one-time signature. Your primary wallet then grants this Ghost Wallet
-permission (**Authz**) to execute specific functions and use its balance for
-fees (**Feegrant**), allowing for seamless, session-based gameplay.
+Auto-signing works by deriving a unique, application-specific `Ghost Wallet`
+from a one-time signature. Your primary wallet then grants this `Ghost Wallet`
+permission (`Authz`) to execute specific functions and use its balance for
+fees (`Feegrant`), allowing for seamless, session-based gameplay.
 
 ## Step 6: Update the Frontend
 
@@ -439,4 +454,4 @@ return (
 Now that you've mastered a Move application, you're ready to build your own
 idea! Ensure your project meets all the technical pillars before submitting.
 
-**[→ Review Submission Requirements](../submission-requirements)**
+[→ Review Submission Requirements](../submission-requirements)

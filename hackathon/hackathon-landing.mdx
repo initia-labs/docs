@@ -25,7 +25,7 @@ cd my-initia-project
 
 ## Step 2: Install Your AI Skill [Terminal]
 
-Your AI assistant needs the **Initia Appchain Dev** skill to help you manage
+Your AI assistant needs the `Initia Appchain Dev` skill to help you manage
 your appchain, write smart contracts, and build your frontend.
 
 **Run the following command in your terminal:**
@@ -49,19 +49,19 @@ split-screen setup:
 ## Step 3: Choose Your Track & VM [Planning]
 
 Before installing tools, decide what you want to build. This choice determines
-which **Virtual Machine (VM)** you will need for your appchain.
+which `Virtual Machine (VM)` you will need for your appchain.
 
 | Track                    | Recommended VM   | Why?                                                                |
 | :----------------------- | :--------------- | :------------------------------------------------------------------ |
-| **Gaming / Consumer**    | `Move`           | Best for complex on-chain logic and object-oriented assets.         |
-| **DeFi / Institutional** | `EVM` (Solidity) | Best for leveraging existing Ethereum tooling and libraries.        |
-| **Agents / Tooling**     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
+| `Gaming / Consumer`    | `Move`           | Best for complex on-chain logic and object-oriented assets.         |
+| `DeFi / Institutional` | `EVM` (Solidity) | Best for leveraging existing Ethereum tooling and libraries.        |
+| `Agents / Tooling`     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
 
 
 ## Step 4: Install Required Tools
 
 <Warning>
-  **Docker Desktop must be running.** Ensure it is active before installing or running tools. **[Download here](https://www.docker.com/products/docker-desktop/)**.
+  **Docker Desktop must be running.** Ensure it is active before installing or running tools. [Download here](https://www.docker.com/products/docker-desktop/).
 </Warning>
 
 ### 4.1 Install the Core CLI Tools [AI Assistant]
@@ -143,18 +143,18 @@ Here's a guide on how to navigate the interactive setup:
     Select `Generate new account (recommended)`.
 
     **Result:**
-    You will see your new Gas Station Address. 💡 **Copy this address.**
+    You will see your new Gas Station Address. 💡 Copy this address.
 
     ### Fund Your Gas Station Account
     **Action:**
-    Go to the **[Initia Testnet Faucet](https://app.testnet.initia.xyz/faucet)**.
+    Go to the [Initia Testnet Faucet](https://app.testnet.initia.xyz/faucet).
 
     **Action:**
     Paste your address and click **Submit** to receive testnet INIT tokens.
 
     **Prompt:**
     ```terminal wrap
-    ? Type 'continue' to proceed.
+    ? Type `continue` to proceed.
     ```
 
     **Action:**
@@ -355,8 +355,8 @@ Your appchain will now launch and start producing blocks!
 ## Step 6: Setup Interwoven Bots [Terminal]
 
 To enable the Optimistic bridge and cross-chain communication (IBC) between
-Initia L1 and your appchain, you need to start the **OPinit Executor** and the
-**IBC Relayer**. These bots manage the cross-chain connectivity of your chain.
+Initia L1 and your appchain, you need to start the `OPinit Executor` and the
+`IBC Relayer`. These bots manage the cross-chain connectivity of your chain.
 
 <Note>
   **Prerequisite:** Your appchain must be running before configuring these bots. Because `weave init` runs your chain in the background, you can continue using the same terminal window.
@@ -417,7 +417,7 @@ Follow the interactive guide:
   </Step>
   <Step title="Finalize Configuration">
     **Action:** 
-    Press `Enter` for **L1 RPC**, **Chain ID**, and **Gas Denom**. For **Rollup RPC**, press `Tab` to use `http://localhost:26657`.
+    Press `Enter` for L1 RPC, Chain ID, and Gas Denom. For Rollup RPC, press `Tab` to use `http://localhost:26657`.
   </Step>
   <Step title="Start the Bot">
     Once initialized, start the bot in the background:
@@ -432,7 +432,7 @@ Follow the interactive guide:
 The relayer enables asset transfers (like INIT) between the L1 and your
 appchain.
 
-<Warning>**Docker Desktop** must be running to launch the relayer.</Warning>
+<Warning>Docker Desktop must be running to launch the relayer.</Warning>
 
 **Run the following command:**
 
@@ -502,7 +502,7 @@ Follow the interactive guide:
 
 <Tip>
   **Persistence After Restart:**
-  If you shut down your computer, the **Relayer** will stay active (it's managed by Docker), but you will need to manually restart your **Rollup full node** and **Executor bot** using these commands:
+  If you shut down your computer, the `Relayer` will stay active (it's managed by Docker), but you will need to manually restart your Rollup full node and Executor bot using these commands:
   
   ```bash wrap
   # Restart the rollup full node
@@ -516,8 +516,8 @@ Follow the interactive guide:
 
 ## Step 7: Final Key Setup [Terminal]
 
-💡 **Why:** The **Gas Station** account acts as your **Universal Developer
-Key**. Importing it allows you to sign transactions manually via the CLI, and it
+💡 **Why:** The `Gas Station` account acts as your `Universal Developer
+Key`. Importing it allows you to sign transactions manually via the CLI, and it
 enables your AI co-pilot to deploy contracts and interact with your appchain.
 
 **Action:** Run these commands to import your account into both the L1
@@ -549,7 +549,7 @@ minitiad keys list --keyring-backend test
   **Production Security:** This workflow is for rapid prototyping only.
   - **Insecure Storage:** `config.json` and `--keyring-backend test` are for convenience, not production.
   - **Mainnet:** Use secure keyrings (OS keychain, hardware wallet) and never store mnemonics in plaintext.
-  - **Best Practice:** Use separate accounts for Gas Station, Validator, and Developer roles on Mainnet.
+  - **Best Practice:** Use separate accounts for `Gas Station`, `Validator`, and `Developer` roles on Mainnet.
 </Warning>
 
 
@@ -573,4 +573,4 @@ workflow.
 The **Builder Guide** will teach you the **Describe → Build → Test** loop using
 your AI co-pilot, which is essential for building a winning hackathon entry.
 
-**[→ Go to the Builder Guide](/hackathon/builder-guide)**
+[→ Go to the Builder Guide](/hackathon/builder-guide)

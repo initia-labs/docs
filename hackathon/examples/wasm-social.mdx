@@ -2,14 +2,8 @@
 title: 'Wasm Tutorial: MemoBoard (Human Identity)'
 ---
 
-<Note>
-  **Prerequisite:** Before starting this tutorial, you should have completed the
-  [Your First Appchain: A Step-by-Step Guide](../hackathon-landing) and have a
-  Wasm-compatible appchain running locally.
-</Note>
-
 This tutorial will guide you through building a lightning-fast on-chain
-guestbook called **MemoBoard**. Users can post public messages, and the
+guestbook called MemoBoard. Users can post public messages, and the
 application prioritizes human-readable identity by resolving `.init` usernames.
 
 By the end of this tutorial, you will have:
@@ -19,15 +13,31 @@ By the end of this tutorial, you will have:
 - Scaffolded and connected a React frontend.
 - Verified the on-chain functionality.
 
-## 📂 Recommended Project Structure
+## 📂 Your Project Structure
 
-To keep your workspace organized, we recommend the following structure inside
-your `my-initia-project` directory:
+The following steps will instruct your AI assistant to create these directories 
+inside your `my-initia-project` folder:
 
 ```text
 my-initia-project/
 ├── memoboard/           # Rust smart contract project
 └── memoboard-frontend/  # React frontend application
+```
+
+<Note>
+  **Prerequisite:** Ensure you have a Wasm-compatible appchain running 
+  locally. If you haven't launched one yet, complete the 
+  [Step-by-Step Guide](../hackathon-landing) first.
+</Note>
+
+### ✅ Readiness Check
+
+Before you start, verify that your local infrastructure is healthy.
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
 ## Step 1: Create and Verify the Smart Contract
@@ -171,7 +181,7 @@ Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Ru
 **1. Build and Store the Code:**
 
 Standard `cargo build` binaries often fail validation on-chain. For WasmVM
-deployment, it is strongly recommended to use the **CosmWasm Optimizer**.
+deployment, it is strongly recommended to use the CosmWasm Optimizer.
 
 **Note for Apple Silicon (M1/M2/M3):** You **MUST** use the
 `cosmwasm/optimizer-arm64:0.16.1` image variant or the build will be extremely
@@ -373,6 +383,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           {...TESTNET}
           defaultChainId="your-chain-id"
           customChain={customChain}
+          customChains={[customChain]}
         >
           <App />
         </InterwovenKitProvider>
@@ -606,13 +617,18 @@ export default Board
 </Accordion>
 
 <Tip>
-  **Open the Frontend:** ```bash wrap cd memoboard-frontend npm run dev ```
+  **Open the Frontend:**
+  ```bash wrap
+  cd memoboard-frontend
+  npm run dev
+  ```
+
   Check the **browser console** if you encounter issues.
 </Tip>
 
 ## Step 5: On-Chain Verification
 
-Finally, ask your AI assistant to interact with your **live** appchain to prove
+Finally, ask your AI assistant to interact with your live appchain to prove
 the deployed contract works as expected.
 
 **Example Prompt:**
@@ -646,21 +662,21 @@ minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}
 # ⚡ Power-Up: Initia Usernames
 
 To make your MemoBoard natively integrated with the Initia stack, you can
-replace long, complex addresses with human-readable **Initia Usernames** (e.g.,
+replace long, complex addresses with human-readable Initia Usernames (e.g.,
 `vitalik.init`).
 
 ## Step 6: Register your .init Name
 
-Before updating your code, you should register a primary username for your
+Before updating your code, you should register a `primary username` for your
 wallet on the Initia testnet.
 
 1.  Navigate to
     [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
     and connect your browser wallet (e.g., Leap or Keplr).
-2.  In the **Find a username** search box, enter your desired name. If it is
-    available, you will see a green **Available** checkmark.
-3.  **Crucial:** Ensure the **Set as primary name** checkbox is selected.
-4.  Click **Register** and approve the transaction. Once resolved, your new
+2.  In the `Find a username` search box, enter your desired name. If it is
+    available, you will see a green `Available` checkmark.
+3.  Crucial: Ensure the `Set as primary name` checkbox is selected.
+4.  Click `Register` and approve the transaction. Once resolved, your new
     `.init` name will appear in the top-right corner of the Initia App.
 
 ## Step 7: Update the Frontend
@@ -707,4 +723,4 @@ const { initiaAddress, username, openConnect, openWallet, requestTxSync } = useI
 Now that you've mastered a Wasm application, you're ready to build your own
 idea! Ensure your project meets all the technical pillars before submitting.
 
-**[→ Review Submission Requirements](../submission-requirements)**
+[→ Review Submission Requirements](../submission-requirements)
