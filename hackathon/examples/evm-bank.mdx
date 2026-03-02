@@ -493,10 +493,7 @@ contract interaction logic.
   input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; }
   ```
-</Tip>
-
-<Tip>
-  **Pro Tip**: For `view` functions that depend on `msg.sender` (like
+  For `view` functions that depend on `msg.sender` (like
   `getBalance`), you MUST provide a `from` address in your `eth_call` parameters
   so the appchain knows whose balance to check.
 </Tip>
