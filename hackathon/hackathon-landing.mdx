@@ -101,6 +101,16 @@ Your AI agent is your partner in this hackathon, but the `weave` CLI requires
 an interactive setup flow to prepare your environment and launch your appchain.
 You can run it whenever you need to initialize or reconfigure your setup.
 
+<Note>
+  If you already ran `weave init` and want to create a new appchain, run the
+  following commands first:
+  ```bash wrap
+  rm -rf ~/.weave
+  initiad keys delete gas-station --keyring-backend test -y || true
+  minitiad keys delete gas-station --keyring-backend test -y || true
+  ```
+</Note>
+
 **Run the following command in your terminal:**
 
 ```bash wrap
@@ -116,7 +126,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Prompt:**
     ```terminal wrap
-    How would you like to setup your Gas station account?
+    How would you like to setup your Gas Station account?
     ```
 
     **Action:**
@@ -277,7 +287,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Add Gas Station Account to Genesis
     **Prompt:**
     ```terminal wrap
-    Would you like to add the gas station account to genesis accounts?
+    Would you like to add the Gas Station account to genesis accounts?
     ```
 
     **Action:**
@@ -286,7 +296,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Genesis Balance
     **Prompt:**
     ```terminal wrap
-    Specify the genesis balance for the gas station account
+    Specify the genesis balance for the Gas Station account
     ```
 
     **Action:**

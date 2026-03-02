@@ -169,12 +169,12 @@ forge test
 ## Step 2: Deploy to your Appchain
 
 Now that the logic is verified, build and publish the contract to your live
-appchain using the gas station account.
+appchain using the Gas Station account.
 
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract located in the `minibank` directory to my appchain using my gas station account.
+Using the `initia-appchain-dev` skill, please build and publish the MiniBank Solidity contract located in the `minibank` directory to my appchain using my Gas Station account.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
@@ -193,7 +193,7 @@ forge build
 
 jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0x//' > minibank.bin
 
-````
+```
 
 Then deploy the binary. **Find your Chain ID first** if you don't know it:
 ```bash wrap
@@ -202,7 +202,7 @@ bash .agents/skills/initia-appchain-dev/scripts/verify-appchain.sh --gas-station
 
 # Option 2: Direct CLI query
 minitiad status 2>&1 | jq -r '.NodeInfo.network'
-````
+```
 
 Now deploy:
 
@@ -754,7 +754,7 @@ the deployed contract works as expected.
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contract. Using my gas station account on my appchain, please:
+Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contract. Using my Gas Station account on my appchain, please:
 1. Deposit 1 token.
 2. Check my balance.
 3. Withdraw 0.5 tokens.
