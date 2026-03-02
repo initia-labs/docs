@@ -54,7 +54,7 @@ Using the `initia-appchain-dev` skill, please create a Solidity smart contract p
 - Allow users to withdraw their own deposited tokens.
 - Keep track of each user's total savings.
 - Include a function to view the caller's current balance.
-Please also create and run a unit test to verify these features.
+Please also create and run unit tests to verify these features.
 ```
 
 Your AI agent will generate the `minibank` project and confirm that the tests
@@ -227,8 +227,10 @@ minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="c
 Ensure your personal wallet has tokens to pay for the gas and initial deposits
 on your appchain.
 
-**1. Get your Wallet Address:** Open your browser wallet and copy your address
-(it starts with `init1...`).
+**1. Get your Wallet Address:** Open your browser wallet and copy your EVM
+address (it starts with `0x...`).
+For CLI commands in this guide, use your bech32 Initia address (`init1...`)
+when the command explicitly asks for it.
 
 **2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
 prompt below with the address you just copied.
@@ -252,7 +254,7 @@ Using the `initia-appchain-dev` skill, please scaffold a new Vite + React applic
 **2. Connect to Appchain:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react package for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 ```
 
 <Accordion title="Manual Approach: Scaffold and Connect">
@@ -757,7 +759,8 @@ Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contra
 
 <Accordion title="Manual Approach: On-Chain Interaction">
 
-**1. Find your bech32 address:** For query calls, get your sender address first.
+**1. Find your bech32 address (`init1...`):** For CLI query calls, get your
+sender address first.
 
 ```bash wrap
 minitiad keys show gas-station -a --keyring-backend test

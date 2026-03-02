@@ -50,12 +50,12 @@ and automatically run unit tests to ensure the logic is sound.
 **Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please create a Move module project for our BlockForge game in a new directory named `blockforge`. The module should be named items inside a blockforge project. The game has the following rules:
+Using the `initia-appchain-dev` skill, please create a Move module project for our BlockForge game in a new directory named `blockforge`. Name the module `items` in the `blockforge` package. The game has the following rules:
 - Players can mint basic items called shards.
 - Players can craft relics by burning 2 shards.
 - Players should have an inventory to store their items.
 - I need a way to view a player's inventory.
-Please also create and run a unit test to verify these rules.
+Please also create and run unit tests to verify these rules.
 ```
 
 Your AI agent will generate the `blockforge` project, including the
@@ -177,11 +177,11 @@ First, get your Gas Station address and convert it to hex:
 
 ```bash wrap
 GAS_STATION_BECH32=$(minitiad keys show gas-station -a --keyring-backend test)
-minitiad debug addr "$GAS_STATION_BECH32"
+minitiad keys parse "$GAS_STATION_BECH32"
 ```
 
 Then, build and publish the compiled module to your appchain. Substitute
-`<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with `0x` + the `Address (hex)` value from
+`<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with `0x` + the `bytes` value from
 the previous command.
 
 ```bash wrap
@@ -231,7 +231,7 @@ Using the `initia-appchain-dev` skill, please scaffold a new Vite + React applic
 **2. Connect to Appchain:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our blockforge contract on my appchain. Use the @initia/interwovenkit-react package for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our blockforge contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 
 The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics.
 ```
