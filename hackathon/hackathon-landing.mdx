@@ -2,10 +2,10 @@
 title: 'Your First Appchain: A Step-by-Step Guide'
 ---
 
-## Build an Appchain with Your AI agent
+## Build an Appchain with Your AI Agent
 
 Welcome to the hackathon! This guide will walk you through building an appchain
-from scratch. You'll go from a simple idea to a functioning appchain with a
+from scratch. You'll go from a simple idea to a functioning appchain and
 frontend efficiently.
 
 
@@ -58,7 +58,7 @@ which `Virtual Machine (VM)` your AI agent will set up for you.
 | `Agents / Tooling`     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
 
 
-## Step 4: Pre-flight Checklist
+## Step 4: Prerequisites Checklist
 
 To ensure a smooth setup, verify you have the following system tools installed:
 
@@ -70,9 +70,11 @@ To ensure a smooth setup, verify you have the following system tools installed:
     - **Wasm**: **[Rust & Cargo](https://rustup.rs/)** are required for contract development.
 
 
-## Step 5: AI-Powered Environment Setup
+## Step 5: AI-Powered Initia Tool Setup & Verification
 
-Now, ask your AI agent to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and ensure everything is in your `PATH`.
+Now, ask your AI agent to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and then verify everything is accessible in your `PATH`.
+
+Replace `<MOVE / EVM / WASM>` with your selected track from Step 3 (`Move`, `EVM`, or `Wasm`).
 
 **Prompt:**
 
@@ -80,10 +82,10 @@ Now, ask your AI agent to handle the Initia-specific tools. It will install the 
 Using the `initia-appchain-dev` skill, please set up my environment for the <MOVE / EVM / WASM> track.
 ```
 
-### 5.1 Verify Installation & PATH [AI agent]
+### Verify Installation & PATH [AI agent]
 
-After the setup completes, your AI agent can ensure the tools are accessible
-from anywhere in your system. 
+After setup completes, your AI agent can verify the tools are accessible from
+anywhere on your system.
 
 **Prompt:**
 
@@ -93,11 +95,11 @@ Using the `initia-appchain-dev` skill, please verify that `initiad`, `weave`, an
 
 
 
-## Step 5: Initial Setup with `weave init` [Terminal]
+## Step 6: Initial Setup with `weave init` [Terminal]
 
-Your AI agent is your partner in this hackathon, but the `weave` CLI
-requires an initial interactive setup to prepare your environment and launch
-your first appchain. This is a one-time process.
+Your AI agent is your partner in this hackathon, but the `weave` CLI requires
+an interactive setup flow to prepare your environment and launch your appchain.
+You can run it whenever you need to initialize or reconfigure your setup.
 
 **Run the following command in your terminal:**
 
@@ -151,7 +153,7 @@ Here's a guide on how to navigate the interactive setup:
     Select `Launch a new rollup`.
 
     <Warning>
-      **Switching VMs?** You **must** reinstall the correct `minitiad` binary (Step 4.2) to override the previous one. If you have existing rollup data, type `confirm` to delete it and proceed.
+      **Switching VMs?** Reinstall the correct `minitiad` binary first (Step 5). If you have existing rollup data, type `confirm` when prompted to clean it and proceed.
     </Warning>
 
     ### Select L1 Network
@@ -330,7 +332,7 @@ Your appchain will now launch and start producing blocks!
 </Steps>
 
 
-## Step 6: Setup Interwoven Bots [Terminal]
+## Step 7: Setup Interwoven Bots [Terminal]
 
 To enable the Optimistic bridge and cross-chain communication (IBC) between
 Initia L1 and your appchain, you need to start the `OPinit Executor` and the
@@ -340,7 +342,7 @@ Initia L1 and your appchain, you need to start the `OPinit Executor` and the
   **Prerequisite:** Your appchain must be running before configuring these bots. Because `weave init` runs your chain in the background, you can continue using the same terminal window.
 </Note>
 
-### 6.1 Start the OPinit Executor
+### 7.1 Start the OPinit Executor
 
 The executor handles the submission of rollup data and bridge operations.
 
@@ -405,7 +407,7 @@ Follow the interactive guide:
   </Step>
 </Steps>
 
-### 6.2 Start the IBC Relayer
+### 7.2 Start the IBC Relayer
 
 The relayer enables asset transfers (like INIT) between the L1 and your
 appchain.
@@ -492,7 +494,7 @@ Follow the interactive guide:
 </Tip>
 
 
-## Step 7: Final Key Setup [Terminal]
+## Step 8: Final Key Setup [Terminal]
 
 💡 **Why:** The `Gas Station` account acts as your `Universal Developer
 Key`. Importing it allows you to sign transactions manually via the CLI, and it
@@ -531,7 +533,7 @@ minitiad keys list --keyring-backend test
 </Warning>
 
 
-## Step 8: Verifying Your Appchain [AI agent]
+## Step 9: Verifying Your Appchain [AI agent]
 
 After completing the infrastructure setup, verify that everything is healthy.
 
@@ -542,7 +544,7 @@ Using the `initia-appchain-dev` skill, please verify that my appchain, executor 
 ```
 
 
-## Step 9: Next Steps: Master the Workflow
+## Step 10: Next Steps: Master the Workflow
 
 Congratulations! You have successfully launched your first appchain. Before
 diving into a specific blueprint, we recommend mastering the development

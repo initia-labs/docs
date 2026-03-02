@@ -191,8 +191,7 @@ forge build
 
 # Ensure NO '0x' prefix and NO trailing newlines
 
-jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed
-'s/^0x//' > minibank.bin
+jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0x//' > minibank.bin
 
 ````
 
@@ -256,7 +255,7 @@ Using the `initia-appchain-dev` skill, please scaffold a new Vite + React applic
 **2. Connect to Appchain:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the @initia/interwovenkit-react package for wallet connection and transaction signing.
 ```
 
 <Accordion title="Manual Approach: Scaffold and Connect">
@@ -311,7 +310,7 @@ export default defineConfig({
 })
 ```
 
-**3. Set up Providers in `main.jsx`:**
+**4. Set up Providers in `main.jsx`:**
 
 ```javascript wrap
 import { Buffer } from 'buffer'
@@ -395,7 +394,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 ```
 
-**4. Create the `App.jsx` Layout:**
+**5. Create the `App.jsx` Layout:**
 
 ```javascript wrap
 import React from 'react'
@@ -488,7 +487,7 @@ function App() {
 export default App
 ```
 
-**5. Create the `Bank.jsx` Component:** Create `src/Bank.jsx` and add the
+**6. Create the `Bank.jsx` Component:** Create `src/Bank.jsx` and add the
 contract interaction logic.
 
 <Tip>
@@ -817,8 +816,7 @@ seamless UI to bridge tokens into your application for use.
 <Tip>
   **Local Dev Limitation:** The Interwoven UI requires a registered chain ID to
   resolve assets. While it may appear empty for your local-only appchain, adding
-  this button allows users the easy process of bridging tokens into your
-  application for use.
+  this button makes it easy for users to bridge tokens into your appchain.
 </Tip>
 
 ## Step 6: Update the Frontend
@@ -902,9 +900,8 @@ const bridgeButtonStyle = {
 ```
 
 <Tip>
-  **Pro Tip:** This allows users to tap into L1 liquidity (like INIT from the
-  faucet) and bring it into your appchain's economy seamlessly while keeping 
-  the landing page focused.
+  **Pro Tip:** This allows users to access L1 liquidity and bridge assets into your
+  appchain while keeping the landing page focused.
 </Tip>
 </Accordion>
 
