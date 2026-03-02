@@ -15,7 +15,7 @@ By the end of this tutorial, you will have:
 
 ## 📂 Your Project Structure
 
-The following steps will instruct your AI assistant to create these directories 
+The following steps will instruct your AI agent to create these directories 
 inside your `my-initia-project` folder:
 
 ```text
@@ -42,8 +42,8 @@ Using the `initia-appchain-dev` skill, please verify that my appchain, executor 
 
 ## Step 1: Create and Verify the Smart Contract
 
-Instruct your AI assistant to create the Rust (Wasm) contract using the
-`initia-appchain-dev` skill. Your assistant will generate the contract and
+Instruct your AI agent to create the Rust (Wasm) contract using the
+`initia-appchain-dev` skill. Your AI agent will generate the contract and
 automatically run unit tests to ensure the logic is sound.
 
 **Example Prompt:**
@@ -56,11 +56,11 @@ Using the `initia-appchain-dev` skill, please create a Rust smart contract proje
 Please also create and run a unit test to verify these features.
 ```
 
-Your assistant will generate the `memoboard` project and confirm that the Rust
+Your AI agent will generate the `memoboard` project and confirm that the Rust
 tests pass.
 
 <Accordion title="Manual Approach: The Rust Contract">
-If you prefer to see the Rust logic, here is a simplified version of what your assistant would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
+If you prefer to see the Rust logic, here is a simplified version of what your AI agent would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
 
 **Important:** Ensure your `Cargo.toml` includes the following `[lib]` section
 to correctly generate the Wasm binary:
@@ -72,8 +72,18 @@ crate-type = ["cdylib", "rlib"]
 
 ```rust wrap
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr};
+use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, StdError};
 use cw_storage_plus::Item;
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum ContractError {
+    #[error("{0}")]
+    Std(#[from] StdError),
+
+    #[error("Unauthorized")]
+    Unauthorized {},
+}
 
 #[cw_serde]
 pub struct Memo {
@@ -628,7 +638,7 @@ export default Board
 
 ## Step 5: On-Chain Verification
 
-Finally, ask your AI assistant to interact with your live appchain to prove
+Finally, ask your AI agent to interact with your live appchain to prove
 the deployed contract works as expected.
 
 **Example Prompt:**
@@ -681,7 +691,7 @@ wallet on the Initia testnet.
 
 ## Step 7: Update the Frontend
 
-Your AI assistant knows how to integrate Initia Usernames. Simply ask it to
+Your AI agent knows how to integrate Initia Usernames. Simply ask it to
 update your board.
 
 **Example Prompt:**

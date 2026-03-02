@@ -2,7 +2,7 @@
 title: 'Your First Appchain: A Step-by-Step Guide'
 ---
 
-## Build an Appchain with Your AI Co-pilot
+## Build an Appchain with Your AI agent
 
 Welcome to the hackathon! This guide will walk you through building an appchain
 from scratch. You'll go from a simple idea to a functioning appchain with a
@@ -25,7 +25,7 @@ cd my-initia-project
 
 ## Step 2: Install Your AI Skill [Terminal]
 
-Your AI assistant needs the `Initia Appchain Dev` skill to help you manage
+Your AI agent needs the `Initia Appchain Dev` skill to help you manage
 your appchain, write smart contracts, and build your frontend.
 
 **Run the following command in your terminal:**
@@ -40,7 +40,7 @@ npx skills add initia-labs/agent-skills
 To get the most out of this guide, we recommend having two terminal tabs or a
 split-screen setup:
 
-1.  **AI Co-pilot**: For high-level tasks, contract generation, and
+1.  **AI agent**: For high-level tasks, contract generation, and
     troubleshooting.
 2.  **Standard Terminal**: For interactive CLI commands (like `weave init`) and
     long-running builds.
@@ -49,7 +49,7 @@ split-screen setup:
 ## Step 3: Choose Your Track & VM [Planning]
 
 Before installing tools, decide what you want to build. This choice determines 
-which `Virtual Machine (VM)` your AI assistant will set up for you.
+which `Virtual Machine (VM)` your AI agent will set up for you.
 
 | Track                    | Recommended VM   | Why?                                                                |
 | :----------------------- | :--------------- | :------------------------------------------------------------------ |
@@ -72,17 +72,17 @@ To ensure a smooth setup, verify you have the following system tools installed:
 
 ## Step 5: AI-Powered Environment Setup
 
-Now, ask your AI assistant to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and ensure everything is in your `PATH`.
+Now, ask your AI agent to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and ensure everything is in your `PATH`.
 
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please set up my environment for the [Move / EVM / Wasm] track.
+Using the `initia-appchain-dev` skill, please set up my environment for the <MOVE / EVM / WASM> track.
 ```
 
-### 5.1 Verify Installation & PATH [AI Assistant]
+### 5.1 Verify Installation & PATH [AI agent]
 
-After the setup completes, your AI assistant can ensure the tools are accessible
+After the setup completes, your AI agent can ensure the tools are accessible
 from anywhere in your system. 
 
 **Prompt:**
@@ -95,7 +95,7 @@ Using the `initia-appchain-dev` skill, please verify that `initiad`, `weave`, an
 
 ## Step 5: Initial Setup with `weave init` [Terminal]
 
-Your AI assistant is your partner in this hackathon, but the `weave` CLI
+Your AI agent is your partner in this hackathon, but the `weave` CLI
 requires an initial interactive setup to prepare your environment and launch
 your first appchain. This is a one-time process.
 
@@ -114,7 +114,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Prompt:**
     ```terminal wrap
-    ? How would you like to setup your Gas station account?
+    How would you like to setup your Gas station account?
     ```
 
     **Action:**
@@ -132,7 +132,7 @@ Here's a guide on how to navigate the interactive setup:
 
     **Prompt:**
     ```terminal wrap
-    ? Type `continue` to proceed.
+    Type `continue` to proceed.
     ```
 
     **Action:**
@@ -144,7 +144,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Choose Your Action
     **Prompt:**
     ```terminal wrap
-    ? What do you want to do?
+    What do you want to do?
     ```
 
     **Action:**
@@ -157,7 +157,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Select L1 Network
     **Prompt:**
     ```terminal wrap
-    ? Select the Initia L1 network
+    Select the Initia L1 network
     ```
 
     **Action:**
@@ -166,7 +166,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Select Virtual Machine (VM)
     **Prompt:**
     ```terminal wrap
-    ? Select the Virtual Machine (VM)
+    Select the Virtual Machine (VM)
     ```
 
     **Action:**
@@ -175,7 +175,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Rollup Chain ID
     **Prompt:**
     ```terminal wrap
-    ? Specify rollup chain ID
+    Specify rollup chain ID
     ```
 
     **Action:**
@@ -188,7 +188,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Rollup Gas Denom
     **Prompt:**
     ```terminal wrap
-    ? Specify rollup gas denom
+    Specify rollup gas denom
     ```
 
     **Action:**
@@ -197,7 +197,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Rollup Node Moniker
     **Prompt:**
     ```terminal wrap
-    ? Specify rollup node moniker
+    Specify rollup node moniker
     ```
 
     **Action:**
@@ -209,7 +209,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Submission Interval
     **Prompt:**
     ```terminal wrap
-    ? Specify OP bridge config: Submission Interval
+    Specify OP bridge config: Submission Interval
     ```
 
     **Action:**
@@ -218,7 +218,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Finalization Period
     **Prompt:**
     ```terminal wrap
-    ? Specify OP bridge config: Output Finalization Period
+    Specify OP bridge config: Output Finalization Period
     ```
 
     **Action:**
@@ -227,7 +227,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Data Availability
     **Prompt:**
     ```terminal wrap
-    ? Where should the rollup blocks data be submitted?
+    Where should the rollup blocks data be submitted?
     ```
 
     **Action:**
@@ -236,7 +236,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Enable Oracle Price Feed
     **Prompt:**
     ```terminal wrap
-    ? Would you like to enable oracle price feed from L1?
+    Would you like to enable oracle price feed from L1?
     ```
 
     **Action:**
@@ -248,7 +248,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Setup Method for System Keys
     **Prompt:**
     ```terminal wrap
-    ? Select a setup method for the system keys
+    Select a setup method for the system keys
     ```
 
     **Action:**
@@ -257,7 +257,7 @@ Here's a guide on how to navigate the interactive setup:
     ### System Accounts Funding Option
     **Prompt:**
     ```terminal wrap
-    ? Select system accounts funding option
+    Select system accounts funding option
     ```
 
     **Action:**
@@ -266,7 +266,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Fee Whitelist Addresses
     **Prompt:**
     ```terminal wrap
-    ? Specify fee whitelist addresses
+    Specify fee whitelist addresses
     ```
 
     **Action:**
@@ -275,7 +275,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Add Gas Station Account to Genesis
     **Prompt:**
     ```terminal wrap
-    ? Would you like to add the gas station account to genesis accounts?
+    Would you like to add the gas station account to genesis accounts?
     ```
 
     **Action:**
@@ -284,7 +284,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Specify Genesis Balance
     **Prompt:**
     ```terminal wrap
-    ? Specify the genesis balance for the gas station account
+    Specify the genesis balance for the gas station account
     ```
 
     **Action:**
@@ -297,7 +297,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Add Additional Genesis Accounts
     **Prompt:**
     ```terminal wrap
-    ? Would you like to add genesis accounts?
+    Would you like to add genesis accounts?
     ```
 
     **Action:**
@@ -309,7 +309,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Verify System Keys & Continue
     **Prompt:**
     ```terminal wrap
-    ? Type 'continue' to proceed.
+    Type 'continue' to proceed.
     ```
 
     **Action:**
@@ -318,7 +318,7 @@ Here's a guide on how to navigate the interactive setup:
     ### Confirm Transactions
     **Prompt:**
     ```terminal wrap
-    ? Confirm to proceed with signing and broadcasting the following transactions? [y]:
+    Confirm to proceed with signing and broadcasting the following transactions? [y]:
     ```
 
     **Action:**
@@ -356,7 +356,7 @@ Follow the interactive guide:
   <Step title="Use Detected Keys">
     **Prompt:** 
     ```terminal wrap
-    ? Existing keys in config.json detected. Would you like to add these to the keyring before proceeding?
+    Existing keys in config.json detected. Would you like to add these to the keyring before proceeding?
     ```
 
     **Action:**
@@ -366,7 +366,7 @@ Follow the interactive guide:
   <Step title="System Key for Oracle">
     **Prompt:** 
     ```terminal wrap
-    ? Please select an option for the system key for Oracle Bridge Executor
+    Please select an option for the system key for Oracle Bridge Executor
     ```
 
     **Action:**
@@ -376,7 +376,7 @@ Follow the interactive guide:
   <Step title="Pre-fill Data">
     **Prompt:** 
     ```terminal wrap
-    ? Existing config.json detected. Would you like to use the data in this file to pre-fill some fields?
+    Existing config.json detected. Would you like to use the data in this file to pre-fill some fields?
     ```
 
     **Action:**
@@ -386,7 +386,7 @@ Follow the interactive guide:
   <Step title="Listen Address">
     **Prompt:** 
     ```terminal wrap
-    ? Specify listen address of the bot
+    Specify listen address of the bot
     ```
 
     **Action:**
@@ -424,7 +424,7 @@ Follow the interactive guide:
   <Step title="Select Rollup">
     **Prompt:** 
     ```terminal wrap
-    ? Select the type of Interwoven rollup you want to relay
+    Select the type of Interwoven rollup you want to relay
     ```
 
     **Action:**
@@ -438,7 +438,7 @@ Follow the interactive guide:
   <Step title="Channel Method">
     **Prompt:** 
     ```terminal wrap
-    ? Select method to setup IBC channels for the relayer
+    Select method to setup IBC channels for the relayer
     ```
 
     **Action:**
@@ -448,7 +448,7 @@ Follow the interactive guide:
   <Step title="Select Channels">
     **Prompt:** 
     ```terminal wrap
-    ? Select the IBC channels you would like to relay
+    Select the IBC channels you would like to relay
     ```
 
     **Action:**
@@ -458,7 +458,7 @@ Follow the interactive guide:
   <Step title="Challenger Key">
     **Prompt:** 
     ```terminal wrap
-    ? Do you want to setup relayer with the challenger key
+    Do you want to setup relayer with the challenger key
     ```
 
     **Action:**
@@ -531,7 +531,7 @@ minitiad keys list --keyring-backend test
 </Warning>
 
 
-## Step 8: Verifying Your Appchain [AI Assistant]
+## Step 8: Verifying Your Appchain [AI agent]
 
 After completing the infrastructure setup, verify that everything is healthy.
 
