@@ -2,13 +2,13 @@
 title: 'Hackathon Builder Guide'
 ---
 
-# 🚀 Transitioning to Your Own Idea
+# Transitioning to Your Own Idea
 
 The Builder Guide is designed for developers who have already completed the
 initial environment setup. If you haven't yet launched your first appchain,
 please start with the [Step-by-Step Guide](/hackathon/hackathon-landing).
 
-### ✅ Readiness Checklist
+### Readiness Checklist
 
 Before proceeding, ensure you have completed these milestones:
 
@@ -23,7 +23,7 @@ Before proceeding, ensure you have completed these milestones:
       ([Step 8](/hackathon/hackathon-landing#step-8-final-key-setup-[terminal]))
 
 
-# ⚡ Quick Reference: The Essentials
+# Quick Reference: The Essentials
 
 Use these common commands and AI prompts to manage your project during the
 hackathon.
@@ -36,9 +36,9 @@ hackathon.
 
 # Part 1: Development Workflow
 
-Master the Describe → Build → Test cycle. This is how you win the hackathon.
+Master the Describe -> Build -> Test cycle. This is how you win the hackathon.
 
-### 💰 Funding Your Personal Wallet
+### Funding Your Personal Wallet
 
 Before you can interact with your appchain via a browser wallet (like Keplr,
 Leap, or MetaMask), you need to fund your personal address from your Gas
@@ -65,18 +65,24 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please write a Move module for a marketplace and a unit test to verify the `list_item` function.
+    Using the `initia-appchain-dev` skill, please write a <MOVE / EVM / WASM> module for <APP_NAME> with core functions <FUNCTION_1>, <FUNCTION_2>, ... and include unit tests that verify expected success and failure behavior for each function.
     ```
 
-3.  **Deploy & Interact**: Instruct the AI to deploy to your appchain.
+3.  **Deploy**: Instruct the AI to deploy your contract/module to your appchain.
 
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please deploy this module to my appchain and execute the `list_item` function.
+    Using the `initia-appchain-dev` skill, please deploy this module to my appchain.
     ```
 
-4.  **Verify State**: Ask the AI to query the chain to prove the logic works.
+4.  **On-Chain Verification**: Ask the AI to verify your live deployment with interactions and state queries.
+
+    **Prompt:**
+
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, I want to verify our live <CONTRACT_NAME> on my appchain. Please execute <FUNCTION_1> with realistic test inputs and then query state to confirm the expected result.
+    ```
 
 <Tip>
   **Submission Receipt:** To qualify for the hackathon prizes, you must provide
@@ -142,7 +148,7 @@ Speed is everything in a hackathon, and debugging is where most time is lost.
 Use these professional workflows to unblock yourself, even when following the
 standard examples.
 
-### ⚡️ High-Signal AI Debugging
+### High-Signal AI Debugging
 
 Whether you are building from scratch or running a blueprint example, errors are
 inevitable.
@@ -161,7 +167,7 @@ inevitable.
     I'm getting this [INSERT_CONSOLE_ERROR] in the browser. Looking at my codebase, why is my transaction failing and how do I fix it?
     ```
 
-### 📚 Deep Dives & Source Truth
+### Deep Dives & Source Truth
 
 If your AI agent is stuck or you need to see the source of truth:
 
