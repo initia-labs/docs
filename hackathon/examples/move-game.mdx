@@ -173,15 +173,15 @@ Using the `initia-appchain-dev` skill, please build and publish the blockforge M
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
-First, get your Gas Station's hex address:
+First, get your Gas Station address:
 
 ```bash wrap
-# Use the to_hex.py script to convert bech32 to hex
-python3 scripts/to_hex.py $(minitiad keys show gas-station -a --keyring-backend test)
+minitiad keys show gas-station -a --keyring-backend test
 ```
 
 Then, build and publish the compiled module to your appchain. Substitute
-`<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with the value from the previous step:
+`<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with your Gas Station address in hex
+(`0x...`) format:
 
 ```bash wrap
 cd blockforge

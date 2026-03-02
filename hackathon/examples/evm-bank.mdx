@@ -197,11 +197,8 @@ jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0
 
 Then deploy the binary. **Find your Chain ID first** if you don't know it:
 ```bash wrap
-# Option 1: Using the skill's health check script (Recommended)
-bash .agents/skills/initia-appchain-dev/scripts/verify-appchain.sh --gas-station --bots
-
-# Option 2: Direct CLI query
-minitiad status 2>&1 | jq -r '.NodeInfo.network'
+# Query the appchain ID directly
+minitiad status 2>&1 | jq -r '.node_info.network'
 ```
 
 Now deploy:
@@ -763,12 +760,10 @@ Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contra
 
 <Accordion title="Manual Approach: On-Chain Interaction">
 
-**1. Find your hex address:** To use `eth_call`, you need your account's hex
-address. Run the following:
+**1. Find your bech32 address:** For query calls, get your sender address first.
 
 ```bash wrap
-# Replace <YOUR_SKILL_SCRIPTS_PATH> with the path to the skill's scripts directory
-minitiad keys show gas-station -a --keyring-backend test | xargs -I {} python3 <YOUR_SKILL_SCRIPTS_PATH>/to_hex.py {}
+minitiad keys show gas-station -a --keyring-backend test
 ```
 
 **2. Interact (Deposit 1 token):** We'll use `cast sig` to generate the function
