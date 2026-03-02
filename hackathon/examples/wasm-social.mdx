@@ -216,7 +216,7 @@ Now, store the code:
 minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 --yes
 ```
 
@@ -227,17 +227,17 @@ then query the transaction hash:
 
 ```bash wrap
 # Retrieve Code ID
-minitiad q tx <TX_HASH> --output json | jq -r '.events[] | select(.type=="store_code") | .attributes[] | select(.key=="code_id") | .value'
+minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="store_code") | .attributes[] | select(.key=="code_id") | .value'
 ```
 
 Then, instantiate the contract:
 
 ```bash wrap
-minitiad tx wasm instantiate <code-id> '{}' \
+minitiad tx wasm instantiate <YOUR_CODE_ID> '{}' \
   --label "memoboard" \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 \
   --no-admin --yes
 ```
@@ -248,7 +248,7 @@ Wait for 5 seconds for indexing and then query the transaction hash:
 
 ```bash wrap
 # Retrieve Contract Address
-minitiad q tx <TX_HASH> --output json | jq -r '.events[] | select(.type=="instantiate") | .attributes[] | select(.key=="_contract_address") | .value'
+minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="instantiate") | .attributes[] | select(.key=="_contract_address") | .value'
 ```
 
 </Accordion>
@@ -351,7 +351,7 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: 'your-chain-id',
+  chain_id: '<YOUR_APPCHAIN_ID>',
   chain_name: 'social',
   pretty_name: 'Social Rollup',
   network_type: 'testnet',
@@ -391,7 +391,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="your-chain-id"
+          defaultChainId="<YOUR_APPCHAIN_ID>"
           customChain={customChain}
           customChains={[customChain]}
         >
@@ -493,7 +493,7 @@ import { RESTClient } from '@initia/initia.js'
 import { useDisconnect } from 'wagmi'
 import './Board.css'
 
-const MEMO_BOARD_ADDRESS = 'YOUR_CONTRACT_ADDRESS'
+const MEMO_BOARD_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
 // RESTClient is the primary client for queries in initia.js v1.0+
 const rest = new RESTClient('http://localhost:1317', {
   chainId: 'social-1',
@@ -653,10 +653,10 @@ Using the `initia-appchain-dev` skill, I want to verify our live MemoBoard contr
 **Post Message:**
 ```bash wrap
 # If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
-minitiad tx wasm execute <contract-address> '{"post_message":{"message":"Hello!"}}' \
+minitiad tx wasm execute <YOUR_CONTRACT_ADDRESS> '{"post_message":{"message":"Hello!"}}' \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 --yes
 ```
 
@@ -664,7 +664,7 @@ minitiad tx wasm execute <contract-address> '{"post_message":{"message":"Hello!"
 
 ```bash wrap
 # Note: minitiad query commands typically do not support the --chain-id flag
-minitiad query wasm contract-state smart <contract-address> '{"all_messages":{}}'
+minitiad query wasm contract-state smart <YOUR_CONTRACT_ADDRESS> '{"all_messages":{}}'
 ```
 
 </Accordion>

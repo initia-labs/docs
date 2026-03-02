@@ -150,10 +150,11 @@ module blockforge::items {
 ```
 
 Once the files are created, you can verify everything is correct by building the
-project. Replace `0xYOUR_HEX_ADDRESS` with your deployment address hex (0x...).
+project. Replace `<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with your deployment
+address hex (0x...).
 
 ```bash wrap
-minitiad move build --language-version=2.1 --named-addresses blockforge=0xYOUR_HEX_ADDRESS
+minitiad move build --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
 ```
 
 If you see `BUILDING blockforge`, then BlockForge was built successfully! 🛠️
@@ -180,13 +181,13 @@ python3 scripts/to_hex.py $(minitiad keys show gas-station -a --keyring-backend 
 ```
 
 Then, build and publish the compiled module to your appchain. Substitute
-`0xYOUR_HEX_ADDRESS` with the value from the previous step:
+`<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with the value from the previous step:
 
 ```bash wrap
 cd blockforge
 
 # 1. Build the module with the correct hex named address and version
-minitiad move build --language-version=2.1 --named-addresses blockforge=0xYOUR_HEX_ADDRESS
+minitiad move build --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
 
 # 2. Publish the compiled bytecode
 minitiad tx move publish build/blockforge/bytecode_modules/items.mv \
@@ -457,7 +458,7 @@ const handleAction = async () => {
         typeUrl: "/initia.move.v1.MsgExecute",
         value: {
           sender: initiaAddress,
-          moduleAddress: "<MODULE_ADDR>",
+          moduleAddress: "<YOUR_MODULE_ADDRESS>",
           moduleName: "items",
           functionName: "mint_shard",
           typeArgs: [], // MANDATORY: Even if empty

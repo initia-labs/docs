@@ -207,11 +207,11 @@ minitiad status 2>&1 | jq -r '.NodeInfo.network'
 Now deploy:
 
 ```bash wrap
-# Replace `your-chain-id` with the ID from the command above
+# Replace `<YOUR_APPCHAIN_ID>` with the ID from the command above
 minitiad tx evm create minibank.bin \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 --yes --output json > deploy.json
 ```
 
@@ -219,8 +219,8 @@ minitiad tx evm create minibank.bin \
 few seconds for indexing, then find your contract address:
 
 ```bash wrap
-# Replace <tx-hash> with the hash from deploy.json
-minitiad q tx <tx-hash> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
+# Replace <YOUR_TX_HASH> with the hash from deploy.json
+minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
 ```
 
 </Accordion>
@@ -340,7 +340,7 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: 'your-chain-id',
+  chain_id: '<YOUR_APPCHAIN_ID>',
   chain_name: 'minibank',
   pretty_name: 'MiniBank Appchain',
   network_type: 'testnet',
@@ -382,7 +382,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="your-chain-id"
+          defaultChainId="<YOUR_APPCHAIN_ID>"
           customChain={customChain}
           customChains={[customChain]}
         >
@@ -510,8 +510,8 @@ import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { encodeFunctionData, parseEther, formatEther } from 'viem'
 import { AccAddress } from '@initia/initia.js'
 
-const MINI_BANK_ADDRESS = 'YOUR_CONTRACT_ADDRESS'
-const CHAIN_ID = 'your-chain-id' // Found in Step 2
+const MINI_BANK_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
+const CHAIN_ID = '<YOUR_APPCHAIN_ID>' // Found in Step 2
 const MINI_BANK_ABI = [
   { name: 'deposit', type: 'function', stateMutability: 'payable', inputs: [] },
   {
@@ -767,8 +767,8 @@ Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contra
 address. Run the following:
 
 ```bash wrap
-# Replace <scripts-path> with the path to the skill's scripts directory
-minitiad keys show gas-station -a --keyring-backend test | xargs -I {} python3 <scripts-path>/to_hex.py {}
+# Replace <YOUR_SKILL_SCRIPTS_PATH> with the path to the skill's scripts directory
+minitiad keys show gas-station -a --keyring-backend test | xargs -I {} python3 <YOUR_SKILL_SCRIPTS_PATH>/to_hex.py {}
 ```
 
 **2. Interact (Deposit 1 token):** We'll use `cast sig` to generate the function
@@ -776,10 +776,10 @@ selector and `10^18` units for "1 token".
 
 ```bash wrap
 SIG=$(cast sig "deposit()")
-minitiad tx evm call <contract-address> $SIG \
+minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $SIG \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --value 1000000000000000000 \
   --gas auto --gas-adjustment 1.4 --yes
 ```
@@ -789,18 +789,18 @@ minitiad tx evm call <contract-address> $SIG \
 
 ```bash wrap
 SIG=$(cast sig "getBalance()")
-# Replace <your-bech32-address> and <contract-address>
-minitiad q evm call <your-bech32-address> <contract-address> 0x$SIG --output json
+# Replace <YOUR_BECH32_ADDRESS> and <YOUR_CONTRACT_ADDRESS>
+minitiad q evm call <YOUR_BECH32_ADDRESS> <YOUR_CONTRACT_ADDRESS> 0x$SIG --output json
 ```
 
 **4. Withdraw (0.5 tokens):**
 
 ```bash wrap
 DATA=$(cast calldata "withdraw(uint256)" 500000000000000000)
-minitiad tx evm call <contract-address> $DATA \
+minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $DATA \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 --yes
 ```
 
