@@ -80,7 +80,7 @@ git clone --depth 1 https://github.com/initia-labs/movevm.git
 cd ../..
 ```
 
-Now, update the `Move.toml` file to use these local dependencies and enable Move
+Now, update the `Move.toml` file to use these dependencies and enable Move
 2.1 features. Replace the content of `blockforge/Move.toml` with the following:
 
 ```toml wrap
@@ -90,11 +90,10 @@ version = "0.0.1"
 edition = "2024.alpha"
 
 [dependencies]
-InitiaStdlib = { local = "deps/movevm/precompile/modules/initia_stdlib" }
-MoveStdlib = { local = "deps/movevm/precompile/modules/move_stdlib" }
+InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
-blockforge = "_" # Use a placeholder to be set during build
+blockforge = "0x0" # Use a placeholder to be set during build
 std = "0x1"
 ```
 
@@ -104,17 +103,14 @@ Next, delete the default `blockforge.move` file and create a new file named
 ```move wrap
 module blockforge::items {
     use std::signer;
-    use std::vector;
 
     /// Error codes
     const E_INSUFFICIENT_SHARDS: u64 = 1;
+    const E_NOT_INITIALIZED: u64 = 2;
 
-    struct Shard has key, store, copy, drop {}
-    struct Relic has key, store, copy, drop {}
-
-    struct Inventory has key {
-        shards: vector<Shard>,
-        relics: vector<Relic>,
+    struct Inventory has key, store {
+        shards: u64,
+        relics: u64,
     }
 
     /// Mint basic items called shards.
@@ -122,39 +118,33 @@ module blockforge::items {
     public entry fun mint_shard(account: &signer) acquires Inventory {
         let addr = signer::address_of(account);
         if (!exists<Inventory>(addr)) {
-            move_to(account, Inventory {
-                shards: vector::singleton(Shard {}),
-                relics: vector::empty<Relic>()
-            });
+            move_to(account, Inventory { shards: 1, relics: 0 });
         } else {
             let inventory = borrow_global_mut<Inventory>(addr);
-            vector::push_back(&mut inventory.shards, Shard {});
-        };
+            inventory.shards = inventory.shards + 1;
+        }
     }
 
     /// Craft a relic by burning 2 shards
     public entry fun craft_relic(account: &signer) acquires Inventory {
         let addr = signer::address_of(account);
-        assert!(exists<Inventory>(addr), E_INSUFFICIENT_SHARDS);
+        assert!(exists<Inventory>(addr), E_NOT_INITIALIZED);
 
         let inventory = borrow_global_mut<Inventory>(addr);
-        assert!(vector::length(&inventory.shards) >= 2, E_INSUFFICIENT_SHARDS);
+        assert!(inventory.shards >= 2, E_INSUFFICIENT_SHARDS);
 
-        // Burn 2 shards
-        vector::pop_back(&mut inventory.shards);
-        vector::pop_back(&mut inventory.shards);
-
-        // Add 1 relic
-        vector::push_back(&mut inventory.relics, Relic {});
+        inventory.shards = inventory.shards - 2;
+        inventory.relics = inventory.relics + 1;
     }
 
     /// Returns (shards, relics) for the given address.
+    #[view]
     public fun get_inventory(addr: address): (u64, u64) acquires Inventory {
         if (!exists<Inventory>(addr)) {
             return (0, 0)
         };
         let inventory = borrow_global<Inventory>(addr);
-        (vector::length(&inventory.shards), vector::length(&inventory.relics))
+        (inventory.shards, inventory.relics)
     }
 }
 ```
@@ -163,7 +153,7 @@ Once the files are created, you can verify everything is correct by building the
 project. Replace `0xYOUR_HEX_ADDRESS` with your deployment address hex (0x...).
 
 ```bash wrap
-minitiad move build --named-addresses blockforge=0xYOUR_HEX_ADDRESS
+minitiad move build --language-version=2.1 --named-addresses blockforge=0xYOUR_HEX_ADDRESS
 ```
 
 If you see `BUILDING blockforge`, then BlockForge was built successfully! 🛠️
@@ -195,14 +185,14 @@ Then, build and publish the compiled module to your appchain. Substitute
 ```bash wrap
 cd blockforge
 
-# 1. Build the module with the correct hex named address
-minitiad move build --named-addresses blockforge=0xYOUR_HEX_ADDRESS
+# 1. Build the module with the correct hex named address and version
+minitiad move build --language-version=2.1 --named-addresses blockforge=0xYOUR_HEX_ADDRESS
 
 # 2. Publish the compiled bytecode
 minitiad tx move publish build/blockforge/bytecode_modules/items.mv \
   --from gas-station \
   --keyring-backend test \
-  --chain-id your-chain-id \
+  --chain-id <YOUR_APPCHAIN_ID> \
   --gas auto --gas-adjustment 1.4 --yes --upgrade-policy COMPATIBLE
 ```
 
@@ -233,13 +223,13 @@ skill.
 **1. Scaffold the Frontend:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `blockforge-frontend` in my current directory. Then, create a component named Game.jsx with Mint Shard and Craft Relic buttons and add it to the main App.jsx file.
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `blockforge-frontend` in my current directory using the `scaffold-frontend` script. Then, create a component named Game.jsx with Mint Shard and Craft Relic buttons and add it to the main App.jsx file.
 ```
 
-**2. Connect the Frontend to the Appchain:**
+**2. Connect to Appchain:**
 
 ```terminal wrap
-Now, using the `initia-appchain-dev`, please modify the Game.jsx component in the `blockforge-frontend` directory to interact with our deployed blockforge smart contract on my appchain.
+Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our blockforge contract on my appchain. Use the @initia/interwovenkit-react for wallet connection and transaction signing.
 
 The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics.
 ```
@@ -285,7 +275,7 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: 'your-appchain-id',
+  chain_id: '<YOUR_APPCHAIN_ID>',
   chain_name: 'BlockForge Appchain',
   bech32_prefix: 'init',
   network_type: 'testnet',
@@ -297,8 +287,11 @@ const customChain = {
   fees: {
     fee_tokens: [
       {
-        denom: 'umin', // Replace with your appchain's native denom
+        denom: '<YOUR_NATIVE_DENOM>', 
         fixed_min_gas_price: 0.15,
+        low_gas_price: 0,
+        average_gas_price: 0,
+        high_gas_price: 0
       },
     ],
   },
@@ -308,6 +301,14 @@ const customChain = {
       type: 'minimove',
     },
   },
+  native_assets: [
+    {
+      denom: '<YOUR_NATIVE_DENOM>',
+      name: 'Native Token',
+      symbol: '<YOUR_TOKEN_SYMBOL>',
+      decimals: 6
+    }
+  ]
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -316,8 +317,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="your-appchain-id"
+          defaultChainId="<YOUR_APPCHAIN_ID>"
           customChain={customChain}
+          customChains={[customChain]}
         >
           <App />
         </InterwovenKitProvider>
@@ -330,10 +332,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <Tip>
     **Pro Tip: Move View Function Encoding:** Address arguments for `rest.move.view` MUST be 32-byte hex (padded to exactly 64 characters) and then Base64 encoded.
     ```javascript
-    const hexAddr = AccAddress.toHex(address).replace('0x', '').padStart(64, '0');
-    const b64Addr = Buffer.from(hexAddr, 'hex').toString('base64');
+    import { AccAddress } from '@initia/initia.js';
+    const hexAddr = AccAddress.toHex(address).replace('0x', '');
+    const paddedHex = hexAddr.padStart(64, '0');
+    const b64Addr = Buffer.from(paddedHex, 'hex').toString('base64');
     ```
-    Also, remember to include a small delay (e.g., `setTimeout(fetch, 2000)`) after transactions before refreshing the state to allow the indexer to catch up.
+    Also, remember to include a small delay (e.g., `setTimeout(() => fetchInventory(), 2000)`) after transactions before refreshing the state to allow the indexer to catch up.
   </Tip>
 </Accordion>
 
@@ -369,10 +373,10 @@ Here are the equivalent `minitiad` commands to interact with the module.
 
 ```bash wrap
 for i in {1..3}; do
-  minitiad tx move execute <module-address> items mint_shard \
+  minitiad tx move execute <YOUR_MODULE_ADDRESS> items mint_shard \
     --from gas-station \
     --keyring-backend test \
-    --chain-id your-chain-id \
+    --chain-id <YOUR_APPCHAIN_ID> \
     --gas auto --gas-adjustment 1.4 --yes \
     --args '[]' --type-args '[]'
   sleep 2
@@ -382,8 +386,8 @@ done
 **Check your inventory:**
 
 ```bash wrap
-minitiad query move view <module-address> items get_inventory \
-    --args '["address:init1..."]'
+minitiad query move view <YOUR_MODULE_ADDRESS> items get_inventory \
+    --args '["address:<YOUR_WALLET_ADDRESS>"]'
 ```
 
 </Accordion>
@@ -426,22 +430,43 @@ First, enable the feature in your provider:
 Then, use the `useInterwovenKit` hook in your component to manage the session:
 
 ```tsx Game.jsx
-const { autoSign } = useInterwovenKit()
-const chainId = 'your-chain-id'
+const { autoSign, requestTxSync } = useInterwovenKit()
+const chainId = '<YOUR_APPCHAIN_ID>'
 
 // Check if auto-sign is active for this chain
-const isAutoSignEnabled = autoSign.isEnabledByChain[chainId]
+const isAutoSignEnabled = autoSign?.isEnabledByChain?.[chainId]
 
-return (
-  <button
-    onClick={() =>
-      isAutoSignEnabled ? autoSign.disable(chainId) : autoSign.enable(chainId)
-    }
-    disabled={autoSign.isLoading}
-  >
-    {isAutoSignEnabled ? 'Disable Auto-sign' : 'Enable Auto-sign'}
-  </button>
-)
+const toggleAutoSign = async () => {
+  if (isAutoSignEnabled) {
+    await autoSign?.disable(chainId)
+  } else {
+    // Permissions are required for the session key to sign specific message types
+    await autoSign?.enable(chainId, { 
+      permissions: ["/initia.move.v1.MsgExecute"] 
+    })
+  }
+}
+
+const handleAction = async () => {
+  await requestTxSync({
+    chainId,
+    autoSign: isAutoSignEnabled, // Enables headless signing flow
+    feeDenom: isAutoSignEnabled ? '<YOUR_NATIVE_DENOM>' : undefined, // MANDATORY for invisible UX
+    messages: [
+      {
+        typeUrl: "/initia.move.v1.MsgExecute",
+        value: {
+          sender: initiaAddress,
+          moduleAddress: "<MODULE_ADDR>",
+          moduleName: "items",
+          functionName: "mint_shard",
+          typeArgs: [], // MANDATORY: Even if empty
+          args: [],     // MANDATORY: Even if empty
+        },
+      }
+    ]
+  })
+}
 ```
 
 <Tip>
