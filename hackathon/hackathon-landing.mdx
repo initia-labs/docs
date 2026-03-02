@@ -48,8 +48,8 @@ split-screen setup:
 
 ## Step 3: Choose Your Track & VM [Planning]
 
-Before installing tools, decide what you want to build. This choice determines
-which `Virtual Machine (VM)` you will need for your appchain.
+Before installing tools, decide what you want to build. This choice determines 
+which `Virtual Machine (VM)` your AI assistant will set up for you.
 
 | Track                    | Recommended VM   | Why?                                                                |
 | :----------------------- | :--------------- | :------------------------------------------------------------------ |
@@ -58,61 +58,39 @@ which `Virtual Machine (VM)` you will need for your appchain.
 | `Agents / Tooling`     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
 
 
-## Step 4: Install Required Tools
+## Step 4: Pre-flight Checklist
 
-<Warning>
-  **Docker Desktop must be running.** Ensure it is active before installing or running tools. [Download here](https://www.docker.com/products/docker-desktop/).
-</Warning>
+To ensure a smooth setup, verify you have the following system tools installed:
 
-### 4.1 Install the Core CLI Tools [AI Assistant]
+- [ ] **[Docker Desktop](https://www.docker.com/products/docker-desktop/)**: Required for running the bridge bots and relayer. **Must be running.**
+- [ ] **[Go (1.22+)](https://go.dev/doc/install)**: Required to build the appchain binaries.
+- [ ] **Track Specifics**:
+    - **Move**: No extra tools required.
+    - **EVM**: **[Foundry](https://book.getfoundry.sh/getting-started/installation)** (Forge) is recommended for contract development.
+    - **Wasm**: **[Rust & Cargo](https://rustup.rs/)** are required for contract development.
 
-The fastest way to install the core CLIs (`weave`, `initiad`, `jq`) is to ask
-your AI assistant. It will handle the environment setup for you.
 
-**Prompt:**
+## Step 5: AI-Powered Environment Setup
 
-```terminal wrap
-Using the `initia-appchain-dev` skill, please install the core tools for Initia development.
-```
-
-### 4.2 Install Your Appchain VM [Terminal]
-
-Because each Virtual Machine (`Move`, `EVM`, `Wasm`) requires building a
-specific `minitiad` binary from source, this step can take **5-15 minutes**. Run
-the commands for your chosen VM directly in your standard terminal:
-
-<Tabs>
-  <Tab title="MoveVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/minimove.git
-    cd minimove && make install && cd .. && rm -rf minimove
-    ```
-  </Tab>
-  <Tab title="EVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/minievm.git
-    cd minievm && make install && cd .. && rm -rf minievm
-    ```
-  </Tab>
-  <Tab title="WasmVM">
-    ```bash wrap
-    git clone --depth 1 https://github.com/initia-labs/miniwasm.git
-    cd miniwasm && make install && cd .. && rm -rf miniwasm
-    ```
-  </Tab>
-</Tabs>
-
-### 4.3 Verify Installation & PATH [AI Assistant]
-
-After the build completes, your AI assistant can ensure the tools are accessible
-from anywhere in your system. This is especially helpful if you aren't sure how
-to configure your `PATH` for your specific shell (Zsh, Bash, etc.).
+Now, ask your AI assistant to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and ensure everything is in your `PATH`.
 
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please verify that `minitiad` is properly installed and accessible. If it isn't in my PATH, help me add the Go binary directory to my shell configuration.
+Using the `initia-appchain-dev` skill, please set up my environment for the [Move / EVM / Wasm] track.
 ```
+
+### 5.1 Verify Installation & PATH [AI Assistant]
+
+After the setup completes, your AI assistant can ensure the tools are accessible
+from anywhere in your system. 
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please verify that `initiad`, `weave`, and `minitiad` are properly installed and accessible in my PATH.
+```
+
 
 
 ## Step 5: Initial Setup with `weave init` [Terminal]
