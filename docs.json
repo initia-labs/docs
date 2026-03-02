@@ -536,6 +536,28 @@
             "pages": ["/resources/security/audits"]
           }
         ]
+      },
+      {
+        "tab": "Hackathon",
+        "hidden": true,
+        "groups": [
+          {
+            "group": "Hackathon 2026",
+            "pages": [
+              "hackathon/hackathon-landing",
+              "hackathon/builder-guide",
+              "hackathon/submission-requirements"
+            ]
+          },
+          {
+            "group": "Examples",
+            "pages": [
+              "hackathon/examples/move-game",
+              "hackathon/examples/evm-bank",
+              "hackathon/examples/wasm-social"
+            ]
+          }
+        ]
       }
     ],
     "global": {

@@ -1,0 +1,185 @@
+---
+title: 'Hackathon Builder Guide'
+---
+
+# Transitioning to Your Own Idea
+
+The Builder Guide is designed for developers who have already completed the
+initial environment setup. If you haven't yet launched your first appchain,
+please start with the [Step-by-Step Guide](/hackathon/hackathon-landing).
+
+### Readiness Checklist
+
+Before proceeding, ensure you have completed these milestones:
+
+- [ ] **Tools Installed**: You have `weave`, `initiad`, and your chosen VM CLI
+      (`minitiad`) in your PATH.
+      ([Step 5](/hackathon/hackathon-landing#step-5-ai-powered-initia-tool-setup-and-verification))
+- [ ] **Infrastructure Live**: Your rollup is running and your OPinit/Relayer
+      bots are active.
+      ([Step 7](/hackathon/hackathon-landing#step-7-setup-interwoven-bots-terminal))
+- [ ] **Keys Imported**: Your Gas Station mnemonic is imported into your local
+      `initiad` and `minitiad` keyrings.
+      ([Step 8](/hackathon/hackathon-landing#step-8-final-key-setup-terminal))
+
+
+# Quick Reference: The Essentials
+
+Use these common commands and AI prompts to manage your project during the
+hackathon.
+
+| Task                | Command / AI Prompt                                                                                                                                           |
+| :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Resume Appchain** | `weave rollup start -d && weave opinit start executor -d` (Restarts both your chain and the bridge bot)                                                       |
+| **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance._ |
+
+
+# Part 1: Development Workflow
+
+Master the Describe -> Build -> Test cycle. This is how you win the hackathon.
+
+### Funding Your Personal Wallet
+
+Before you can interact with your appchain via a browser wallet (like Keplr,
+Leap, or MetaMask), you need to fund your personal address from your Gas
+Station.
+
+1. Copy your wallet address:
+
+- Move / Wasm Track: Copy your `init1...` address.
+- EVM Track: Copy your `0x...` address.
+
+2. Ask your AI agent to fund your wallet:
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+```
+
+### The Core Loop
+
+1.  **Describe the Goal**: Tell the AI _what_ you want to achieve and _why_.
+2.  **Build & Test (Unit)**: Let the AI write the code AND the unit tests.
+
+    **Prompt:**
+
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, please write a <MOVE / EVM / WASM> module for <APP_NAME> with core functions <FUNCTION_1>, <FUNCTION_2>, ... and include unit tests that verify expected success and failure behavior for each function.
+    ```
+
+3.  **Deploy**: Instruct the AI to deploy your contract/module to your appchain.
+
+    **Prompt:**
+
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, please deploy this module to my appchain.
+    ```
+
+4.  **On-Chain Verification**: Ask the AI to verify your live deployment with interactions and state queries.
+
+    **Prompt:**
+
+    ```terminal wrap
+    Using the `initia-appchain-dev` skill, I want to verify our live <CONTRACT_NAME> on my appchain. Please execute <FUNCTION_1> with realistic test inputs and then query state to confirm the expected result.
+    ```
+
+<Tip>
+  **Submission Receipt:** To qualify for the hackathon prizes, you must provide
+  the Contract Address of your primary logic and a Transaction Hash of a user
+  interacting with it. Save these as soon as you have a working version!
+</Tip>
+
+# Part 2: Choose Your Blueprint (Satisfy Pillar 3)
+
+To qualify for the hackathon prizes, your project must implement at least one 
+Initia Native Feature (defined as Pillar 3 in the submission 
+requirements). These Blueprints provide the foundation for meeting that 
+requirement.
+
+<Note>
+  **The Custom Implementation:** To win, don't just deploy these examples as-is. 
+  Judges look for your `Custom Implementation`: the unique code and functionality you 
+  added on top of these base patterns to solve a specific problem.
+</Note>
+
+<CardGroup cols={1}>
+  <Card title="Blueprint 1: BlockForge Game (Auto-signing)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
+    **Pillar 3: Invisible UX.** A high-frequency application where the 
+    blockchain handles logic silently in the background. Users never see a 
+    wallet popup after the initial session start.
+    - **Native Feature:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
+    - **Best for:** Gaming, Social tipping, High-frequency trading.
+  </Card>
+
+  <Card title="Blueprint 2: MiniBank (Interwoven Bridge)" icon="bridge" href="/hackathon/examples/evm-bank">
+    **Pillar 3: Liquidity & Connectivity.** An application that allows users 
+    to move assets between the broader Initia L1 and your appchain without 
+    leaving your interface. 
+    - **Native Feature:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
+    - **Best for:** DeFi Lending, Cross-chain storefronts, Multi-chain games. 
+  </Card>
+
+  <Card title="Blueprint 3: MemoBoard (Initia Usernames)" icon="user-group" href="/hackathon/examples/wasm-social">
+    **Pillar 3: Human Identity.** An application that prioritizes 
+    human-readable identities, replacing complex hex addresses with personal 
+    usernames.
+    - **Native Feature:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
+    - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
+  </Card>
+</CardGroup>
+
+
+# Part 3: Making It Demo-Ready
+
+Judges want to see **On-chain Proof**. Use this checklist before submitting.
+
+- [ ] **Contract Address**: Your primary logic is deployed.
+- [ ] **Interaction TX**: You have a transaction hash of a user _interacting_
+      with your contract.
+- [ ] **Frontend**: You are using `InterwovenKit` for the wallet connection.
+- [ ] **Native Feature**: You've pointed to the code implementing an
+      Initia-native feature.
+
+
+# Part 4: Debugging & Troubleshooting
+
+Speed is everything in a hackathon, and debugging is where most time is lost.
+Use these professional workflows to unblock yourself, even when following the
+standard examples.
+
+### High-Signal AI Debugging
+
+Whether you are building from scratch or running a blueprint example, errors are
+inevitable.
+
+1.  **Open the Browser Console**: Press `F12` or `Cmd+Option+J` to see the exact
+    error logs.
+2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is open in
+    your project root. This allows it to reference your `package.json`, your
+    `interwovenkit` initialization, and your specific chain configuration.
+3.  The Perfect Debugging Prompt: Provide the console error and ask your
+    AI agent to find the cause within your project.
+
+    **Prompt:**
+
+    ```terminal wrap
+    I'm getting this [INSERT_CONSOLE_ERROR] in the browser. Looking at my codebase, why is my transaction failing and how do I fix it?
+    ```
+
+### Deep Dives & Source Truth
+
+If your AI agent is stuck or you need to see the source of truth:
+
+- **Official Docs**: Visit [docs.initia.xyz](https://docs.initia.xyz/) for
+  architectural details and API references.
+- **Initia Examples**: Reference the
+  [initia-labs/examples](https://github.com/initia-labs/examples) repository for
+  working code across all VMs (EVM, Move, Wasm).
+- **Core Repositories**: Explore [initia-labs](https://github.com/initia-labs)
+  on GitHub to see the underlying implementation of the SDKs and CLI tools.
+
+
+> **Mandatory:** Review the
+> [Submission & Technical Requirements](/hackathon/submission-requirements)
+> to ensure you are eligible for prizes.

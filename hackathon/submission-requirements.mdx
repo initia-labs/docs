@@ -1,0 +1,117 @@
+---
+title: 'Submission & Eligibility Criteria'
+---
+
+Welcome to the Initia hackathon! Our goal is to empower builders to push the
+boundaries of what's possible with Interwoven Rollups. To ensure your project is
+eligible for judging and showcases the best of the Initia ecosystem, please
+adhere to the following technical pillars.
+
+# 1. Eligibility Pillars
+
+To qualify for the prize pool, projects must demonstrate meaningful integration
+with the Initia stack.
+
+### Pillar 1: Dedicated Rollup Architecture
+
+This hackathon is dedicated to the power of appchains. Your project should be
+deployed as its own appchain.
+
+- **Requirement:** Provide your rollup's Chain ID and a link to a transaction or
+  contract deployment on your rollup.
+- **Getting Started:** Use the `weave` CLI to launch and manage your
+  environment.
+
+### Pillar 2: Optimized Frontend Experience
+
+We encourage builders to use the flagship tooling designed for the Interwoven
+ecosystem. This ensures your application is fully integrated with the Initia
+stack and provides a seamless experience for users.
+
+- **Requirement:** Utilize `InterwovenKit` (`@initia/interwovenkit-react`) for
+  wallet connections and transaction handling.
+- **Why:** This stack enables advanced Initia features like social logins via
+  `Privy` and cross-chain visibility.
+
+### Pillar 3: Showcasing Initia Native Features
+
+High-value projects go beyond Hello World by leveraging Initia's native
+features. Your submission should implement at least one of the following
+Interwoven Power-Ups:
+
+1.  **Auto-signing (Invisible UX):** Create a frictionless experience where
+    players or users can interact with the blockchain seamlessly without
+    constant wallet popups (Session UX).
+2.  **Interwoven Bridge (Liquidity & Connectivity):** Enable the native bridge
+    interface to allow users to move assets between your appchain and the
+    broader Initia ecosystem.
+3.  **Initia Usernames (Human Identity):** Integrate human-readable `.init`
+    names to replace complex addresses and improve user onboarding.
+
+# 2. Technical Resource Hub
+
+Access the official tools and documentation to build your project:
+
+### Official Repositories
+
+- [Initia L1](https://github.com/initia-labs/initia): Core Layer 1 source
+  code.
+- [Weave CLI](https://github.com/initia-labs/weave): Essential for launching
+  appchains.
+- [InterwovenKit](https://github.com/initia-labs/interwovenkit): The
+  standard React SDK for Initia frontends.
+- [Initia.js](https://github.com/initia-labs/initia.js): The primary
+  JavaScript library for blockchain interactions.
+
+### APIs & Endpoints
+
+- **Local Rollup Indexer:** `http://localhost:8080` (Use this to query
+  transactions and assets on your appchain).
+- **L1 Indexer:** [View Swagger](https://indexer.initia.xyz/swagger/index.html)
+  (Use this as a reference for querying global data like L1 assets and staking).
+- **L1 Testnet RPC:** `https://rpc.testnet.initia.xyz`
+- **L1 Testnet LCD:** `https://lcd.testnet.initia.xyz`
+- **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
+
+# 3. Submission Summary (Add to your README)
+
+To assist our technical review process and ensure your project stands out,
+please include the following block at the top of your project's `README.md`.
+
+### Copy-Paste README Template
+
+```markdown
+## Initia Hackathon Submission
+
+- **Project Name**: [Your Project Name]
+
+### Project Overview
+
+[Provide a 2-3 sentence description of your application. Why is it valuable and
+what problem does it solve?]
+
+### Technical Specification (Automated Verification)
+
+- **Rollup Chain ID**: [e.g. my-game-1]
+- **GitHub Repository**: [Link to public repo]
+- **Custom Implementation (Core Logic)**: [Link to the specific smart contract
+  or module file]
+- **Power-Up (Interwoven Feature)**: [Link to the specific frontend file
+  implementing the feature]
+- **L2 Interaction TX**: [Hash/Link to a primary functionality transaction]
+- **Demo Video URL**: [2-minute walkthrough via Loom, YouTube, etc.]
+
+### Implementation Detail
+
+- **The Custom Implementation**: Briefly describe the unique logic you added.
+  What did you build that wasn't in the base template?
+- **The Power-Up**: Which Interwoven feature did you use, and exactly how does
+  it improve the user experience?
+- **The Value Add**: How does this application benefit the broader Initia
+  ecosystem? Why is it better as an appchain than a generic L1 dApp?
+
+### How to Run Locally
+
+[Provide 3-4 clear steps for a judge to run your frontend and connect it to a
+local environment if necessary.]
+```

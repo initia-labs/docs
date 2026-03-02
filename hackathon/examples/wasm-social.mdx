@@ -1,0 +1,736 @@
+---
+title: 'Wasm Tutorial: MemoBoard (Human Identity)'
+---
+
+This tutorial will guide you through building a lightning-fast on-chain
+guestbook called MemoBoard. Users can post public messages, and the
+application prioritizes human-readable identity by resolving `.init` usernames.
+
+By the end of this tutorial, you will have:
+
+- Generated and verified a Rust smart contract for the guestbook.
+- Deployed the contract to your live appchain.
+- Scaffolded and connected a React frontend.
+- Verified the on-chain functionality.
+
+## Your Project Structure
+
+The following steps will instruct your AI agent to create these directories 
+inside your `my-initia-project` folder:
+
+```text
+my-initia-project/
+├── memoboard/           # Rust smart contract project
+└── memoboard-frontend/  # React frontend application
+```
+
+<Note>
+  **Prerequisite:** Ensure you have a Wasm-compatible appchain running 
+  locally. If you haven't launched one yet, complete the 
+  [Step-by-Step Guide](../hackathon-landing) first.
+</Note>
+
+### Readiness Check
+
+Before you start, verify that your local infrastructure is healthy.
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
+```
+
+## Step 1: Create and Verify the Smart Contract
+
+Instruct your AI agent to create the Rust (Wasm) contract using the
+`initia-appchain-dev` skill. Your AI agent will generate the contract and
+automatically run unit tests to ensure the logic is sound.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please create a Rust smart contract project for our MemoBoard in a new directory named `memoboard`. The contract should:
+- Allow users to post a message (string).
+- Store a list of all messages with the sender's address.
+- Include a function to query all messages on the board.
+Please also create and run unit tests to verify these features.
+```
+
+Your AI agent will generate the `memoboard` project and confirm that the Rust
+tests pass.
+
+<Accordion title="Manual Approach: The Rust Contract">
+If you prefer to see the Rust logic, here is a simplified version of what your AI agent would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
+
+**Important:** Ensure your `Cargo.toml` includes the following `[lib]` section
+to correctly generate the Wasm binary:
+
+```toml
+[lib]
+crate-type = ["cdylib", "rlib"]
+```
+
+```rust wrap
+use cosmwasm_schema::{cw_serde, QueryResponses};
+use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, StdError};
+use cw_storage_plus::Item;
+use thiserror::Error;
+
+#[derive(Error, Debug)]
+pub enum ContractError {
+    #[error("{0}")]
+    Std(#[from] StdError),
+
+    #[error("Unauthorized")]
+    Unauthorized {},
+}
+
+#[cw_serde]
+pub struct Memo {
+    pub sender: Addr,
+    pub message: String,
+}
+
+pub const MESSAGES: Item<Vec<Memo>> = Item::new("messages");
+
+#[cw_serde]
+pub struct InstantiateMsg {}
+
+#[cw_serde]
+pub enum ExecuteMsg {
+    PostMessage { message: String },
+}
+
+#[cw_serde]
+#[derive(QueryResponses)]
+pub enum QueryMsg {
+    #[returns(AllMessagesResponse)]
+    AllMessages {},
+}
+
+#[cw_serde]
+pub struct AllMessagesResponse {
+    pub messages: Vec<Memo>,
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn instantiate(deps: DepsMut, _env: Env, _info: MessageInfo, _msg: InstantiateMsg) -> Result<Response, ContractError> {
+    MESSAGES.save(deps.storage, &vec![])?;
+    Ok(Response::new().add_attribute("action", "instantiate"))
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> Result<Response, ContractError> {
+    match msg {
+        ExecuteMsg::PostMessage { message } => {
+            let mut messages = MESSAGES.load(deps.storage)?;
+            let sender = info.sender.clone();
+            messages.push(Memo { sender: info.sender, message });
+            MESSAGES.save(deps.storage, &messages)?;
+            Ok(Response::new()
+                .add_attribute("action", "post_message")
+                .add_attribute("sender", sender.as_str()))
+        }
+    }
+}
+
+#[cfg_attr(not(feature = "library"), entry_point)]
+pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+    match msg {
+        QueryMsg::AllMessages {} => {
+            let messages = MESSAGES.load(deps.storage)?;
+            to_json_binary(&AllMessagesResponse { messages })
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env};
+    use cosmwasm_std::from_json;
+
+    #[test]
+    fn test_post_and_query() {
+        let mut deps = mock_dependencies();
+        let env = mock_env();
+
+        // Instantiate
+        let info = message_info(&Addr::unchecked("creator"), &[]);
+        instantiate(deps.as_mut(), env.clone(), info, InstantiateMsg {}).unwrap();
+
+        // Post Message
+        let info = message_info(&Addr::unchecked("user1"), &[]);
+        let msg = ExecuteMsg::PostMessage { message: "Hello!".to_string() };
+        execute(deps.as_mut(), env.clone(), info, msg).unwrap();
+
+        // Query
+        let res = query(deps.as_ref(), env, QueryMsg::AllMessages {}).unwrap();
+        let val: AllMessagesResponse = from_json(&res).unwrap();
+        assert_eq!(val.messages.len(), 1);
+        assert_eq!(val.messages[0].message, "Hello!");
+        assert_eq!(val.messages[0].sender.as_str(), "user1");
+    }
+}
+```
+
+</Accordion>
+
+## Step 2: Deploy to your Appchain
+
+Now that the logic is verified, build and publish the contract to your appchain
+using the Gas Station account.
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract located in the `memoboard` directory to my appchain using my Gas Station account.
+```
+
+<Accordion title="Manual Approach: Deploy via CLI">
+**1. Build and Store the Code:**
+
+Standard `cargo build` binaries often fail validation on-chain. For WasmVM
+deployment, it is strongly recommended to use the CosmWasm Optimizer.
+
+**Note for Apple Silicon (M1/M2/M3):** You **MUST** use the
+`cosmwasm/optimizer-arm64:0.16.1` image variant or the build will be extremely
+slow and may fail.
+
+```bash wrap
+# Run from the root of your project
+# Use 'optimizer' for x86_64 or 'optimizer-arm64' for Apple Silicon
+OPTIMIZER_IMAGE="cosmwasm/optimizer-arm64:0.16.1"
+
+docker run --rm -v "$(pwd)/memoboard":/code \
+  --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
+  --mount type=volume,source=registry_cache,target=/usr/local/cargo/registry \
+  $OPTIMIZER_IMAGE
+```
+
+The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`.
+Now, store the code:
+
+```bash wrap
+# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
+minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+**2. Retrieve the Code ID and Instantiate:**
+
+If the `code_id` is not returned directly, wait for 5 seconds for indexing and
+then query the transaction hash:
+
+```bash wrap
+# Retrieve Code ID
+minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="store_code") | .attributes[] | select(.key=="code_id") | .value'
+```
+
+Then, instantiate the contract:
+
+```bash wrap
+minitiad tx wasm instantiate <YOUR_CODE_ID> '{}' \
+  --label "memoboard" \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --gas auto --gas-adjustment 1.4 \
+  --no-admin --yes
+```
+
+**3. Retrieve the Contract Address:**
+
+Wait for 5 seconds for indexing and then query the transaction hash:
+
+```bash wrap
+# Retrieve Contract Address
+minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="instantiate") | .attributes[] | select(.key=="_contract_address") | .value'
+```
+
+</Accordion>
+
+## Step 3: Fund your Browser Wallet
+
+Ensure your personal wallet has tokens to pay for the transaction to post a
+memo.
+
+**1. Get your Wallet Address:** Open your browser wallet and copy your address
+(it starts with `init1...`).
+
+**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
+prompt below with the address you just copied.
+
+**Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+```
+
+## Step 4: Create a Frontend
+
+Let's create a UI to display and post messages.
+
+**1. Scaffold the Frontend:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `memoboard-frontend` in my current directory using the `scaffold-frontend` script. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
+```
+
+**2. Connect to Appchain:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, modify the Board.jsx component in the `memoboard-frontend` directory to connect to our MemoBoard contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
+```
+
+<Accordion title="Manual Approach: Scaffold and Connect">
+If you prefer to set up the frontend manually, follow these steps:
+
+**1. Create the Project and Install Dependencies:**
+
+```bash wrap
+npm create vite@latest memoboard-frontend -- --template react
+cd memoboard-frontend
+npm install
+npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js @initia/initia.proto
+npm install --save-dev vite-plugin-node-polyfills
+npm install buffer util
+```
+
+**2. Configure Vite Polyfills:** Update `vite.config.js` to include the Node
+polyfills:
+
+```javascript wrap
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+      },
+    }),
+  ],
+})
+```
+
+**3. Set up Providers in `main.jsx`:**
+
+```javascript wrap
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import '@initia/interwovenkit-react/styles.css'
+import {
+  injectStyles,
+  InterwovenKitProvider,
+  TESTNET,
+} from '@initia/interwovenkit-react'
+import InterwovenKitStyles from '@initia/interwovenkit-react/styles.js'
+import { WagmiProvider, createConfig, http } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import App from './App.jsx'
+
+// Inject styles for the InterwovenKit drawer
+injectStyles(InterwovenKitStyles)
+
+const queryClient = new QueryClient()
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+
+const customChain = {
+  chain_id: '<YOUR_APPCHAIN_ID>',
+  chain_name: 'social',
+  pretty_name: 'Social Rollup',
+  network_type: 'testnet',
+  bech32_prefix: 'init',
+  logo_URIs: {
+    png: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png',
+    svg: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg',
+  },
+  apis: {
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }], // Placeholder REQUIRED for stability
+  },
+  fees: {
+    fee_tokens: [
+      {
+        denom: 'umin',
+        fixed_min_gas_price: 0.15,
+        low_gas_price: 0.15,
+        average_gas_price: 0.15,
+        high_gas_price: 0.15,
+      },
+    ],
+  },
+  staking: {
+    staking_tokens: [{ denom: 'umin' }],
+  },
+  metadata: {
+    minitia: { type: 'miniwasm' },
+    is_l1: false, // REQUIRED for local appchains
+  },
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider
+          {...TESTNET}
+          defaultChainId="<YOUR_APPCHAIN_ID>"
+          customChain={customChain}
+          customChains={[customChain]}
+        >
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+**4. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
+`src/Board.css` with the following content:
+
+**src/Board.css:**
+
+```css wrap
+.board-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 32px;
+  font-family: sans-serif;
+}
+.board-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  text-align: center;
+}
+.section-header {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+  margin-bottom: 16px;
+  display: block;
+}
+.auth-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+.wallet-info {
+  background: #f0f0f0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.message-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+.message-sender {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: #999;
+}
+.message-content {
+  margin-top: 8px;
+  font-size: 1.1rem;
+}
+.input-group {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.memo-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+.btn-primary {
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+```
+
+**src/Board.jsx:**
+
+```javascript wrap
+import React, { useState, useEffect } from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import { RESTClient } from '@initia/initia.js'
+import { useDisconnect } from 'wagmi'
+import './Board.css'
+
+const MEMO_BOARD_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
+// RESTClient is the primary client for queries in initia.js v1.0+
+const rest = new RESTClient('http://localhost:1317', {
+  chainId: 'social-1',
+})
+
+const Board = () => {
+  const [messages, setMessages] = useState([])
+  const [content, setContent] = useState('')
+  const { initiaAddress, requestTxSync, openConnect, openWallet } =
+    useInterwovenKit()
+  const { disconnect } = useDisconnect()
+
+  const truncate = (addr) => `${addr.slice(0, 10)}...${addr.slice(-6)}`
+
+  const fetchMessages = async () => {
+    try {
+      // Wasm queries via REST MUST be base64 encoded
+      const queryData = Buffer.from(
+        JSON.stringify({ all_messages: {} }),
+      ).toString('base64')
+      const res = await rest.wasm.smartContractState(
+        MEMO_BOARD_ADDRESS,
+        queryData,
+      )
+      setMessages((res?.messages || []).reverse())
+    } catch (e) {
+      console.error('Failed to fetch messages', e)
+    }
+  }
+
+  useEffect(() => {
+    fetchMessages()
+    // Poll for new messages every 5 seconds
+    const interval = setInterval(fetchMessages, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handlePostMessage = async () => {
+    if (!content || !initiaAddress) return
+
+    // Encode execute msg to Uint8Array (bytes)
+    const msg = new TextEncoder().encode(
+      JSON.stringify({ post_message: { message: content } }),
+    )
+
+    try {
+      // Use requestTxSync for local development transactions
+      // ALWAYS include the chainId to avoid RPC routing errors
+      await requestTxSync({
+        chainId: 'social-1',
+        messages: [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: initiaAddress,
+              contract: MEMO_BOARD_ADDRESS,
+              msg,
+              funds: [],
+            },
+          },
+        ],
+      })
+      setContent('')
+      // Small delay to allow block inclusion
+      setTimeout(fetchMessages, 2000)
+    } catch (e) {
+      console.error('Transaction failed', e)
+    }
+  }
+
+  return (
+    <div className="board-container">
+      <h1 className="board-title">MemoBoard</h1>
+      {!initiaAddress ? (
+        <div className="auth-section">
+          <button onClick={openConnect} className="btn-primary">
+            Connect Wallet
+          </button>
+        </div>
+      ) : (
+        <div className="auth-section">
+          <div className="wallet-info">
+            <button
+              onClick={openWallet}
+              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              {truncate(initiaAddress)}
+            </button>
+            <button
+              onClick={() => disconnect()}
+              className="btn-secondary"
+              style={{ marginLeft: '12px' }}
+            >
+              Disconnect
+            </button>
+          </div>
+        </div>
+      )}
+      {initiaAddress && (
+        <div style={{ marginBottom: '32px' }}>
+          <h3 className="section-header">Post a Memo</h3>
+          <div className="input-group">
+            <input
+              className="memo-input"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Write a memo..."
+            />
+            <button onClick={handlePostMessage} className="btn-primary">
+              Post Message
+            </button>
+          </div>
+        </div>
+      )}
+      <div className="messages-list">
+        <h3 className="section-header">Board Feed</h3>
+        {messages.map((m, i) => (
+          <div key={i} className="message-card">
+            <div className="message-sender">{truncate(m.sender)}</div>
+            <div className="message-content">{m.message}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default Board
+```
+
+</Accordion>
+
+<Tip>
+  **Open the Frontend:**
+  ```bash wrap
+  cd memoboard-frontend
+  npm run dev
+  ```
+
+  Check the **browser console** if you encounter issues.
+</Tip>
+
+## Step 5: On-Chain Verification
+
+Finally, ask your AI agent to interact with your live appchain to prove
+the deployed contract works as expected.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, I want to verify our live MemoBoard contract. Using my Gas Station account on my appchain, please:
+1. Post a message: "Hello from Initia!"
+2. Query the board to see all messages.
+```
+
+<Accordion title="Manual Approach: On-Chain Interaction">
+**Post Message:**
+```bash wrap
+# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
+minitiad tx wasm execute <YOUR_CONTRACT_ADDRESS> '{"post_message":{"message":"Hello!"}}' \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+**Query Messages:**
+
+```bash wrap
+# Note: minitiad query commands typically do not support the --chain-id flag
+minitiad query wasm contract-state smart <YOUR_CONTRACT_ADDRESS> '{"all_messages":{}}'
+```
+
+</Accordion>
+
+# Power-Up: Initia Usernames
+
+To make your MemoBoard natively integrated with the Initia stack, you can
+replace long, complex addresses with human-readable Initia Usernames (e.g.,
+`vitalik.init`).
+
+## Step 6: Register your .init Name
+
+Before updating your code, you should register a `primary username` for your
+wallet on the Initia testnet.
+
+1.  Navigate to
+    [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
+    and connect your browser wallet (e.g., Leap or Keplr).
+2.  In the `Find a username` search box, enter your desired name. If it is
+    available, you will see a green `Available` checkmark.
+3.  Crucial: Ensure the `Set as primary name` checkbox is selected.
+4.  Click `Register` and approve the transaction. Once resolved, your new
+    `.init` name will appear in the top-right corner of the Initia App.
+
+## Step 7: Update the Frontend
+
+Your AI agent knows how to integrate Initia Usernames. Simply ask it to
+update your board.
+
+**Example Prompt:**
+
+```terminal wrap
+Using the `initia-appchain-dev` skill, please add Initia username support to my MemoBoard.
+```
+
+<Accordion title="Manual Approach: Username Resolution">
+The `useInterwovenKit()` hook provides the `username` for the currently connected wallet. To implement this, update your `src/Board.jsx` to extract the `username` and update the render logic:
+
+```tsx wrap
+// 1. Extract username from the hook
+const { initiaAddress, username, openConnect, openWallet, requestTxSync } = useInterwovenKit();
+
+// 2. Update the Header to show the username
+<div className="wallet-info">
+  <button onClick={openWallet} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+    {username ? username : truncate(initiaAddress)}
+  </button>
+  <button onClick={() => disconnect()} className="btn-secondary">
+    Disconnect
+  </button>
+</div>
+
+// 3. Update the Feed to show the username for the current user's posts
+<div className="message-sender">
+  {m.sender === initiaAddress && username ? username : truncate(m.sender)}
+</div>
+```
+
+<Tip>
+  **Pro Tip:** This pattern ensures that the connected user sees their identity reflected immediately in the application (in both the header and their own posts). For other participants in the feed, we continue to show the truncated address until a global resolver is implemented.
+</Tip>
+</Accordion>
+
+## Next Steps
+
+Now that you've mastered a Wasm application, you're ready to build your own
+idea! Ensure your project meets all the technical pillars before submitting.
+
+[Review Submission Requirements ->](../submission-requirements)
