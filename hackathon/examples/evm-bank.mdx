@@ -18,7 +18,7 @@ By the end of this tutorial, you will have:
 The following steps will instruct your AI agent to create these directories 
 inside your `my-initia-project` folder:
 
-```text
+```text wrap Project Structure
 my-initia-project/
 ├── minibank/           # Solidity smart contract project
 └── minibank-frontend/  # React frontend application
@@ -40,7 +40,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Verify the Smart Contract
+## Step 1: Create and Unit Test the Smart Contract
 
 Instruct your AI agent to create the Solidity contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
@@ -61,9 +61,17 @@ Your AI agent will generate the `minibank` project and confirm that the tests
 (likely using Foundry or Hardhat) pass successfully.
 
 <Accordion title="Manual Approach: The Solidity Contract">
+Initialize a Foundry project first:
+
+```bash wrap Initialize Foundry Project
+# Use --no-git to avoid nested repos if you're already in a git project.
+forge init minibank --no-git
+cd minibank
+```
+
 If you prefer to create the contract manually, here is the Solidity code your AI agent would generate. Save this as MiniBank.sol in your `minibank/src` directory.
 
-```solidity wrap
+```solidity wrap src/MiniBank.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -90,15 +98,15 @@ contract MiniBank {
         emit Withdrawn(msg.sender, amount);
     }
 
-    function getBalance() public view returns (uint256) {
-        // NOTE: This returns the balance for the CALLER (msg.sender).
-        // In tests or frontend calls, ensure the correct account is the caller.
-        return balances[msg.sender];
+    function myBalance() public view returns (uint256) {
+      // NOTE: This returns the balance for the CALLER (msg.sender).
+      // In tests or frontend calls, ensure the correct account is the caller.
+      return balances[msg.sender];
     }
 
-    function getBalanceOf(address user) public view returns (uint256) {
-        // Helper to check the balance of any user without needing a 'from' address.
-        return balances[user];
+    function totalSavingsOf(address user) public view returns (uint256) {
+      // Helper to check the balance of any user without needing a 'from' address.
+      return balances[user];
     }
 
     receive() external payable {
@@ -117,7 +125,7 @@ the `test` directory.
   `vm.expectRevert()` for failure testing.
 </Tip>
 
-```solidity wrap
+```solidity wrap test/MiniBank.t.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
@@ -136,14 +144,14 @@ contract MiniBankTest is Test {
     function testDeposit() public {
         vm.prank(user);
         bank.deposit{value: 1 ether}();
-        assertEq(bank.getBalanceOf(user), 1 ether);
+        assertEq(bank.totalSavingsOf(user), 1 ether);
     }
 
     function testWithdraw() public {
         vm.startPrank(user);
         bank.deposit{value: 2 ether}();
         bank.withdraw(1 ether);
-        assertEq(bank.getBalanceOf(user), 1 ether);
+        assertEq(bank.totalSavingsOf(user), 1 ether);
         vm.stopPrank();
     }
 
@@ -160,7 +168,7 @@ contract MiniBankTest is Test {
 
 Run your tests:
 
-```bash wrap
+```bash wrap Run Foundry Tests
 forge test
 ```
 
@@ -179,7 +187,7 @@ Using the `initia-appchain-dev` skill, please build and publish the MiniBank Sol
 
 <Accordion title="Manual Approach: Deploy via CLI">
 First, compile your contract and extract the hex bytecode:
-```bash wrap
+```bash wrap Compile And Extract Bytecode
 # Navigate to the contract directory
 cd minibank
 
@@ -196,50 +204,96 @@ jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0
 ```
 
 Then deploy the binary. **Find your Chain ID first** if you don't know it:
-```bash wrap
+```bash wrap Get Chain ID
 # Query the appchain ID directly
-minitiad status 2>&1 | jq -r '.node_info.network'
+curl -s http://localhost:26657/status | jq -r '.result.node_info.network'
 ```
 
 Now deploy:
 
-```bash wrap
+```bash wrap Deploy Contract
 # Replace `<YOUR_APPCHAIN_ID>` with the ID from the command above
 minitiad tx evm create minibank.bin \
   --from gas-station \
   --keyring-backend test \
   --chain-id <YOUR_APPCHAIN_ID> \
+  --node http://localhost:26657 \
   --gas auto --gas-adjustment 1.4 --yes --output json > deploy.json
 ```
 
 **Retrieve your contract address:** The output will provide a `txhash`. Wait a
 few seconds for indexing, then find your contract address:
 
-```bash wrap
+```bash wrap Get Contract Address
 # Replace <YOUR_TX_HASH> with the hash from deploy.json
-minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
+minitiad q tx <YOUR_TX_HASH> --node http://localhost:26657 --output json | jq -r '.events[] | select(.type=="contract_created") | .attributes[] | select(.key=="contract") | .value'
 ```
 
 </Accordion>
 
-## Step 3: Fund your Browser Wallet
+## Step 3: Smoke Test the Deployed Contract On-Chain
 
-Ensure your personal wallet has tokens to pay for the gas and initial deposits
-on your appchain.
+Before moving to frontend integration, smoke test the deployed contract
+directly on chain from the CLI. This isolates contract-level issues before UI
+work.
 
-**1. Get your Wallet Address:** Open your browser wallet and copy your EVM
-address (it starts with `0x...`).
-For CLI commands in this guide, use your bech32 Initia address (`init1...`)
-when the command explicitly asks for it.
-
-**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
-prompt below with the address you just copied.
-
-**Prompt:**
+**Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, I want to smoke test our live MiniBank contract. Using my Gas Station account on my appchain, please:
+1. Deposit 1 token.
+2. Check my balance.
+3. Withdraw 0.5 tokens.
+4. Check my balance again.
 ```
+
+<Accordion title="Manual Approach: On-Chain Interaction">
+Call `deposit()` and send exactly `1` token in base units (`1e18` wei).
+
+```bash wrap Deposit 1 Token
+DATA=$(cast calldata "deposit()")
+minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $DATA \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --node http://localhost:26657 \
+  --value 1000000000000000000 \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+Query `myBalance()` as your sender account so `msg.sender` resolves correctly.
+
+```bash wrap Query Balance
+SENDER=$(minitiad keys show gas-station -a --keyring-backend test)
+DATA=$(cast calldata "myBalance()")
+RAW=$(minitiad q evm call $SENDER <YOUR_CONTRACT_ADDRESS> $DATA --node http://localhost:26657 --output json | jq -r '.response')
+echo "base_units: $(cast to-dec $RAW)"
+echo "tokens: $(cast --from-wei $(cast to-dec $RAW) ether)"
+```
+
+Call `withdraw(uint256)` with `0.5` token in base units (`5e17` wei).
+
+```bash wrap Withdraw 0.5 Tokens
+DATA=$(cast calldata "withdraw(uint256)" 500000000000000000)
+minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $DATA \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --node http://localhost:26657 \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+Query `myBalance()` again to confirm the post-withdraw balance.
+
+```bash wrap Query Balance Again
+SENDER=$(minitiad keys show gas-station -a --keyring-backend test)
+DATA=$(cast calldata "myBalance()")
+RAW=$(minitiad q evm call $SENDER <YOUR_CONTRACT_ADDRESS> $DATA --node http://localhost:26657 --output json | jq -r '.response')
+echo "base_units: $(cast to-dec $RAW)"
+echo "tokens: $(cast --from-wei $(cast to-dec $RAW) ether)"
+```
+
+</Accordion>
 
 ## Step 4: Create a Frontend
 
@@ -262,19 +316,20 @@ If you prefer to set up the frontend manually, follow these steps:
 
 **1. Create the Project and Install Dependencies:**
 
-```bash wrap
+```bash wrap Create React App
 npm create vite@latest minibank-frontend -- --template react
 cd minibank-frontend
 npm install
-npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js @initia/initia.proto
+npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js
 npm install --save-dev vite-plugin-node-polyfills
 npm install buffer util
 ```
 
-**2. Create index.html:** Create `index.html` in the root of your
+**2. Verify `index.html`:** Vite scaffolding already creates `index.html`.
+Confirm it has this minimal structure in the root of your
 `minibank-frontend` directory:
 
-```html wrap
+```html wrap index.html
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -292,26 +347,72 @@ npm install buffer util
 **3. Configure Vite Polyfills:** Update `vite.config.js` to include the Node
 polyfills:
 
-```javascript wrap
+```javascript wrap vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 
 export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom', 'wagmi', '@tanstack/react-query', 'viem'],
+  },
+  optimizeDeps: {
+    include: ['wagmi', '@tanstack/react-query', 'viem'],
+  },
   plugins: [
     react(),
     nodePolyfills({
       globals: {
         Buffer: true,
+        process: true,
       },
     }),
   ],
 })
 ```
 
-**4. Set up Providers in `main.jsx`:**
+**4. Gather Runtime Values for Frontend Config:** Before creating `.env`,
+collect the values you will use:
 
-```javascript wrap
+```bash wrap Gather Frontend Values
+APPCHAIN_ID=$(curl -s http://localhost:26657/status | jq -r '.result.node_info.network')
+NATIVE_DENOM=$(minitiad q evm params --output json | jq -r '.params.fee_denom')
+NATIVE_SYMBOL=$(minitiad q bank denoms-metadata --output json \
+  | jq -r --arg denom "$NATIVE_DENOM" '
+      .metadatas[]
+      | select(.base==$denom or .display==$denom)
+      | .symbol
+    ' \
+  | head -n1)
+[ -z "$NATIVE_SYMBOL" ] && NATIVE_SYMBOL="$NATIVE_DENOM"
+
+# Use the contract address you retrieved in Step 2.
+MINIBANK_CONTRACT=<YOUR_CONTRACT_ADDRESS>
+
+echo "APPCHAIN_ID=$APPCHAIN_ID"
+echo "NATIVE_DENOM=$NATIVE_DENOM"
+echo "NATIVE_SYMBOL=$NATIVE_SYMBOL"
+echo "MINIBANK_CONTRACT=$MINIBANK_CONTRACT"
+```
+
+**5. Create `.env` from Runtime Values:**
+
+```bash wrap Create Frontend Env
+cat > .env <<EOF
+VITE_APPCHAIN_ID=$APPCHAIN_ID
+VITE_NATIVE_DENOM=$NATIVE_DENOM
+VITE_NATIVE_SYMBOL=$NATIVE_SYMBOL
+VITE_NATIVE_DECIMALS=18
+VITE_JSON_RPC_URL=http://localhost:8545
+VITE_MINIBANK_CONTRACT=$MINIBANK_CONTRACT
+VITE_BRIDGE_SRC_CHAIN_ID=initiation-2
+VITE_BRIDGE_SRC_DENOM=uinit
+EOF
+```
+
+**6. Set up Providers in `main.jsx`:**
+
+```javascript wrap src/main.jsx
 import { Buffer } from 'buffer'
 window.Buffer = Buffer
 window.process = { env: { NODE_ENV: 'development' } }
@@ -357,7 +458,7 @@ const customChain = {
   fees: {
     fee_tokens: [
       {
-        denom: 'GAS',
+        denom: '<YOUR_NATIVE_DENOM>',
         fixed_min_gas_price: 0,
         low_gas_price: 0,
         average_gas_price: 0,
@@ -366,13 +467,20 @@ const customChain = {
     ],
   },
   staking: {
-    staking_tokens: [{ denom: 'GAS' }],
+    staking_tokens: [{ denom: '<YOUR_NATIVE_DENOM>' }],
   },
   metadata: {
     minitia: { type: 'minievm' },
-    is_evm: true,
     is_l1: false,
   },
+  native_assets: [
+    {
+      denom: '<YOUR_NATIVE_DENOM>',
+      name: 'Native Token',
+      symbol: '<YOUR_NATIVE_SYMBOL>',
+      decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 18),
+    },
+  ],
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -381,7 +489,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="<YOUR_APPCHAIN_ID>"
+          defaultChainId={customChain.chain_id}
           customChain={customChain}
           customChains={[customChain]}
         >
@@ -393,15 +501,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 ```
 
-**5. Create the `App.jsx` Layout:**
+**7. Create the `App.jsx` Layout:**
 
-```javascript wrap
+```javascript wrap src/App.jsx
 import React from 'react'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 import Bank from './Bank'
 
 function App() {
-  const { address, openConnect, openWallet } = useInterwovenKit()
+  const { initiaAddress, openConnect, openWallet } = useInterwovenKit()
 
   const containerStyle = {
     fontFamily: 'system-ui, -apple-system, sans-serif',
@@ -461,7 +569,7 @@ function App() {
           MiniBank
         </h1>
 
-        {!address ? (
+        {!initiaAddress ? (
           <>
             <p style={{ color: '#64748b', marginBottom: '32px' }}>
               Connect your wallet to manage your savings.
@@ -486,7 +594,7 @@ function App() {
 export default App
 ```
 
-**6. Create the `Bank.jsx` Component:** Create `src/Bank.jsx` and add the
+**8. Create the `Bank.jsx` Component:** Create `src/Bank.jsx` and add the
 contract interaction logic.
 
 <Tip>
@@ -496,11 +604,14 @@ contract interaction logic.
   input[type=number] { -moz-appearance: textfield; }
   ```
   For `view` functions that depend on `msg.sender` (like
-  `getBalance`), you MUST provide a `from` address in your `eth_call` parameters
+  `myBalance`), you MUST provide a `from` address in your `eth_call` parameters
   so the appchain knows whose balance to check.
+  This tutorial uses an EVM appchain with 18 decimals, so `parseEther` and
+  `formatEther` are appropriate. If your chain uses different decimals, switch
+  to `parseUnits` and `formatUnits` with your runtime decimals value.
 </Tip>
 
-```javascript wrap
+```javascript wrap src/Bank.jsx
 import React, { useState, useEffect } from 'react'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { encodeFunctionData, parseEther, formatEther } from 'viem'
@@ -508,6 +619,9 @@ import { AccAddress } from '@initia/initia.js'
 
 const MINI_BANK_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
 const CHAIN_ID = '<YOUR_APPCHAIN_ID>' // Found in Step 2
+const NATIVE_DENOM = '<YOUR_NATIVE_DENOM>'
+const NATIVE_SYMBOL = '<YOUR_NATIVE_SYMBOL>'
+const JSON_RPC_URL = import.meta.env.VITE_JSON_RPC_URL ?? 'http://localhost:8545'
 const MINI_BANK_ABI = [
   { name: 'deposit', type: 'function', stateMutability: 'payable', inputs: [] },
   {
@@ -516,14 +630,14 @@ const MINI_BANK_ABI = [
     inputs: [{ name: 'amount', type: 'uint256' }],
   },
   {
-    name: 'getBalance',
+    name: 'myBalance',
     type: 'function',
     stateMutability: 'view',
     inputs: [],
     outputs: [{ type: 'uint256' }],
   },
   {
-    name: 'getBalanceOf',
+    name: 'totalSavingsOf',
     type: 'function',
     stateMutability: 'view',
     inputs: [{ name: 'user', type: 'address' }],
@@ -535,25 +649,24 @@ const Bank = () => {
   const [amount, setAmount] = useState('')
   const [balance, setBalance] = useState('0')
   const [isPending, setIsPending] = useState(false)
-  const { address, initiaAddress, requestTxBlock } = useInterwovenKit()
+  const { initiaAddress, requestTxBlock } = useInterwovenKit()
 
   const fetchBalance = async () => {
-    if (!address) return
+    if (!initiaAddress) return
     try {
-      const hex = AccAddress.toHex(address)
+      const hex = AccAddress.toHex(initiaAddress)
       const userHex = hex.startsWith('0x') ? hex : `0x${hex}`
       const data = encodeFunctionData({
         abi: MINI_BANK_ABI,
-        functionName: 'getBalanceOf',
-        args: [userHex],
+        functionName: 'myBalance',
       })
-      const response = await fetch('http://localhost:8545', {
+      const response = await fetch(JSON_RPC_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           jsonrpc: '2.0',
           method: 'eth_call',
-          params: [{ to: MINI_BANK_ADDRESS, data }, 'latest'],
+          params: [{ from: userHex, to: MINI_BANK_ADDRESS, data }, 'latest'],
           id: 1,
         }),
       })
@@ -570,7 +683,7 @@ const Bank = () => {
     fetchBalance()
     const interval = setInterval(fetchBalance, 10000)
     return () => clearInterval(interval)
-  }, [address])
+  }, [initiaAddress])
 
   const handleDeposit = async () => {
     if (!amount || !initiaAddress) return
@@ -586,7 +699,7 @@ const Bank = () => {
           {
             typeUrl: '/minievm.evm.v1.MsgCall',
             value: {
-              sender: initiaAddress,
+              sender: initiaAddress.toLowerCase(),
               contractAddr: MINI_BANK_ADDRESS,
               input: data,
               value: parseEther(amount).toString(),
@@ -622,7 +735,7 @@ const Bank = () => {
           {
             typeUrl: '/minievm.evm.v1.MsgCall',
             value: {
-              sender: initiaAddress,
+              sender: initiaAddress.toLowerCase(),
               contractAddr: MINI_BANK_ADDRESS,
               input: data,
               value: '0',
@@ -690,7 +803,7 @@ const Bank = () => {
         >
           Your Savings Balance
         </div>
-        <div style={balanceValueStyle}>{balance} GAS</div>
+        <div style={balanceValueStyle}>{balance} {NATIVE_SYMBOL}</div>
       </div>
       <input
         type="number"
@@ -707,7 +820,7 @@ const Bank = () => {
             backgroundColor: '#10b981',
             opacity: isPending ? 0.5 : 1,
           }}
-          disabled={!address || isPending}
+          disabled={!initiaAddress || isPending}
         >
           {isPending ? 'Pending...' : 'Deposit'}
         </button>
@@ -718,7 +831,7 @@ const Bank = () => {
             backgroundColor: '#ef4444',
             opacity: isPending ? 0.5 : 1,
           }}
-          disabled={!address || isPending}
+          disabled={!initiaAddress || isPending}
         >
           {isPending ? 'Pending...' : 'Withdraw'}
         </button>
@@ -734,7 +847,7 @@ export default Bank
 
 <Tip>
   **Open the Frontend:**
-  ```bash wrap
+  ```bash wrap Start Vite Dev Server
   cd minibank-frontend
   npm run dev
   ```
@@ -742,64 +855,25 @@ export default Bank
   Check the **browser console** if you encounter issues.
 </Tip>
 
-## Step 5: On-Chain Verification
+## Step 5: Wallet Funding and UI Verification
 
-Finally, ask your AI agent to interact with your live appchain to prove
-the deployed contract works as expected.
+Ask your AI agent to fund your browser wallet, then verify frontend behavior
+manually in the browser:
 
-**Example Prompt:**
+1. Open your browser wallet and copy your address (`init1...`).
+2. Give this prompt to your AI agent:
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our live MiniBank contract. Using my Gas Station account on my appchain, please:
-1. Deposit 1 token.
-2. Check my balance.
-3. Withdraw 0.5 tokens.
-4. Check my balance again.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 100 of my appchain's native tokens on L2.
 ```
 
-<Accordion title="Manual Approach: On-Chain Interaction">
+3. Connect your wallet in `minibank-frontend`.
+4. Deposit `1` token from the UI and confirm the wallet prompt.
+5. Confirm the displayed savings updates.
+6. Withdraw `0.5` token from the UI.
+7. Confirm the displayed savings updates again.
 
-**1. Find your bech32 address (`init1...`):** For CLI query calls, get your
-sender address first.
-
-```bash wrap
-minitiad keys show gas-station -a --keyring-backend test
-```
-
-**2. Interact (Deposit 1 token):** We'll use `cast sig` to generate the function
-selector and `10^18` units for "1 token".
-
-```bash wrap
-SIG=$(cast sig "deposit()")
-minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $SIG \
-  --from gas-station \
-  --keyring-backend test \
-  --chain-id <YOUR_APPCHAIN_ID> \
-  --value 1000000000000000000 \
-  --gas auto --gas-adjustment 1.4 --yes
-```
-
-**3. Query Balance:** Querying a function that uses `msg.sender` requires a
-`from` address in the query call.
-
-```bash wrap
-SIG=$(cast sig "getBalance()")
-# Replace <YOUR_BECH32_ADDRESS> and <YOUR_CONTRACT_ADDRESS>
-minitiad q evm call <YOUR_BECH32_ADDRESS> <YOUR_CONTRACT_ADDRESS> 0x$SIG --output json
-```
-
-**4. Withdraw (0.5 tokens):**
-
-```bash wrap
-DATA=$(cast calldata "withdraw(uint256)" 500000000000000000)
-minitiad tx evm call <YOUR_CONTRACT_ADDRESS> $DATA \
-  --from gas-station \
-  --keyring-backend test \
-  --chain-id <YOUR_APPCHAIN_ID> \
-  --gas auto --gas-adjustment 1.4 --yes
-```
-
-</Accordion>
+If you get stuck, see the [High-Signal AI Debugging guide](../builder-guide#high-signal-ai-debugging).
 
 # Power-Up: Interwoven Bridge
 
@@ -816,8 +890,8 @@ seamless UI to bridge tokens into your application for use.
 
 ## Step 6: Update the Frontend
 
-The `useInterwovenKit()` hook provides `openDeposit` and `openWithdraw`
-functions that open a specialized modal for bridging assets.
+The `useInterwovenKit()` hook provides `openBridge`, which opens the bridge
+modal for moving assets between chains.
 
 **Example Prompt:**
 
@@ -829,12 +903,16 @@ Using the `initia-appchain-dev` skill, please enable Interwoven Bridge support i
 To implement this, update your `src/Bank.jsx` to include the bridge logic and
 UI:
 
-```tsx wrap
+```tsx wrap Bridge Logic
 // 1. Extract bridge functions from the hook
-const { address, openBridge } = useInterwovenKit()
+const { initiaAddress, openConnect, openBridge } = useInterwovenKit()
 
 // 2. Add bridge handler
 const handleBridge = () => {
+  if (!initiaAddress) {
+    openConnect()
+    return
+  }
   openBridge({
     srcChainId: 'initiation-2', // Public testnet ID
     srcDenom: 'uinit', // Native INIT
@@ -869,7 +947,7 @@ const bridgeButtonStyle = {
 
 // Inside return (showing it only when connected)...
 {
-  address && (
+  initiaAddress && (
     <div style={bridgeContainerStyle}>
       <div
         style={{
@@ -899,6 +977,344 @@ const bridgeButtonStyle = {
   appchain while keeping the landing page focused.
 </Tip>
 </Accordion>
+
+If you want a complete end-state after the manual steps above, use the
+consolidated reference below.
+
+<Accordion title="Manual Approach: Final Frontend Reference">
+This reference combines:
+
+- runtime config from `.env`,
+- InterwovenKit provider wiring in `main.jsx`,
+- wallet connect/display in `App.jsx`, and
+- live MiniBank interactions plus bridge entry point in `Bank.jsx`.
+
+**.env**
+
+```bash wrap .env
+VITE_APPCHAIN_ID=<YOUR_APPCHAIN_ID>
+VITE_NATIVE_DENOM=<YOUR_NATIVE_DENOM>
+VITE_NATIVE_SYMBOL=<YOUR_NATIVE_SYMBOL>
+VITE_NATIVE_DECIMALS=18
+VITE_JSON_RPC_URL=http://localhost:8545
+VITE_MINIBANK_CONTRACT=<YOUR_CONTRACT_ADDRESS>
+VITE_BRIDGE_SRC_CHAIN_ID=initiation-2
+VITE_BRIDGE_SRC_DENOM=uinit
+```
+
+**src/main.jsx**
+
+```jsx wrap src/main.jsx
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import "@initia/interwovenkit-react/styles.css";
+import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from './App.jsx'
+
+injectStyles(InterwovenKitStyles);
+
+const queryClient = new QueryClient();
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+});
+
+const customChain = {
+  chain_id: import.meta.env.VITE_APPCHAIN_ID,
+  chain_name: 'minibank',
+  pretty_name: 'MiniBank Appchain',
+  network_type: 'testnet',
+  bech32_prefix: 'init',
+  logo_URIs: {
+    png: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png',
+    svg: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg',
+  },
+  apis: {
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }],
+    'json-rpc': [{ address: import.meta.env.VITE_JSON_RPC_URL ?? 'http://localhost:8545' }],
+  },
+  fees: {
+    fee_tokens: [{
+      denom: import.meta.env.VITE_NATIVE_DENOM,
+      fixed_min_gas_price: 0,
+      low_gas_price: 0,
+      average_gas_price: 0,
+      high_gas_price: 0,
+    }],
+  },
+  staking: {
+    staking_tokens: [{ denom: import.meta.env.VITE_NATIVE_DENOM }]
+  },
+  metadata: {
+    is_l1: false,
+    minitia: {
+      type: 'minievm',
+    },
+  },
+  native_assets: [
+    {
+      denom: import.meta.env.VITE_NATIVE_DENOM,
+      name: 'Native Token',
+      symbol: import.meta.env.VITE_NATIVE_SYMBOL,
+      decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 18)
+    }
+  ]
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider
+          {...TESTNET}
+          defaultChainId={customChain.chain_id}
+          customChain={customChain}
+          customChains={[customChain]}
+        >
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+**src/App.jsx**
+
+```jsx wrap src/App.jsx
+import React from 'react'
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+import Bank from './Bank.jsx';
+
+function App() {
+  const { initiaAddress, openConnect, openWallet } = useInterwovenKit();
+
+  const shortenAddress = (addr) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 8)}...${addr.slice(-4)}`;
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <header style={{
+        width: '100%',
+        maxWidth: '1200px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '2rem'
+      }}>
+        <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>MiniBank</h1>
+
+        {!initiaAddress ? (
+          <button onClick={openConnect}>Connect Wallet</button>
+        ) : (
+          <button onClick={openWallet}>{shortenAddress(initiaAddress)}</button>
+        )}
+      </header>
+
+      <main style={{ flex: 1, width: '100%', maxWidth: '760px', padding: '2rem' }}>
+        <Bank />
+      </main>
+    </div>
+  )
+}
+
+export default App
+```
+
+**src/Bank.jsx**
+
+```jsx wrap src/Bank.jsx
+import React, { useEffect, useState } from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import { AccAddress } from '@initia/initia.js'
+import { encodeFunctionData, formatUnits, parseUnits } from 'viem'
+
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const NATIVE_DENOM = import.meta.env.VITE_NATIVE_DENOM
+const NATIVE_SYMBOL = import.meta.env.VITE_NATIVE_SYMBOL
+const NATIVE_DECIMALS = Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 18)
+const JSON_RPC_URL = import.meta.env.VITE_JSON_RPC_URL ?? 'http://localhost:8545'
+const MINI_BANK_ADDRESS = import.meta.env.VITE_MINIBANK_CONTRACT
+const BRIDGE_SRC_CHAIN_ID = import.meta.env.VITE_BRIDGE_SRC_CHAIN_ID ?? 'initiation-2'
+const BRIDGE_SRC_DENOM = import.meta.env.VITE_BRIDGE_SRC_DENOM ?? 'uinit'
+
+const MINI_BANK_ABI = [
+  { name: 'deposit', type: 'function', stateMutability: 'payable', inputs: [] },
+  {
+    name: 'withdraw',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'amount', type: 'uint256' }],
+  },
+  {
+    name: 'myBalance',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ type: 'uint256' }],
+  },
+]
+
+export default function Bank() {
+  const { initiaAddress, openConnect, openBridge, requestTxBlock } = useInterwovenKit()
+  const [amount, setAmount] = useState('')
+  const [balance, setBalance] = useState('0')
+  const [isPending, setIsPending] = useState(false)
+  const [status, setStatus] = useState('')
+
+  const fetchBalance = async () => {
+    if (!initiaAddress) {
+      setBalance('0')
+      return
+    }
+
+    const data = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: 'myBalance' })
+    const from = AccAddress.toHex(initiaAddress).toLowerCase()
+
+    const response = await fetch(JSON_RPC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        method: 'eth_call',
+        params: [{ from, to: MINI_BANK_ADDRESS, data }, 'latest'],
+        id: 1,
+      }),
+    })
+
+    const result = await response.json()
+    if (result.error) throw new Error(result.error.message || 'eth_call failed')
+    const baseUnits = BigInt(result.result || '0x0')
+    setBalance(formatUnits(baseUnits, NATIVE_DECIMALS))
+  }
+
+  useEffect(() => {
+    fetchBalance().catch((err) => setStatus(String(err.message || err)))
+  }, [initiaAddress])
+
+  const handleDeposit = async () => {
+    if (!initiaAddress || !amount || Number(amount) <= 0) return
+    setIsPending(true)
+    setStatus('Submitting deposit...')
+    try {
+      const input = encodeFunctionData({ abi: MINI_BANK_ABI, functionName: 'deposit' })
+      const value = parseUnits(amount, NATIVE_DECIMALS).toString()
+      const tx = await requestTxBlock({
+        chainId: CHAIN_ID,
+        messages: [{
+          typeUrl: '/minievm.evm.v1.MsgCall',
+          value: {
+            sender: initiaAddress.toLowerCase(),
+            contractAddr: MINI_BANK_ADDRESS,
+            input,
+            value,
+            accessList: [],
+            authList: [],
+          },
+        }],
+      })
+      setStatus(`Deposit confirmed: ${tx?.txhash ?? 'submitted'}`)
+      setAmount('')
+      await fetchBalance()
+    } catch (err) {
+      setStatus(`Deposit failed: ${String(err.message || err)}`)
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const handleWithdraw = async () => {
+    if (!initiaAddress || !amount || Number(amount) <= 0) return
+    setIsPending(true)
+    setStatus('Submitting withdrawal...')
+    try {
+      const input = encodeFunctionData({
+        abi: MINI_BANK_ABI,
+        functionName: 'withdraw',
+        args: [parseUnits(amount, NATIVE_DECIMALS)],
+      })
+      const tx = await requestTxBlock({
+        chainId: CHAIN_ID,
+        messages: [{
+          typeUrl: '/minievm.evm.v1.MsgCall',
+          value: {
+            sender: initiaAddress.toLowerCase(),
+            contractAddr: MINI_BANK_ADDRESS,
+            input,
+            value: '0',
+            accessList: [],
+            authList: [],
+          },
+        }],
+      })
+      setStatus(`Withdraw confirmed: ${tx?.txhash ?? 'submitted'}`)
+      setAmount('')
+      await fetchBalance()
+    } catch (err) {
+      setStatus(`Withdraw failed: ${String(err.message || err)}`)
+    } finally {
+      setIsPending(false)
+    }
+  }
+
+  const handleBridge = async () => {
+    if (!initiaAddress) {
+      openConnect()
+      return
+    }
+    await openBridge({
+      srcChainId: BRIDGE_SRC_CHAIN_ID,
+      srcDenom: BRIDGE_SRC_DENOM,
+    })
+  }
+
+  return (
+    <section>
+      <p>My Savings: {balance} {NATIVE_SYMBOL}</p>
+      <input
+        type="number"
+        min="0"
+        step="any"
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder="Enter amount"
+      />
+      <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+        <button onClick={handleDeposit} disabled={!initiaAddress || isPending}>Deposit</button>
+        <button onClick={handleWithdraw} disabled={!initiaAddress || isPending}>Withdraw</button>
+        <button onClick={handleBridge} disabled={isPending}>Bridge Funds</button>
+      </div>
+      {status ? <p>{status}</p> : null}
+    </section>
+  )
+}
+```
+
+This reference assumes:
+
+- the deployed contract address is stored in `.env` as `VITE_MINIBANK_CONTRACT`,
+- `sender` in `MsgCall` uses bech32 (`initiaAddress`) lowercased,
+- EVM balance reads use JSON-RPC `eth_call` with a `from` hex address, and
+- the Vite dev server is restarted after any `.env` change.
+</Accordion>
+
+### Power-Up Verification
+
+1. Connect your wallet in `minibank-frontend`.
+2. Click `Bridge Funds`.
+3. Confirm the Interwoven Bridge modal opens.
 
 ## Next Steps
 
