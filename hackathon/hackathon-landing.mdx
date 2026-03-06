@@ -105,9 +105,8 @@ You can run it whenever you need to initialize or reconfigure your setup.
   If you already ran `weave init` and want to create a new appchain, run the
   following commands first:
   ```bash wrap
-  rm -rf ~/.weave
-  initiad keys delete gas-station --keyring-backend test -y || true
-  minitiad keys delete gas-station --keyring-backend test -y || true
+  rm -rf ~/.weave ~/.initia ~/.minitia ~/.opinit
+  docker rm -f weave-relayer || true
   ```
 </Note>
 
