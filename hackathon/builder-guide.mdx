@@ -28,7 +28,7 @@ hackathon.
 
 | Task                | Command / AI Prompt                                                                                                                                           |
 | :------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Resume Appchain** | `weave rollup start -d && weave opinit start executor -d` (Restarts both your chain and the bridge bot)                                                       |
+| **Resume Appchain** | `weave rollup start -d && weave opinit start executor -d` (Restarts chain and executor. Ensure Docker Desktop is open. If relayer is not running, run `weave relayer start -d`.) |
 | **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance._ |
 
 
@@ -131,13 +131,10 @@ Use this checklist to mirror the official
 [Submission & Eligibility Criteria](/hackathon/submission-requirements).
 
 - **Rollup Chain ID**: Include your appchain Chain ID.
-- **GitHub Repository**: Include a link to your public repository.
-- **Submission JSON**: Create `.initia/submission.json` using the official schema.
-- **Custom Implementation (Core Logic)**: Link to the specific smart contract/module file you built.
-- **Power-Up (Interwoven Feature)**: Link to the frontend file implementing Auto-signing, Bridge, or Usernames.
-- **L2 Interaction TX**: Include a transaction hash/link showing real user interaction on your appchain.
-- **Demo Video URL**: Include a 1-3 minute walkthrough video (Loom/YouTube, public or unlisted).
-- **Implementation Detail**: Briefly explain your custom logic, chosen power-up, and ecosystem value add.
+- **Submission JSON**: Create `.initia/submission.json` and complete all required fields exactly as defined in [Submission & Eligibility Criteria](/hackathon/submission-requirements).
+- **Supporting Evidence**: Ensure your JSON includes valid paths to your core logic file and power-up frontend file, plus a real L2 interaction transaction.
+- **Demo Video URL**: Include a 1-3 minute walkthrough video (Loom/YouTube, publicly accessible via URL).
+- **README Summary**: Add a short project overview and implementation details section for judges.
 
 
 # Part 4: Debugging & Troubleshooting
@@ -180,5 +177,5 @@ If your AI agent is stuck or you need to see the source of truth:
 
 
 > **Mandatory:** Review the
-> [Submission & Technical Requirements](/hackathon/submission-requirements)
+> [Submission & Eligibility Criteria](/hackathon/submission-requirements)
 > to ensure you are eligible for prizes.
