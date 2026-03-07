@@ -1,5 +1,6 @@
 ---
-title: 'EVM Tutorial: MiniBank (Liquidity & Connectivity)'
+title: 'EVM Tutorial: MiniBank - Liquidity & Connectivity'
+icon: bridge
 ---
 
 This tutorial will guide you through building a liquidity-ready digital piggy
@@ -120,11 +121,6 @@ contract MiniBank {
 To verify your contract's logic, create a test file named `MiniBank.t.sol` in
 the `test` directory.
 
-<Tip>
-  **Pro Tip**: `testFail` is deprecated in newer versions of Foundry. Use
-  `vm.expectRevert()` for failure testing.
-</Tip>
-
 ```solidity wrap test/MiniBank.t.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
@@ -192,15 +188,11 @@ First, compile your contract and extract the hex bytecode:
 cd minibank
 
 # Compile with Foundry
-
 forge build
 
 # Extract bytecode (requires jq)
-
 # Ensure NO '0x' prefix and NO trailing newlines
-
 jq -r '.bytecode.object' out/MiniBank.sol/MiniBank.json | tr -d '\n' | sed 's/^0x//' > minibank.bin
-
 ```
 
 Then deploy the binary. **Find your Chain ID first** if you don't know it:
@@ -440,7 +432,7 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: '<YOUR_APPCHAIN_ID>',
+  chain_id: import.meta.env.VITE_APPCHAIN_ID,
   chain_name: 'minibank',
   pretty_name: 'MiniBank Appchain',
   network_type: 'testnet',
@@ -458,7 +450,7 @@ const customChain = {
   fees: {
     fee_tokens: [
       {
-        denom: '<YOUR_NATIVE_DENOM>',
+        denom: import.meta.env.VITE_NATIVE_DENOM,
         fixed_min_gas_price: 0,
         low_gas_price: 0,
         average_gas_price: 0,
@@ -467,7 +459,7 @@ const customChain = {
     ],
   },
   staking: {
-    staking_tokens: [{ denom: '<YOUR_NATIVE_DENOM>' }],
+    staking_tokens: [{ denom: import.meta.env.VITE_NATIVE_DENOM }],
   },
   metadata: {
     minitia: { type: 'minievm' },
@@ -475,9 +467,9 @@ const customChain = {
   },
   native_assets: [
     {
-      denom: '<YOUR_NATIVE_DENOM>',
+      denom: import.meta.env.VITE_NATIVE_DENOM,
       name: 'Native Token',
-      symbol: '<YOUR_NATIVE_SYMBOL>',
+      symbol: import.meta.env.VITE_NATIVE_SYMBOL,
       decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 18),
     },
   ],
@@ -598,17 +590,10 @@ export default App
 contract interaction logic.
 
 <Tip>
-  **Pro Tip:** For a cleaner UI, hide the numeric "up/down" arrows in your CSS:
-  ```css
-  input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  input[type=number] { -moz-appearance: textfield; }
-  ```
-  For `view` functions that depend on `msg.sender` (like
-  `myBalance`), you MUST provide a `from` address in your `eth_call` parameters
-  so the appchain knows whose balance to check.
-  This tutorial uses an EVM appchain with 18 decimals, so `parseEther` and
-  `formatEther` are appropriate. If your chain uses different decimals, switch
-  to `parseUnits` and `formatUnits` with your runtime decimals value.
+  **Pro Tip:** For `view` functions that depend on `msg.sender` (like
+  `myBalance`), provide a `from` address in your `eth_call` params so the
+  appchain resolves the correct user balance. This tutorial assumes 18
+  decimals, so `parseEther`/`formatEther` are used.
 </Tip>
 
 ```javascript wrap src/Bank.jsx
@@ -617,10 +602,10 @@ import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { encodeFunctionData, parseEther, formatEther } from 'viem'
 import { AccAddress } from '@initia/initia.js'
 
-const MINI_BANK_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
-const CHAIN_ID = '<YOUR_APPCHAIN_ID>' // Found in Step 2
-const NATIVE_DENOM = '<YOUR_NATIVE_DENOM>'
-const NATIVE_SYMBOL = '<YOUR_NATIVE_SYMBOL>'
+const MINI_BANK_ADDRESS = import.meta.env.VITE_MINIBANK_CONTRACT
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const NATIVE_DENOM = import.meta.env.VITE_NATIVE_DENOM
+const NATIVE_SYMBOL = import.meta.env.VITE_NATIVE_SYMBOL
 const JSON_RPC_URL = import.meta.env.VITE_JSON_RPC_URL ?? 'http://localhost:8545'
 const MINI_BANK_ABI = [
   { name: 'deposit', type: 'function', stateMutability: 'payable', inputs: [] },
@@ -845,37 +830,34 @@ export default Bank
 
 </Accordion>
 
-<Tip>
-  **Open the Frontend:**
-  ```bash wrap Start Vite Dev Server
-  cd minibank-frontend
-  npm run dev
-  ```
-  
-  Check the **browser console** if you encounter issues.
-</Tip>
-
 ## Step 5: Wallet Funding and UI Verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
 
-1. Open your browser wallet and copy your address (`init1...`).
-2. Give this prompt to your AI agent:
+1. Start the frontend:
+
+```bash wrap Start Vite Dev Server
+cd minibank-frontend
+npm run dev
+```
+
+Check the **browser console** if you encounter issues.
+
+2. Open your browser wallet and copy your address (`init1...`).
+3. Give this prompt to your AI agent, replacing `<YOUR_WALLET_ADDRESS>` with the address you just copied:
 
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 100 of my appchain's native tokens on L2.
 ```
 
-3. Connect your wallet in `minibank-frontend`.
-4. Deposit `1` token from the UI and confirm the wallet prompt.
-5. Confirm the displayed savings updates.
-6. Withdraw `0.5` token from the UI.
-7. Confirm the displayed savings updates again.
+4. Connect your wallet in `minibank-frontend`.
+5. Test the full flow by depositing and withdrawing from the UI, then confirm
+   the displayed savings state updates correctly after each action.
 
-If you get stuck, see the [High-Signal AI Debugging guide](../builder-guide#high-signal-ai-debugging).
+If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-# Power-Up: Interwoven Bridge
+# ⚡ Power-Up: Interwoven Bridge
 
 Adding bridge support allows users to bring liquidity from the broader Initia
 ecosystem into your rollup. This transforms your appchain from an isolated
@@ -883,9 +865,12 @@ sandbox into a connected part of the Interwoven Stack, providing users with a
 seamless UI to bridge tokens into your application for use.
 
 <Tip>
-  **Local Dev Limitation:** The Interwoven UI requires a registered chain ID to
-  resolve assets. While it may appear empty for your local-only appchain, adding
-  this button makes it easy for users to bridge tokens into your appchain.
+  **Local Dev Limitation:** The Interwoven UI only resolves registered chain IDs,
+  so your local appchain and token may not appear during local testing. You can
+  still add bridge functionality now. In your hackathon submission, explain the
+  user flow (for example: bridge INIT or other assets from L1 to your appchain,
+  then deposit them in MiniBank) and why this matters (faster onboarding,
+  easier liquidity access, and immediate utility in your app).
 </Tip>
 
 ## Step 6: Update the Frontend

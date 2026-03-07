@@ -1,5 +1,6 @@
 ---
-title: 'Move Tutorial: BlockForge Game (Invisible UX)'
+title: 'Move Tutorial: BlockForge Game - Invisible UX'
+icon: wand-magic-sparkles
 ---
 
 This tutorial will guide you through building a high-frequency on-chain game on
@@ -593,50 +594,39 @@ export default function Game() {
 Render `<Game />` from `src/App.jsx`.
 
   <Tip>
-    **Pro Tip: Move Frontend Address Rules:** For `MsgExecute`, `moduleAddress`
-    must stay **bech32**. For `rest.move.resource`, the struct tag must use the
-    module address in **hex**. Using `init1...::items::Inventory` will fail
-    with `invalid struct tag`.
-  </Tip>
-
-  <Tip>
     **Pro Tip: Refresh Delay After Transactions:** local Move state queries can
     lag briefly after a successful `requestTxSync`. Wait about 2 seconds before
     reloading inventory so the new state is visible.
   </Tip>
 </Accordion>
 
-<Tip>
-  **Open the Frontend:**
-  ```bash wrap Start Vite Dev Server
-  cd blockforge-frontend
-  npm run dev
-  ```
-  
-  Check the **browser console** if you encounter issues.
-</Tip>
-
 ## Step 5: Wallet Funding and UI Verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
 
-1. Open your browser wallet and copy your address (`init1...`).
-2. Give this prompt to your AI agent:
+1. Start the frontend:
+
+```bash wrap Start Vite Dev Server
+cd blockforge-frontend
+npm run dev
+```
+
+Check the **browser console** if you encounter issues.
+
+2. Open your browser wallet and copy your address (`init1...`).
+3. Give this prompt to your AI agent, replacing `<YOUR_WALLET_ADDRESS>` with the address you just copied:
 
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
-3. Connect your wallet in `blockforge-frontend`.
-4. Click `Mint Shard` three times.
-5. Confirm the displayed shard/relic counts update.
-6. Click `Craft Relic`.
-7. Confirm the inventory updates to reflect consumed shards and one relic.
+4. Connect your wallet in `blockforge-frontend`.
+5. Test the gameplay flow by minting shards, crafting a relic, and confirming the displayed inventory state updates correctly after each action.
 
-If you get stuck, see the [High-Signal AI Debugging guide](../builder-guide#high-signal-ai-debugging).
+If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-# Power-Up: Auto-signing (Session UX)
+# ⚡ Power-Up: Auto-signing
 
 To make your BlockForge game natively integrated with the Initia stack, you can
 enable Auto-signing to create a frictionless experience where players don't
@@ -675,29 +665,29 @@ Then, use the `useInterwovenKit` hook in your component to manage the session:
 
 ```tsx wrap Game.jsx
 const { initiaAddress, autoSign, requestTxSync } = useInterwovenKit()
-const chainId = '<YOUR_APPCHAIN_ID>'
+const CHAIN_ID = '<YOUR_APPCHAIN_ID>'
 
 // Check if auto-sign is active for this chain
-const isAutoSignEnabled = autoSign?.isEnabledByChain?.[chainId]
+const isAutoSignEnabled = autoSign?.isEnabledByChain?.[CHAIN_ID]
 
 const toggleAutoSign = async () => {
   if (isAutoSignEnabled) {
     try {
-      await autoSign?.disable(chainId)
+      await autoSign?.disable(CHAIN_ID)
     } catch (error) {
       const message = String(error?.response?.data?.message || error?.message || '')
       if (message.includes('authorization not found')) {
-        await autoSign?.enable(chainId, {
+        await autoSign?.enable(CHAIN_ID, {
           permissions: ["/initia.move.v1.MsgExecute"]
         })
-        await autoSign?.disable(chainId)
+        await autoSign?.disable(CHAIN_ID)
       } else {
         throw error
       }
     }
   } else {
     // Permissions are required for the session key to sign specific message types
-    await autoSign?.enable(chainId, { 
+    await autoSign?.enable(CHAIN_ID, { 
       permissions: ["/initia.move.v1.MsgExecute"] 
     })
   }
@@ -705,7 +695,7 @@ const toggleAutoSign = async () => {
 
 const handleAction = async () => {
   await requestTxSync({
-    chainId,
+    chainId: CHAIN_ID,
     autoSign: isAutoSignEnabled, // Enables headless signing flow
     feeDenom: isAutoSignEnabled ? '<YOUR_NATIVE_DENOM>' : undefined, // MANDATORY for invisible UX
     messages: [

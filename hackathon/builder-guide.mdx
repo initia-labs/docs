@@ -1,5 +1,6 @@
 ---
 title: 'Hackathon Builder Guide'
+icon: map
 ---
 
 # Transitioning to Your Own Idea
@@ -8,19 +9,16 @@ The Builder Guide is designed for developers who have already completed the
 initial environment setup. If you haven't yet launched your first appchain,
 please start with the [Step-by-Step Guide](/hackathon/hackathon-landing).
 
-### Readiness Checklist
+### Before You Continue
 
-Before proceeding, ensure you have completed these milestones:
+Quick check before you start building:
 
-- [ ] **Tools Installed**: You have `weave`, `initiad`, and your chosen VM CLI
-      (`minitiad`) in your PATH.
-      ([Step 5](/hackathon/hackathon-landing#step-5-ai-powered-initia-tool-setup-and-verification))
-- [ ] **Infrastructure Live**: Your rollup is running and your OPinit/Relayer
-      bots are active.
-      ([Step 7](/hackathon/hackathon-landing#step-7-setup-interwoven-bots-terminal))
-- [ ] **Keys Imported**: Your Gas Station mnemonic is imported into your local
-      `initiad` and `minitiad` keyrings.
-      ([Step 8](/hackathon/hackathon-landing#step-8-final-key-setup-terminal))
+- **Tools ready**: `weave`, `initiad`, and `minitiad` are installed and in your
+  PATH ([Step 5](/hackathon/hackathon-landing#step-5-ai-powered-initia-tool-setup-and-verification)).
+- **Infrastructure live**: your rollup and OPinit/Relayer bots are running
+  ([Step 7](/hackathon/hackathon-landing#step-7-setup-interwoven-bots-terminal)).
+- **Gas Station keys imported**: your mnemonic is available in local keyrings
+  ([Step 8](/hackathon/hackathon-landing#step-8-final-key-setup-terminal)).
 
 
 # Quick Reference: The Essentials
@@ -44,10 +42,7 @@ Before you can interact with your appchain via a browser wallet (like Keplr,
 Leap, or MetaMask), you need to fund your personal address from your Gas
 Station.
 
-1. Copy your wallet address:
-
-- Move / Wasm Track: Copy your `init1...` address.
-- EVM Track: Copy your `0x...` address.
+1. Copy your wallet address (`init1...`).
 
 2. Ask your AI agent to fund your wallet:
 
@@ -65,7 +60,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please write a <MOVE / EVM / WASM> module for <APP_NAME> with core functions <FUNCTION_1>, <FUNCTION_2>, ... and include unit tests that verify expected success and failure behavior for each function.
+    Using the `initia-appchain-dev` skill, please create a new <MOVE / EVM / WASM> contract project in a directory named <PROJECT_NAME>, implement the core logic for <APP_NAME>, and create/run unit tests that verify both success and failure paths.
     ```
 
 3.  **Deploy**: Instruct the AI to deploy your contract/module to your appchain.
@@ -73,7 +68,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, please deploy this module to my appchain.
+    Using the `initia-appchain-dev` skill, please build and deploy my contract/module from the <PROJECT_NAME> directory to my appchain using my Gas Station account. If this VM requires instantiate after deploy, run that too, then return the deployed address.
     ```
 
 4.  **On-Chain Verification**: Ask the AI to verify your live deployment with interactions and state queries.
@@ -81,7 +76,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     **Prompt:**
 
     ```terminal wrap
-    Using the `initia-appchain-dev` skill, I want to verify our live <CONTRACT_NAME> on my appchain. Please execute <FUNCTION_1> with realistic test inputs and then query state to confirm the expected result.
+    Using the `initia-appchain-dev` skill, I want to smoke test my live <CONTRACT_NAME> on my appchain. Please execute 2-3 realistic user actions, then query state after each step and confirm the observed results match expected behavior.
     ```
 
 <Tip>
@@ -90,7 +85,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
   interacting with it. Save these as soon as you have a working version!
 </Tip>
 
-# Part 2: Choose Your Blueprint (Satisfy Pillar 3)
+# Part 2: Choose Your Blueprint
 
 To qualify for the hackathon prizes, your project must implement at least one 
 Initia Native Feature (defined as Pillar 3 in the submission 
@@ -132,14 +127,16 @@ requirement.
 
 # Part 3: Making It Demo-Ready
 
-Judges want to see **On-chain Proof**. Use this checklist before submitting.
+Use this checklist to mirror the official
+[Submission & Eligibility Criteria](/hackathon/submission-requirements).
 
-- [ ] **Contract Address**: Your primary logic is deployed.
-- [ ] **Interaction TX**: You have a transaction hash of a user _interacting_
-      with your contract.
-- [ ] **Frontend**: You are using `InterwovenKit` for the wallet connection.
-- [ ] **Native Feature**: You've pointed to the code implementing an
-      Initia-native feature.
+- [ ] **Rollup Chain ID**: Include your appchain Chain ID.
+- [ ] **GitHub Repository**: Include a link to your public repository.
+- [ ] **Custom Implementation (Core Logic)**: Link to the specific smart contract/module file you built.
+- [ ] **Power-Up (Interwoven Feature)**: Link to the frontend file implementing Auto-signing, Bridge, or Usernames.
+- [ ] **L2 Interaction TX**: Include a transaction hash/link showing real user interaction on your appchain.
+- [ ] **Demo Video URL**: Include a short walkthrough video.
+- [ ] **Implementation Detail**: Briefly explain your custom logic, chosen power-up, and ecosystem value add.
 
 
 # Part 4: Debugging & Troubleshooting
@@ -148,7 +145,7 @@ Speed is everything in a hackathon, and debugging is where most time is lost.
 Use these professional workflows to unblock yourself, even when following the
 standard examples.
 
-### High-Signal AI Debugging
+### Debugging Workflow
 
 Whether you are building from scratch or running a blueprint example, errors are
 inevitable.
@@ -158,13 +155,14 @@ inevitable.
 2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is open in
     your project root. This allows it to reference your `package.json`, your
     `interwovenkit` initialization, and your specific chain configuration.
-3.  The Perfect Debugging Prompt: Provide the console error and ask your
-    AI agent to find the cause within your project.
+3.  Ask your AI agent to fix the issue directly, then paste the exact console
+    error below the question.
 
     **Prompt:**
 
     ```terminal wrap
-    I'm getting this [INSERT_CONSOLE_ERROR] in the browser. Looking at my codebase, why is my transaction failing and how do I fix it?
+    Please find and fix this error directly in my codebase, then tell me what changed.
+    [PASTE_CONSOLE_ERROR]
     ```
 
 ### Deep Dives & Source Truth

@@ -1,8 +1,9 @@
 ---
-title: 'Wasm Tutorial: MemoBoard (Human Identity)'
+title: 'Wasm Tutorial: MemoBoard - Human Identity'
+icon: user-group
 ---
 
-This tutorial will guide you through building a lightning-fast on-chain
+This tutorial will guide you through building an on-chain
 guestbook called MemoBoard. Users can post public messages, and the
 application prioritizes human-readable identity by resolving `.init` usernames.
 
@@ -288,6 +289,9 @@ Using the `initia-appchain-dev` skill, I want to smoke test our live MemoBoard c
 ```
 
 <Accordion title="Manual Approach: On-Chain Interaction">
+Submit one message transaction, then query contract state to confirm it was
+persisted on chain.
+
 ```bash wrap Post Message
 # If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
 minitiad tx wasm execute <YOUR_CONTRACT_ADDRESS> '{"post_message":{"message":"Hello!"}}' \
@@ -387,7 +391,7 @@ echo "MEMOBOARD_CONTRACT_ADDRESS=$MEMOBOARD_CONTRACT_ADDRESS"
 so the chain metadata, endpoints, and live contract address are explicit:
 
 ```bash wrap .env
-VITE_INITIA_CHAIN_ID=$APPCHAIN_ID
+VITE_APPCHAIN_ID=$APPCHAIN_ID
 VITE_CHAIN_NAME=social
 VITE_CHAIN_PRETTY_NAME=Social 1
 VITE_INITIA_RPC_URL=http://localhost:26657
@@ -431,7 +435,7 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: import.meta.env.VITE_INITIA_CHAIN_ID,
+  chain_id: import.meta.env.VITE_APPCHAIN_ID,
   chain_name: import.meta.env.VITE_CHAIN_NAME,
   pretty_name: import.meta.env.VITE_CHAIN_PRETTY_NAME,
   network_type: 'testnet',
@@ -581,7 +585,7 @@ import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { RESTClient } from '@initia/initia.js'
 import './Board.css'
 
-const chainId = import.meta.env.VITE_INITIA_CHAIN_ID
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
 const MEMO_BOARD_ADDRESS = import.meta.env.VITE_MEMOBOARD_CONTRACT_ADDRESS
 const rest = new RESTClient(import.meta.env.VITE_INITIA_REST_URL)
 
@@ -625,9 +629,9 @@ const Board = () => {
 
     try {
       // Use requestTxSync for local development transactions
-      // ALWAYS include the chainId to avoid RPC routing errors
+      // ALWAYS include CHAIN_ID to avoid RPC routing errors
       await requestTxSync({
-        chainId,
+        chainId: CHAIN_ID,
         messages: [
           {
             typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
@@ -746,36 +750,35 @@ export default App
 
 </Accordion>
 
-<Tip>
-  **Open the Frontend:**
-```bash wrap Start Vite Dev Server
-  cd memoboard-frontend
-  npm run dev
-  ```
-
-  Check the **browser console** if you encounter issues.
-</Tip>
-
 ## Step 5: Wallet Funding and UI Verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
 
-1. Open your browser wallet and copy your address (`init1...`).
-2. Give this prompt to your AI agent:
+1. Start the frontend:
+
+```bash wrap Start Vite Dev Server
+cd memoboard-frontend
+npm run dev
+```
+
+Check the **browser console** if you encounter issues.
+
+2. Open your browser wallet and copy your address (`init1...`).
+3. Give this prompt to your AI agent, replacing `<YOUR_WALLET_ADDRESS>` with the address you just copied:
 
 ```terminal wrap
 Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
-3. Connect your wallet in `memoboard-frontend`.
-4. Post a message from the UI.
-5. Confirm it appears in the message list after refresh/poll.
-6. If your UI supports it, verify sender identity/address rendering matches expectations.
+4. Connect your wallet in `memoboard-frontend`.
+5. Post a message from the UI.
+6. Confirm it appears in the message list after refresh.
+7. If your UI supports it, verify sender identity rendering matches expectations.
 
-If you get stuck, see the [High-Signal AI Debugging guide](../builder-guide#high-signal-ai-debugging).
+If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-# Power-Up: Initia Usernames
+# ⚡ Power-Up: Initia Usernames
 
 To make your MemoBoard natively integrated with the Initia stack, you can
 replace long, complex addresses with human-readable Initia Usernames (e.g.,
@@ -788,7 +791,7 @@ wallet on the Initia testnet.
 
 1.  Navigate to
     [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
-    and connect your browser wallet (e.g., Leap or Keplr).
+    and connect your browser wallet.
 2.  In the `Find a username` search box, enter your desired name. If it is
     available, you will see a green `Available` checkmark.
 3.  Crucial: Ensure the `Set as primary name` checkbox is selected.
@@ -874,7 +877,7 @@ import { RESTClient } from '@initia/initia.js'
 import { useInterwovenKit, useUsernameQuery } from '@initia/interwovenkit-react'
 import './Board.css'
 
-const CHAIN_ID = import.meta.env.VITE_INITIA_CHAIN_ID
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
 const REST_URL = import.meta.env.VITE_INITIA_REST_URL
 const CONTRACT_ADDRESS = import.meta.env.VITE_MEMOBOARD_CONTRACT_ADDRESS
 
