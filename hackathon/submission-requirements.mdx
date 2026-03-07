@@ -75,42 +75,73 @@ Access the official tools and documentation to build your project:
 - **L1 Testnet LCD:** `https://lcd.testnet.initia.xyz`
 - **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
 
-# 3. Submission Summary (Add to your README)
+# 3. Submission Package
 
-To assist our technical review process and ensure your project stands out,
-please include the following block at the top of your project's `README.md`.
+To support reliable automated verification, every submission repository must
+include this file:
 
-### Copy-Paste README Template
+- **Required path:** `.initia/submission.json`
+
+This JSON file is the source of truth for eligibility checks. Also include a
+human-readable summary in your `README.md`, but the grader should parse
+`.initia/submission.json`.
+
+### Required `.initia/submission.json` Template
+
+```json
+{
+  "project_name": "My Project",
+  "repo_url": "https://github.com/<org>/<repo>",
+  "commit_sha": "0123456789abcdef0123456789abcdef01234567",
+  "rollup_chain_id": "my-game-1",
+  "vm": "move",
+  "power_up": "auto-signing",
+  "core_logic_path": "blockforge/sources/items.move",
+  "power_up_frontend_path": "blockforge-frontend/src/Game.jsx",
+  "l2_interaction_tx": "0x...",
+  "demo_video_url": "https://youtu.be/..."
+}
+```
+
+### Validation Rules (Automated Checks)
+
+- `project_name`: Required. Non-empty string.
+- `repo_url`: Required. Reachable public GitHub repository URL.
+- `commit_sha`: Required. 40-character hex Git commit SHA.
+- `rollup_chain_id`: Required. Non-empty string.
+- `vm`: Required. One of `move`, `evm`, `wasm`.
+- `power_up`: Required. One of `auto-signing`, `interwoven-bridge`,
+  `initia-usernames`.
+- `core_logic_path`: Required. Repo-relative file path that exists at
+  `commit_sha`.
+- `power_up_frontend_path`: Required. Repo-relative file path that exists at
+  `commit_sha`.
+- `l2_interaction_tx`: Required. Non-empty transaction hash or explorer URL.
+- `demo_video_url`: Required for every submission. Provide a 1-3 minute walkthrough video (Loom/YouTube, public or unlisted).
+
+### Example README Submission Block
+
+Use this as an example for the top of your `README.md`:
 
 ```markdown
 ## Initia Hackathon Submission
 
 - **Project Name**: [Your Project Name]
+- **Submission JSON**: [Link to `.initia/submission.json` in this repo]
 
 ### Project Overview
 
 [Provide a 2-3 sentence description of your application. Why is it valuable and
 what problem does it solve?]
 
-### Technical Specification (Automated Verification)
-
-- **Rollup Chain ID**: [e.g. my-game-1]
-- **GitHub Repository**: [Link to public repo]
-- **Custom Implementation (Core Logic)**: [Link to the specific smart contract
-  or module file]
-- **Power-Up (Interwoven Feature)**: [Link to the specific frontend file
-  implementing the feature]
-- **L2 Interaction TX**: [Hash/Link to a primary functionality transaction]
-- **Demo Video URL**: [2-minute walkthrough via Loom, YouTube, etc.]
-
 ### Implementation Detail
 
 - **The Custom Implementation**: Briefly describe the unique logic you added.
-  What did you build that wasn't in the base template?
+  What original functionality did you design and implement?
 - **The Power-Up**: Which Interwoven feature did you use, and exactly how does
   it improve the user experience?
-- **The Value Add**: How does this application benefit the broader Initia
-  ecosystem? Why is it better as an appchain than a generic L1 dApp?
+- **The Value Add**: What meaningful value does this application create for
+  crypto users, and how does it specifically strengthen the Initia ecosystem?
 
 ### How to Run Locally
 
