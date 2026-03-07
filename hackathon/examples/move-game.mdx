@@ -261,7 +261,9 @@ minitiad move deploy --build \
   compatibility for the existing module. Preserve public function signatures and
   public struct abilities, or rename the module before republishing. If you see
   `BACKWARD_INCOMPATIBLE_MODULE_UPDATE`, this account already has a non-compatible
-  prior version of the module.
+  prior version of the module. Use a fresh funded deployer account on the same
+  chain, update `blockforge` named-address values to its hex, and deploy with
+  `--from <FRESH_ACCOUNT>`.
 </Tip>
 
 </Accordion>
@@ -381,7 +383,8 @@ NATIVE_DENOM=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas
 NATIVE_SYMBOL=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas[0].symbol // empty')
 [ -z "$NATIVE_SYMBOL" ] && NATIVE_SYMBOL="$NATIVE_DENOM"
 
-# This tutorial deploys from gas-station, so the module owner is gas-station's bech32 address.
+# By default this tutorial deploys from gas-station, so module owner = gas-station.
+# If you used the fresh account fallback in Step 2, query that deployer instead.
 BLOCKFORGE_MODULE_ADDRESS=$(minitiad keys show gas-station -a --keyring-backend test)
 
 echo "APPCHAIN_ID=$APPCHAIN_ID"
