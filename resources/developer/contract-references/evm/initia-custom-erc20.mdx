@@ -229,6 +229,11 @@ function burn(address from, uint256 amount) external burnable(from) onlyOwner
 Transfers tokens from one address to another, bypassing the usual access control
 checks. This function can only be called by the chain signer.
 
+<Info>
+  For Cosmos-side transfer handling in Initia ERC20 flows, `sudoTransfer` is
+  the key transfer hook used by chain-level logic.
+</Info>
+
 ```solidity
 function sudoTransfer(address sender, address recipient, uint256 amount) external onlyChain
 ```

@@ -17,7 +17,9 @@ Fee Token as an ERC20 token.
 Use validator (admin) account to update the chain parameter.
 
 <Warning>
-  The deployed ERC20 token must inherit the `InitiaERC20` contract.
+  The fee token ERC20 must include Initia ERC20 compatibility extensions.
+  Factory-deployed tokens satisfy this automatically. For custom deployments,
+  inherit `InitiaCustomERC20` (recommended for direct deployment).
 </Warning>
 
 ```ts
