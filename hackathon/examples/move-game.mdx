@@ -1,5 +1,6 @@
 ---
-title: 'Move Tutorial: BlockForge Game (Invisible UX)'
+title: 'Move Tutorial: BlockForge Game - Invisible UX'
+icon: wand-magic-sparkles
 ---
 
 This tutorial will guide you through building a high-frequency on-chain game on
@@ -19,7 +20,7 @@ By the end of this tutorial, you will have instructed your AI agent to:
 The following steps will instruct your AI agent to create these directories 
 inside your `my-initia-project` folder:
 
-```text
+```text wrap Project Structure
 my-initia-project/
 ├── blockforge/           # Move smart contract project
 └── blockforge-frontend/  # React frontend application
@@ -41,7 +42,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Verify the Smart Contract
+## Step 1: Create and Unit Test the Smart Contract
 
 Instead of writing the code yourself, instruct your AI agent to do it for you
 using the `initia-appchain-dev` skill. Your AI agent will generate the contract
@@ -66,98 +67,146 @@ If you prefer to create the Move module and project manually, follow these steps
 
 First, create a new Move package named `blockforge`:
 
-```bash wrap
+```bash wrap Create Move Package
+mkdir -p blockforge
+cd blockforge
 minitiad move new blockforge
 ```
 
-To ensure fast builds and access to the latest Initia features, we recommend
-setting up local dependencies by cloning the `movevm` repository into a `deps`
-folder:
+<Tip>
+  `minitiad move new blockforge` creates a package named `blockforge` in the
+  current working directory. Creating and entering the `blockforge/` directory
+  first keeps the generated package in the expected place.
+</Tip>
 
-```bash wrap
-mkdir -p blockforge/deps && cd blockforge/deps
-git clone --depth 1 https://github.com/initia-labs/movevm.git
-cd ../..
-```
+Now, update the `Move.toml` file to use the Initia stdlib dependency directly.
+Replace the content of `blockforge/Move.toml` with the following:
 
-Now, update the `Move.toml` file to use these dependencies and enable Move
-2.1 features. Replace the content of `blockforge/Move.toml` with the following:
-
-```toml wrap
+```toml wrap Move.toml
 [package]
 name = "blockforge"
 version = "0.0.1"
-edition = "2024.alpha"
 
 [dependencies]
 InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
-blockforge = "0x0" # Use a placeholder to be set during build
+blockforge = "_" # Supply via --named-addresses during build/test. Replace with the deployer hex before publishing if needed.
 std = "0x1"
 ```
 
-Next, delete the default `blockforge.move` file and create a new file named
-`blockforge/sources/items.move` with the following content.
+Next, create `blockforge/sources/items.move` with the following content.
 
-```move wrap
+```move wrap sources/items.move
 module blockforge::items {
+    use std::error;
     use std::signer;
 
-    /// Error codes
     const E_INSUFFICIENT_SHARDS: u64 = 1;
-    const E_NOT_INITIALIZED: u64 = 2;
+    const E_INVALID_INVENTORY_STATE: u64 = 2;
 
-    struct Inventory has key, store {
+    struct Inventory has key {
         shards: u64,
         relics: u64,
     }
 
-    /// Mint basic items called shards.
-    /// Automatically initializes inventory if it doesn't exist.
-    public entry fun mint_shard(account: &signer) acquires Inventory {
-        let addr = signer::address_of(account);
-        if (!exists<Inventory>(addr)) {
-            move_to(account, Inventory { shards: 1, relics: 0 });
-        } else {
-            let inventory = borrow_global_mut<Inventory>(addr);
-            inventory.shards = inventory.shards + 1;
-        }
+    struct InventoryView has copy, drop, store {
+        shards: u64,
+        relics: u64,
     }
 
-    /// Craft a relic by burning 2 shards
-    public entry fun craft_relic(account: &signer) acquires Inventory {
+    fun ensure_inventory(account: &signer) {
         let addr = signer::address_of(account);
-        assert!(exists<Inventory>(addr), E_NOT_INITIALIZED);
+        if (!exists<Inventory>(addr)) {
+            move_to(account, Inventory { shards: 0, relics: 0 });
+        };
+    }
 
-        let inventory = borrow_global_mut<Inventory>(addr);
-        assert!(inventory.shards >= 2, E_INSUFFICIENT_SHARDS);
+    public entry fun mint_shard(account: &signer) acquires Inventory {
+        ensure_inventory(account);
+
+        let inventory = borrow_global_mut<Inventory>(signer::address_of(account));
+        inventory.shards = inventory.shards + 1;
+    }
+
+    public entry fun craft_relic(account: &signer) acquires Inventory {
+        ensure_inventory(account);
+
+        let inventory = borrow_global_mut<Inventory>(signer::address_of(account));
+        assert!(inventory.shards >= 2, error::invalid_argument(E_INSUFFICIENT_SHARDS));
 
         inventory.shards = inventory.shards - 2;
         inventory.relics = inventory.relics + 1;
     }
 
-    /// Returns (shards, relics) for the given address.
     #[view]
-    public fun get_inventory(addr: address): (u64, u64) acquires Inventory {
+    public fun inventory_of(addr: address): InventoryView acquires Inventory {
         if (!exists<Inventory>(addr)) {
-            return (0, 0)
+            return InventoryView { shards: 0, relics: 0 }
         };
+
         let inventory = borrow_global<Inventory>(addr);
-        (inventory.shards, inventory.relics)
+        InventoryView {
+            shards: inventory.shards,
+            relics: inventory.relics,
+        }
+    }
+
+    #[view]
+    public fun shard_count(addr: address): u64 acquires Inventory {
+        inventory_of(addr).shards
+    }
+
+    #[view]
+    public fun relic_count(addr: address): u64 acquires Inventory {
+        inventory_of(addr).relics
     }
 }
 ```
 
-Once the files are created, you can verify everything is correct by building the
-project. Replace `<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with your deployment
-address hex (0x...).
+Add the following unit tests inside the same `module blockforge::items { ... }`
+block, immediately before the final closing `}` of `items.move`, so you can
+verify minting, crafting, and the insufficient-shards failure path:
 
-```bash wrap
-minitiad move build --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
+```move wrap Unit Tests
+    #[test(account = @blockforge)]
+    fun test_mint_shard_creates_inventory(account: &signer) acquires Inventory {
+        mint_shard(account);
+
+        let inventory = inventory_of(signer::address_of(account));
+        assert!(inventory.shards == 1, E_INVALID_INVENTORY_STATE);
+        assert!(inventory.relics == 0, E_INVALID_INVENTORY_STATE);
+    }
+
+    #[test(account = @blockforge)]
+    fun test_craft_relic_burns_two_shards(account: &signer) acquires Inventory {
+        mint_shard(account);
+        mint_shard(account);
+        craft_relic(account);
+
+        let inventory = inventory_of(signer::address_of(account));
+        assert!(inventory.shards == 0, E_INVALID_INVENTORY_STATE);
+        assert!(inventory.relics == 1, E_INVALID_INVENTORY_STATE);
+    }
+
+    #[test(account = @blockforge)]
+    #[expected_failure(abort_code = 0x10001, location = blockforge::items)]
+    fun test_craft_relic_requires_two_shards(account: &signer) acquires Inventory {
+        mint_shard(account);
+        craft_relic(account);
+    }
 ```
 
-If you see `BUILDING blockforge`, then BlockForge was built successfully.
+Once the files are created, verify everything is correct by building and testing
+the project. Replace `<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with your deployment
+address hex (`0x...`).
+
+```bash wrap Build Move Package
+minitiad move build --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
+minitiad move test --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
+```
+
+If the build succeeds and the tests pass, BlockForge is ready to deploy.
 
 </Accordion>
 
@@ -169,13 +218,13 @@ appchain using the Gas Station account.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the blockforge Move module located in the `blockforge` directory to my appchain using my Gas Station account.
+Using the `initia-appchain-dev` skill, please build and publish the blockforge Move module located in the `blockforge` directory to my appchain using my Gas Station account, then return the deployed module address.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
 First, get your Gas Station address and convert it to hex:
 
-```bash wrap
+```bash wrap Get Gas Station Hex Address
 GAS_STATION_BECH32=$(minitiad keys show gas-station -a --keyring-backend test)
 minitiad keys parse "$GAS_STATION_BECH32"
 ```
@@ -184,38 +233,89 @@ Then, build and publish the compiled module to your appchain. Substitute
 `<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>` with `0x` + the `bytes` value from
 the previous command.
 
-```bash wrap
+```bash wrap Publish Move Module
 cd blockforge
 
-# 1. Build the module with the correct hex named address and version
+# 1. Update Move.toml so [addresses].blockforge matches your deployer hex address.
+# 2. Build the module with the correct hex named address and version.
 minitiad move build --language-version=2.1 --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX>
 
-# 2. Publish the compiled bytecode
-minitiad tx move publish build/blockforge/bytecode_modules/items.mv \
+# 3. Deploy the package.
+minitiad move deploy --build \
+  --language-version=2.1 \
+  --named-addresses blockforge=<YOUR_HEX_ADDRESS_WITH_0X_PREFIX> \
   --from gas-station \
   --keyring-backend test \
   --chain-id <YOUR_APPCHAIN_ID> \
-  --gas auto --gas-adjustment 1.4 --yes --upgrade-policy COMPATIBLE
+  --gas auto --gas-adjustment 1.4 --yes
 ```
+
+<Note>
+  Move modules do not have a separate instantiate transaction. For this
+  tutorial, the first gameplay call (for example `mint_shard`) initializes
+  per-player inventory state on demand.
+</Note>
+
+<Tip>
+  If you are redeploying from the same account, Initia enforces backward
+  compatibility for the existing module. Preserve public function signatures and
+  public struct abilities, or rename the module before republishing. If you see
+  `BACKWARD_INCOMPATIBLE_MODULE_UPDATE`, this account already has a non-compatible
+  prior version of the module. Use a fresh funded deployer account on the same
+  chain, update `blockforge` named-address values to its hex, and deploy with
+  `--from <FRESH_ACCOUNT>`.
+</Tip>
 
 </Accordion>
 
-## Step 3: Fund your Browser Wallet
+## Step 3: Smoke Test the Deployed Contract On-Chain
 
-Before you can interact with the game through a frontend, your browser wallet
-needs tokens to pay for transaction fees.
+Before frontend work, smoke test the deployed module directly on chain. This
+keeps contract/module debugging separate from UI integration.
 
-**1. Get your Wallet Address:** Open your browser wallet and copy your address
-(it starts with `init1...`).
-
-**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
-prompt below with the address you just copied.
-
-**Prompt:**
+**Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, I want to smoke test our live BlockForge game. Using my Gas Station account on my appchain, please:
+1. Mint 3 shards.
+2. Check my inventory.
+3. Craft a relic.
+4. Check my inventory again.
 ```
+
+<Accordion title="Manual Approach: On-Chain Interaction">
+Here are the equivalent `minitiad` commands to interact with the module.
+
+```bash wrap Mint 3 Shards
+for i in {1..3}; do
+  minitiad tx move execute <YOUR_MODULE_ADDRESS> items mint_shard \
+    --from gas-station \
+    --keyring-backend test \
+    --chain-id <YOUR_APPCHAIN_ID> \
+    --gas auto --gas-adjustment 1.4 --yes \
+    --args '[]' --type-args '[]'
+  sleep 2
+done
+```
+
+```bash wrap Query Inventory
+minitiad query move resource <YOUR_WALLET_ADDRESS> <YOUR_MODULE_HEX_ADDRESS>::items::Inventory
+```
+
+```bash wrap Craft Relic
+minitiad tx move execute <YOUR_MODULE_ADDRESS> items craft_relic \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --gas auto --gas-adjustment 1.4 --yes \
+  --args '[]' --type-args '[]'
+```
+
+```bash wrap Query Inventory Again
+minitiad query move resource <YOUR_WALLET_ADDRESS> <YOUR_MODULE_HEX_ADDRESS>::items::Inventory
+```
+
+</Accordion>
 
 ## Step 4: Create a Frontend
 
@@ -239,17 +339,82 @@ The Mint Shard button should call the mint_shard function, and the Craft Relic b
 <Accordion title="Manual Approach: Scaffold and Connect">
 If you prefer to set up the frontend manually, follow these steps:
 
-**1. Project Setup:**
-Refer to the [Interwoven Kit Documentation](../../interwovenkit/introduction)
-for initial project scaffolding instructions.
+**1. Create the Project and Install Dependencies:**
 
-**2. Configure Providers:**
+Create a new Vite + React app and install the dependencies used by the working
+BlockForge frontend:
+
+```bash wrap Create Frontend Project
+npm create vite@latest blockforge-frontend -- --template react
+cd blockforge-frontend
+npm install
+npm install @initia/initia.js @initia/interwovenkit-react @tanstack/react-query wagmi buffer util
+npm install -D vite-plugin-node-polyfills
+```
+
+Then update `vite.config.js` so browser builds have the required Node polyfills:
+
+```js wrap vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
+
+export default defineConfig({
+  plugins: [
+    react(),
+    nodePolyfills({
+      globals: {
+        Buffer: true,
+        process: true,
+      },
+    }),
+  ],
+})
+```
+
+**2. Gather Runtime Values for Frontend Config:**
+
+Collect the values you will use for frontend configuration:
+
+```bash wrap Gather Frontend Values
+APPCHAIN_ID=$(curl -s http://localhost:26657/status | jq -r '.result.node_info.network')
+NATIVE_DENOM=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas[0].base // empty')
+[ -z "$NATIVE_DENOM" ] && NATIVE_DENOM=$(minitiad q bank total --output json | jq -r '.supply[0].denom')
+NATIVE_SYMBOL=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas[0].symbol // empty')
+[ -z "$NATIVE_SYMBOL" ] && NATIVE_SYMBOL="$NATIVE_DENOM"
+
+# By default this tutorial deploys from gas-station, so module owner = gas-station.
+# If you used the fresh account fallback in Step 2, query that deployer instead.
+BLOCKFORGE_MODULE_ADDRESS=$(minitiad keys show gas-station -a --keyring-backend test)
+
+echo "APPCHAIN_ID=$APPCHAIN_ID"
+echo "NATIVE_DENOM=$NATIVE_DENOM"
+echo "NATIVE_SYMBOL=$NATIVE_SYMBOL"
+echo "BLOCKFORGE_MODULE_ADDRESS=$BLOCKFORGE_MODULE_ADDRESS"
+```
+
+**3. Create `.env` from Runtime Values:**
+
+```bash wrap Create Frontend Env
+cat > .env <<EOF
+VITE_APPCHAIN_ID=$APPCHAIN_ID
+VITE_INITIA_RPC_URL=http://localhost:26657
+VITE_INITIA_REST_URL=http://localhost:1317
+VITE_INITIA_INDEXER_URL=http://localhost:8080
+VITE_NATIVE_DENOM=$NATIVE_DENOM
+VITE_NATIVE_SYMBOL=$NATIVE_SYMBOL
+VITE_NATIVE_DECIMALS=6
+VITE_BLOCKFORGE_MODULE_ADDRESS=$BLOCKFORGE_MODULE_ADDRESS
+EOF
+```
+
+**4. Set up Providers in `main.jsx`:**
 
 Wrap your application with `InterwovenKitProvider` to enable wallet
-connectivity. Ensure the `customChain` includes `fee_tokens` and
+connectivity. Ensure the `customChain` includes `fee_tokens`, `staking`, and
 `bech32_prefix`.
 
-```tsx main.jsx
+```tsx wrap main.jsx
 import { Buffer } from 'buffer'
 window.Buffer = Buffer
 window.process = { env: { NODE_ENV: 'development' } }
@@ -279,25 +444,29 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: '<YOUR_APPCHAIN_ID>',
+  chain_id: import.meta.env.VITE_APPCHAIN_ID,
   chain_name: 'BlockForge Appchain',
+  pretty_name: 'BlockForge',
   bech32_prefix: 'init',
   network_type: 'testnet',
   apis: {
-    rpc: [{ address: 'http://localhost:26657' }],
-    rest: [{ address: 'http://localhost:1317' }],
-    indexer: [{ address: 'http://localhost:8080' }],
+    rpc: [{ address: import.meta.env.VITE_INITIA_RPC_URL }],
+    rest: [{ address: import.meta.env.VITE_INITIA_REST_URL }],
+    indexer: [{ address: import.meta.env.VITE_INITIA_INDEXER_URL }],
   },
   fees: {
     fee_tokens: [
       {
-        denom: '<YOUR_NATIVE_DENOM>', 
-        fixed_min_gas_price: 0.15,
+        denom: import.meta.env.VITE_NATIVE_DENOM,
+        fixed_min_gas_price: 0,
         low_gas_price: 0,
         average_gas_price: 0,
         high_gas_price: 0
       },
     ],
+  },
+  staking: {
+    staking_tokens: [{ denom: import.meta.env.VITE_NATIVE_DENOM }],
   },
   metadata: {
     is_l1: false,
@@ -307,10 +476,10 @@ const customChain = {
   },
   native_assets: [
     {
-      denom: '<YOUR_NATIVE_DENOM>',
+      denom: import.meta.env.VITE_NATIVE_DENOM,
       name: 'Native Token',
-      symbol: '<YOUR_TOKEN_SYMBOL>',
-      decimals: 6
+      symbol: import.meta.env.VITE_NATIVE_SYMBOL,
+      decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 6),
     }
   ]
 }
@@ -321,7 +490,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="<YOUR_APPCHAIN_ID>"
+          defaultChainId={customChain.chain_id}
           customChain={customChain}
           customChains={[customChain]}
         >
@@ -333,70 +502,134 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 ```
 
+**5. Add the Game Component:**
+
+Then create `src/Game.jsx`:
+
+```jsx wrap Game.jsx
+import React, { useEffect, useState } from 'react'
+import { AccAddress, RESTClient } from '@initia/initia.js'
+import { MsgExecute } from '@initia/initia.proto/initia/move/v1/tx'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const REST_URL = import.meta.env.VITE_INITIA_REST_URL
+const MODULE_ADDRESS = import.meta.env.VITE_BLOCKFORGE_MODULE_ADDRESS
+const MODULE_ADDRESS_HEX = AccAddress.toHex(MODULE_ADDRESS)
+const INVENTORY_STRUCT_TAG = `${MODULE_ADDRESS_HEX}::items::Inventory`
+const rest = new RESTClient(REST_URL, { chainId: CHAIN_ID })
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const EMPTY_INVENTORY = { shards: 0, relics: 0 }
+
+export default function Game() {
+  const { initiaAddress, openConnect, requestTxSync } = useInterwovenKit()
+  const [inventory, setInventory] = useState(EMPTY_INVENTORY)
+  const [loading, setLoading] = useState(false)
+
+  const loadInventory = async (walletAddress) => {
+    if (!walletAddress) {
+      setInventory(EMPTY_INVENTORY)
+      return
+    }
+
+    setLoading(true)
+    try {
+      const resource = await rest.move.resource(walletAddress, INVENTORY_STRUCT_TAG)
+      setInventory({
+        shards: Number(resource.data?.shards ?? 0),
+        relics: Number(resource.data?.relics ?? 0),
+      })
+    } catch (error) {
+      const message = String(error?.response?.data?.message || error?.message || '')
+      if (message.includes('not found')) {
+        setInventory(EMPTY_INVENTORY)
+      } else {
+        throw error
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadInventory(initiaAddress)
+  }, [initiaAddress])
+
+  const execute = async (functionName) => {
+    if (!initiaAddress) {
+      openConnect()
+      return
+    }
+
+    await requestTxSync({
+      chainId: CHAIN_ID,
+      messages: [
+        {
+          typeUrl: '/initia.move.v1.MsgExecute',
+          value: MsgExecute.fromPartial({
+            sender: initiaAddress,
+            moduleAddress: MODULE_ADDRESS,
+            moduleName: 'items',
+            functionName,
+            typeArgs: [],
+            args: [],
+          }),
+        },
+      ],
+    })
+
+    await sleep(2000)
+    await loadInventory(initiaAddress)
+  }
+
+  return (
+    <div>
+      <button onClick={() => execute('mint_shard')}>Mint Shard</button>
+      <button onClick={() => execute('craft_relic')}>Craft Relic</button>
+      <p>Shards: {loading ? '...' : inventory.shards}</p>
+      <p>Relics: {loading ? '...' : inventory.relics}</p>
+    </div>
+  )
+}
+```
+
+Render `<Game />` from `src/App.jsx`.
+
   <Tip>
-    **Pro Tip: Move View Function Encoding:** Address arguments for `rest.move.view` MUST be 32-byte hex (padded to exactly 64 characters) and then Base64 encoded.
-    ```javascript
-    import { AccAddress } from '@initia/initia.js';
-    const hexAddr = AccAddress.toHex(address).replace('0x', '');
-    const paddedHex = hexAddr.padStart(64, '0');
-    const b64Addr = Buffer.from(paddedHex, 'hex').toString('base64');
-    ```
-    Also, remember to include a small delay (e.g., `setTimeout(() => fetchInventory(), 2000)`) after transactions before refreshing the state to allow the indexer to catch up.
+    **Pro Tip: Refresh Delay After Transactions:** local Move state queries can
+    lag briefly after a successful `requestTxSync`. Wait about 2 seconds before
+    reloading inventory so the new state is visible.
   </Tip>
 </Accordion>
 
-<Tip>
-  **Open the Frontend:**
-  ```bash wrap
-  cd blockforge-frontend
-  npm run dev
-  ```
-  
-  Check the **browser console** if you encounter issues.
-</Tip>
+## Step 5: Wallet Funding and UI Verification
 
-## Step 5: On-Chain Verification
+Ask your AI agent to fund your browser wallet, then verify frontend behavior
+manually in the browser:
 
-Finally, ask your AI agent to interact with your live appchain to prove
-the deployed contract works as expected.
+1. Start the frontend:
 
-**Example Prompt:**
+```bash wrap Start Vite Dev Server
+cd blockforge-frontend
+npm run dev
+```
+
+Check the **browser console** if you encounter issues.
+
+2. Open your browser wallet and copy your address (`init1...`).
+3. Give this prompt to your AI agent, replacing `<YOUR_WALLET_ADDRESS>` with the address you just copied:
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our live BlockForge game. Using my Gas Station account on my appchain, please:
-1. Mint 3 shards.
-2. Check my inventory.
-3. Craft a relic.
-4. Check my inventory again.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
-<Accordion title="Manual Approach: On-Chain Interaction">
-Here are the equivalent `minitiad` commands to interact with the module.
+4. Connect your wallet in `blockforge-frontend`.
+5. Test the gameplay flow by minting shards, crafting a relic, and confirming the displayed inventory state updates correctly after each action.
 
-**Mint 3 shards:**
+If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-```bash wrap
-for i in {1..3}; do
-  minitiad tx move execute <YOUR_MODULE_ADDRESS> items mint_shard \
-    --from gas-station \
-    --keyring-backend test \
-    --chain-id <YOUR_APPCHAIN_ID> \
-    --gas auto --gas-adjustment 1.4 --yes \
-    --args '[]' --type-args '[]'
-  sleep 2
-done
-```
-
-**Check your inventory:**
-
-```bash wrap
-minitiad query move view <YOUR_MODULE_ADDRESS> items get_inventory \
-    --args '["address:<YOUR_WALLET_ADDRESS>"]'
-```
-
-</Accordion>
-
-# Power-Up: Auto-signing (Session UX)
+# ⚡ Power-Up: Auto-signing
 
 To make your BlockForge game natively integrated with the Initia stack, you can
 enable Auto-signing to create a frictionless experience where players don't
@@ -421,7 +654,7 @@ Using the `initia-appchain-dev` skill, please modify my InterwovenKit configurat
 <Accordion title="Manual Approach: Auto-signing Logic">
 First, enable the feature in your provider:
 
-```tsx main.jsx
+```tsx wrap main.jsx
 <InterwovenKitProvider
   {...TESTNET}
   // Enables auto-signing for MoveVM transactions
@@ -433,19 +666,31 @@ First, enable the feature in your provider:
 
 Then, use the `useInterwovenKit` hook in your component to manage the session:
 
-```tsx Game.jsx
-const { autoSign, requestTxSync } = useInterwovenKit()
-const chainId = '<YOUR_APPCHAIN_ID>'
+```tsx wrap Game.jsx
+const { initiaAddress, autoSign, requestTxSync } = useInterwovenKit()
+const CHAIN_ID = '<YOUR_APPCHAIN_ID>'
 
 // Check if auto-sign is active for this chain
-const isAutoSignEnabled = autoSign?.isEnabledByChain?.[chainId]
+const isAutoSignEnabled = autoSign?.isEnabledByChain?.[CHAIN_ID]
 
 const toggleAutoSign = async () => {
   if (isAutoSignEnabled) {
-    await autoSign?.disable(chainId)
+    try {
+      await autoSign?.disable(CHAIN_ID)
+    } catch (error) {
+      const message = String(error?.response?.data?.message || error?.message || '')
+      if (message.includes('authorization not found')) {
+        await autoSign?.enable(CHAIN_ID, {
+          permissions: ["/initia.move.v1.MsgExecute"]
+        })
+        await autoSign?.disable(CHAIN_ID)
+      } else {
+        throw error
+      }
+    }
   } else {
     // Permissions are required for the session key to sign specific message types
-    await autoSign?.enable(chainId, { 
+    await autoSign?.enable(CHAIN_ID, { 
       permissions: ["/initia.move.v1.MsgExecute"] 
     })
   }
@@ -453,7 +698,7 @@ const toggleAutoSign = async () => {
 
 const handleAction = async () => {
   await requestTxSync({
-    chainId,
+    chainId: CHAIN_ID,
     autoSign: isAutoSignEnabled, // Enables headless signing flow
     feeDenom: isAutoSignEnabled ? '<YOUR_NATIVE_DENOM>' : undefined, // MANDATORY for invisible UX
     messages: [
@@ -471,12 +716,452 @@ const handleAction = async () => {
     ]
   })
 }
+
+return (
+  <div>
+    <button onClick={toggleAutoSign}>
+      {isAutoSignEnabled ? 'Disable Auto-Sign' : 'Enable Auto-Sign'}
+    </button>
+    <button onClick={handleAction}>
+      Mint With Current Auto-Sign Mode
+    </button>
+  </div>
+)
 ```
 
 <Tip>
   **Pro Tip:** You can check the exact expiration of the current session using `autoSign.expiredAtByChain[chainId]`.
 </Tip>
 </Accordion>
+
+If you want the complete finished frontend after applying the manual steps
+above, use the consolidated reference below.
+
+<Accordion title="Manual Approach: Final Frontend Reference">
+If you want a single copyable end-state after completing the manual steps
+above, use this consolidated reference. It combines:
+
+- runtime config from `.env`,
+- InterwovenKit provider wiring in `main.jsx`,
+- wallet connect/display in `App.jsx`, and
+- live Move inventory, actions, and auto-sign toggle flow in `Game.jsx`.
+
+**.env**
+
+```bash wrap .env
+VITE_BLOCKFORGE_MODULE_ADDRESS=<YOUR_MODULE_OWNER_BECH32>
+```
+
+**src/main.jsx**
+
+```jsx wrap src/main.jsx
+import { Buffer } from 'buffer'
+window.Buffer = Buffer
+window.process = { env: { NODE_ENV: 'development' } }
+
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import "@initia/interwovenkit-react/styles.css";
+import { injectStyles, InterwovenKitProvider, TESTNET } from "@initia/interwovenkit-react";
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import App from './App.jsx'
+import './index.css'
+
+injectStyles(InterwovenKitStyles);
+
+const queryClient = new QueryClient();
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+});
+
+const customChain = {
+  chain_id: '<YOUR_APPCHAIN_ID>',
+  chain_name: 'blockforge',
+  pretty_name: 'BlockForge',
+  network_type: 'testnet',
+  bech32_prefix: 'init',
+  logo_URIs: {
+    png: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.png',
+    svg: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg',
+  },
+  apis: {
+    rpc: [{ address: 'http://localhost:26657' }],
+    rest: [{ address: 'http://localhost:1317' }],
+    indexer: [{ address: 'http://localhost:8080' }],
+    'json-rpc': [{ address: 'http://localhost:8545' }],
+  },
+  fees: {
+    fee_tokens: [{
+      denom: '<YOUR_NATIVE_DENOM>',
+      fixed_min_gas_price: 0,
+      low_gas_price: 0,
+      average_gas_price: 0,
+      high_gas_price: 0
+    }],
+  },
+  staking: {
+    staking_tokens: [{ denom: '<YOUR_NATIVE_DENOM>' }]
+  },
+  metadata: {
+    is_l1: false,
+    minitia: {
+      type: 'minimove',
+    },
+  },
+  native_assets: [
+    {
+      denom: '<YOUR_NATIVE_DENOM>',
+      name: 'Native Token',
+      symbol: '<YOUR_TOKEN_SYMBOL>',
+      decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 6)
+    }
+  ]
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <InterwovenKitProvider
+          {...TESTNET}
+          defaultChainId={customChain.chain_id}
+          enableAutoSign={true}
+          customChain={customChain}
+          customChains={[customChain]}
+        >
+          <App />
+        </InterwovenKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>,
+)
+```
+
+**src/App.jsx**
+
+```jsx wrap src/App.jsx
+import React from 'react'
+import { useInterwovenKit } from "@initia/interwovenkit-react";
+import Game from './Game.jsx';
+
+function App() {
+  const { initiaAddress, openConnect, openWallet } = useInterwovenKit();
+
+  const shortenAddress = (addr) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 8)}...${addr.slice(-4)}`;
+  };
+
+  return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <header style={{
+        width: '100%',
+        maxWidth: '1200px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '2rem'
+      }}>
+        <h1 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0 }}>BlockForge</h1>
+
+        {!initiaAddress ? (
+          <button onClick={openConnect} className="btn btn-primary">Connect Wallet</button>
+        ) : (
+          <button onClick={openWallet} className="btn btn-secondary">
+            {shortenAddress(initiaAddress)}
+          </button>
+        )}
+      </header>
+
+      <main style={{ flex: 1, width: '100%', maxWidth: '760px', padding: '2rem' }}>
+        <div style={{ display: 'grid', gap: '1.5rem' }}>
+          <section className="card" style={{ display: 'grid', gap: '0.9rem' }}>
+            <p style={{ margin: 0, color: 'var(--fg-muted)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+              Local Rollup
+            </p>
+            <div>
+              <h2 style={{ fontSize: '2.2rem', margin: 0 }}>Items Workshop</h2>
+              <p style={{ color: 'var(--fg-muted)', margin: '0.75rem 0 0', lineHeight: 1.6 }}>
+                Connect a wallet to mint shards and craft relics against the deployed <code>items</code> module.
+              </p>
+            </div>
+          </section>
+
+          <Game />
+        </div>
+      </main>
+    </div>
+  )
+}
+
+export default App
+```
+
+**src/Game.jsx**
+
+```jsx wrap src/Game.jsx
+import React, { useEffect, useState } from 'react'
+import { AccAddress, RESTClient } from '@initia/initia.js'
+import { MsgExecute } from '@initia/initia.proto/initia/move/v1/tx'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+
+const CHAIN_ID = '<YOUR_APPCHAIN_ID>'
+const REST_URL = 'http://localhost:1317'
+const MODULE_ADDRESS = import.meta.env.VITE_BLOCKFORGE_MODULE_ADDRESS
+const MODULE_ADDRESS_HEX = AccAddress.toHex(MODULE_ADDRESS)
+const INVENTORY_STRUCT_TAG = `${MODULE_ADDRESS_HEX}::items::Inventory`
+const rest = new RESTClient(REST_URL, { chainId: CHAIN_ID })
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+const EMPTY_INVENTORY = { shards: 0, relics: 0 }
+
+function Game() {
+  const { initiaAddress, openConnect, requestTxSync, autoSign } = useInterwovenKit()
+  const [inventory, setInventory] = useState(EMPTY_INVENTORY)
+  const [isLoadingInventory, setIsLoadingInventory] = useState(false)
+  const [pendingAction, setPendingAction] = useState('')
+  const [isTogglingAutoSign, setIsTogglingAutoSign] = useState(false)
+  const [error, setError] = useState('')
+  const [txHash, setTxHash] = useState('')
+
+  const isConnected = Boolean(initiaAddress)
+  const isAutoSignEnabled = Boolean(autoSign?.isEnabledByChain?.[CHAIN_ID])
+
+  const loadInventory = async (address) => {
+    if (!address) {
+      setInventory(EMPTY_INVENTORY)
+      return
+    }
+
+    setIsLoadingInventory(true)
+    try {
+      const resource = await rest.move.resource(address, INVENTORY_STRUCT_TAG)
+      setInventory({
+        shards: Number(resource.data?.shards ?? 0),
+        relics: Number(resource.data?.relics ?? 0),
+      })
+      setError('')
+    } catch (fetchError) {
+      const message = String(fetchError?.response?.data?.message || fetchError?.message || '')
+      const notFound = fetchError?.response?.status === 500 && message.includes('not found')
+
+      if (notFound) {
+        setInventory(EMPTY_INVENTORY)
+        setError('')
+      } else {
+        setError(message || 'Failed to load inventory.')
+      }
+    } finally {
+      setIsLoadingInventory(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!initiaAddress) {
+      setInventory(EMPTY_INVENTORY)
+      setError('')
+      setTxHash('')
+      return
+    }
+
+    loadInventory(initiaAddress)
+  }, [initiaAddress])
+
+  const submitAction = async (functionName) => {
+    if (!initiaAddress) {
+      openConnect()
+      return
+    }
+
+    setPendingAction(functionName)
+    setError('')
+    setTxHash('')
+
+    try {
+      const result = await requestTxSync({
+        chainId: CHAIN_ID,
+        autoSign: isAutoSignEnabled,
+        feeDenom: isAutoSignEnabled ? '<YOUR_NATIVE_DENOM>' : undefined,
+        messages: [
+          {
+            typeUrl: '/initia.move.v1.MsgExecute',
+            value: MsgExecute.fromPartial({
+              sender: initiaAddress,
+              moduleAddress: MODULE_ADDRESS,
+              moduleName: 'items',
+              functionName,
+              typeArgs: [],
+              args: [],
+            }),
+          },
+        ],
+      })
+
+      await sleep(2000)
+      await loadInventory(initiaAddress)
+
+      const responseHash =
+        result?.txhash ||
+        result?.tx_response?.txhash ||
+        result?.transactionHash ||
+        ''
+      setTxHash(responseHash)
+    } catch (submitError) {
+      setError(
+        String(
+          submitError?.response?.data?.message ||
+          submitError?.message ||
+          'Transaction failed.',
+        ),
+      )
+    } finally {
+      setPendingAction('')
+    }
+  }
+
+  const toggleAutoSign = async () => {
+    if (!initiaAddress) {
+      openConnect()
+      return
+    }
+
+    setIsTogglingAutoSign(true)
+    setError('')
+
+    try {
+      if (isAutoSignEnabled) {
+        try {
+          await autoSign?.disable(CHAIN_ID)
+        } catch (disableError) {
+          const disableMessage = String(
+            disableError?.response?.data?.message ||
+            disableError?.message ||
+            '',
+          )
+
+          if (disableMessage.includes('authorization not found')) {
+            await autoSign?.enable(CHAIN_ID, {
+              permissions: ['/initia.move.v1.MsgExecute'],
+            })
+            await autoSign?.disable(CHAIN_ID)
+          } else {
+            throw disableError
+          }
+        }
+      } else {
+        await autoSign?.enable(CHAIN_ID, {
+          permissions: ['/initia.move.v1.MsgExecute'],
+        })
+      }
+    } catch (toggleError) {
+      setError(
+        String(
+          toggleError?.response?.data?.message ||
+          toggleError?.message ||
+          'Failed to update auto-sign.',
+        ),
+      )
+    } finally {
+      setIsTogglingAutoSign(false)
+    }
+  }
+
+  return (
+    <section className="card" style={{ display: 'grid', gap: '1.25rem' }}>
+      <div>
+        <p style={{ margin: 0, color: 'var(--fg-muted)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+          BlockForge
+        </p>
+        <h2 style={{ margin: '0.35rem 0 0', fontSize: '1.9rem' }}>Forge items on your appchain</h2>
+      </div>
+
+      <div style={{ display: 'grid', gap: '0.9rem', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))' }}>
+        <button
+          className="btn btn-primary"
+          type="button"
+          disabled={pendingAction === 'mint_shard'}
+          onClick={() => submitAction('mint_shard')}
+        >
+          {pendingAction === 'mint_shard' ? 'Minting...' : 'Mint Shard'}
+        </button>
+        <button
+          className="btn btn-secondary"
+          type="button"
+          disabled={pendingAction === 'craft_relic'}
+          onClick={() => submitAction('craft_relic')}
+        >
+          {pendingAction === 'craft_relic' ? 'Crafting...' : 'Craft Relic'}
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+        <div>
+          <p style={{ margin: 0, color: 'var(--fg-muted)', fontSize: '0.8rem', letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+            Auto-Sign
+          </p>
+          <p style={{ margin: '0.35rem 0 0', color: 'var(--fg-muted)' }}>
+            {isAutoSignEnabled ? 'Enabled for Move execute messages on this chain.' : 'Disabled. Wallet approval is required for each transaction.'}
+          </p>
+        </div>
+
+        <button className="btn btn-secondary" type="button" onClick={toggleAutoSign} disabled={isTogglingAutoSign}>
+          {isTogglingAutoSign ? 'Updating...' : isAutoSignEnabled ? 'Disable Auto-Sign' : 'Enable Auto-Sign'}
+        </button>
+      </div>
+
+      <section style={{ display: 'grid', gap: '0.9rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <p style={{ margin: 0, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--fg-muted)' }}>
+              Inventory
+            </p>
+            <p style={{ margin: '0.35rem 0 0', color: 'var(--fg-muted)' }}>
+              {isConnected ? initiaAddress : 'Connect a wallet to view your items.'}
+            </p>
+          </div>
+
+          {!isConnected ? (
+            <button className="btn btn-primary" type="button" onClick={openConnect}>
+              Connect Wallet
+            </button>
+          ) : (
+            <button className="btn btn-secondary" type="button" onClick={() => loadInventory(initiaAddress)}>
+              {isLoadingInventory ? 'Refreshing...' : 'Refresh Inventory'}
+            </button>
+          )}
+        </div>
+
+        <p>Shards: {isLoadingInventory ? '...' : inventory.shards}</p>
+        <p>Relics: {isLoadingInventory ? '...' : inventory.relics}</p>
+
+        {txHash ? <p>Latest tx: <code>{txHash}</code></p> : null}
+        {error ? <p>{error}</p> : null}
+      </section>
+    </section>
+  )
+}
+
+export default Game
+```
+
+This reference assumes:
+
+- your module owner is stored in `.env` as bech32,
+- `moduleAddress` in `MsgExecute` uses that bech32 value,
+- inventory reads use `rest.move.resource` with a hex struct tag.
+</Accordion>
+
+### Power-Up Verification
+
+1. Connect your wallet in `blockforge-frontend`.
+2. Enable Auto-sign and approve the one-time Auto-sign setup.
+3. Click `Mint Shard` and confirm the transaction completes without a new wallet signature prompt.
+4. Disable Auto-sign.
+5. Click `Mint Shard` again and confirm a wallet signature prompt is required.
 
 ## Next Steps
 
