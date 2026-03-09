@@ -1,5 +1,6 @@
 ---
 title: 'Your First Appchain: A Step-by-Step Guide'
+icon: play
 ---
 
 ## Build an Appchain with Your AI Agent
@@ -62,9 +63,9 @@ which `Virtual Machine (VM)` your AI agent will set up for you.
 
 To ensure a smooth setup, verify you have the following system tools installed:
 
-- [ ] **[Docker Desktop](https://www.docker.com/products/docker-desktop/)**: Required for running the bridge bots and relayer. **Must be running.**
-- [ ] **[Go (1.22+)](https://go.dev/doc/install)**: Required to build the appchain binaries.
-- [ ] **Track Specifics**:
+- **[Docker Desktop](https://www.docker.com/products/docker-desktop/)**: Required for running the bridge bots and relayer. **Must be running.**
+- **[Go (1.22+)](https://go.dev/doc/install)**: Required to build the appchain binaries.
+- **Track Specifics**:
     - **Move**: No extra tools required.
     - **EVM**: **[Foundry](https://book.getfoundry.sh/getting-started/installation)** (Forge) is recommended for contract development.
     - **Wasm**: **[Rust & Cargo](https://rustup.rs/)** are required for contract development.
@@ -105,9 +106,8 @@ You can run it whenever you need to initialize or reconfigure your setup.
   If you already ran `weave init` and want to create a new appchain, run the
   following commands first:
   ```bash wrap
-  rm -rf ~/.weave
-  initiad keys delete gas-station --keyring-backend test -y || true
-  minitiad keys delete gas-station --keyring-backend test -y || true
+  rm -rf ~/.weave ~/.initia ~/.minitia ~/.opinit
+  docker rm -f weave-relayer || true
   ```
 </Note>
 

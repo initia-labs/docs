@@ -1,8 +1,9 @@
 ---
-title: 'Wasm Tutorial: MemoBoard (Human Identity)'
+title: 'Wasm Tutorial: MemoBoard - Human Identity'
+icon: user-group
 ---
 
-This tutorial will guide you through building a lightning-fast on-chain
+This tutorial will guide you through building an on-chain
 guestbook called MemoBoard. Users can post public messages, and the
 application prioritizes human-readable identity by resolving `.init` usernames.
 
@@ -18,7 +19,7 @@ By the end of this tutorial, you will have:
 The following steps will instruct your AI agent to create these directories 
 inside your `my-initia-project` folder:
 
-```text
+```text wrap Project Structure
 my-initia-project/
 ├── memoboard/           # Rust smart contract project
 └── memoboard-frontend/  # React frontend application
@@ -40,7 +41,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Verify the Smart Contract
+## Step 1: Create and Unit Test the Smart Contract
 
 Instruct your AI agent to create the Rust (Wasm) contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
@@ -60,19 +61,40 @@ Your AI agent will generate the `memoboard` project and confirm that the Rust
 tests pass.
 
 <Accordion title="Manual Approach: The Rust Contract">
-If you prefer to see the Rust logic, here is a simplified version of what your AI agent would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
+If you prefer to see the Rust logic, here is a simplified but schema-accurate version of what your AI agent would generate. If doing this manually, save the following code in `src/contract.rs` inside your `memoboard` directory (ensure `src/lib.rs` exports the `contract` module).
+
+First create and enter the project directory:
+
+```bash wrap
+cargo new --lib --edition 2021 memoboard
+cd memoboard
+```
 
 **Important:** Ensure your `Cargo.toml` includes the following `[lib]` section
 to correctly generate the Wasm binary:
 
-```toml
+```toml wrap Cargo.toml
 [lib]
 crate-type = ["cdylib", "rlib"]
 ```
 
-```rust wrap
+Also ensure `Cargo.toml` includes these dependencies and features required by
+the example contract:
+
+```toml wrap Cargo.toml
+[features]
+library = []
+
+[dependencies]
+cosmwasm-schema = "2.0.4"
+cosmwasm-std = "2.0.4"
+cw-storage-plus = "2.0.0"
+thiserror = "1.0.31"
+```
+
+```rust wrap src/contract.rs
 use cosmwasm_schema::{cw_serde, QueryResponses};
-use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, Addr, StdError};
+use cosmwasm_std::{entry_point, to_json_binary, Binary, Deps, DepsMut, Env, MessageInfo, Response, StdResult, StdError};
 use cw_storage_plus::Item;
 use thiserror::Error;
 
@@ -80,14 +102,11 @@ use thiserror::Error;
 pub enum ContractError {
     #[error("{0}")]
     Std(#[from] StdError),
-
-    #[error("Unauthorized")]
-    Unauthorized {},
 }
 
 #[cw_serde]
 pub struct Memo {
-    pub sender: Addr,
+    pub sender: String,
     pub message: String,
 }
 
@@ -102,15 +121,15 @@ pub enum ExecuteMsg {
 }
 
 #[cw_serde]
-#[derive(QueryResponses)]
-pub enum QueryMsg {
-    #[returns(AllMessagesResponse)]
-    AllMessages {},
+pub struct MessagesResponse {
+    pub messages: Vec<Memo>,
 }
 
 #[cw_serde]
-pub struct AllMessagesResponse {
-    pub messages: Vec<Memo>,
+#[derive(QueryResponses)]
+pub enum QueryMsg {
+    #[returns(MessagesResponse)]
+    GetMessages {},
 }
 
 #[cfg_attr(not(feature = "library"), entry_point)]
@@ -124,12 +143,15 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
     match msg {
         ExecuteMsg::PostMessage { message } => {
             let mut messages = MESSAGES.load(deps.storage)?;
-            let sender = info.sender.clone();
-            messages.push(Memo { sender: info.sender, message });
+            messages.push(Memo {
+                sender: info.sender.to_string(),
+                message: message.clone(),
+            });
             MESSAGES.save(deps.storage, &messages)?;
             Ok(Response::new()
                 .add_attribute("action", "post_message")
-                .add_attribute("sender", sender.as_str()))
+                .add_attribute("sender", info.sender)
+                .add_attribute("message", message))
         }
     }
 }
@@ -137,9 +159,9 @@ pub fn execute(deps: DepsMut, _env: Env, info: MessageInfo, msg: ExecuteMsg) -> 
 #[cfg_attr(not(feature = "library"), entry_point)]
 pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
     match msg {
-        QueryMsg::AllMessages {} => {
+        QueryMsg::GetMessages {} => {
             let messages = MESSAGES.load(deps.storage)?;
-            to_json_binary(&AllMessagesResponse { messages })
+            to_json_binary(&MessagesResponse { messages })
         }
     }
 }
@@ -148,6 +170,7 @@ pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
 mod tests {
     use super::*;
     use cosmwasm_std::testing::{message_info, mock_dependencies, mock_env};
+    use cosmwasm_std::Addr;
     use cosmwasm_std::from_json;
 
     #[test]
@@ -165,11 +188,11 @@ mod tests {
         execute(deps.as_mut(), env.clone(), info, msg).unwrap();
 
         // Query
-        let res = query(deps.as_ref(), env, QueryMsg::AllMessages {}).unwrap();
-        let val: AllMessagesResponse = from_json(&res).unwrap();
+        let res = query(deps.as_ref(), env, QueryMsg::GetMessages {}).unwrap();
+        let val: MessagesResponse = from_json(&res).unwrap();
         assert_eq!(val.messages.len(), 1);
         assert_eq!(val.messages[0].message, "Hello!");
-        assert_eq!(val.messages[0].sender.as_str(), "user1");
+        assert_eq!(val.messages[0].sender, "user1");
     }
 }
 ```
@@ -184,7 +207,7 @@ using the Gas Station account.
 **Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Rust contract located in the `memoboard` directory to my appchain using my Gas Station account.
+Using the `initia-appchain-dev` skill, please build, publish, and instantiate the MemoBoard Rust contract located in the `memoboard` directory to my appchain using my Gas Station account, then return the deployed contract address.
 ```
 
 <Accordion title="Manual Approach: Deploy via CLI">
@@ -193,14 +216,13 @@ Using the `initia-appchain-dev` skill, please build and publish the MemoBoard Ru
 Standard `cargo build` binaries often fail validation on-chain. For WasmVM
 deployment, it is strongly recommended to use the CosmWasm Optimizer.
 
-**Note for Apple Silicon (M1/M2/M3):** You **MUST** use the
-`cosmwasm/optimizer-arm64:0.16.1` image variant or the build will be extremely
-slow and may fail.
+**Note for Apple Silicon (M1/M2/M3):** Use
+`cosmwasm/optimizer-arm64:0.17.0`.
 
-```bash wrap
+```bash wrap Optimizer Build Command
 # Run from the root of your project
 # Use 'optimizer' for x86_64 or 'optimizer-arm64' for Apple Silicon
-OPTIMIZER_IMAGE="cosmwasm/optimizer-arm64:0.16.1"
+OPTIMIZER_IMAGE="cosmwasm/optimizer-arm64:0.17.0"
 
 docker run --rm -v "$(pwd)/memoboard":/code \
   --mount type=volume,source="$(basename "$(pwd)")_cache",target=/code/target \
@@ -211,7 +233,7 @@ docker run --rm -v "$(pwd)/memoboard":/code \
 The optimized binary will be located in `./memoboard/artifacts/memoboard.wasm`.
 Now, store the code:
 
-```bash wrap
+```bash wrap Store Wasm Code
 # If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
 minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
   --from gas-station \
@@ -225,14 +247,14 @@ minitiad tx wasm store ./memoboard/artifacts/memoboard.wasm \
 If the `code_id` is not returned directly, wait for 5 seconds for indexing and
 then query the transaction hash:
 
-```bash wrap
+```bash wrap Get Code ID
 # Retrieve Code ID
 minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="store_code") | .attributes[] | select(.key=="code_id") | .value'
 ```
 
 Then, instantiate the contract:
 
-```bash wrap
+```bash wrap Instantiate Contract
 minitiad tx wasm instantiate <YOUR_CODE_ID> '{}' \
   --label "memoboard" \
   --from gas-station \
@@ -246,29 +268,45 @@ minitiad tx wasm instantiate <YOUR_CODE_ID> '{}' \
 
 Wait for 5 seconds for indexing and then query the transaction hash:
 
-```bash wrap
+```bash wrap Get Contract Address
 # Retrieve Contract Address
 minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="instantiate") | .attributes[] | select(.key=="_contract_address") | .value'
 ```
 
 </Accordion>
 
-## Step 3: Fund your Browser Wallet
+## Step 3: Smoke Test the Deployed Contract On-Chain
 
-Ensure your personal wallet has tokens to pay for the transaction to post a
-memo.
+Before frontend integration, smoke test your deployed contract directly on
+chain.
 
-**1. Get your Wallet Address:** Open your browser wallet and copy your address
-(it starts with `init1...`).
-
-**2. Send Tokens from Gas Station:** Replace `<YOUR_WALLET_ADDRESS>` in the
-prompt below with the address you just copied.
-
-**Prompt:**
+**Example Prompt:**
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
+Using the `initia-appchain-dev` skill, I want to smoke test our live MemoBoard contract. Using my Gas Station account on my appchain, please:
+1. Post a message: "Hello from Initia!"
+2. Query the board to see all messages.
 ```
+
+<Accordion title="Manual Approach: On-Chain Interaction">
+Submit one message transaction, then query contract state to confirm it was
+persisted on chain.
+
+```bash wrap Post Message
+# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
+minitiad tx wasm execute <YOUR_CONTRACT_ADDRESS> '{"post_message":{"message":"Hello!"}}' \
+  --from gas-station \
+  --keyring-backend test \
+  --chain-id <YOUR_APPCHAIN_ID> \
+  --gas auto --gas-adjustment 1.4 --yes
+```
+
+```bash wrap Query Messages
+sleep 5
+minitiad query wasm contract-state smart <YOUR_CONTRACT_ADDRESS> '{"get_messages":{}}'
+```
+
+</Accordion>
 
 ## Step 4: Create a Frontend
 
@@ -295,7 +333,7 @@ If you prefer to set up the frontend manually, follow these steps:
 npm create vite@latest memoboard-frontend -- --template react
 cd memoboard-frontend
 npm install
-npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js @initia/initia.proto
+npm install @initia/interwovenkit-react wagmi viem @tanstack/react-query @initia/initia.js
 npm install --save-dev vite-plugin-node-polyfills
 npm install buffer util
 ```
@@ -303,7 +341,7 @@ npm install buffer util
 **2. Configure Vite Polyfills:** Update `vite.config.js` to include the Node
 polyfills:
 
-```javascript wrap
+```javascript wrap vite.config.js
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
@@ -314,15 +352,61 @@ export default defineConfig({
     nodePolyfills({
       globals: {
         Buffer: true,
+        process: true,
       },
     }),
   ],
 })
 ```
 
-**3. Set up Providers in `main.jsx`:**
+Create the frontend files in this order so the imports line up cleanly:
 
-```javascript wrap
+1. `vite.config.js`
+2. `.env`
+3. `src/main.jsx`
+4. `src/Board.css`
+5. `src/Board.jsx`
+6. `src/App.jsx`
+
+**3. Gather Runtime Values for Frontend Config:** Right before creating `.env`,
+collect the values you will use:
+
+```bash wrap Gather Frontend Values
+APPCHAIN_ID=$(curl -s http://localhost:26657/status | jq -r '.result.node_info.network')
+NATIVE_DENOM=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas[0].base // empty')
+[ -z "$NATIVE_DENOM" ] && NATIVE_DENOM=$(minitiad q bank total --output json | jq -r '.supply[0].denom')
+NATIVE_SYMBOL=$(minitiad q bank denoms-metadata --output json | jq -r '.metadatas[0].symbol // empty')
+[ -z "$NATIVE_SYMBOL" ] && NATIVE_SYMBOL="$NATIVE_DENOM"
+
+# Use the contract address you retrieved in Step 2.
+MEMOBOARD_CONTRACT_ADDRESS=<YOUR_CONTRACT_ADDRESS>
+
+echo "APPCHAIN_ID=$APPCHAIN_ID"
+echo "NATIVE_DENOM=$NATIVE_DENOM"
+echo "NATIVE_SYMBOL=$NATIVE_SYMBOL"
+echo "MEMOBOARD_CONTRACT_ADDRESS=$MEMOBOARD_CONTRACT_ADDRESS"
+```
+
+**4. Add Runtime Configuration:** Create a `.env` file in `memoboard-frontend`
+so the chain metadata, endpoints, and live contract address are explicit:
+
+```bash wrap .env
+VITE_APPCHAIN_ID=$APPCHAIN_ID
+VITE_CHAIN_NAME=social
+VITE_CHAIN_PRETTY_NAME=Social 1
+VITE_INITIA_RPC_URL=http://localhost:26657
+VITE_INITIA_REST_URL=http://localhost:1317
+VITE_INITIA_INDEXER_URL=http://localhost:8080
+VITE_INITIA_JSON_RPC_URL=http://localhost:8545
+VITE_NATIVE_DENOM=$NATIVE_DENOM
+VITE_NATIVE_SYMBOL=$NATIVE_SYMBOL
+VITE_NATIVE_DECIMALS=6
+VITE_MEMOBOARD_CONTRACT_ADDRESS=$MEMOBOARD_CONTRACT_ADDRESS
+```
+
+**5. Set up Providers in `main.jsx`:**
+
+```javascript wrap src/main.jsx
 import { Buffer } from 'buffer'
 window.Buffer = Buffer
 window.process = { env: { NODE_ENV: 'development' } }
@@ -351,9 +435,9 @@ const wagmiConfig = createConfig({
 })
 
 const customChain = {
-  chain_id: '<YOUR_APPCHAIN_ID>',
-  chain_name: 'social',
-  pretty_name: 'Social Rollup',
+  chain_id: import.meta.env.VITE_APPCHAIN_ID,
+  chain_name: import.meta.env.VITE_CHAIN_NAME,
+  pretty_name: import.meta.env.VITE_CHAIN_PRETTY_NAME,
   network_type: 'testnet',
   bech32_prefix: 'init',
   logo_URIs: {
@@ -361,28 +445,37 @@ const customChain = {
     svg: 'https://raw.githubusercontent.com/initia-labs/initia-registry/main/testnets/initia/images/initia.svg',
   },
   apis: {
-    rpc: [{ address: 'http://localhost:26657' }],
-    rest: [{ address: 'http://localhost:1317' }],
-    indexer: [{ address: 'http://localhost:8080' }], // Placeholder REQUIRED for stability
+    rpc: [{ address: import.meta.env.VITE_INITIA_RPC_URL }],
+    rest: [{ address: import.meta.env.VITE_INITIA_REST_URL }],
+    indexer: [{ address: import.meta.env.VITE_INITIA_INDEXER_URL }], // Placeholder REQUIRED for stability
+    'json-rpc': [{ address: import.meta.env.VITE_INITIA_JSON_RPC_URL }],
   },
   fees: {
     fee_tokens: [
       {
-        denom: 'umin',
-        fixed_min_gas_price: 0.15,
-        low_gas_price: 0.15,
-        average_gas_price: 0.15,
-        high_gas_price: 0.15,
+        denom: import.meta.env.VITE_NATIVE_DENOM,
+        fixed_min_gas_price: 0,
+        low_gas_price: 0,
+        average_gas_price: 0,
+        high_gas_price: 0,
       },
     ],
   },
   staking: {
-    staking_tokens: [{ denom: 'umin' }],
+    staking_tokens: [{ denom: import.meta.env.VITE_NATIVE_DENOM }],
   },
   metadata: {
     minitia: { type: 'miniwasm' },
     is_l1: false, // REQUIRED for local appchains
   },
+  native_assets: [
+    {
+      denom: import.meta.env.VITE_NATIVE_DENOM,
+      name: 'Minitia',
+      symbol: import.meta.env.VITE_NATIVE_SYMBOL,
+      decimals: Number(import.meta.env.VITE_NATIVE_DECIMALS ?? 6),
+    },
+  ],
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
@@ -391,7 +484,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <QueryClientProvider client={queryClient}>
         <InterwovenKitProvider
           {...TESTNET}
-          defaultChainId="<YOUR_APPCHAIN_ID>"
+          defaultChainId={customChain.chain_id}
           customChain={customChain}
           customChains={[customChain]}
         >
@@ -403,12 +496,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 )
 ```
 
-**4. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
+**6. Create the `Board.jsx` Component:** Create `src/Board.jsx` and
 `src/Board.css` with the following content:
 
 **src/Board.css:**
 
-```css wrap
+```css wrap src/Board.css
 .board-container {
   max-width: 600px;
   margin: 40px auto;
@@ -486,25 +579,20 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 
 **src/Board.jsx:**
 
-```javascript wrap
+```javascript wrap src/Board.jsx
 import React, { useState, useEffect } from 'react'
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 import { RESTClient } from '@initia/initia.js'
-import { useDisconnect } from 'wagmi'
 import './Board.css'
 
-const MEMO_BOARD_ADDRESS = '<YOUR_CONTRACT_ADDRESS>'
-// RESTClient is the primary client for queries in initia.js v1.0+
-const rest = new RESTClient('http://localhost:1317', {
-  chainId: 'social-1',
-})
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const MEMO_BOARD_ADDRESS = import.meta.env.VITE_MEMOBOARD_CONTRACT_ADDRESS
+const rest = new RESTClient(import.meta.env.VITE_INITIA_REST_URL)
 
 const Board = () => {
   const [messages, setMessages] = useState([])
   const [content, setContent] = useState('')
-  const { initiaAddress, requestTxSync, openConnect, openWallet } =
-    useInterwovenKit()
-  const { disconnect } = useDisconnect()
+  const { initiaAddress, requestTxSync } = useInterwovenKit()
 
   const truncate = (addr) => `${addr.slice(0, 10)}...${addr.slice(-6)}`
 
@@ -512,13 +600,13 @@ const Board = () => {
     try {
       // Wasm queries via REST MUST be base64 encoded
       const queryData = Buffer.from(
-        JSON.stringify({ all_messages: {} }),
+        JSON.stringify({ get_messages: {} }),
       ).toString('base64')
       const res = await rest.wasm.smartContractState(
         MEMO_BOARD_ADDRESS,
         queryData,
       )
-      setMessages((res?.messages || []).reverse())
+      setMessages([...(res?.messages ?? [])].reverse())
     } catch (e) {
       console.error('Failed to fetch messages', e)
     }
@@ -532,7 +620,7 @@ const Board = () => {
   }, [])
 
   const handlePostMessage = async () => {
-    if (!content || !initiaAddress) return
+    if (!content || !initiaAddress || !MEMO_BOARD_ADDRESS) return
 
     // Encode execute msg to Uint8Array (bytes)
     const msg = new TextEncoder().encode(
@@ -541,9 +629,9 @@ const Board = () => {
 
     try {
       // Use requestTxSync for local development transactions
-      // ALWAYS include the chainId to avoid RPC routing errors
+      // ALWAYS include CHAIN_ID to avoid RPC routing errors
       await requestTxSync({
-        chainId: 'social-1',
+        chainId: CHAIN_ID,
         messages: [
           {
             typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
@@ -567,29 +655,12 @@ const Board = () => {
   return (
     <div className="board-container">
       <h1 className="board-title">MemoBoard</h1>
-      {!initiaAddress ? (
-        <div className="auth-section">
-          <button onClick={openConnect} className="btn-primary">
-            Connect Wallet
-          </button>
-        </div>
-      ) : (
-        <div className="auth-section">
-          <div className="wallet-info">
-            <button
-              onClick={openWallet}
-              style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-            >
-              {truncate(initiaAddress)}
-            </button>
-            <button
-              onClick={() => disconnect()}
-              className="btn-secondary"
-              style={{ marginLeft: '12px' }}
-            >
-              Disconnect
-            </button>
-          </div>
+      {!initiaAddress && (
+        <div
+          className="message-card"
+          style={{ marginBottom: 24, textAlign: 'center', color: '#666' }}
+        >
+          Connect your wallet from the app header to post a memo.
         </div>
       )}
       {initiaAddress && (
@@ -624,52 +695,90 @@ const Board = () => {
 export default Board
 ```
 
+**7. Create `App.jsx`:** Create the app shell that renders the board and owns the wallet button:
+
+```javascript wrap src/App.jsx
+import React from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import Board from './Board.jsx'
+
+function shortenAddress(addr) {
+  if (!addr) return ''
+  return `${addr.slice(0, 8)}...${addr.slice(-4)}`
+}
+
+function App() {
+  const { initiaAddress, openConnect, openWallet } = useInterwovenKit()
+
+  return (
+    <div>
+      <header
+        style={{
+          maxWidth: 600,
+          margin: '40px auto 0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16,
+        }}
+      >
+        <div>
+          <p style={{ margin: 0, color: '#666', fontSize: 12, fontWeight: 700 }}>
+            Initia Wasm Appchain
+          </p>
+          <h1 style={{ margin: '8px 0 0' }}>MemoBoard</h1>
+        </div>
+
+        {!initiaAddress ? (
+          <button onClick={openConnect} className="btn-primary">
+            Connect Wallet
+          </button>
+        ) : (
+          <button onClick={openWallet} className="btn-primary">
+            {shortenAddress(initiaAddress)}
+          </button>
+        )}
+      </header>
+
+      <Board />
+    </div>
+  )
+}
+
+export default App
+```
+
 </Accordion>
 
-<Tip>
-  **Open the Frontend:**
-  ```bash wrap
-  cd memoboard-frontend
-  npm run dev
-  ```
+## Step 5: Wallet Funding and UI Verification
 
-  Check the **browser console** if you encounter issues.
-</Tip>
+Ask your AI agent to fund your browser wallet, then verify frontend behavior
+manually in the browser:
 
-## Step 5: On-Chain Verification
+1. Start the frontend:
 
-Finally, ask your AI agent to interact with your live appchain to prove
-the deployed contract works as expected.
+```bash wrap Start Vite Dev Server
+cd memoboard-frontend
+npm run dev
+```
 
-**Example Prompt:**
+Check the **browser console** if you encounter issues.
+
+2. Open your browser wallet and copy your address (`init1...`).
+3. Give this prompt to your AI agent, replacing `<YOUR_WALLET_ADDRESS>` with the address you just copied:
 
 ```terminal wrap
-Using the `initia-appchain-dev` skill, I want to verify our live MemoBoard contract. Using my Gas Station account on my appchain, please:
-1. Post a message: "Hello from Initia!"
-2. Query the board to see all messages.
+Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
-<Accordion title="Manual Approach: On-Chain Interaction">
-**Post Message:**
-```bash wrap
-# If the chain requires fees, add the --fees flag (e.g., --fees 1000000umin)
-minitiad tx wasm execute <YOUR_CONTRACT_ADDRESS> '{"post_message":{"message":"Hello!"}}' \
-  --from gas-station \
-  --keyring-backend test \
-  --chain-id <YOUR_APPCHAIN_ID> \
-  --gas auto --gas-adjustment 1.4 --yes
-```
+4. Connect your wallet in `memoboard-frontend`.
+5. Post a message from the UI.
+6. Confirm it appears in the message list after refresh.
+7. If your UI supports it, verify sender identity rendering matches expectations.
 
-**Query Messages:**
+If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-```bash wrap
-# Note: minitiad query commands typically do not support the --chain-id flag
-minitiad query wasm contract-state smart <YOUR_CONTRACT_ADDRESS> '{"all_messages":{}}'
-```
-
-</Accordion>
-
-# Power-Up: Initia Usernames
+# ⚡ Power-Up: Initia Usernames
 
 To make your MemoBoard natively integrated with the Initia stack, you can
 replace long, complex addresses with human-readable Initia Usernames (e.g.,
@@ -682,7 +791,7 @@ wallet on the Initia testnet.
 
 1.  Navigate to
     [app.testnet.initia.xyz/usernames](https://app.testnet.initia.xyz/usernames)
-    and connect your browser wallet (e.g., Leap or Keplr).
+    and connect your browser wallet.
 2.  In the `Find a username` search box, enter your desired name. If it is
     available, you will see a green `Available` checkmark.
 3.  Crucial: Ensure the `Set as primary name` checkbox is selected.
@@ -701,32 +810,314 @@ Using the `initia-appchain-dev` skill, please add Initia username support to my 
 ```
 
 <Accordion title="Manual Approach: Username Resolution">
-The `useInterwovenKit()` hook provides the `username` for the currently connected wallet. To implement this, update your `src/Board.jsx` to extract the `username` and update the render logic:
+The `useInterwovenKit()` hook provides the `username` for the currently connected wallet, and `useUsernameQuery(address)` resolves usernames for other sender addresses. This requires `@initia/interwovenkit-react` `2.4.6` or newer. To implement this, update your wallet button component (for example `src/App.jsx`) and your board message list like this:
 
 ```tsx wrap
-// 1. Extract username from the hook
-const { initiaAddress, username, openConnect, openWallet, requestTxSync } = useInterwovenKit();
+import { useInterwovenKit, useUsernameQuery } from '@initia/interwovenkit-react'
 
-// 2. Update the Header to show the username
+function MessageRow({ message }) {
+  const { initiaAddress, username } = useInterwovenKit()
+  const { data: senderUsername } = useUsernameQuery(message.sender)
+  const senderLabel =
+    message.sender === initiaAddress
+      ? username
+        ? username
+        : truncate(message.sender)
+      : senderUsername
+        ? senderUsername
+        : truncate(message.sender)
+
+  return (
+    <div className="message-sender">
+      {senderLabel}
+    </div>
+  )
+}
+
+// 1. Extract username from the hook
+const { initiaAddress, username, openConnect, openWallet } = useInterwovenKit()
+
+// 2. Update the connected wallet button to show the username
 <div className="wallet-info">
-  <button onClick={openWallet} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+  <button
+    onClick={openWallet}
+    style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+  >
     {username ? username : truncate(initiaAddress)}
   </button>
-  <button onClick={() => disconnect()} className="btn-secondary">
-    Disconnect
-  </button>
 </div>
 
-// 3. Update the Feed to show the username for the current user's posts
-<div className="message-sender">
-  {m.sender === initiaAddress && username ? username : truncate(m.sender)}
-</div>
+// 3. Update the feed rows to resolve usernames for sender addresses
+messages.map((message, index) => (
+  <MessageRow key={`${message.sender}-${index}`} message={message} />
+))
 ```
 
 <Tip>
-  **Pro Tip:** This pattern ensures that the connected user sees their identity reflected immediately in the application (in both the header and their own posts). For other participants in the feed, we continue to show the truncated address until a global resolver is implemented.
+  **Pro Tip:** Keep `useUsernameQuery(address)` inside a child row component like `MessageRow`. Do not call it directly inside a parent component's `.map()` callback.
 </Tip>
 </Accordion>
+
+If you want the complete finished frontend after applying the manual steps
+above, use the consolidated reference below.
+
+<Accordion title="Manual Approach: Final Frontend Reference">
+If you want a single copyable end-state after completing the manual steps above, use this consolidated reference. It combines:
+
+- live Wasm contract query and execute flow,
+- wallet connect/display via `App.jsx`,
+- runtime config from `.env`, and
+- Initia username support for the connected wallet and sender rows.
+
+**src/Board.jsx**
+
+```jsx wrap src/Board.jsx
+import React, { useEffect, useMemo, useState } from 'react'
+import { RESTClient } from '@initia/initia.js'
+import { useInterwovenKit, useUsernameQuery } from '@initia/interwovenkit-react'
+import './Board.css'
+
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const REST_URL = import.meta.env.VITE_INITIA_REST_URL
+const CONTRACT_ADDRESS = import.meta.env.VITE_MEMOBOARD_CONTRACT_ADDRESS
+
+function truncate(value) {
+  if (!value) return ''
+  if (value.length < 18) return value
+  return `${value.slice(0, 10)}...${value.slice(-6)}`
+}
+
+function MessageRow({ message, index, initiaAddress, username }) {
+  const { data: senderUsername } = useUsernameQuery(message.sender)
+
+  const senderLabel =
+    message.sender === initiaAddress
+      ? username
+        ? username
+        : truncate(message.sender)
+      : senderUsername
+        ? senderUsername
+        : truncate(message.sender)
+
+  return (
+    <div className="message-card">
+      <div className="message-sender">{senderLabel}</div>
+      <div className="message-content">{message.message}</div>
+      <div
+        style={{
+          marginTop: 8,
+          fontSize: 12,
+          color: '#999',
+        }}
+      >
+        Message #{index + 1}
+      </div>
+    </div>
+  )
+}
+
+export default function Board() {
+  const { initiaAddress, username, requestTxSync } = useInterwovenKit()
+  const [messages, setMessages] = useState([])
+  const [draft, setDraft] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [posting, setPosting] = useState(false)
+  const [error, setError] = useState('')
+
+  const rest = useMemo(() => new RESTClient(REST_URL), [])
+
+  const fetchMessages = async () => {
+    if (!CONTRACT_ADDRESS) {
+      setError('Missing VITE_MEMOBOARD_CONTRACT_ADDRESS in .env')
+      setLoading(false)
+      return
+    }
+
+    setLoading(true)
+    try {
+      const queryData = Buffer.from(
+        JSON.stringify({ get_messages: {} }),
+      ).toString('base64')
+      const res = await rest.wasm.smartContractState(CONTRACT_ADDRESS, queryData)
+      setMessages(Array.isArray(res.messages) ? res.messages : [])
+      setError('')
+    } catch (e) {
+      console.error('Failed to fetch messages', e)
+      setError('Failed to load board messages')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchMessages()
+  }, [])
+
+  const handlePostMessage = async (event) => {
+    event.preventDefault()
+
+    const trimmed = draft.trim()
+    if (!trimmed || !initiaAddress || !CONTRACT_ADDRESS) return
+
+    setPosting(true)
+    setError('')
+
+    try {
+      const msg = new TextEncoder().encode(
+        JSON.stringify({ post_message: { message: trimmed } }),
+      )
+
+      await requestTxSync({
+        chainId: CHAIN_ID,
+        messages: [
+          {
+            typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+            value: {
+              sender: initiaAddress,
+              contract: CONTRACT_ADDRESS,
+              msg,
+              funds: [],
+            },
+          },
+        ],
+      })
+
+      setDraft('')
+      await new Promise((resolve) => setTimeout(resolve, 1200))
+      await fetchMessages()
+    } catch (e) {
+      console.error('Transaction failed', e)
+      setError('Posting the message failed')
+    } finally {
+      setPosting(false)
+    }
+  }
+
+  return (
+    <div className="board-container">
+      <h1 className="board-title">MemoBoard</h1>
+
+      {!initiaAddress && (
+        <div
+          className="message-card"
+          style={{ marginBottom: 24, textAlign: 'center', color: '#666' }}
+        >
+          Connect your wallet from the app header to post a memo.
+        </div>
+      )}
+
+      {initiaAddress && (
+        <div style={{ marginBottom: 32 }}>
+          <h3 className="section-header">Post a Memo</h3>
+          <p style={{ color: '#777', marginBottom: 12 }}>
+            Posting as {username ? username : truncate(initiaAddress)}
+          </p>
+          <form className="input-group" onSubmit={handlePostMessage}>
+            <input
+              className="memo-input"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="Write a memo..."
+            />
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={posting || !draft.trim()}
+            >
+              {posting ? 'Posting...' : 'Post Message'}
+            </button>
+          </form>
+        </div>
+      )}
+
+      <div className="messages-list">
+        <h3 className="section-header">Board Feed</h3>
+
+        {error && (
+          <div className="message-card" style={{ color: '#b42318' }}>
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="message-card">Loading board state...</div>
+        ) : messages.length === 0 ? (
+          <div className="message-card">No messages yet.</div>
+        ) : (
+          messages.map((message, index) => (
+            <MessageRow
+              key={`${message.sender}-${index}`}
+              message={message}
+              index={index}
+              initiaAddress={initiaAddress}
+              username={username}
+            />
+          ))
+        )}
+      </div>
+    </div>
+  )
+}
+```
+
+**src/App.jsx**
+
+```jsx wrap src/App.jsx
+import React from 'react'
+import { useInterwovenKit } from '@initia/interwovenkit-react'
+import Board from './Board.jsx'
+
+function shortenAddress(addr) {
+  if (!addr) return ''
+  return `${addr.slice(0, 8)}...${addr.slice(-4)}`
+}
+
+export default function App() {
+  const { initiaAddress, username, openConnect, openWallet } = useInterwovenKit()
+
+  return (
+    <div>
+      <header
+        style={{
+          maxWidth: 600,
+          margin: '40px auto 0',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 16,
+        }}
+      >
+        <div>
+          <p style={{ margin: 0, color: '#666', fontSize: 12, fontWeight: 700 }}>
+            Initia Wasm Appchain
+          </p>
+          <h1 style={{ margin: '8px 0 0' }}>MemoBoard</h1>
+        </div>
+
+        {!initiaAddress ? (
+          <button onClick={openConnect} className="btn-primary">
+            Connect Wallet
+          </button>
+        ) : (
+          <button onClick={openWallet} className="btn-primary">
+            {username ? username : shortenAddress(initiaAddress)}
+          </button>
+        )}
+      </header>
+
+      <Board />
+    </div>
+  )
+}
+```
+
+</Accordion>
+
+### Power-Up Verification
+
+1. Connect your wallet in `memoboard-frontend`.
+2. Confirm the header button shows your `.init` username (not only a truncated address).
+3. Post a message and confirm the sender label for your message uses your username.
 
 ## Next Steps
 
