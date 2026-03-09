@@ -71,27 +71,27 @@ Then configure `Move.toml`:
 
 ```toml title="move/Move.toml"
 [package]
-name = "side_quest"
+name = "lotteria"
 version = "0.0.0"
 
 [dependencies]
-InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
+InitiaStdlib = { git = "https://github.com/initia-labs/move-natives.git", subdir = "initia_stdlib", rev = "v1.1.10" }
 
 [addresses]
+lottery = "0x<YOUR_HEX_ADDRESS>"
 std = "0x1"
-side_quest = "0x<YOUR_HEX_ADDRESS>"
 ```
 
 The `InitiaStdlib` dependency gives you access to core modules like `coin`,
 `signer`, `event`, and `object`, which are essential building blocks for any
 onchain application.
 
-<Tip>
-`rev = "main"` always pulls the latest version of the stdlib, which is appropriate for Initia
-rollups tracking the current chain version. If you hit a compilation error after pulling fresh
-dependencies, your `initiad`/`minitiad` binary may be out of sync with the stdlib. Run
-`weave update` or re-install `minitiad` to match the chain's current version.
-</Tip>
+<Warning>
+This example is pinned to `v1.1.10`, which matches the local rollup version used in this guide.
+Using a newer stdlib revision can still compile but fail during `minitiad move deploy`. If your
+toolchain is on a different Initia release, update `rev` to the matching stdlib version before
+deploying.
+</Warning>
 
 ### Writing the Lottery Module
 
@@ -204,6 +204,7 @@ minitiad move deploy \
   --path ./move \
   --upgrade-policy COMPATIBLE \
   --from $MODULE_OWNER \
+  --keyring-backend test \
   --gas auto --gas-adjustment 1.5 \
   --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
@@ -245,6 +246,7 @@ To execute a function (e.g., buying a ticket):
 minitiad tx move execute $MODULE_ADDRESS lottery buy_ticket \
   --args '["u64:1000000"]' \
   --from $MODULE_OWNER \
+  --keyring-backend test \
   --gas auto --gas-adjustment 1.5 \
   --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
