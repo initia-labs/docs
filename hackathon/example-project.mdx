@@ -47,9 +47,16 @@ Create a `move/` directory in your project root with the following structure:
 ```
 move/
 ├── sources/
-│   └── lottery.move
+│   ├── lottery.move
+│   └── lottery_random.move
 └── Move.toml
 ```
+
+<Note>
+The lottery module depends on a helper module `lottery_random` for onchain randomness (winner
+selection). Both source files are required for compilation. Copy both from the
+[reference repo](https://github.com/yonnie-park/side-quest/tree/main/move/sources).
+</Note>
 
 Your `Move.toml` defines the package metadata, dependencies, and the address
 your module will be published under. You need to convert your Initia address to
@@ -78,6 +85,13 @@ side_quest = "0x<YOUR_HEX_ADDRESS>"
 The `InitiaStdlib` dependency gives you access to core modules like `coin`,
 `signer`, `event`, and `object`, which are essential building blocks for any
 onchain application.
+
+<Tip>
+`rev = "main"` always pulls the latest version of the stdlib, which is appropriate for Initia
+rollups tracking the current chain version. If you hit a compilation error after pulling fresh
+dependencies, your `initiad`/`minitiad` binary may be out of sync with the stdlib. Run
+`weave update` or re-install `minitiad` to match the chain's current version.
+</Tip>
 
 ### Writing the Lottery Module
 
@@ -133,19 +147,30 @@ transactions:
 ```move
 public entry fun buy_ticket(
     account: &signer,
+    fa_metadata: Object<Metadata>,
     amount: u64,
 ) acquires LotteryState {
     let state = borrow_global_mut<LotteryState>(@side_quest);
     assert!(state.is_active, 1); // lottery must be active
     assert!(amount >= state.ticket_price, 2); // must pay full price
 
-    // Transfer tokens from buyer to the module
+    // Transfer tokens from buyer to the module address
+    primary_fungible_store::transfer(account, fa_metadata, @side_quest, amount);
+
     // Add buyer's address to the ticket list
     let buyer = signer::address_of(account);
     vector::push_back(&mut state.tickets, buyer);
     state.prize_pool = state.prize_pool + amount;
 }
 ```
+
+<Note>
+`fa_metadata` is the `Object<Metadata>` handle for the fungible asset accepted as payment
+(e.g., the INIT token on your rollup). The actual token transfer is performed by
+`primary_fungible_store::transfer` — without this call, no funds move onchain. Refer to the
+[full source](https://github.com/yonnie-park/side-quest) for how the metadata object is
+resolved at runtime.
+</Note>
 
 **View functions:**
 
@@ -173,13 +198,14 @@ Deploy to your running appchain:
 ```bash
 export MODULE_OWNER=gas-station  # or your key name
 export L2_CHAIN_ID=<your-chain-id>
+export FEE_DENOM=umin  # replace with your rollup's configured fee token denom
 
 minitiad move deploy \
   --path ./move \
   --upgrade-policy COMPATIBLE \
   --from $MODULE_OWNER \
   --gas auto --gas-adjustment 1.5 \
-  --gas-prices 0.15umin \
+  --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
   --chain-id $L2_CHAIN_ID
 ```
@@ -187,14 +213,31 @@ minitiad move deploy \
 Use `minitiad` (not `initiad`) here because you are deploying to your Layer 2
 rollup, not the Initia L1.
 
+<Note>
+The fee denom (`umin` above) depends on the fee token you configured during `weave init`. To
+confirm the correct denom for your rollup, run:
+
+```bash
+minitiad query bank total --node http://localhost:26657
+```
+
+and use the denom shown for your rollup's native token.
+</Note>
+
 To verify the deployment, query a view function:
 
 ```bash
 export MODULE_ADDRESS=0x<YOUR_HEX_ADDRESS>
 
 minitiad query move view $MODULE_ADDRESS lottery get_lottery_state \
+  --args '[]' \
   --node http://localhost:26657
 ```
+
+<Note>
+Even for view functions that take no arguments, `--args '[]'` is required. Omitting it will
+cause a CLI parse error.
+</Note>
 
 To execute a function (e.g., buying a ticket):
 
@@ -203,7 +246,7 @@ minitiad tx move execute $MODULE_ADDRESS lottery buy_ticket \
   --args '["u64:1000000"]' \
   --from $MODULE_OWNER \
   --gas auto --gas-adjustment 1.5 \
-  --gas-prices 0.15umin \
+  --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
   --chain-id $L2_CHAIN_ID
 ```
@@ -246,13 +289,19 @@ import { InterwovenKitProvider } from '@initia/interwovenkit-react'
 function App() {
   return (
     <InterwovenKitProvider
-      defaultChainId="<your-chain-id>"
+      chainId="<your-chain-id>"
     >
       <LotteryApp />
     </InterwovenKitProvider>
   )
 }
 ```
+
+<Warning>
+The prop is `chainId`, not `defaultChainId`. Passing an unrecognized prop is silently ignored,
+and the provider will fall back to `interwoven-1` (Initia mainnet). Your local rollup
+transactions will fail to broadcast.
+</Warning>
 
 ### Connecting a Wallet
 
@@ -261,8 +310,11 @@ Here is the `Connection` component from Side Quest:
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
-import { truncate } from "@initia/utils"
 import styles from "./Connection.module.css"
+
+// truncate is a simple display utility — inline it or use your own preferred implementation
+const truncate = (str: string, maxLength = 12): string =>
+  str.length > maxLength ? `${str.slice(0, 6)}...${str.slice(-4)}` : str
 
 const Connection = () => {
   const { address, username, openWallet, openConnect } = useInterwovenKit()
@@ -286,6 +338,12 @@ const Connection = () => {
 
 export default Connection
 ```
+
+<Note>
+`@initia/utils` is not a published npm package. The `truncate` helper shown in the Side Quest
+source is an internal utility. The inline version above is equivalent — or copy it directly
+from the [reference repo](https://github.com/yonnie-park/side-quest).
+</Note>
 
 When no wallet is connected, the component renders a "Connect" button that
 calls `openConnect` to launch the wallet connection drawer. Once connected, it
@@ -394,13 +452,18 @@ async function fetchLotteryState() {
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ args: [] }),
+      body: JSON.stringify({ type_args: [], args: [] }),
     }
   )
   const data = await res.json()
   return data
 }
 ```
+
+<Note>
+The request body must include both `type_args` and `args`, even when both are empty. Omitting
+`type_args` will return a 400 Bad Request error from the LCD endpoint.
+</Note>
 
 You can wrap this in a React hook with polling or use a library like TanStack
 Query for automatic refetching.
