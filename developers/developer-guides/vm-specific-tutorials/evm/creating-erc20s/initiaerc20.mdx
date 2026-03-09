@@ -1,0 +1,34 @@
+---
+title: InitiaERC20
+---
+
+InitiaERC20 is Initia's native token standard for EVM appchains. It extends the
+ERC20 standard with additional modifiers and functions required for full
+compatibility with the Cosmos SDK and Initia's core products. See the
+[InitiaERC20 contract reference](/resources/developer/contract-references/evm/initia-erc20)
+for implementation details.
+
+<Warning>
+  **Do not deploy plain ERC20 contracts** on Initia EVM appchains. Tokens that
+  do not follow the InitiaERC20 standard will not display correctly in Initia's
+  products and will have limited transfer and bridging functionalities.
+</Warning>
+
+Developers looking to create and deploy ERC20s on EVM appchains have two
+options:
+
+1. For creating standard ERC20 tokens, use the
+   [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory)
+   contract (which deploys the
+   [ERC20](/resources/developer/contract-references/evm/erc20) contract).
+2. For creating ERC20 tokens with custom functionality, inherit and extend the
+   [InitiaERC20](/resources/developer/contract-references/evm/initia-erc20)
+   contract.
+
+We strongly recommend using one of these two methods to create your tokens.
+
+<Note>
+  For Initia's products to correctly display your token's symbol, logo, and
+  other details, it must still be added to the [Initia
+  Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction).
+</Note>

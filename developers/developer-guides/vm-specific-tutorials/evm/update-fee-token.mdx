@@ -1,5 +1,5 @@
 ---
-title: Update Fee with ERC20 Token
+title: Updating the Fee Token
 ---
 
 ## Prerequisites
@@ -17,7 +17,8 @@ Fee Token as an ERC20 token.
 Use validator (admin) account to update the chain parameter.
 
 <Warning>
-  The deployed ERC20 token must inherit the `InitiaERC20` contract.
+  The deployed ERC20 token must follow the InitiaERC20 standard—i.e. use the
+  `ERC20` contract (factory-created) or inherit from `InitiaERC20` (custom).
 </Warning>
 
 ```ts

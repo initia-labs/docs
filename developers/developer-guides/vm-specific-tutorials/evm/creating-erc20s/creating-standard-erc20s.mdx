@@ -1,13 +1,12 @@
 ---
-title: Creating Standard ERC20s via ERC20Factory
+title: Using ERC20Factory
 ---
 
-[Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/erc20-factory)
-
-For developers looking to create standard ERC20 tokens on EVM rollups, we
-recommend using the
+To create standard ERC20s, you can use the
 [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory)
-contract.
+contract. Tokens created via this factory use the
+[ERC20](/resources/developer/contract-references/evm/erc20) contract and are
+fully compatible with the chain and Initia's core products.
 
 ## Project Setup
 
@@ -57,15 +56,15 @@ touch .env
 
 This file will store your private environment variables, such as your wallet's
 private key and the deployed ERC20Factory contract address. These values are
-required for signing transactions and interacting with the MiniEVM.
+required for signing transactions and interacting with the chain's EVM module.
 
-The `ERC20Factory` contract is automatically deployed on all MiniEVM rollups as
+The `ERC20Factory` contract is automatically deployed on all EVM appchains as
 part of the chain’s bootstrapping process.
 
 To retrieve the deployed factory address, query
-`{ROLLUP_REST_URL}/minievm/evm/v1/contracts/erc20_factory`.
+`{APPCHAIN_REST_URL}/evm/v1/contracts/erc20_factory`.
 
-`{ROLLUP_REST_URL}` refers to the REST endpoint of the rollup you are
+`{APPCHAIN_REST_URL}` refers to the REST endpoint of the chain you are
 interacting with.
 
 Example:
@@ -166,7 +165,7 @@ Load the environment variables:
 <Note>
   You can also find factory addresses on the
   [Networks](/resources/developer/initia-l1) page or by calling the
-  `/minievm/evm/v1/contracts/erc20_factory` endpoint on any MiniEVM rollup.
+  `/minievm/evm/v1/contracts/erc20_factory` endpoint on any EVM appchain.
 </Note>
 
 ```js

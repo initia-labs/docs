@@ -1,0 +1,38 @@
+---
+title: ERC20
+---
+
+GitHub:
+[ERC20](https://github.com/initia-labs/initia-evm-contracts/blob/main/src/ERC20.sol)
+
+## Overview
+
+The `ERC20` contract is used by the
+[ERC20Factory](/resources/developer/contract-references/evm/erc20-factory) to
+create standard tokens. It does not self-register in the constructor—the factory
+calls `register_erc20_from_factory` after deployment.
+
+For custom ERC20 tokens with additional logic, use
+[InitiaERC20](/resources/developer/contract-references/evm/initia-erc20)
+instead.
+
+## Key Features
+
+- **metadataSealed**: Prevents metadata changes after sealing. Set via
+  `updateMetadata` by authority.
+- **updateMetadata**: One-time metadata update by authority (gov).
+- **sudoMint / sudoBurn**: Chain signer operations for bridging and module
+  interactions.
+
+## Constructor
+
+```solidity
+constructor(string memory _name, string memory _symbol, uint8 _decimals, bool _metadataSealed)
+```
+
+| Name              | Type            | Description                                       |
+| ----------------- | --------------- | ------------------------------------------------- |
+| `_name`           | `string memory` | The name of the token.                            |
+| `_symbol`         | `string memory` | The symbol of the token.                          |
+| `_decimals`       | `uint8`         | The number of decimals.                           |
+| `_metadataSealed` | `bool`          | If true, metadata cannot be updated by authority. |

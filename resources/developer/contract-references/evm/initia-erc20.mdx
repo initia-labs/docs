@@ -13,14 +13,9 @@ support for Cosmos blockchain interactions. This contract inherits from multiple
 contracts including `IERC20`, `Ownable`, `ERC20Registry`, `ERC165`, and
 `ERC20ACL`.
 
-<Warning>
-The InitiaERC20 contract is only meant to be used by the [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory) contract. It is not meant to be used directly and does not have the necessary modifiers for full compatibility with the MiniEVM.
-
-To deploy a custom ERC20 token, developers should use the
-[InitiaCustomERC20](/resources/developer/contract-references/evm/initia-custom-erc20)
-contract instead.
-
-</Warning>
+It can be used in two ways: via the
+[ERC20Factory](/resources/developer/contract-references/evm/erc20-factory) for
+standard tokens, or inherited directly for custom tokens with additional logic.
 
 ## Inheritance
 
@@ -55,10 +50,13 @@ contract instead.
 
 ## Constructor
 
-Initializes the contract with the token's name, symbol, and decimals.
+Initializes the contract with the token's name, symbol, and decimals. The
+`register_erc20` modifier registers the token with the ERC20 registry.
+InitiaERC20 is used for custom deployments only; factory-created tokens use the
+[ERC20](/resources/developer/contract-references/evm/erc20) contract.
 
 ```solidity
-constructor(string memory _name, string memory _symbol, uint8 _decimals) {
+constructor(string memory _name, string memory _symbol, uint8 _decimals) register_erc20 {
     name = _name;
     symbol = _symbol;
     decimals = _decimals;
@@ -228,11 +226,26 @@ function mint(address to, uint256 amount) external mintable(to) onlyOwner
 
 ### `burn`
 
-Burns tokens from a specified address, ensuring the sender is not a module
-address. This function can only be called by the owner.
+Burns tokens from the caller's address, ensuring the sender is not a module
+address.
 
 ```solidity
-function burn(address from, uint256 amount) external burnable(from) onlyOwner
+function burn(uint256 amount) external burnable(msg.sender)
+```
+
+#### Parameters
+
+| Name     | Type      | Description                   |
+| -------- | --------- | ----------------------------- |
+| `amount` | `uint256` | The amount of tokens to burn. |
+
+### `burnFrom`
+
+Burns tokens from a specified address on behalf of the caller, ensuring the
+address is not a module address. Requires prior allowance approval.
+
+```solidity
+function burnFrom(address from, uint256 amount) external burnable(from) returns (bool)
 ```
 
 #### Parameters
@@ -241,6 +254,12 @@ function burn(address from, uint256 amount) external burnable(from) onlyOwner
 | -------- | --------- | ------------------------------------ |
 | `from`   | `address` | The address whose tokens are burned. |
 | `amount` | `uint256` | The amount of tokens to burn.        |
+
+#### Returns
+
+| Type   | Description                        |
+| ------ | ---------------------------------- |
+| `bool` | `true` if the burn was successful. |
 
 ### `sudoTransfer`
 
@@ -258,35 +277,3 @@ function sudoTransfer(address sender, address recipient, uint256 amount) externa
 | `sender`    | `address` | The address sending the tokens.   |
 | `recipient` | `address` | The address receiving the tokens. |
 | `amount`    | `uint256` | The amount of tokens to transfer. |
-
-### `sudoMint`
-
-Mints new tokens to a specified address, bypassing the usual access control
-checks. This function can only be called by the chain signer.
-
-```solidity
-function sudoMint(address to, uint256 amount) external onlyChain
-```
-
-#### Parameters
-
-| Name     | Type      | Description                       |
-| -------- | --------- | --------------------------------- |
-| `to`     | `address` | The address receiving the tokens. |
-| `amount` | `uint256` | The amount of tokens to mint.     |
-
-### `sudoBurn`
-
-Burns tokens from a specified address, bypassing the usual access control
-checks. This function can only be called by the chain signer.
-
-```solidity
-function sudoBurn(address from, uint256 amount) external onlyChain
-```
-
-#### Parameters
-
-| Name     | Type      | Description                          |
-| -------- | --------- | ------------------------------------ |
-| `from`   | `address` | The address whose tokens are burned. |
-| `amount` | `uint256` | The amount of tokens to burn.        |
