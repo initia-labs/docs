@@ -8,31 +8,34 @@ For developers looking to create standard ERC20 tokens on EVM rollups, we
 recommend using the
 [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory)
 contract. For most teams, this is the lowest-risk path because it deploys a
-token implementation that already includes Initia ERC20 compatibility
-extensions.
+token implementation that already includes the required Initia chain integration
+hooks (including `sudoTransfer`).
 
 ## Production Readiness Checklist
 
-Before treating a token as ready for broad ecosystem support:
+Before treating a factory-deployed token as ready for support across Initia
+products (for example, Initia Scan, InterwovenKit, Wallet, and Bridge):
 
 1. Deploy via
-   [`ERC20Factory`](/resources/developer/contract-references/evm/erc20-factory)
-   (or implement equivalent Initia extensions in a custom token contract using
-   [Creating Custom ERC20s](/developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s)
-   and
-   [`InitiaCustomERC20`](/resources/developer/contract-references/evm/initia-custom-erc20)).
+   [`ERC20Factory`](/resources/developer/contract-references/evm/erc20-factory).
 2. Add token metadata to the relevant `assetlist.json` in
    [Initia Registry](/developers/developer-guides/integrating-initia-apps/registry/introduction).
-3. Confirm your token supports the Cosmos transfer path (`sudoTransfer`) used in
-   escrow-style bridge transfer handling by following the compatibility guidance
-   in
+3. Confirm your token is compatible with the required `sudoTransfer` hook used
+   in sending and bridging flows (included by default for `ERC20Factory`
+   deployments) by following the compatibility guidance in
    [Creating ERC20s Introduction](/developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/introduction)
    and
    [`InitiaCustomERC20` reference](/resources/developer/contract-references/evm/initia-custom-erc20).
 
+If you need custom token logic, deploy a custom ERC20 that inherits
+[`InitiaCustomERC20`](/resources/developer/contract-references/evm/initia-custom-erc20)
+as the base contract (see
+[Creating Custom ERC20s](/developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s)).
+
 <Note>
-  Registry listing is required for app-level discovery and metadata display
-  across Initia products.
+  Registry listing is required for tokens to appear correctly in Initia product
+  UIs with metadata (name, symbol, decimals, logo), and to be selectable in
+  flows such as balances, transfers, and bridging.
 </Note>
 
 ## Project Setup

@@ -9,12 +9,15 @@ registration is done via a GitHub pull request to the registry repository. The
 file and directory that need to be updated in the PR vary depending on the type
 of information being added.
 
-<Info>
-  Registry listing and token contract compatibility solve different problems. A
-  token may appear in some balance displays (for example, on scan) but still
-  fail in Wallet or Bridge actions. For full end-user support across Initia
-  apps, you need both complete registry metadata and compatible token behavior.
-</Info>
+<Tip>
+  Full token support across Initia apps depends on two separate requirements:
+
+1. Registry metadata (`assetlist.json`): Controls how the token appears in
+   product UIs (name, symbol, decimals, logo, and display info in Initia Scan).
+2. Token contract behavior: Controls whether token actions actually work (for
+   example, sending and bridging). For MiniEVM ERC20 tokens, this includes the
+   `sudoTransfer` hook.
+   </Tip>
 
 ## Adding Profiles
 
