@@ -546,17 +546,20 @@
             "pages": [
               "hackathon/hackathon-landing",
               "hackathon/builder-guide",
-              "hackathon/submission-requirements",
-              "hackathon/example-project"
+              "hackathon/submission-requirements"
             ]
           },
           {
-            "group": "Examples",
+            "group": "VM Tutorials",
             "pages": [
               "hackathon/examples/move-game",
               "hackathon/examples/evm-bank",
               "hackathon/examples/wasm-social"
             ]
+          },
+          {
+            "group": "Reference Project",
+            "pages": ["hackathon/example-project"]
           }
         ]
       }
