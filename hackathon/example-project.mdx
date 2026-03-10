@@ -3,16 +3,16 @@ title: 'Case Study: Lottery Appchain - Move'
 icon: ticket
 ---
 
-This guide walks through building **[Side Quest](https://lotteria-five.vercel.app/)**, an onchain lottery machine, as
+This guide walks through building **[Lotteria](https://lotteria-five.vercel.app/)**, an onchain lottery machine, as
 a working example of how to build a full-stack appchain on Initia. It covers
 writing Move modules, connecting a frontend with InterwovenKit, and deploying to
 your rollup.
 
-The full source code is available at
-[github.com/yonnie-park/side-quest](https://github.com/yonnie-park/side-quest).
+The full source code is available in the
+[Lotteria reference repository](https://github.com/yonnie-park/lotteria).
 This is a demo repository built as a reference for hackathon participants. If
 you get stuck on any step, from writing Move modules to wiring up your frontend,
-use this repo as a working example to compare against.
+use the reference implementation as a working example to compare against.
 
 # Prerequisites
 
@@ -26,8 +26,8 @@ Before you begin, make sure you have completed the
 
 ### Project Structure
 
-```
-side-quest/
+```text
+lotteria/
 ├── move/             # Move smart contract modules
 ├── frontend/         # React frontend application
 ├── interwovenkit     # InterwovenKit submodule
@@ -36,8 +36,8 @@ side-quest/
 
 # 1. Move Modules
 
-Move is the smart contract language for the MoveVM track on Initia. In Side
-Quest, the Move module handles all the core lottery logic: creating rounds,
+Move is the smart contract language for the MoveVM track on Initia. In
+Lotteria, the Move module handles all the core lottery logic: creating rounds,
 buying tickets, drawing winners, and distributing prizes.
 
 ### Setting Up the Move Package
@@ -55,7 +55,7 @@ move/
 <Note>
 The lottery module depends on a helper module `lottery_random` for onchain randomness (winner
 selection). Both source files are required for compilation. Copy both from the
-[reference repo](https://github.com/yonnie-park/side-quest/tree/main/move/sources).
+[reference repo](https://github.com/yonnie-park/lotteria/tree/main/move/sources).
 </Note>
 
 Your `Move.toml` defines the package metadata, dependencies, and the address
@@ -63,7 +63,7 @@ your module will be published under. You need to convert your Initia address to
 its hex representation:
 
 ```bash
-initiad keys parse <your-init-address>
+initiad keys parse <YOUR_INIT_ADDRESS>
 # Output: bytes: <YOUR_HEX_ADDRESS>
 ```
 
@@ -75,23 +75,17 @@ name = "lotteria"
 version = "0.0.0"
 
 [dependencies]
-InitiaStdlib = { git = "https://github.com/initia-labs/move-natives.git", subdir = "initia_stdlib", rev = "v1.1.10" }
+InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
 lottery = "0x<YOUR_HEX_ADDRESS>"
 std = "0x1"
+initia_std = "0x1"
 ```
 
 The `InitiaStdlib` dependency gives you access to core modules like `coin`,
 `signer`, `event`, and `object`, which are essential building blocks for any
 onchain application.
-
-<Warning>
-This example is pinned to `v1.1.10`, which matches the local rollup version used in this guide.
-Using a newer stdlib revision can still compile but fail during `minitiad move deploy`. If your
-toolchain is on a different Initia release, update `rev` to the matching stdlib version before
-deploying.
-</Warning>
 
 ### Writing the Lottery Module
 
@@ -101,15 +95,16 @@ breakdown of the key components.
 **Module declaration and imports:**
 
 ```move
-module side_quest::lottery {
+module lottery::lottery {
     use std::signer;
     use std::vector;
-    use std::string;
-    use initia_std::coin;
-    use initia_std::event;
-    use initia_std::object;
-    use initia_std::block;
+    use std::error;
+    use lottery::lottery_random;
+    use initia_std::fungible_asset::Metadata;
+    use initia_std::object::{Self, ExtendRef};
     use initia_std::primary_fungible_store;
+    use initia_std::block;
+    use initia_std::table::{Self, Table};
 }
 ```
 
@@ -119,13 +114,13 @@ Define the resources that will live onchain. A lottery needs to track the
 current round state, ticket purchases, and prize pool:
 
 ```move
-struct LotteryState has key {
-    round: u64,
+struct LotteryConfig has key {
+    admin: address,
+    current_draw_id: u64,
     ticket_price: u64,
-    tickets: vector<address>,
-    prize_pool: u64,
-    is_active: bool,
-    winner: address,
+    total_tickets_sold: u64,
+    extend_ref: ExtendRef,
+    vault_addr: address,
 }
 ```
 
@@ -137,40 +132,36 @@ global storage, which is how Move manages persistent onchain state.
 Entry functions are the public interface that users and frontends call via
 transactions:
 
-- `init_lottery`: Initializes a new lottery round with a set ticket price
-- `buy_ticket`: Allows a user to purchase a ticket by sending the ticket price
-- `draw_winner`: Selects a winner (called by the admin/module owner) and
-  transfers the prize pool
-- `get_lottery_state`: A view function that returns the current state without
-  modifying it
+- `initialize`: Creates the initial lottery config and first draw
+- `buy_ticket`: Validates six picked numbers and transfers the ticket price
+- `execute_draw`: Generates winning numbers for a draw
+- `finalize_draw`: Calculates prize amounts per winner tier
+- `get_ticket_price`: A view function that returns the configured ticket price
+  without modifying state
 
 ```move
 public entry fun buy_ticket(
-    account: &signer,
-    fa_metadata: Object<Metadata>,
-    amount: u64,
-) acquires LotteryState {
-    let state = borrow_global_mut<LotteryState>(@side_quest);
-    assert!(state.is_active, 1); // lottery must be active
-    assert!(amount >= state.ticket_price, 2); // must pay full price
+    buyer: &signer,
+    numbers: vector<u8>,
+) acquires LotteryConfig, DrawStore, TicketCollection {
+    let buyer_addr = signer::address_of(buyer);
+    assert!(vector::length(&numbers) == NUMBERS_TO_PICK, error::invalid_argument(EINVALID_NUMBERS));
+    validate_numbers(&numbers);
 
-    // Transfer tokens from buyer to the module address
-    primary_fungible_store::transfer(account, fa_metadata, @side_quest, amount);
+    let config = borrow_global_mut<LotteryConfig>(@lottery);
+    let draw_store = borrow_global_mut<DrawStore>(@lottery);
 
-    // Add buyer's address to the ticket list
-    let buyer = signer::address_of(account);
-    vector::push_back(&mut state.tickets, buyer);
-    state.prize_pool = state.prize_pool + amount;
+    let metadata = object::address_to_object<Metadata>(@0x9759eac00e068b4e8adc206d17c6a8477f00ae41f824f0e2e81b3832cc8065ae);
+    primary_fungible_store::transfer(buyer, metadata, config.vault_addr, config.ticket_price);
+
+    let (_, current_time) = block::get_block_info();
+    let draw_id = config.current_draw_id;
+
+    let ticket_entry = TicketEntry { owner: buyer_addr, numbers };
+    let draw_ticket_list = table::borrow_mut(&mut draw_store.draw_tickets, draw_id);
+    vector::push_back(draw_ticket_list, ticket_entry);
 }
 ```
-
-<Note>
-`fa_metadata` is the `Object<Metadata>` handle for the fungible asset accepted as payment
-(e.g., the INIT token on your rollup). The actual token transfer is performed by
-`primary_fungible_store::transfer` — without this call, no funds move onchain. Refer to the
-[full source](https://github.com/yonnie-park/side-quest) for how the metadata object is
-resolved at runtime.
-</Note>
 
 **View functions:**
 
@@ -179,9 +170,8 @@ transaction:
 
 ```move
 #[view]
-public fun get_lottery_state(): (u64, u64, u64, bool) acquires LotteryState {
-    let state = borrow_global<LotteryState>(@side_quest);
-    (state.round, state.ticket_price, state.prize_pool, state.is_active)
+public fun get_ticket_price(): u64 {
+    TICKET_PRICE
 }
 ```
 
@@ -197,7 +187,7 @@ Deploy to your running appchain:
 
 ```bash
 export MODULE_OWNER=gas-station  # or your key name
-export L2_CHAIN_ID=<your-chain-id>
+export L2_CHAIN_ID=<YOUR_CHAIN_ID>
 export FEE_DENOM=umin  # replace with your rollup's configured fee token denom
 
 minitiad move deploy \
@@ -208,7 +198,8 @@ minitiad move deploy \
   --gas auto --gas-adjustment 1.5 \
   --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
-  --chain-id $L2_CHAIN_ID
+  --chain-id $L2_CHAIN_ID \
+  --yes
 ```
 
 Use `minitiad` (not `initiad`) here because you are deploying to your Layer 2
@@ -230,7 +221,7 @@ To verify the deployment, query a view function:
 ```bash
 export MODULE_ADDRESS=0x<YOUR_HEX_ADDRESS>
 
-minitiad query move view $MODULE_ADDRESS lottery get_lottery_state \
+minitiad query move view $MODULE_ADDRESS lottery get_ticket_price \
   --args '[]' \
   --node http://localhost:26657
 ```
@@ -240,17 +231,17 @@ Even for view functions that take no arguments, `--args '[]'` is required. Omitt
 cause a CLI parse error.
 </Note>
 
-To execute a function (e.g., buying a ticket):
+To execute a function, for example to initialize the module state after deployment:
 
 ```bash
-minitiad tx move execute $MODULE_ADDRESS lottery buy_ticket \
-  --args '["u64:1000000"]' \
+minitiad tx move execute $MODULE_ADDRESS lottery initialize \
   --from $MODULE_OWNER \
   --keyring-backend test \
   --gas auto --gas-adjustment 1.5 \
   --gas-prices 0.15$FEE_DENOM \
   --node http://localhost:26657 \
-  --chain-id $L2_CHAIN_ID
+  --chain-id $L2_CHAIN_ID \
+  --yes
 ```
 
 # 2. Using InterwovenKit
@@ -286,12 +277,13 @@ your component tree.
 In your `main.tsx` or `App.tsx`:
 
 ```tsx
-import { InterwovenKitProvider } from '@initia/interwovenkit-react'
+import { InterwovenKitProvider, TESTNET } from '@initia/interwovenkit-react'
 
 function App() {
   return (
     <InterwovenKitProvider
-      chainId="<your-chain-id>"
+      {...TESTNET}
+      defaultChainId="<YOUR_CHAIN_ID>"
     >
       <LotteryApp />
     </InterwovenKitProvider>
@@ -299,16 +291,11 @@ function App() {
 }
 ```
 
-<Warning>
-The prop is `chainId`, not `defaultChainId`. Passing an unrecognized prop is silently ignored,
-and the provider will fall back to `interwoven-1` (Initia mainnet). Your local rollup
-transactions will fail to broadcast.
-</Warning>
-
 ### Connecting a Wallet
 
 The `useInterwovenKit` hook provides everything you need for wallet connection.
-Here is the `Connection` component from Side Quest:
+Here is a simplified wallet connection component based on the wallet controls in Lotteria's
+`Header.tsx`:
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -341,12 +328,6 @@ const Connection = () => {
 export default Connection
 ```
 
-<Note>
-`@initia/utils` is not a published npm package. The `truncate` helper shown in the Side Quest
-source is an internal utility. The inline version above is equivalent — or copy it directly
-from the [reference repo](https://github.com/yonnie-park/side-quest).
-</Note>
-
 When no wallet is connected, the component renders a "Connect" button that
 calls `openConnect` to launch the wallet connection drawer. Once connected, it
 displays the user's Initia username (if they have one) or a truncated version
@@ -357,7 +338,7 @@ detail panel.
 
 Users need tokens on your appchain to interact with it. InterwovenKit provides
 a built-in deposit flow that handles cross-chain bridging. Here is the
-`Deposit` component from Side Quest:
+`openDeposit` pattern used by Lotteria:
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -374,11 +355,9 @@ const Deposit = () => {
       onClick={() =>
         openDeposit({
           denoms: [
-            "uinit",
-            "ibc/6490A7EAB61059BFC1CDDEB05917DD70BDF3A611654162A1A47DB930D40D8AF4",
-            "move/edfcddacac79ab86737a1e9e65805066d8be286a37cb94f4884b892b0e39f954",
+            "<YOUR_ROLLUP_DENOMS>",
           ],
-          chainId: "interwoven-1",
+          chainId: "<YOUR_CHAIN_ID>",
         })
       }
     >
@@ -392,38 +371,46 @@ export default Deposit
 
 The `openDeposit` method opens a drawer that lets users bridge tokens from
 Initia L1 (or other connected chains) to your appchain. The `denoms` array
-specifies which token denominations are accepted. You can include native tokens
-(`uinit`), IBC-transferred tokens, and Move-based fungible assets. The
-`chainId` should match your appchain's chain ID.
+specifies which token denominations are accepted. The `chainId` should match
+your appchain's chain ID.
+
+<Tip>
+If you want to support deposits from Initia L1, include `uinit` in the allowed denoms. Initia L1
+uses `initiation-2` on testnet and `interwoven-1` on mainnet.
+</Tip>
 
 The component only renders when a wallet is connected (`address` is truthy),
 since depositing requires an active wallet session.
 
 ### Sending Transactions
 
-To interact with your Move module from the frontend, use `requestTx` to
+To interact with your Move module from the frontend, use `requestTxSync` to
 construct and send transactions:
 
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 
 function BuyTicketButton() {
-  const { address, requestTx } = useInterwovenKit()
+  const { initiaAddress, requestTxSync } = useInterwovenKit()
 
   const handleBuyTicket = async () => {
+    if (!initiaAddress) return
+
     try {
-      const txHash = await requestTx({
+      const txHash = await requestTxSync({
+        chainId: '<YOUR_CHAIN_ID>',
         messages: [
           {
             typeUrl: "/initia.move.v1.MsgExecute",
             value: {
-              sender: address,
-              module_address: "<your-module-hex-address>",
-              module_name: "lottery",
-              function_name: "buy_ticket",
-              type_args: [],
+              sender: initiaAddress,
+              moduleAddress: "<YOUR_MODULE_HEX_ADDRESS>",
+              moduleName: "lottery",
+              functionName: "buy_ticket",
+              typeArgs: [],
               args: [
-                // Encode arguments as base64 BCS
+                // Pass the BCS-encoded ticket numbers from your app, for example
+                // a 6-number pick like [1, 2, 3, 4, 5, 6].
               ],
             },
           },
@@ -439,7 +426,7 @@ function BuyTicketButton() {
 }
 ```
 
-The `requestTx` method prompts the user's wallet to sign and broadcast the
+The `requestTxSync` method prompts the user's wallet to sign and broadcast the
 transaction. It returns the transaction hash on success.
 
 ### Querying Onchain State
@@ -448,9 +435,9 @@ To read data from your module without sending a transaction, query the REST
 API. Initia's LCD (Light Client Daemon) endpoint exposes Move view functions:
 
 ```tsx
-async function fetchLotteryState() {
+async function fetchTicketPrice() {
   const res = await fetch(
-    `http://localhost:1317/initia/move/v1/accounts/<module-address>/modules/lottery/view_functions/get_lottery_state`,
+    `http://localhost:1317/initia/move/v1/accounts/<MODULE_ADDRESS>/modules/lottery/view_functions/get_ticket_price`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -515,11 +502,11 @@ Building an appchain on Initia with the Move track involves three layers:
     `minitiad move deploy`.
 2.  **InterwovenKit** connects your React frontend to the chain. Wrap your app
     in `InterwovenKitProvider`, use `useInterwovenKit` for wallet connection
-    and `requestTx` for transactions.
+    and `requestTxSync` for transactions.
 3.  **Chain connectivity** is handled by the Interwoven Stack. Your local
     rollup exposes RPC and REST endpoints, and the IBC Relayer enables
     cross-chain token transfers.
 
 For the full working example, check out the
-[Side Quest repository](https://github.com/yonnie-park/side-quest). Happy
+[Lotteria repository](https://github.com/yonnie-park/lotteria). Happy
 building.
