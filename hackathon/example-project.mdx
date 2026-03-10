@@ -277,16 +277,36 @@ your component tree.
 In your `main.tsx` or `App.tsx`:
 
 ```tsx
-import { InterwovenKitProvider, TESTNET } from '@initia/interwovenkit-react'
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
+import { createConfig, http, WagmiProvider } from "wagmi"
+import { mainnet } from "wagmi/chains"
+import {
+  InterwovenKitProvider,
+  TESTNET,
+  injectStyles,
+} from "@initia/interwovenkit-react"
+import InterwovenKitStyles from "@initia/interwovenkit-react/styles.js"
+
+const queryClient = new QueryClient()
+const wagmiConfig = createConfig({
+  chains: [mainnet],
+  transports: { [mainnet.id]: http() },
+})
+
+injectStyles(InterwovenKitStyles)
 
 function App() {
   return (
-    <InterwovenKitProvider
-      {...TESTNET}
-      defaultChainId="<YOUR_CHAIN_ID>"
-    >
-      <LotteryApp />
-    </InterwovenKitProvider>
+    <QueryClientProvider client={queryClient}>
+      <WagmiProvider config={wagmiConfig}>
+        <InterwovenKitProvider
+          {...TESTNET}
+          defaultChainId="<YOUR_CHAIN_ID>"
+        >
+          <LotteryApp />
+        </InterwovenKitProvider>
+      </WagmiProvider>
+    </QueryClientProvider>
   )
 }
 ```
@@ -299,7 +319,6 @@ Here is a simplified wallet connection component based on the wallet controls in
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
-import styles from "./Connection.module.css"
 
 // truncate is a simple display utility — inline it or use your own preferred implementation
 const truncate = (str: string, maxLength = 12): string =>
@@ -309,19 +328,11 @@ const Connection = () => {
   const { address, username, openWallet, openConnect } = useInterwovenKit()
 
   if (!address) {
-    return (
-      <button className={styles.button} onClick={openConnect}>
-        Connect
-      </button>
-    )
+    return <button onClick={openConnect}>Connect</button>
   }
 
   return (
-    <>
-      <button className={styles.button} onClick={openWallet}>
-        {truncate(username ?? address)}
-      </button>
-    </>
+    <button onClick={openWallet}>{truncate(username ?? address)}</button>
   )
 }
 
@@ -390,11 +401,21 @@ construct and send transactions:
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
 
+function encodeVectorU8(numbers: number[]): Uint8Array {
+  const bytes = new Uint8Array(numbers.length + 1)
+  bytes[0] = numbers.length
+  for (let i = 0; i < numbers.length; i++) {
+    bytes[i + 1] = numbers[i]
+  }
+  return bytes
+}
+
 function BuyTicketButton() {
   const { initiaAddress, requestTxSync } = useInterwovenKit()
 
   const handleBuyTicket = async () => {
     if (!initiaAddress) return
+    const selectedNumbers = [1, 2, 3, 4, 5, 6] // replace with numbers chosen in your UI
 
     try {
       const txHash = await requestTxSync({
@@ -408,10 +429,7 @@ function BuyTicketButton() {
               moduleName: "lottery",
               functionName: "buy_ticket",
               typeArgs: [],
-              args: [
-                // Pass the BCS-encoded ticket numbers from your app, for example
-                // a 6-number pick like [1, 2, 3, 4, 5, 6].
-              ],
+              args: [encodeVectorU8(selectedNumbers)],
             },
           },
         ],
@@ -448,11 +466,6 @@ async function fetchTicketPrice() {
   return data
 }
 ```
-
-<Note>
-The request body must include both `type_args` and `args`, even when both are empty. Omitting
-`type_args` will return a 400 Bad Request error from the LCD endpoint.
-</Note>
 
 You can wrap this in a React hook with polling or use a library like TanStack
 Query for automatic refetching.
