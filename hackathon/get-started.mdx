@@ -24,7 +24,7 @@ cd my-initia-project
 ```
 
 
-## Step 2: Install Your AI Skill [Terminal]
+## Step 2: Install Your AI Skill
 
 Your AI agent needs the `Initia Appchain Dev` skill to help you manage
 your appchain, write smart contracts, and build your frontend.
@@ -35,7 +35,7 @@ your appchain, write smart contracts, and build your frontend.
 npx skills add initia-labs/agent-skills
 ```
 
-## Choose an AI Agent
+## Step 3: Choose an AI Agent
 
 These guides assume you are using a code-aware AI agent that can access your
 project directory, read files, run commands, and help you edit code. Any
@@ -56,18 +56,16 @@ Keep your AI agent open in your project root so it can use your local context
 when you paste the prompts in this guide.
 
 
-## Recommended Setup
-
-To get the most out of this guide, we recommend having two terminal tabs or a
-split-screen setup:
-
-1.  **AI agent**: For high-level tasks, contract generation, and
-    troubleshooting.
-2.  **Standard Terminal**: For interactive CLI commands (like `weave init`) and
-    long-running builds.
+<Tip>
+  **Recommended setup:** Use two terminal tabs or a split-screen layout:
+  1. **AI agent**: For high-level tasks, contract generation, and
+     troubleshooting.
+  2. **Standard terminal**: For interactive CLI commands like `weave init` and
+     long-running builds.
+</Tip>
 
 
-## Step 3: Choose Your Track & VM [Planning]
+## Step 4: Choose Your Track & VM
 
 Before installing tools, decide what you want to build. This choice determines 
 which `Virtual Machine (VM)` your AI agent will set up for you.
@@ -79,7 +77,7 @@ which `Virtual Machine (VM)` your AI agent will set up for you.
 | `Agents / Tooling`     | `Wasm` (Rust)    | Best for performance-critical logic and Rust ecosystem integration. |
 
 
-## Step 4: Prerequisites Checklist
+## Step 5: Prerequisites Checklist
 
 To ensure a smooth setup, verify you have the following system tools installed:
 
@@ -91,11 +89,11 @@ To ensure a smooth setup, verify you have the following system tools installed:
     - **Wasm**: **[Rust & Cargo](https://rustup.rs/)** are required for contract development.
 
 
-## Step 5: AI-Powered Initia Tool Setup and Verification
+## Step 6: AI-Powered Initia Tool Setup and Verification
 
 Now, ask your AI agent to handle the Initia-specific tools. It will install the core CLIs (`weave`, `initiad`, `jq`), build your chosen VM binary (`minitiad`), and then verify everything is accessible in your `PATH`.
 
-Replace `<MOVE / EVM / WASM>` with your selected track from Step 3 (`Move`, `EVM`, or `Wasm`).
+Replace `<MOVE / EVM / WASM>` with your selected track from Step 4 (`Move`, `EVM`, or `Wasm`).
 
 **Prompt:**
 
@@ -103,7 +101,7 @@ Replace `<MOVE / EVM / WASM>` with your selected track from Step 3 (`Move`, `EVM
 Using the `initia-appchain-dev` skill, please set up my environment for the <MOVE / EVM / WASM> track.
 ```
 
-### Verify Installation & PATH [AI Agent]
+### Verify Installation & PATH
 
 After setup completes, your AI agent can verify the tools are accessible from
 anywhere on your system.
@@ -116,7 +114,7 @@ Using the `initia-appchain-dev` skill, please verify that `initiad`, `weave`, an
 
 
 
-## Step 6: Initial Setup with `weave init` [Terminal]
+## Step 7: Initial Setup with `weave init`
 
 Your AI agent is your partner in this hackathon, but the `weave` CLI requires
 an interactive setup flow to prepare your environment and launch your appchain.
@@ -184,7 +182,7 @@ Here's a guide on how to navigate the interactive setup:
     Select `Launch a new rollup`.
 
     <Warning>
-      **Switching VMs?** Reinstall the correct `minitiad` binary first (Step 5). If you have existing rollup data, type `confirm` when prompted to clean it and proceed.
+      **Switching VMs?** Reinstall the correct `minitiad` binary first (Step 6). If you have existing rollup data, type `confirm` when prompted to clean it and proceed.
     </Warning>
 
     ### Select L1 Network
@@ -363,7 +361,7 @@ Your appchain will now launch and start producing blocks!
 </Steps>
 
 
-## Step 7: Setup Interwoven Bots [Terminal]
+## Step 8: Setup Interwoven Bots
 
 To enable the Optimistic bridge and cross-chain communication (IBC) between
 Initia L1 and your appchain, you need to start the `OPinit Executor` and the
@@ -525,7 +523,7 @@ Follow the interactive guide:
 </Tip>
 
 
-## Step 8: Final Key Setup [Terminal]
+## Step 9: Final Key Setup
 
 **Why:** The `Gas Station` account acts as your `Universal Developer
 Key`. Importing it allows you to sign transactions manually via the CLI, and it
@@ -564,7 +562,7 @@ minitiad keys list --keyring-backend test
 </Warning>
 
 
-## Step 9: Verifying Your Appchain [AI Agent]
+## Step 10: Verifying Your Appchain
 
 After completing the infrastructure setup, verify that everything is healthy.
 
@@ -575,7 +573,7 @@ Using the `initia-appchain-dev` skill, please verify that my appchain, executor 
 ```
 
 
-## Step 10: Next Steps: Master the Workflow
+## Step 11: Next Steps: Master the Workflow
 
 Congratulations! You have successfully launched your first appchain. Before
 diving into a specific blueprint, we recommend mastering the development
