@@ -20,9 +20,9 @@ Before you begin, make sure you have completed the
 [Your First Appchain](/hackathon/hackathon-landing) setup, including:
 
 - A running appchain via `weave init`
-- `initiad` and `minitiad` installed and in your PATH
-- OPinit Executor and IBC Relayer running
-- A funded gas station account imported into your local keyring
+- `initiad` and `minitiad` installed and in your PATH. This should already be installed when you set up your appchain
+- OPinit Executor and IBC Relayer running connected to your appchain
+- A funded Weave Gas Station account imported into your local keyring
 
 ### Project Structure
 
@@ -78,7 +78,7 @@ version = "0.0.0"
 InitiaStdlib = { git = "https://github.com/initia-labs/movevm.git", subdir = "precompile/modules/initia_stdlib", rev = "main" }
 
 [addresses]
-lottery = "0x<YOUR_HEX_ADDRESS>"
+lottery = "<YOUR_HEX_ADDRESS>"
 std = "0x1"
 initia_std = "0x1"
 ```
@@ -233,7 +233,7 @@ and use the denom shown for your rollup's native token.
 To verify the deployment, query a view function:
 
 ```bash
-export MODULE_ADDRESS=0x<YOUR_HEX_ADDRESS>
+export MODULE_ADDRESS=<YOUR_HEX_ADDRESS>
 
 minitiad query move view $MODULE_ADDRESS lottery get_ticket_price \
   --args '[]' \
@@ -480,8 +480,7 @@ transaction. It returns the transaction hash on success.
 
 ### Querying Onchain State
 
-To read data from your module without sending a transaction, query the REST
-API. Initia's LCD (Light Client Daemon) endpoint exposes Move view functions:
+To query and read data using the view functions of your Move module, you can utilize the chain's REST endpoint as follows:
 
 ```tsx
 async function fetchTicketPrice() {
@@ -507,10 +506,10 @@ Query for automatic refetching.
 
 Your appchain runs locally after `weave init`. The default endpoints are:
 
-| Service  | URL                      |
-| -------- | ------------------------ |
+| Service  | URL                       |
+| -------- | --------------------------|
 | RPC      | `http://localhost:26657`  |
-| REST/LCD | `http://localhost:1317`   |
+| REST     | `http://localhost:1317`   |
 
 These endpoints are what your frontend uses to query state and broadcast
 transactions.
