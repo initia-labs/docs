@@ -412,7 +412,7 @@
                     "group": "Get Started",
                     "pages": [
                       "hackathon/get-started",
-                      "hackathon/build-your-project",
+                      "hackathon/builder-guide",
                       "hackathon/submission-requirements"
                     ]
                   },
