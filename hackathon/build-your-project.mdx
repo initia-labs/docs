@@ -1,27 +1,33 @@
 ---
-title: 'Hackathon Builder Guide'
+title: 'Build Your Project'
 icon: map
 ---
 
-# Transitioning to Your Own Idea
+# Build Your App
 
-The Builder Guide is designed for developers who have already completed the
-initial environment setup. If you haven't yet launched your first appchain,
-please start with the [Step-by-Step Guide](/hackathon/hackathon-landing).
+Use this page after [Set Up Your Appchain](/hackathon/get-started). Pick a
+direction, prompt your AI agent, deploy fast, and verify real onchain
+behavior.
 
-### Before You Continue
-
-Quick check before you start building:
+Before you start, confirm:
 
 - **Tools ready**: `weave`, `initiad`, and `minitiad` are installed and in your
-  PATH ([Step 5](/hackathon/hackathon-landing#step-5-ai-powered-initia-tool-setup-and-verification)).
+  PATH ([Step 5](/hackathon/get-started#step-5-ai-powered-initia-tool-setup-and-verification)).
 - **Infrastructure live**: your rollup and OPinit/Relayer bots are running
-  ([Step 7](/hackathon/hackathon-landing#step-7-setup-interwoven-bots-terminal)).
+  ([Step 7](/hackathon/get-started#step-7-setup-interwoven-bots-terminal)).
 - **Gas Station keys imported**: your mnemonic is available in local keyrings
-  ([Step 8](/hackathon/hackathon-landing#step-8-final-key-setup-terminal)).
+  ([Step 8](/hackathon/get-started#step-8-final-key-setup-terminal)).
+
+## Recommended Order
+
+1. Complete [Set Up Your Appchain](/hackathon/get-started).
+2. Pick a Blueprint or build your own concept.
+3. Build your app from scratch or adapt a Blueprint.
+4. Deploy and verify real onchain interactions.
+5. Complete [Submission Requirements](/hackathon/submission-requirements).
 
 
-# Quick Reference: The Essentials
+# Quick Actions
 
 Use these common commands and AI prompts to manage your project during the
 hackathon.
@@ -32,7 +38,7 @@ hackathon.
 | **Health Check**    | _Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance._ |
 
 
-# Part 1: Development Workflow
+# Part 1: Core Workflow
 
 Master the Describe -> Build -> Test cycle. This is how you win the hackathon.
 
@@ -52,7 +58,7 @@ Station.
 Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALLET_ADDRESS> with 1 INIT on L1 and 100 of my appchain's native tokens on L2.
 ```
 
-### The Core Loop
+### Describe -> Build -> Test
 
 1.  **Describe the Goal**: Tell the AI _what_ you want to achieve and _why_.
 2.  **Build & Test (Unit)**: Let the AI write the code AND the unit tests.
@@ -80,46 +86,43 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     ```
 
 <Tip>
-  **Submission Receipt:** To qualify for the hackathon prizes, you must provide
-  the Contract Address of your primary logic and a Transaction Hash of a user
-  interacting with it. Save these as soon as you have a working version!
+  **Save these early:** As you build, save your deployed contract address and a
+  real L2 interaction transaction hash. You will need this information when
+  completing `.initia/submission.json`.
 </Tip>
 
 # Part 2: Choose Your Blueprint
 
-To qualify for the hackathon prizes, your project must implement at least one 
-Initia Native Feature (defined as Pillar 3 in the submission 
-requirements). These Blueprints provide the foundation for meeting that 
-requirement.
+To qualify for the hackathon prizes, your project must implement at least one
+supported Power-Up (defined in the submission requirements). These Blueprints
+provide implementation patterns you can adapt, or use as references while
+building your own concept.
 
 <Note>
-  **The Custom Implementation:** To win, don't just deploy these examples as-is. 
-  Judges look for your `Custom Implementation`: the unique code and functionality you 
-  added on top of these base patterns to solve a specific problem.
+  **Originality matters:** Whether you build from scratch or adapt an example,
+  judges will look for clear custom logic, UX, and product differentiation.
 </Note>
 
 <CardGroup cols={1}>
   <Card title="Blueprint 1: BlockForge Game (Auto-signing)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
-    **Pillar 3: Invisible UX.** A high-frequency application where the 
-    blockchain handles logic silently in the background. Users never see a 
-    wallet popup after the initial session start.
-    - **Native Feature:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
+    A high-frequency application where the blockchain handles logic silently in
+    the background. Users never see a wallet popup after the initial session
+    start.
+    - **Power-Up:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
   </Card>
 
   <Card title="Blueprint 2: MiniBank (Interwoven Bridge)" icon="bridge" href="/hackathon/examples/evm-bank">
-    **Pillar 3: Liquidity & Connectivity.** An application that allows users 
-    to move assets between the broader Initia L1 and your appchain without 
-    leaving your interface. 
-    - **Native Feature:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
+    An application that allows users to move assets between the broader Initia
+    L1 and your appchain without leaving your interface.
+    - **Power-Up:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
     - **Best for:** DeFi Lending, Cross-chain storefronts, Multi-chain games. 
   </Card>
 
   <Card title="Blueprint 3: MemoBoard (Initia Usernames)" icon="user-group" href="/hackathon/examples/wasm-social">
-    **Pillar 3: Human Identity.** An application that prioritizes 
-    human-readable identities, replacing complex hex addresses with personal 
-    usernames.
-    - **Native Feature:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
+    An application that prioritizes human-readable identities, replacing
+    complex hex addresses with personal usernames.
+    - **Power-Up:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
     - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
   </Card>
 </CardGroup>
@@ -128,10 +131,10 @@ requirement.
 # Part 3: Making It Demo-Ready
 
 Use this checklist to mirror the official
-[Submission & Eligibility Criteria](/hackathon/submission-requirements).
+[Submission Requirements](/hackathon/submission-requirements).
 
 - **Rollup Chain ID**: Include your appchain Chain ID.
-- **Submission JSON**: Create `.initia/submission.json` and complete all required fields exactly as defined in [Submission & Eligibility Criteria](/hackathon/submission-requirements).
+- **Submission JSON**: Create `.initia/submission.json` and complete all required fields exactly as defined in [Submission Requirements](/hackathon/submission-requirements).
 - **Supporting Evidence**: Ensure your JSON includes valid paths to your core logic file and power-up frontend file, plus a real L2 interaction transaction.
 - **Demo Video URL**: Include a 1-3 minute walkthrough video (Loom/YouTube, publicly accessible via URL).
 - **README Summary**: Add a short project overview and implementation details section for judges.
@@ -139,20 +142,19 @@ Use this checklist to mirror the official
 
 # Part 4: Debugging & Troubleshooting
 
-Speed is everything in a hackathon, and debugging is where most time is lost.
-Use these professional workflows to unblock yourself, even when following the
-standard examples.
+Debugging is where most hackathon time gets lost. Use this workflow to unblock
+quickly.
 
 ### Debugging Workflow
 
-Whether you are building from scratch or running a blueprint example, errors are
+Whether you are building from scratch or adapting an example, errors are
 inevitable.
 
 1.  **Open the Browser Console**: Press `F12` or `Cmd+Option+J` to see the exact
     error logs.
-2.  **Context is King**: Ensure your AI agent (Cursor, Gemini) is open in
-    your project root. This allows it to reference your `package.json`, your
-    `interwovenkit` initialization, and your specific chain configuration.
+2.  **Keep Context Loaded**: Ensure your AI agent is open in your project root.
+    This allows it to reference your `package.json`, your `interwovenkit`
+    initialization, and your specific chain configuration.
 3.  Ask your AI agent to fix the issue directly, then paste the exact console
     error below the question.
 
@@ -163,7 +165,7 @@ inevitable.
     [PASTE_CONSOLE_ERROR]
     ```
 
-### Deep Dives & Official References
+### Official References
 
 If your AI agent is stuck or you need to see the source of truth:
 
@@ -177,5 +179,5 @@ If your AI agent is stuck or you need to see the source of truth:
 
 
 > **Mandatory:** Review the
-> [Submission & Eligibility Criteria](/hackathon/submission-requirements)
+> [Submission Requirements](/hackathon/submission-requirements)
 > to ensure you are eligible for prizes.

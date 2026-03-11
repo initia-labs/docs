@@ -408,11 +408,16 @@
               {
                 "group": "Hackathon 2026",
                 "pages": [
-                  "hackathon/hackathon-landing",
-                  "hackathon/builder-guide",
-                  "hackathon/submission-requirements",
                   {
-                    "group": "VM Tutorials",
+                    "group": "Get Started",
+                    "pages": [
+                      "hackathon/get-started",
+                      "hackathon/build-your-project",
+                      "hackathon/submission-requirements"
+                    ]
+                  },
+                  {
+                    "group": "Blueprints",
                     "pages": [
                       "hackathon/examples/move-game",
                       "hackathon/examples/evm-bank",
@@ -420,8 +425,8 @@
                     ]
                   },
                   {
-                    "group": "Reference Project",
-                    "pages": ["hackathon/example-project"]
+                    "group": "Reference Implementation",
+                    "pages": ["hackathon/lotteria"]
                   }
                 ]
               }

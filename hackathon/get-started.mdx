@@ -1,5 +1,5 @@
 ---
-title: 'Your First Appchain: A Step-by-Step Guide'
+title: 'Set Up Your Appchain'
 icon: play
 ---
 
@@ -104,7 +104,8 @@ You can run it whenever you need to initialize or reconfigure your setup.
 
 <Note>
   If you already ran `weave init` and want to create a new appchain, run the
-  following commands first:
+  following commands first. This clears your existing local Initia, Minitia,
+  OPinit, and relayer setup:
   ```bash wrap
   rm -rf ~/.weave ~/.initia ~/.minitia ~/.opinit
   docker rm -f weave-relayer || true
@@ -492,13 +493,13 @@ Follow the interactive guide:
 
 <Tip>
   **Persistence After Restart:**
-  If you shut down your computer, the `Relayer` will stay active (it's managed by Docker), but you will need to manually restart your Rollup full node and Executor bot using these commands:
+  After restarting your computer, the relayer remains managed by Docker. As
+  long as Docker Desktop is open, it should still be running. You still need to
+  restart your rollup full node and executor:
   
   ```bash wrap
-  # Restart the rollup full node
   weave rollup start -d
   
-  # Restart the OPinit executor bot
   weave opinit start executor -d
   ```
 </Tip>
@@ -560,7 +561,7 @@ Congratulations! You have successfully launched your first appchain. Before
 diving into a specific blueprint, we recommend mastering the development
 workflow.
 
-The **Builder Guide** will teach you the **Describe -> Build -> Test** loop using
+**Build Your Project** will teach you the **Describe -> Build -> Test** loop using
 your AI co-pilot, which is essential for building a winning hackathon entry.
 
-[Go to the Builder Guide ->](/hackathon/builder-guide)
+[Go to Build Your Project ->](/hackathon/build-your-project)
