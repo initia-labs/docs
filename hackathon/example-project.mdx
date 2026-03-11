@@ -163,6 +163,20 @@ public entry fun buy_ticket(
 }
 ```
 
+<Note>
+The `Metadata` object address in `lottery.move` is specific to the token used by the reference deployment and
+will not exist on your local rollup. Before building, query the metadata object for the token you want to use
+for ticket payments:
+
+```bash
+minitiad query move metadata --denom <YOUR_FEE_DENOM> --node http://localhost:26657
+# metadata: 0x...
+```
+
+Replace every hardcoded `object::address_to_object<Metadata>(@0x...)` occurrence in `lottery.move` with the
+returned metadata address.
+</Note>
+
 **View functions:**
 
 View functions let the frontend query onchain state without submitting a
@@ -292,6 +306,23 @@ const wagmiConfig = createConfig({
   chains: [mainnet],
   transports: { [mainnet.id]: http() },
 })
+const feeDenom = "<YOUR_FEE_DENOM>"
+
+const customChain = {
+  chain_id: "<YOUR_CHAIN_ID>",
+  chain_name: "My Appchain",
+  network_type: "testnet",
+  bech32_prefix: "init",
+  apis: {
+    rpc: [{ address: "http://localhost:26657" }],
+    rest: [{ address: "http://localhost:1317" }],
+    indexer: [{ address: "http://localhost:8080" }],
+  },
+  fees: { fee_tokens: [{ denom: feeDenom, fixed_min_gas_price: 0, low_gas_price: 0, average_gas_price: 0, high_gas_price: 0 }] },
+  staking: { staking_tokens: [{ denom: feeDenom }] },
+  native_assets: [{ denom: feeDenom, name: "Token", symbol: "TKN", decimals: 6 }],
+  metadata: { is_l1: false, minitia: { type: "minimove" } },
+}
 
 injectStyles(InterwovenKitStyles)
 
@@ -302,6 +333,8 @@ function App() {
         <InterwovenKitProvider
           {...TESTNET}
           defaultChainId="<YOUR_CHAIN_ID>"
+          customChain={customChain}
+          customChains={[customChain]}
         >
           <LotteryApp />
         </InterwovenKitProvider>
@@ -353,7 +386,6 @@ a built-in deposit flow that handles cross-chain bridging. Here is the
 
 ```tsx
 import { useInterwovenKit } from "@initia/interwovenkit-react"
-import styles from "./Button.module.css"
 
 const Deposit = () => {
   const { address, openDeposit } = useInterwovenKit()
@@ -362,7 +394,6 @@ const Deposit = () => {
 
   return (
     <button
-      className={styles.button}
       onClick={() =>
         openDeposit({
           denoms: [
