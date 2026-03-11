@@ -95,9 +95,7 @@ Now, ask your AI agent to handle the Initia-specific tools. It will install the 
 
 Replace `<MOVE / EVM / WASM>` with your selected track from Step 4 (`Move`, `EVM`, or `Wasm`).
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Set up my environment" wrap
 Using the `initia-appchain-dev` skill, please set up my environment for the <MOVE / EVM / WASM> track.
 ```
 
@@ -106,9 +104,7 @@ Using the `initia-appchain-dev` skill, please set up my environment for the <MOV
 After setup completes, your AI agent can verify the tools are accessible from
 anywhere on your system.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Verify tool installation" wrap
 Using the `initia-appchain-dev` skill, please verify that `initiad`, `weave`, and `minitiad` are properly installed and accessible in my PATH.
 ```
 
@@ -566,9 +562,7 @@ minitiad keys list --keyring-backend test
 
 After completing the infrastructure setup, verify that everything is healthy.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Verify my appchain is healthy" wrap
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 

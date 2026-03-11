@@ -35,9 +35,7 @@ my-initia-project/
 
 Before you start, verify that your local infrastructure is healthy.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Check local infrastructure health" wrap
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
@@ -47,9 +45,7 @@ Instruct your AI agent to create the Solidity contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
 automatically run unit tests to ensure the logic is sound.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Create and test the MiniBank contract" wrap
 Using the `initia-appchain-dev` skill, please create a Solidity smart contract project for our MiniBank in a new directory named `minibank`. The contract should:
 - Allow users to deposit native tokens.
 - Allow users to withdraw their own deposited tokens.
@@ -175,9 +171,7 @@ forge test
 Now that the logic is verified, build and publish the contract to your live
 appchain using the Gas Station account.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Deploy the MiniBank contract" wrap
 Using the `initia-appchain-dev` skill, please build, publish, and instantiate the MiniBank Solidity contract located in the `minibank` directory to my appchain using my Gas Station account, then return the deployed contract address.
 ```
 
@@ -229,9 +223,7 @@ Before moving to frontend integration, smoke test the deployed contract
 directly on chain from the CLI. This isolates contract-level issues before UI
 work.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Smoke test the MiniBank contract" wrap
 Using the `initia-appchain-dev` skill, I want to smoke test our live MiniBank contract. Using my Gas Station account on my appchain, please:
 1. Deposit 1 token.
 2. Check my balance.
@@ -293,13 +285,13 @@ Let's create a simple UI to interact with our bank.
 
 **1. Scaffold the Frontend:**
 
-```terminal wrap
+```terminal title="Prompt: Scaffold the MiniBank frontend" wrap
 Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `minibank-frontend` in my current directory using the `scaffold-frontend` script. Create a component named Bank.jsx with Deposit and Withdraw buttons and an input field for the amount.
 ```
 
 **2. Connect to Appchain:**
 
-```terminal wrap
+```terminal title="Prompt: Connect the frontend to the MiniBank contract" wrap
 Using the `initia-appchain-dev` skill, modify the Bank.jsx component in the `minibank-frontend` directory to connect to our MiniBank contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 ```
 
@@ -878,9 +870,7 @@ seamless UI to bridge tokens into your application for use.
 The `useInterwovenKit()` hook provides `openBridge`, which opens the bridge
 modal for moving assets between chains.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Add Interwoven Bridge support" wrap
 Using the `initia-appchain-dev` skill, please enable Interwoven Bridge support in my MiniBank so I can move funds between chains on Initia.
 ```
 

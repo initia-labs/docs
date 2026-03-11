@@ -35,9 +35,7 @@ my-initia-project/
 
 Before you start, verify that your local infrastructure is healthy.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Check local infrastructure health" wrap
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
@@ -47,9 +45,7 @@ Instruct your AI agent to create the Rust (Wasm) contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
 automatically run unit tests to ensure the logic is sound.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Create and test the MemoBoard contract" wrap
 Using the `initia-appchain-dev` skill, please create a Rust smart contract project for our MemoBoard in a new directory named `memoboard`. The contract should:
 - Allow users to post a message (string).
 - Store a list of all messages with the sender's address.
@@ -204,9 +200,7 @@ mod tests {
 Now that the logic is verified, build and publish the contract to your appchain
 using the Gas Station account.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Deploy the MemoBoard contract" wrap
 Using the `initia-appchain-dev` skill, please build, publish, and instantiate the MemoBoard Rust contract located in the `memoboard` directory to my appchain using my Gas Station account, then return the deployed contract address.
 ```
 
@@ -280,9 +274,7 @@ minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="i
 Before frontend integration, smoke test your deployed contract directly on
 chain.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Smoke test the MemoBoard contract" wrap
 Using the `initia-appchain-dev` skill, I want to smoke test our live MemoBoard contract. Using my Gas Station account on my appchain, please:
 1. Post a message: "Hello from Initia!"
 2. Query the board to see all messages.
@@ -314,13 +306,13 @@ Let's create a UI to display and post messages.
 
 **1. Scaffold the Frontend:**
 
-```terminal wrap
+```terminal title="Prompt: Scaffold the MemoBoard frontend" wrap
 Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `memoboard-frontend` in my current directory using the `scaffold-frontend` script. Create a component named Board.jsx that displays a list of messages and a text input to post a new one.
 ```
 
 **2. Connect to Appchain:**
 
-```terminal wrap
+```terminal title="Prompt: Connect the frontend to the MemoBoard contract" wrap
 Using the `initia-appchain-dev` skill, modify the Board.jsx component in the `memoboard-frontend` directory to connect to our MemoBoard contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 ```
 
@@ -803,9 +795,7 @@ wallet on the Initia testnet.
 Your AI agent knows how to integrate Initia Usernames. Simply ask it to
 update your board.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Add Initia username support" wrap
 Using the `initia-appchain-dev` skill, please add Initia username support to my MemoBoard.
 ```
 
