@@ -4,7 +4,7 @@ icon: map
 ---
 
 Use this page after [Set Up Your Appchain](/hackathon/get-started). Pick a
-direction, prompt your AI agent, deploy fast, and verify real onchain
+direction, prompt your AI agent, deploy, and verify real onchain
 behavior.
 
 Before you start, confirm:
@@ -19,7 +19,7 @@ Before you start, confirm:
 ## Recommended Order
 
 1. Complete [Set Up Your Appchain](/hackathon/get-started).
-2. Choose your direction: build from scratch or use a Blueprint for reference.
+2. Choose between building your app from scratch or using a Blueprint for reference.
 3. Implement your app with your AI agent.
 4. Deploy and verify real onchain interactions.
 5. Complete [Submission Requirements](/hackathon/submission-requirements).
@@ -57,7 +57,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
 ### Describe -> Build -> Test
 
 1.  **Describe the Goal**: Tell the AI _what_ you want to achieve and _why_.
-2.  **Build & Test (Unit)**: Let the AI write the code AND the unit tests.
+2.  **Build & Test**: Let the AI write the code and unit tests.
 
     ```terminal title="Prompt: Create and test the contract" wrap
     Using the `initia-appchain-dev` skill, please create a new <MOVE / EVM / WASM> contract project in a directory named <PROJECT_NAME>, implement the core logic for <APP_NAME>, and create/run unit tests that verify both success and failure paths.
@@ -84,7 +84,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
 # Part 2: Choose Your Blueprint
 
 To qualify for the hackathon prizes, your project must implement at least one
-supported Power-Up (defined in the submission requirements). These Blueprints
+supported Native Feature (defined in the submission requirements). These Blueprints
 provide implementation patterns you can adapt, or use as references while
 building your own concept.
 
@@ -96,23 +96,23 @@ building your own concept.
 <CardGroup cols={1}>
   <Card title="Blueprint 1: BlockForge Game (Auto-signing)" icon="wand-magic-sparkles" href="/hackathon/examples/move-game">
     A high-frequency application where the blockchain handles logic silently in
-    the background. Users never see a wallet popup after the initial session
-    start.
-    - **Power-Up:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
+    the background. Users approve a session once, then continue interacting
+    without repeated wallet popups.
+    - **Native Feature:** [`Auto-signing`](/interwovenkit/features/autosign/introduction)
     - **Best for:** Gaming, Social tipping, High-frequency trading.
   </Card>
 
   <Card title="Blueprint 2: MiniBank (Interwoven Bridge)" icon="bridge" href="/hackathon/examples/evm-bank">
     An application that allows users to move assets between the broader Initia
     L1 and your appchain without leaving your interface.
-    - **Power-Up:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
+    - **Native Feature:** [`Interwoven Bridging`](/interwovenkit/features/transfers/deposit-withdraw)
     - **Best for:** DeFi Lending, Cross-chain storefronts, Multi-chain games. 
   </Card>
 
   <Card title="Blueprint 3: MemoBoard (Initia Usernames)" icon="user-group" href="/hackathon/examples/wasm-social">
     An application that prioritizes human-readable identities, replacing
     complex hex addresses with personal usernames.
-    - **Power-Up:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
+    - **Native Feature:** [`Initia Usernames`](/developers/developer-guides/integrating-initia-apps/usernames)
     - **Best for:** Consumer Social, Peer-to-peer payments, DAO governance.
   </Card>
 </CardGroup>
@@ -125,15 +125,12 @@ Use this checklist to mirror the official
 
 - **Rollup Chain ID**: Include your appchain Chain ID.
 - **Submission JSON**: Create `.initia/submission.json` and complete all required fields exactly as defined in [Submission Requirements](/hackathon/submission-requirements).
-- **Supporting Evidence**: Ensure your JSON includes valid paths to your core logic file and power-up frontend file, plus a real L2 interaction transaction.
+- **Supporting Evidence**: Ensure your JSON includes valid paths to your core logic file and native feature frontend file, plus a real L2 interaction transaction.
 - **Demo Video URL**: Include a 1-3 minute walkthrough video (Loom/YouTube, publicly accessible via URL).
 - **README Summary**: Add a short project overview and implementation details section for judges.
 
 
 # Part 4: Debugging & Troubleshooting
-
-Debugging is where most hackathon time gets lost. Use this workflow to unblock
-quickly.
 
 ### Debugging Workflow
 
@@ -142,7 +139,7 @@ inevitable.
 
 1.  **Open the Browser Console**: Press `F12` or `Cmd+Option+J` to see the exact
     error logs.
-2.  **Keep Context Loaded**: Ensure your AI agent is open in your project root.
+2.  **Provide Project Context**: Ensure your AI agent is open in your project root.
     This allows it to reference your `package.json`, your `interwovenkit`
     initialization, and your specific chain configuration.
 3.  Ask your AI agent to fix the issue directly, then paste the exact console

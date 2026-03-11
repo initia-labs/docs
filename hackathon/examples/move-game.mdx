@@ -323,7 +323,7 @@ Using the `initia-appchain-dev` skill, please scaffold a new Vite + React applic
 **2. Connect to Appchain:**
 
 ```terminal title="Prompt: Connect the frontend to the BlockForge module" wrap
-Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our blockforge contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
+Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our BlockForge module on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 
 The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics.
 ```
@@ -621,7 +621,7 @@ Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLE
 
 If you get stuck, see the [Debugging Workflow guide](../build-your-project#debugging-workflow).
 
-# ⚡ Power-Up: Auto-signing
+# ⚡ Native Feature: Auto-signing
 
 To make your BlockForge game natively integrated with the Initia stack, you can
 enable Auto-signing to create a frictionless experience where players don't
@@ -1145,7 +1145,7 @@ This reference assumes:
 - inventory reads use `rest.move.resource` with a hex struct tag.
 </Accordion>
 
-### Power-Up Verification
+### Native Feature Verification
 
 1. Connect your wallet in `blockforge-frontend`.
 2. Enable Auto-sign and approve the one-time Auto-sign setup.

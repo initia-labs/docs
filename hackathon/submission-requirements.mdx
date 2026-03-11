@@ -45,11 +45,11 @@ stack and provides a seamless experience for users.
   Auto-signing (session-based invisible UX) and Interwoven Bridge flows for
   moving liquidity between L1 and your appchain.
 
-### Requirement 3: Required Power-Up
+### Requirement 3: Required Native Feature
 
 High-value projects go beyond Hello World by implementing at least one
-supported Power-Up. In `.initia/submission.json`, this maps directly to the
-required `power_up` field.
+supported Native Feature. In `.initia/submission.json`, this maps directly to
+the required `native_feature` field.
 
 1.  **Auto-signing (Invisible UX):** Create a frictionless experience where
     players or users can interact with the blockchain seamlessly without
@@ -73,10 +73,8 @@ include this file:
 
 - **Required path:** `.initia/submission.json`
 
-This JSON file is the source of truth for automated eligibility checks. The
-requirements above explain what qualifies; the grader should parse
-`.initia/submission.json`. Also include a human-readable summary in your
-`README.md`.
+This JSON file is the source of truth for automated eligibility checks. Also
+include a human-readable summary in your `README.md`.
 
 ### Required `.initia/submission.json` Template
 
@@ -88,9 +86,9 @@ requirements above explain what qualifies; the grader should parse
   "rollup_chain_id": "my-game-1",
   "deployed_address": "0x...",
   "vm": "move",
-  "power_up": "auto-signing",
+  "native_feature": "auto-signing",
   "core_logic_path": "blockforge/sources/items.move",
-  "power_up_frontend_path": "blockforge-frontend/src/Game.jsx",
+  "native_feature_frontend_path": "blockforge-frontend/src/Game.jsx",
   "l2_interaction_tx": "0x...",
   "demo_video_url": "https://youtu.be/..."
 }
@@ -105,11 +103,11 @@ requirements above explain what qualifies; the grader should parse
 - `deployed_address`: Required. Primary deployed address for your application
   logic. Use your contract address, or your module address for Move projects.
 - `vm`: Required. One of `move`, `evm`, `wasm`.
-- `power_up`: Required. One of `auto-signing`, `interwoven-bridge`,
+- `native_feature`: Required. One of `auto-signing`, `interwoven-bridge`,
   `initia-usernames`.
 - `core_logic_path`: Required. Repo-relative file path that exists at
   `commit_sha`.
-- `power_up_frontend_path`: Required. Repo-relative file path that exists at
+- `native_feature_frontend_path`: Required. Repo-relative file path that exists at
   `commit_sha`.
 - `l2_interaction_tx`: Required. Non-empty transaction hash or explorer URL.
 - `demo_video_url`: Required for every submission. Provide a 1-3 minute walkthrough video (Loom/YouTube, publicly accessible via URL).
@@ -133,7 +131,7 @@ what problem does it solve?]
 
 - **The Custom Implementation**: Briefly describe the unique logic you added.
   What original functionality did you design and implement?
-- **The Power-Up**: Which Interwoven feature did you use, and exactly how does
+- **The Native Feature**: Which Interwoven feature did you use, and exactly how does
   it improve the user experience?
 - **The Value Add**: What meaningful value does this application create for
   crypto users, and how does it specifically strengthen the Initia ecosystem?
