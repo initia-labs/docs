@@ -151,7 +151,7 @@ function SendWithAutosign() {
         GasPrice.fromString("0.015uinit")
       )
 
-      // Submit transaction directly (no modal, uses ghost wallet)
+      // Submit transaction directly (no modal)
       const { transactionHash } = await submitTxBlock({ messages, fee })
       return transactionHash
     },
