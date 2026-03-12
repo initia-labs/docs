@@ -25,57 +25,6 @@ function MyComponent() {
 }
 ```
 
-## Sending transactions with autosign
-
-Once autosign is enabled, you can send transactions without user confirmation using `submitTxBlock`. This method signs and broadcasts transactions directly using the ghost wallet.
-
-```tsx
-import { calculateFee, GasPrice } from "@cosmjs/stargate"
-import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
-import { useMutation } from "@tanstack/react-query"
-import { useInterwovenKit } from "@initia/interwovenkit-react"
-
-function SendWithAutosign() {
-  const { initiaAddress, submitTxBlock, estimateGas } = useInterwovenKit()
-
-  const { mutate, isPending } = useMutation({
-    mutationFn: async () => {
-      const messages = [
-        {
-          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
-          value: MsgSend.fromPartial({
-            fromAddress: initiaAddress,
-            toAddress: "init1...", // recipient address
-            amount: [{ amount: "1000000", denom: "uinit" }],
-          }),
-        },
-      ]
-
-      // Estimate gas and calculate fee
-      const gasEstimate = await estimateGas({ messages })
-      const fee = calculateFee(
-        Math.ceil(gasEstimate * 1.4),
-        GasPrice.fromString("0.015uinit")
-      )
-
-      // Submit transaction directly (no modal, uses ghost wallet)
-      const { transactionHash } = await submitTxBlock({ messages, fee })
-      return transactionHash
-    },
-  })
-
-  return (
-    <button onClick={() => mutate()} disabled={isPending}>
-      Send
-    </button>
-  )
-}
-```
-
-<Tip>
-Use `submitTxBlock` for seamless transactions with autosign. For transactions requiring user confirmation, use `requestTxBlock` instead.
-</Tip>
-
 ## Enabling Autosign
 
 To enable autosign, call the `enable()` method. This opens a drawer where users
@@ -168,6 +117,57 @@ When `autoSign.enable()` is called:
 
 The method returns a Promise that resolves when autosign is successfully enabled
 or rejects if the user cancels or an error occurs.
+
+## Sending transactions with autosign
+
+Once autosign is enabled, you can send transactions without user confirmation using `submitTxBlock`. This method signs and broadcasts transactions directly using the ghost wallet.
+
+```tsx
+import { calculateFee, GasPrice } from "@cosmjs/stargate"
+import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
+import { useMutation } from "@tanstack/react-query"
+import { useInterwovenKit } from "@initia/interwovenkit-react"
+
+function SendWithAutosign() {
+  const { initiaAddress, submitTxBlock, estimateGas } = useInterwovenKit()
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      const messages = [
+        {
+          typeUrl: "/cosmos.bank.v1beta1.MsgSend",
+          value: MsgSend.fromPartial({
+            fromAddress: initiaAddress,
+            toAddress: "init1...", // recipient address
+            amount: [{ amount: "1000000", denom: "uinit" }],
+          }),
+        },
+      ]
+
+      // Estimate gas and calculate fee
+      const gasEstimate = await estimateGas({ messages })
+      const fee = calculateFee(
+        Math.ceil(gasEstimate * 1.4),
+        GasPrice.fromString("0.015uinit")
+      )
+
+      // Submit transaction directly (no modal, uses ghost wallet)
+      const { transactionHash } = await submitTxBlock({ messages, fee })
+      return transactionHash
+    },
+  })
+
+  return (
+    <button onClick={() => mutate()} disabled={isPending}>
+      Send
+    </button>
+  )
+}
+```
+
+<Tip>
+Use `submitTxBlock` for seamless transactions with autosign. For transactions requiring user confirmation, use `requestTxBlock` instead.
+</Tip>
 
 ## Disabling Autosign
 
