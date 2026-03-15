@@ -1,5 +1,5 @@
 ---
-title: 'Move Tutorial: BlockForge Game - Invisible UX'
+title: 'BlockForge Game - Move'
 icon: wand-magic-sparkles
 ---
 
@@ -29,16 +29,14 @@ my-initia-project/
 <Note>
   **Prerequisite:** Ensure you have a Move-compatible appchain running 
   locally. If you haven't launched one yet, complete the 
-  [Step-by-Step Guide](../hackathon-landing) first.
+  [Set Up Your Appchain](../get-started) first.
 </Note>
 
 ### Readiness Check
 
 Before you start, verify that your local infrastructure is healthy.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Check local infrastructure health" wrap
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
@@ -48,9 +46,7 @@ Instead of writing the code yourself, instruct your AI agent to do it for you
 using the `initia-appchain-dev` skill. Your AI agent will generate the contract
 and automatically run unit tests to ensure the logic is sound.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Create and test the BlockForge module" wrap
 Using the `initia-appchain-dev` skill, please create a Move module project for our BlockForge game in a new directory named `blockforge`. Name the module `items` in the `blockforge` package. The game has the following rules:
 - Players can mint basic items called shards.
 - Players can craft relics by burning 2 shards.
@@ -215,9 +211,7 @@ If the build succeeds and the tests pass, BlockForge is ready to deploy.
 Now that the logic is verified, build and publish the contract to your live
 appchain using the Gas Station account.
 
-**Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Deploy the BlockForge module" wrap
 Using the `initia-appchain-dev` skill, please build and publish the blockforge Move module located in the `blockforge` directory to my appchain using my Gas Station account, then return the deployed module address.
 ```
 
@@ -273,9 +267,7 @@ minitiad move deploy --build \
 Before frontend work, smoke test the deployed module directly on chain. This
 keeps contract/module debugging separate from UI integration.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Smoke test the BlockForge module" wrap
 Using the `initia-appchain-dev` skill, I want to smoke test our live BlockForge game. Using my Gas Station account on my appchain, please:
 1. Mint 3 shards.
 2. Check my inventory.
@@ -324,14 +316,14 @@ skill.
 
 **1. Scaffold the Frontend:**
 
-```terminal wrap
+```terminal title="Prompt: Scaffold the BlockForge frontend" wrap
 Using the `initia-appchain-dev` skill, please scaffold a new Vite + React application named `blockforge-frontend` in my current directory using the `scaffold-frontend` script. Then, create a component named Game.jsx with Mint Shard and Craft Relic buttons and add it to the main App.jsx file.
 ```
 
 **2. Connect to Appchain:**
 
-```terminal wrap
-Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our blockforge contract on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
+```terminal title="Prompt: Connect the frontend to the BlockForge module" wrap
+Using the `initia-appchain-dev` skill, modify the Game.jsx component in the `blockforge-frontend` directory to connect to our BlockForge module on my appchain. Use the `@initia/interwovenkit-react` package for wallet connection and transaction signing.
 
 The Mint Shard button should call the mint_shard function, and the Craft Relic button should call the craft_relic function. Also, please display the player's current inventory of shards and relics.
 ```
@@ -629,7 +621,7 @@ Using the `initia-appchain-dev` skill, please fund my wallet address <YOUR_WALLE
 
 If you get stuck, see the [Debugging Workflow guide](../builder-guide#debugging-workflow).
 
-# ⚡ Power-Up: Auto-signing
+# 🪢 Native Feature: Auto-signing
 
 To make your BlockForge game natively integrated with the Initia stack, you can
 enable Auto-signing to create a frictionless experience where players don't
@@ -645,9 +637,7 @@ fees (`Feegrant`), allowing for seamless, session-based gameplay.
 You can enable session-based signing by modifying your provider configuration
 and adding a toggle in your UI.
 
-**Example Prompt:**
-
-```terminal wrap
+```terminal title="Prompt: Add auto-signing support" wrap
 Using the `initia-appchain-dev` skill, please modify my InterwovenKit configuration in `main.jsx` to enable `enableAutoSign`. Then, update `Game.jsx` to include a button that toggles auto-signing on and off for the player using the `autoSign` methods from `useInterwovenKit`.
 ```
 
@@ -1155,7 +1145,7 @@ This reference assumes:
 - inventory reads use `rest.move.resource` with a hex struct tag.
 </Accordion>
 
-### Power-Up Verification
+### Native Feature Verification
 
 1. Connect your wallet in `blockforge-frontend`.
 2. Enable Auto-sign and approve the one-time Auto-sign setup.

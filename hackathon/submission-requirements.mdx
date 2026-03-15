@@ -1,29 +1,39 @@
 ---
-title: 'Submission & Eligibility Criteria'
+title: 'Submission Requirements'
 icon: check-to-slot
 ---
 
 Welcome to the Initia hackathon! Our goal is to empower builders to push the
 boundaries of what's possible with Interwoven Rollups. To ensure your project is
 eligible for judging and showcases the best of the Initia ecosystem, please
-adhere to the following technical pillars.
+meet the following project requirements.
 
-# 1. Eligibility Pillars
+## What to Submit
+
+To submit, include:
+
+- `.initia/submission.json` as the source of truth for automated checks
+- `README.md` with a short project overview, implementation notes, and run instructions
+- your primary deployed address in the submission JSON
+- `demo_video_url` in your submission JSON
+
+# 1. Project Requirements
 
 To qualify for the prize pool, projects must demonstrate meaningful integration
 with the Initia stack.
 
-### Pillar 1: Dedicated Rollup Architecture
+### Requirement 1: Dedicated Rollup Architecture
 
 This hackathon is dedicated to the power of appchains. Your project should be
 deployed as its own appchain.
 
-- **Requirement:** Provide your rollup's Chain ID and a link to a transaction or
-  contract deployment on your rollup.
+- **Requirement:** Your submission must include your rollup metadata in
+  `.initia/submission.json`, including `rollup_chain_id`, your primary
+  deployed address, and a verifiable `l2_interaction_tx`.
 - **Getting Started:** Use the `weave` CLI to launch and manage your
   environment.
 
-### Pillar 2: Optimized Frontend Experience
+### Requirement 2: Optimized Frontend Experience
 
 We encourage builders to use the flagship tooling designed for the Interwoven
 ecosystem. This ensures your application is fully integrated with the Initia
@@ -35,11 +45,11 @@ stack and provides a seamless experience for users.
   Auto-signing (session-based invisible UX) and Interwoven Bridge flows for
   moving liquidity between L1 and your appchain.
 
-### Pillar 3: Showcasing Initia Native Features
+### Requirement 3: Required Native Feature
 
-High-value projects go beyond Hello World by leveraging Initia's native
-features. Your submission should implement at least one of the following
-Interwoven Power-Ups:
+High-value projects go beyond Hello World by implementing at least one
+supported Native Feature. In `.initia/submission.json`, this maps directly to
+the required `native_feature` field.
 
 1.  **Auto-signing (Invisible UX):** Create a frictionless experience where
     players or users can interact with the blockchain seamlessly without
@@ -50,41 +60,21 @@ Interwoven Power-Ups:
 3.  **Initia Usernames (Human Identity):** Integrate human-readable `.init`
     names to replace complex addresses and improve user onboarding.
 
-# 2. Technical Resource Hub
+<Note>
+Judges will score originality and execution. Projects that only reproduce an
+example without meaningful customization are unlikely to score as well as
+projects with clear custom logic, UX, or product differentiation.
+</Note>
 
-Access the official tools and documentation to build your project:
-
-### Official Repositories
-
-- [Initia L1](https://github.com/initia-labs/initia): Core Layer 1 source
-  code.
-- [Weave CLI](https://github.com/initia-labs/weave): Essential for launching
-  appchains.
-- [InterwovenKit](https://github.com/initia-labs/interwovenkit): The
-  standard React SDK for Initia frontends.
-- [Initia.js](https://github.com/initia-labs/initia.js): The primary
-  JavaScript library for blockchain interactions.
-
-### APIs & Endpoints
-
-- **Local Rollup Indexer:** `http://localhost:8080` (Use this to query
-  transactions and assets on your appchain).
-- **L1 Indexer:** [View Swagger](https://indexer.initia.xyz/swagger/index.html)
-  (Use this as a reference for querying global data like L1 assets and staking).
-- **L1 Testnet RPC:** `https://rpc.testnet.initia.xyz`
-- **L1 Testnet REST:** `https://rest.testnet.initia.xyz`
-- **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
-
-# 3. Submission Package
+# 2. Required Submission Files
 
 To support reliable automated verification, every submission repository must
 include this file:
 
 - **Required path:** `.initia/submission.json`
 
-This JSON file is the source of truth for eligibility checks. Also include a
-human-readable summary in your `README.md`, but the grader should parse
-`.initia/submission.json`.
+This JSON file is the source of truth for automated eligibility checks. Also
+include a human-readable summary in your `README.md`.
 
 ### Required `.initia/submission.json` Template
 
@@ -94,10 +84,11 @@ human-readable summary in your `README.md`, but the grader should parse
   "repo_url": "https://github.com/<org>/<repo>",
   "commit_sha": "0123456789abcdef0123456789abcdef01234567",
   "rollup_chain_id": "my-game-1",
+  "deployed_address": "0x...",
   "vm": "move",
-  "power_up": "auto-signing",
+  "native_feature": "auto-signing",
   "core_logic_path": "blockforge/sources/items.move",
-  "power_up_frontend_path": "blockforge-frontend/src/Game.jsx",
+  "native_feature_frontend_path": "blockforge-frontend/src/Game.jsx",
   "l2_interaction_tx": "0x...",
   "demo_video_url": "https://youtu.be/..."
 }
@@ -109,12 +100,14 @@ human-readable summary in your `README.md`, but the grader should parse
 - `repo_url`: Required. Reachable public GitHub repository URL.
 - `commit_sha`: Required. 40-character hex Git commit SHA.
 - `rollup_chain_id`: Required. Non-empty string.
+- `deployed_address`: Required. Primary deployed address for your application
+  logic. Use your contract address, or your module address for Move projects.
 - `vm`: Required. One of `move`, `evm`, `wasm`.
-- `power_up`: Required. One of `auto-signing`, `interwoven-bridge`,
+- `native_feature`: Required. One of `auto-signing`, `interwoven-bridge`,
   `initia-usernames`.
 - `core_logic_path`: Required. Repo-relative file path that exists at
   `commit_sha`.
-- `power_up_frontend_path`: Required. Repo-relative file path that exists at
+- `native_feature_frontend_path`: Required. Repo-relative file path that exists at
   `commit_sha`.
 - `l2_interaction_tx`: Required. Non-empty transaction hash or explorer URL.
 - `demo_video_url`: Required for every submission. Provide a 1-3 minute walkthrough video (Loom/YouTube, publicly accessible via URL).
@@ -138,7 +131,7 @@ what problem does it solve?]
 
 - **The Custom Implementation**: Briefly describe the unique logic you added.
   What original functionality did you design and implement?
-- **The Power-Up**: Which Interwoven feature did you use, and exactly how does
+- **The Native Feature**: Which Interwoven feature did you use, and exactly how does
   it improve the user experience?
 - **The Value Add**: What meaningful value does this application create for
   crypto users, and how does it specifically strengthen the Initia ecosystem?
@@ -148,3 +141,28 @@ what problem does it solve?]
 [Provide 3-4 clear steps for a judge to run your frontend and connect it to a
 local environment if necessary.]
 ```
+
+# 3. Technical Resources
+
+Access the official tools and documentation to build your project:
+
+### Official Repositories
+
+- [Initia L1](https://github.com/initia-labs/initia): Core Layer 1 source
+  code.
+- [Weave CLI](https://github.com/initia-labs/weave): Essential for launching
+  appchains.
+- [InterwovenKit](https://github.com/initia-labs/interwovenkit): The
+  standard React SDK for Initia frontends.
+- [Initia.js](https://github.com/initia-labs/initia.js): The primary
+  JavaScript library for blockchain interactions.
+
+### APIs & Endpoints
+
+- **Local Rollup Indexer:** `http://localhost:8080` (Use this to query
+  transactions and assets on your appchain).
+- **L1 Indexer:** [View Swagger](https://indexer.initia.xyz/swagger/index.html)
+  (Use this as a reference for querying global data like L1 assets and staking).
+- **L1 Testnet RPC:** `https://rpc.testnet.initia.xyz`
+- **L1 Testnet REST:** `https://rest.testnet.initia.xyz`
+- **Faucets:** [faucet.testnet.initia.xyz](https://faucet.testnet.initia.xyz)
