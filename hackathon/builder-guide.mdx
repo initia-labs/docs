@@ -112,7 +112,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
       them in the [Submission JSON](/hackathon/submission-requirements#submission-json).
     </Tip>
 
-2.  **Build & Test**: Clearly describe your app's behavior and rules, then let
+2.  **Build and Test**: Clearly describe your app's behavior and rules, then let
     the AI write the code and unit tests.
 
     ```terminal title="Prompt: Create and test the contract" wrap
@@ -122,7 +122,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     Please also create and run unit tests that verify both success and failure paths.
     ```
 
-3.  **Deploy**: Instruct the AI to deploy your contract/module to your appchain.
+3.  **Deploy to Your Appchain**: Instruct the AI to deploy your contract/module to your appchain.
 
     ```terminal title="Prompt: Deploy to your appchain" wrap
     Using the `initia-appchain-dev` skill, please build and deploy my contract/module from the <PROJECT_NAME> directory to my appchain using my Gas Station account.
@@ -130,7 +130,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     If this VM requires instantiate after deploy, run that too, then return the deployed address.
     ```
 
-4.  **On-Chain Verification**: Ask the AI to verify your live deployment with interactions and state queries.
+4.  **Verify Onchain Behavior**: Ask the AI to verify your live deployment with interactions and state queries.
 
     ```terminal title="Prompt: Smoke test live deployment" wrap
     Using the `initia-appchain-dev` skill, I want to smoke test my live <CONTRACT_NAME> on my appchain.
@@ -138,7 +138,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
     Please execute 2-3 realistic user actions, then query state after each step and confirm the observed results match expected behavior.
     ```
 
-5.  **Frontend Integration**: Ask the AI to build or update your frontend and connect it to your appchain.
+5.  **Integrate the Frontend**: Ask the AI to build or update your frontend and connect it to your appchain.
 
     ```terminal title="Prompt: Build the frontend" wrap
     Using the `initia-appchain-dev` skill, please create or update my frontend in <FRONTEND_PROJECT_NAME> to connect to my appchain with `InterwovenKit`, integrate my deployed <CONTRACT_OR_MODULE_NAME>, and implement the core user flow for <APP_NAME>.
@@ -150,7 +150,7 @@ Using the `initia-appchain-dev` skill, please fund my personal wallet <YOUR_WALL
       user flow in the browser.
     </Note>
 
-6.  **Native Feature Integration**: Ask the AI to implement one supported native feature and wire it into your app flow.
+6.  **Add a Native Feature**: Ask the AI to implement one supported native feature and wire it into your app flow.
 
     <Note>
       **Supported Native Features:** To be eligible for prizes, your project
