@@ -13,11 +13,13 @@ without meaningful customization are unlikely to score as well as projects with
 clear custom logic, UX, or product differentiation.
 </Note>
 
-## Create `.initia/submission.json`
+## Submission JSON
+
+Required file path: `.initia/submission.json`
 
 Use this exact structure:
 
-```json
+```json title=".initia/submission.json"
 {
   "project_name": "My Project",
   "repo_url": "https://github.com/<org>/<repo>",
@@ -33,7 +35,7 @@ Use this exact structure:
 }
 ```
 
-## Submission JSON field guide
+## Submission JSON Field Reference
 
 All fields in `.initia/submission.json` are required.
 
@@ -51,11 +53,13 @@ All fields in `.initia/submission.json` are required.
 | `l2_interaction_tx` | Real, non-empty transaction hash or explorer URL |
 | `demo_video_url` | Public Loom or YouTube URL for a 1 to 3 minute walkthrough video |
 
-## Create `README.md`
+## Project Description
+
+Required file path: `README.md` at the repository root
 
 Copy this block near the top of your `README.md` and fill it in:
 
-```markdown
+```markdown title="README.md"
 ## Initia Hackathon Submission
 
 - **Project Name**: [Your Project Name]
