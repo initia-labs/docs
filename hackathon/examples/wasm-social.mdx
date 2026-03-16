@@ -843,9 +843,9 @@ messages.map((message, index) => (
 ))
 ```
 
-<Tip>
-  **Pro Tip:** Keep `useUsernameQuery(address)` inside a child row component like `MessageRow`. Do not call it directly inside a parent component's `.map()` callback.
-</Tip>
+<Warning>
+  **Hook Placement:** Keep `useUsernameQuery(address)` inside a child row component like `MessageRow`. Do not call it directly inside a parent component's `.map()` callback.
+</Warning>
 </Accordion>
 
 If you want the complete finished frontend after applying the manual steps
@@ -1112,6 +1112,5 @@ export default function App() {
 ## Next Steps
 
 Now that you've mastered a Wasm application, you're ready to build your own
-idea! Ensure your project meets all the technical pillars before submitting.
-
-[Review Submission Requirements ->](../submission-requirements)
+idea! Ensure your project meets all the
+[Submission Requirements](../submission-requirements) before submitting.

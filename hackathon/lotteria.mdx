@@ -163,8 +163,8 @@ public entry fun buy_ticket(
 }
 ```
 
-<Note>
-The `Metadata` object address in `lottery.move` is specific to the token used by the reference deployment and
+<Warning>
+**Replace the Reference Metadata Address:** The `Metadata` object address in `lottery.move` is specific to the token used by the reference deployment and
 will not exist on your local rollup. Before building, query the metadata object for the token you want to use
 for ticket payments:
 
@@ -175,7 +175,7 @@ minitiad query move metadata --denom <YOUR_FEE_DENOM> --node http://localhost:26
 
 Replace every hardcoded `object::address_to_object<Metadata>(@0x...)` occurrence in `lottery.move` with the
 returned metadata address.
-</Note>
+</Warning>
 
 **View functions:**
 
@@ -240,10 +240,10 @@ minitiad query move view $MODULE_ADDRESS lottery get_ticket_price \
   --node http://localhost:26657
 ```
 
-<Note>
-Even for view functions that take no arguments, `--args '[]'` is required. Omitting it will
+<Warning>
+**Required Empty Args:** Even for view functions that take no arguments, `--args '[]'` is required. Omitting it will
 cause a CLI parse error.
-</Note>
+</Warning>
 
 To execute a function, for example to initialize the module state after deployment:
 

@@ -116,15 +116,15 @@ Your AI agent is your partner in this hackathon, but the `weave` CLI requires
 an interactive setup flow to prepare your environment and launch your appchain.
 You can run it whenever you need to initialize or reconfigure your setup.
 
-<Note>
-  If you already ran `weave init` and want to create a new appchain, run the
+<Warning>
+  **Resetting Existing Local State:** If you already ran `weave init` and want to create a new appchain, run the
   following commands first. This clears your existing local Initia, Minitia,
   OPinit, and relayer setup:
   ```bash wrap
   rm -rf ~/.weave ~/.initia ~/.minitia ~/.opinit
   docker rm -f weave-relayer || true
   ```
-</Note>
+</Warning>
 
 **Run the following command in your terminal:**
 
@@ -317,9 +317,9 @@ Here's a guide on how to navigate the interactive setup:
     **Action:**
     Enter `1000000000000000000000000` (10^24). This ensures you have plenty of tokens for testing, especially for EVM.
 
-    <Note>
-      **Move Track:** Use `10000000000000000000` (10^19) to avoid `u64` overflows.
-    </Note>
+    <Warning>
+      **Move Track Balance Limit:** Use `10000000000000000000` (10^19) to avoid `u64` overflows.
+    </Warning>
 
     ### Add Additional Genesis Accounts
     **Prompt:**
@@ -505,7 +505,7 @@ Follow the interactive guide:
   </Step>
 </Steps>
 
-<Tip>
+<Note>
   **Persistence After Restart:**
   After restarting your computer, the relayer remains managed by Docker. As
   long as Docker Desktop is open, it should still be running. You still need to
@@ -516,7 +516,7 @@ Follow the interactive guide:
   
   weave opinit start executor -d
   ```
-</Tip>
+</Note>
 
 
 ## Step 9: Final Key Setup
