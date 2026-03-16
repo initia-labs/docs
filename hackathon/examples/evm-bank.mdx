@@ -581,12 +581,12 @@ export default App
 **8. Create the `Bank.jsx` Component:** Create `src/Bank.jsx` and add the
 contract interaction logic.
 
-<Tip>
-  **Pro Tip:** For `view` functions that depend on `msg.sender` (like
+<Note>
+  **`msg.sender` in `view` Calls:** For `view` functions that depend on `msg.sender` (like
   `myBalance`), provide a `from` address in your `eth_call` params so the
   appchain resolves the correct user balance. This tutorial assumes 18
   decimals, so `parseEther`/`formatEther` are used.
-</Tip>
+</Note>
 
 ```javascript wrap src/Bank.jsx
 import React, { useState, useEffect } from 'react'
@@ -1290,6 +1290,5 @@ This reference assumes:
 ## Next Steps
 
 Now that you've mastered an EVM application, you're ready to build your own
-idea! Ensure your project meets all the technical pillars before submitting.
-
-[Review Submission Requirements ->](../submission-requirements)
+idea! Ensure your project meets all the
+[Submission Requirements](../submission-requirements) before submitting.
