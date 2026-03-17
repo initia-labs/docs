@@ -4,9 +4,9 @@ title: useUsernameQuery
 
 ## Overview
 
-- React Query hook that fetches the Initia (`.init`) username for the connected
-  address.
-- Automatically re-runs when the address changes.
+- React Query hook that fetches the Initia (`.init`) username for a provided
+  address, or for the connected address when no argument is passed.
+- Automatically re-runs when the target address changes.
 - Exposes standard React Query state (`isLoading`, `error`, etc.).
 
 ## Prerequisites
@@ -18,6 +18,11 @@ title: useUsernameQuery
   dynamic import in Next.js.
 
 ## Quickstart
+
+### Connected Wallet
+
+Call `useUsernameQuery()` with no arguments to resolve the username for the
+currently connected wallet.
 
 ```tsx
 'use client'
@@ -31,15 +36,31 @@ function Username() {
 }
 ```
 
+### Specific Address
+
+Pass an address to resolve the username for that address instead of the
+connected wallet.
+
+```tsx
+'use client'
+
+import { useUsernameQuery } from '@initia/interwovenkit-react'
+
+function SenderUsername({ address }: { address: string }) {
+  const { data } = useUsernameQuery(address)
+  return <span>{data ?? address}</span>
+}
+```
+
 <Note>
-  This example assumes providers are already set up. For complete setup
+  These examples assume providers are already set up. For complete setup
   configurations, see [Provider Setup](../setup/providers).
 </Note>
 
 ## Return value
 
 ```ts
-function useUsernameQuery(): UseQueryResult<string | null>
+function useUsernameQuery(address?: string): UseQueryResult<string | null>
 ```
 
 Returns a React Query `UseQueryResult<string | null>` object. The `data`
@@ -48,11 +69,12 @@ property is:
 - `string` when a username exists (ends with `.init`)
 - `null` when no username exists or the address is invalid
 - `undefined` before the query has produced a value or when the query is
-  disabled (e.g., when no address is connected)
+  disabled (for example, when neither an explicit address nor a connected
+  wallet address is available)
 
 Type `UseQueryResult` is from `@tanstack/react-query`.
 
 ## Notes
 
-- The query is disabled until a non‑empty address is available from
+- If `address` is omitted, the hook falls back to the connected address from
   `useAddress()`.
