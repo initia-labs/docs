@@ -1,0 +1,221 @@
+---
+title: Changelog
+description: Release history for InterwovenKit
+---
+
+<Update label="2026-03-02" description="v2.4.6" tags={["Feature"]}>
+  ## v2.4.6
+
+  - **hooks:** Accept optional address in `useUsernameQuery`
+</Update>
+
+<Update label="2026-02-26" description="v2.4.5" tags={["Feature", "Bug Fix"]}>
+  ## v2.4.5
+
+  ### Features
+
+  - **prices:** Use indexer API for asset price queries
+
+  ### Bug fixes
+
+  - **deposit:** Respect explicit `srcOptions` over overrides
+</Update>
+
+<Update label="2026-02-26" description="v2.4.4" tags={["Feature", "Bug Fix"]}>
+  ## v2.4.4
+
+  ### Features
+
+  - **bridge:** Display minimum received for swap routes
+  - **deposit:** Add iUSD extra source list with USDC
+  - **deposit:** Add source-aware empty-state messaging
+
+  ### Bug fixes
+
+  - **query:** Scope retry cache cleanup to InterwovenKit queries
+  - **modal:** Add `AsyncBoundary` and optimize deposit rendering
+  - **portfolio:** Hide VIP positions with no remaining value
+  - **activity:** Prevent unit symbol truncation in changes
+  - **bridge:** Prevent invalid balance queries on chain switch
+  - **bridge:** Refresh and requote stale routes
+  - **deposit:** Auto-prefill single transfer destination
+  - **deposit:** Keep iUSD source symbol matching
+</Update>
+
+<Update label="2026-02-23" description="v2.4.3" tags={["Feature"]}>
+  ## v2.4.3
+
+  - **liquidity:** Add CLAMM liquidity positions
+</Update>
+
+<Update label="2026-02-19" description="v2.4.2" tags={["Bug Fix"]}>
+  ## v2.4.2
+
+  - **autosign:** Restore autosign after reload for direct submit
+</Update>
+
+<Update label="2026-02-19" description="v2.4.1" tags={["Bug Fix"]}>
+  ## v2.4.1
+
+  - **autosign:** Accept apex/www registry host for subdomains
+</Update>
+
+<Update label="2026-02-17" description="v2.4.0" tags={["Feature"]}>
+  ## v2.4.0
+
+  - **autosign:** Replace Privy with signature-derived wallet
+  - **example:** Add programmatic test wallet for E2E testing
+</Update>
+
+<Update label="2026-02-16" description="v2.3.0" tags={["Feature"]}>
+  ## v2.3.0
+
+  - **wallet:** Send version header in Router API requests
+</Update>
+
+<Update label="2026-02-14" description="v2.2.5" tags={["Feature", "Bug Fix"]}>
+  ## v2.2.5
+
+  ### Features
+
+  - Redesigned wallet connection UI
+  - **deposit:** Refactor transfer flow for deposit and withdraw
+
+  ### Bug fixes
+
+  - **deps:** Add `@initia/opinit.proto` peer dependency
+  - **assets:** Resolve `l2/` denom via trace counterparty lookup
+  - **bridge:** Fall back to valid asset on unsupported denom
+  - **bridge:** Fall back to alternative route on error
+</Update>
+
+<Update label="2026-02-04" description="v2.2.4" tags={["Feature", "Bug Fix"]}>
+  ## v2.2.4
+
+  ### Features
+
+  - **portfolio:** Include VIP reward in Initia chain total balance
+  - **bridge:** Skip OP withdrawal reminder for migrated bridges
+
+  ### Bug fixes
+
+  - Fix deposit and withdraw bugs and inconsistencies
+  - **portfolio:** Prevent cross-chain denom logo collision
+  - **bridge:** Add route data conditions to Fast/Lossless toggle
+  - **deps:** Patch `brace-expansion` transitive vulnerability
+</Update>
+
+<Update label="2026-02-01" description="v2.2.3" tags={["Bug Fix"]}>
+  ## v2.2.3
+
+  - **assets:** Resolve query key collision between `useDenoms` and `WithDenom`
+</Update>
+
+<Update label="2026-01-28" description="v2.2.2" tags={["Bug Fix"]}>
+  ## v2.2.2
+
+  - **home:** Increase navigation icon size from 16 to 20px
+  - **minity:** Simplify SSE reconnection and add refresh trigger
+</Update>
+
+<Update label="2026-01-24" description="v2.2.1" tags={["Performance"]}>
+  ## v2.2.1
+
+  - Externalize video assets to CDN
+</Update>
+
+<Update label="2026-01-23" description="v2.2.0" tags={["Feature", "Bug Fix"]}>
+  ## v2.2.0
+
+  ### Features
+
+  - Add portfolio view
+  - Add deposit and withdraw functionality
+  - **deps:** Upgrade `@base-ui` to 1.0.0 release version
+
+  ### Bug fixes
+
+  - **bridge:** Show dash for unavailable route price
+</Update>
+
+<Update label="2026-01-23" description="v2.1.1" tags={["Feature"]}>
+  ## v2.1.1
+
+  - **autosign:** Check account existence before enabling autosign
+  - **autosign:** Revoke existing grants before enabling new ones
+</Update>
+
+<Update label="2025-11-18" description="v2.1.0" tags={["Feature"]}>
+  ## v2.1.0
+
+  - **autosign:** Implement auto-sign and settings pages
+  - **send-nft:** Add IBC NFT transfer parameter generation
+</Update>
+
+<Update label="2025-10-16" description="v2.0.6" tags={["Feature", "Bug Fix"]}>
+  ## v2.0.6
+
+  ### Features
+
+  - **chains:** Add `profiles.json` fallback for deleted chains
+  - **nft:** Validate NFT transferability before sending
+  - **signer:** Fetch public key from REST API first
+  - **wallet:** Display chain value and NFT count in `ChainSelect`
+  - **wallet:** Display disabled message on send forms
+
+  ### Bug fixes
+
+  - **balance:** Disable max button when balance is zero
+  - **nft:** Remove conditional rendering for NFT thumbnails
+  - **send:** Throw error only when assetlist is missing
+</Update>
+
+<Update label="2025-10-15" description="v2.0.5" tags={["Feature", "Bug Fix"]}>
+  ## v2.0.5
+
+  ### Features
+
+  - **config:** Add configurable glyph URL
+  - **tx:** Add collapsible fee breakdown
+
+  ### Bug fixes
+
+  - **drawer:** Add `onClick` handler to backdrop
+  - **portfolio:** Show chains with balance regardless of value
+  - **send:** Add error handling for missing primary asset
+</Update>
+
+<Update label="2025-10-01" description="v2.0.4" tags={["Feature"]}>
+  ## v2.0.4
+
+  - **tx:** Add timeout and interval parameters
+</Update>
+
+<Update label="2025-09-30" description="v2.0.3" tags={["Feature", "Bug Fix"]}>
+  ## v2.0.3
+
+  ### Features
+
+  - **interface:** Add custom fee handling support
+  - **form:** Add paste handling for formatted numbers
+  - **form:** Improve focus management
+  - **tx:** Improve fee selector UI design
+  - **bridge:** Improve route selection UI
+  - **bridge:** Group history items by date
+
+  ### Bug fixes
+
+  - **bridge:** Handle sequence conflicts in same-chain op hook transactions
+</Update>
+
+<Update label="2025-09-30" description="v2.0.2" tags={["Feature"]}>
+  ## v2.0.2
+
+  - Change indexer URL
+</Update>
+
+<Update label="2025-09-30" description="v2.0.1" tags={["Bug Fix"]}>
+  ## v2.0.1
+
+  - **nft:** Use `collection_addr` and `token_id` for unique key
+</Update>

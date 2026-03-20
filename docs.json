@@ -442,7 +442,8 @@
             "pages": [
               "interwovenkit/introduction",
               "interwovenkit/getting-started",
-              "interwovenkit/migration"
+              "interwovenkit/migration",
+              "interwovenkit/changelog"
             ]
           },
           {
