@@ -27,6 +27,10 @@ const TESTNET: {
   routerApiUrl: 'https://router-api.initiation-2.initia.xyz'
   glyphUrl: 'https://glyph.initiation-2.initia.xyz'
   usernamesModuleAddress: '0x42cd8467b1c86e59bf319e5664a09b6b5840bb3fac64f5ce690b5041c530565a'
+  lockStakeModuleAddress: '0x81c3ea419d2fd3a27971021d9dd3cc708def05e5d6a09d39b2f1f9ba18312264'
+  minityUrl: 'https://portfolio-api.minity.xyz'
+  dexUrl: 'https://dex-api.initiation-2.initia.xyz'
+  vipUrl: 'https://vip-api.testnet.initia.xyz'
   theme: 'dark'
   disableAnalytics: true
 }
@@ -38,6 +42,11 @@ const TESTNET: {
   username contract. This is the same for all apps using testnet and it
   represents the deployed contract address that handles username lookups (e.g.,
   resolving `alice.init` to an address)
+- `lockStakeModuleAddress`: On-chain module address used for lock/stake
+  position queries
+- `minityUrl`: Base URL for Minity-backed portfolio data
+- `dexUrl`: Base URL for DEX-backed portfolio and position data
+- `vipUrl`: Base URL for VIP-backed portfolio and position data
 - `theme`: Default theme is `"dark"`, but can be overridden to `"light"` when
   using the preset
 
