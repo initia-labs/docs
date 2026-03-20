@@ -1,221 +1,316 @@
 ---
 title: Changelog
-description: Release history for InterwovenKit
+description: Stay up to date with InterwovenKit releases, new features, improvements, and bug fixes.
 ---
 
-<Update label="2026-03-02" description="v2.4.6" tags={["Feature"]}>
-  ## v2.4.6
+<Update label="March 2, 2026" description="v2.4.6" tags={["Improvement"]}>
 
-  - **hooks:** Accept optional address in `useUsernameQuery`
+  ## Optional address in `useUsernameQuery`
+
+  The `useUsernameQuery` hook now accepts an optional `address` parameter. When provided, the hook resolves the username for the given address instead of the connected wallet. When omitted, it falls back to the connected wallet address as before.
+
 </Update>
 
-<Update label="2026-02-26" description="v2.4.5" tags={["Feature", "Bug Fix"]}>
-  ## v2.4.5
+<Update label="February 26, 2026" description="v2.4.5" tags={["Improvement", "Bug fix"]}>
 
-  ### Features
+  ## Indexer-based asset price queries
 
-  - **prices:** Use indexer API for asset price queries
+  Asset price queries now use the Initia indexer API (`indexer.initia.xyz`) instead of the general REST API, providing faster and more reliable price data.
 
-  ### Bug fixes
+  ## Bug fixes
 
-  - **deposit:** Respect explicit `srcOptions` over overrides
+  - Fixed deposit source filtering to respect explicitly provided `srcOptions` instead of merging them with internal overrides.
+
 </Update>
 
-<Update label="2026-02-26" description="v2.4.4" tags={["Feature", "Bug Fix"]}>
-  ## v2.4.4
+<Update label="February 26, 2026" description="v2.4.4" tags={["New feature", "Improvement", "Bug fix"]}>
 
-  ### Features
+  ## Minimum received for swap routes
 
-  - **bridge:** Display minimum received for swap routes
-  - **deposit:** Add iUSD extra source list with USDC
-  - **deposit:** Add source-aware empty-state messaging
+  Bridge swap routes now display the minimum amount the user will receive after slippage, calculated with full BigNumber precision.
 
-  ### Bug fixes
+  ## iUSD deposit sources
 
-  - **query:** Scope retry cache cleanup to InterwovenKit queries
-  - **modal:** Add `AsyncBoundary` and optimize deposit rendering
-  - **portfolio:** Hide VIP positions with no remaining value
-  - **activity:** Prevent unit symbol truncation in changes
-  - **bridge:** Prevent invalid balance queries on chain switch
-  - **bridge:** Refresh and requote stale routes
-  - **deposit:** Auto-prefill single transfer destination
-  - **deposit:** Keep iUSD source symbol matching
+  Deposits now support iUSD with USDC as an additional external source. The deposit flow includes source-aware empty-state messaging that explains why no assets are available and guides users on where to acquire them.
+
+  ## Route refresh and requoting
+
+  Bridge routes now automatically refresh and requote when they become stale (older than 10 seconds). A new polling system checks route freshness at intervals based on the route type — 2 seconds for L2, 5 seconds for L1, and 10 seconds for other routes.
+
+  ## Improvements
+
+  - Deposit flow auto-prefills the destination when only a single transfer target is available.
+  - Removed the Civitia integration from the portfolio.
+
+  ## Bug fixes
+
+  - Scoped query cache cleanup to InterwovenKit-prefixed queries only, preventing accidental clearing of host application caches.
+  - Wrapped deposit rendering in an `AsyncBoundary` to prevent Suspense from blocking the modal dialog.
+  - Hidden VIP positions with no remaining value from the portfolio view.
+  - Fixed unit symbol truncation in activity change entries by removing overflow constraints.
+  - Prevented invalid balance queries when switching chains by adding strict bech32 address validation.
+
 </Update>
 
-<Update label="2026-02-23" description="v2.4.3" tags={["Feature"]}>
-  ## v2.4.3
+<Update label="February 23, 2026" description="v2.4.3" tags={["New feature"]}>
 
-  - **liquidity:** Add CLAMM liquidity positions
+  ## CLAMM liquidity positions
+
+  The portfolio now displays Concentrated Liquidity AMM (CLAMM) positions alongside traditional pool-based LP positions. This release includes a full CLAMM math library ported from the on-chain Move contracts, including Q64.64 fixed-point arithmetic, tick-to-sqrt-price conversions, and liquidity amount calculations.
+
+  Each CLAMM position shows the token pair, in-range or out-of-range status, and the calculated value of both tokens in the position. The liquidity data layer was refactored into focused submodules for pools, CLAMM, query keys, and shared types.
+
 </Update>
 
-<Update label="2026-02-19" description="v2.4.2" tags={["Bug Fix"]}>
-  ## v2.4.2
+<Update label="February 19, 2026" description="v2.4.2" tags={["Bug fix"]}>
 
-  - **autosign:** Restore autosign after reload for direct submit
+  ## Bug fixes
+
+  - Fixed autosign not persisting after page reload when using direct submit. The derived wallet is now re-derived once per page session when auto-sign is enabled, so direct signing continues to work after reload.
+
 </Update>
 
-<Update label="2026-02-19" description="v2.4.1" tags={["Bug Fix"]}>
-  ## v2.4.1
+<Update label="February 19, 2026" description="v2.4.1" tags={["Bug fix"]}>
 
-  - **autosign:** Accept apex/www registry host for subdomains
+  ## Bug fixes
+
+  - Fixed autosign domain verification for subdomains. When the registered hostname is an apex domain or `www.` variant, any subdomain under that registrable domain is now accepted. For example, registering `www.civitia.org` now also allows `app.civitia.org`.
+
 </Update>
 
-<Update label="2026-02-17" description="v2.4.0" tags={["Feature"]}>
-  ## v2.4.0
+<Update label="February 17, 2026" description="v2.4.0" tags={["New feature"]}>
 
-  - **autosign:** Replace Privy with signature-derived wallet
-  - **example:** Add programmatic test wallet for E2E testing
+  ## Signature-derived autosign wallet
+
+  The autosign system has been rebuilt from the ground up. The previous Privy-based embedded wallet has been replaced with a signature-derived wallet that requires no third-party dependencies.
+
+  When a user enables autosign, InterwovenKit requests an EIP-191 personal signature from the connected wallet and derives an HD wallet from it using a keccak256-to-BIP39-to-SLIP10 derivation path (inspired by dYdX). This derived wallet signs transactions via authz delegation, with a new `AutoSignFeePolicy` configuration for controlling gas multipliers and allowed fee denominations.
+
+  The release also adds Amino encoding support for `AllowedMsgAllowance` in fee grants, domain verification using the `psl` package for public suffix awareness, and comprehensive test coverage across the autosign flow. The `@privy-io/react-auth` dependency has been fully removed, reducing the bundle size significantly.
+
+  ## E2E test wallet
+
+  A programmatic test wallet is now available for end-to-end testing. When the `INITIA_TEST_MNEMONIC` environment variable is set, the example app automatically creates an EIP-1193 provider from the mnemonic and registers it as an injected wagmi connector.
+
 </Update>
 
-<Update label="2026-02-16" description="v2.3.0" tags={["Feature"]}>
-  ## v2.3.0
+<Update label="February 16, 2026" description="v2.3.0" tags={["Improvement"]}>
 
-  - **wallet:** Send version header in Router API requests
+  ## Version header in API requests
+
+  InterwovenKit now sends an `InterwovenKit-Version` header with every Router API request, populated from a build-time constant. This enables the Initia backend to track which version of InterwovenKit is making requests, improving debugging and compatibility monitoring. The version display in the wallet UI also uses this build-time constant instead of reading from `package.json` at runtime.
+
 </Update>
 
-<Update label="2026-02-14" description="v2.2.5" tags={["Feature", "Bug Fix"]}>
-  ## v2.2.5
+<Update label="February 14, 2026" description="v2.2.5" tags={["New feature", "Bug fix"]}>
 
-  ### Features
+  ## Redesigned wallet connection UI
 
-  - Redesigned wallet connection UI
-  - **deposit:** Refactor transfer flow for deposit and withdraw
+  The wallet connection screen has been completely redesigned. The new UI features a two-step flow: a primary sign-in view with social login options (Google, X, Email) and a secondary all-wallets view with search and the WalletConnect directory. The layout includes slide animations between views and a scrollable wallet list for mobile. Uninstalled wallets now show as disabled buttons instead of external links.
 
-  ### Bug fixes
+  ## Unified transfer flow
 
-  - **deps:** Add `@initia/opinit.proto` peer dependency
-  - **assets:** Resolve `l2/` denom via trace counterparty lookup
-  - **bridge:** Fall back to valid asset on unsupported denom
-  - **bridge:** Fall back to alternative route on error
+  The deposit and withdraw flows have been consolidated into a single shared `TransferFlow` component that accepts a transfer mode ("deposit" or "withdraw"). This eliminates duplicate field components and ensures consistent behavior between deposit and withdraw operations, with mode-specific asset key mappings and empty state copy.
+
+  ## Bug fixes
+
+  - Added `@initia/opinit.proto` as a peer dependency to prevent missing module errors.
+  - Fixed L2 denom resolution by falling back to trace counterparty lookup when direct denom matching fails.
+  - Bridge now falls back to a valid asset with an info notification when the selected denom is not supported on the target chain.
+  - Bridge falls back to alternative routes (preferring OP withdrawal) when the primary route returns an error.
+
 </Update>
 
-<Update label="2026-02-04" description="v2.2.4" tags={["Feature", "Bug Fix"]}>
-  ## v2.2.4
+<Update label="February 4, 2026" description="v2.2.4" tags={["Improvement", "Bug fix"]}>
 
-  ### Features
+  ## VIP rewards in portfolio balance
 
-  - **portfolio:** Include VIP reward in Initia chain total balance
-  - **bridge:** Skip OP withdrawal reminder for migrated bridges
+  The portfolio total balance on the Initia L1 chain now includes VIP reward values. Previously, VIP rewards were displayed separately but not counted toward the chain's total balance.
 
-  ### Bug fixes
+  ## OP bridge migration detection
 
-  - Fix deposit and withdraw bugs and inconsistencies
-  - **portfolio:** Prevent cross-chain denom logo collision
-  - **bridge:** Add route data conditions to Fast/Lossless toggle
-  - **deps:** Patch `brace-expansion` transitive vulnerability
+  The bridge now detects whether an OP bridge has been migrated to instant withdrawal by querying the `/migration_info/by_l1_denom` API. Migrated bridges skip the OP withdrawal reminder since instant withdrawals don't require a waiting period.
+
+  ## Bug fixes
+
+  - Fixed deposit and withdraw validation to use BigNumber instead of `Number()` for quantity checks, preventing edge cases with large or precise amounts.
+  - Resolved cross-chain denom logo collisions by using `chainId:denom` composite keys in the asset logo map instead of bare denom strings.
+  - The Fast/Lossless route toggle now only appears when both route options have loaded data and the OP withdrawal duration exceeds the default route duration.
+  - Patched `brace-expansion` transitive vulnerability via dependency override.
+
 </Update>
 
-<Update label="2026-02-01" description="v2.2.3" tags={["Bug Fix"]}>
-  ## v2.2.3
+<Update label="February 1, 2026" description="v2.2.3" tags={["Bug fix"]}>
 
-  - **assets:** Resolve query key collision between `useDenoms` and `WithDenom`
+  ## Bug fixes
+
+  - Fixed a query key collision between `useDenoms` and `WithDenom` where both queries shared the same cache key but expected different return types. The `useDenoms` query function now returns the full response object and uses a `select` transform, giving each query a distinct cache shape.
+
 </Update>
 
-<Update label="2026-01-28" description="v2.2.2" tags={["Bug Fix"]}>
-  ## v2.2.2
+<Update label="January 28, 2026" description="v2.2.2" tags={["Improvement", "Bug fix"]}>
 
-  - **home:** Increase navigation icon size from 16 to 20px
-  - **minity:** Simplify SSE reconnection and add refresh trigger
+  ## Improvements
+
+  - Increased home navigation icon size from 16px to 20px for better tap targets.
+  - Simplified SSE reconnection logic by removing exponential backoff and letting the server manage reconnection. Added a `useRefreshPortfolio` hook with 1000ms throttle for manual portfolio refresh triggers.
+
 </Update>
 
-<Update label="2026-01-24" description="v2.2.1" tags={["Performance"]}>
-  ## v2.2.1
+<Update label="January 24, 2026" description="v2.2.1" tags={["Improvement"]}>
 
-  - Externalize video assets to CDN
+  ## Video assets moved to CDN
+
+  Transfer completion and loading animations are now loaded from `assets.initia.xyz/videos/` instead of being bundled with the package. This removes four `.mp4` files from the build output, reducing the package size. Video end detection was also improved by switching from the `onEnded` event to `onTimeUpdate` with a 100ms threshold check.
+
 </Update>
 
-<Update label="2026-01-23" description="v2.2.0" tags={["Feature", "Bug Fix"]}>
-  ## v2.2.0
+<Update label="January 23, 2026" description="v2.2.0" tags={["New feature", "Improvement"]}>
 
-  ### Features
+  ## Portfolio
 
-  - Add portfolio view
-  - Add deposit and withdraw functionality
-  - **deps:** Upgrade `@base-ui` to 1.0.0 release version
+  A complete portfolio view is now available in the wallet. The portfolio is powered by a real-time Minity SSE connection that streams balance updates as they happen, with optimized re-rendering that only triggers React Query updates on aggregated data changes.
 
-  ### Bug fixes
+  The portfolio displays staking positions (delegations, unbonding, and rewards), DEX liquidity positions, VIP rewards, and per-chain asset breakdowns with position groups. A dedicated data layer handles Initia staking, liquidity, VIP, and position total calculations, backed by extensive test coverage.
 
-  - **bridge:** Show dash for unavailable route price
+  ## Deposit and withdraw
+
+  A new transfer flow enables depositing assets from external chains into Interwoven Rollups and withdrawing them back. The flow includes external and local asset selection, quantity input with route simulation via the Skip API, transaction execution with OP bridge withdrawal tracking, and completion animations with explorer links.
+
+  ## Improvements
+
+  - Upgraded `@base-ui-components/react` to `@base-ui/react` 1.0.0 stable release.
+  - Added responsive layout with mobile menu to the example application.
+  - Disabled Minity API calls on testnet to avoid unnecessary errors. Testnet uses on-chain balance queries instead.
+
+  ## Bug fixes
+
+  - Bridge now shows a dash (`$-`) instead of `$0` when a route price is unavailable.
+
 </Update>
 
-<Update label="2026-01-23" description="v2.1.1" tags={["Feature"]}>
-  ## v2.1.1
+<Update label="January 23, 2026" description="v2.1.1" tags={["Improvement"]}>
 
-  - **autosign:** Check account existence before enabling autosign
-  - **autosign:** Revoke existing grants before enabling new ones
+  ## Autosign safety improvements
+
+  Enabling autosign now checks whether the derived wallet account exists on-chain before proceeding. If the account doesn't exist (no funds), the enable button is disabled with an appropriate error message.
+
+  Additionally, when enabling autosign, any existing authz grants and fee grants from previous sessions are automatically revoked before creating new ones. The grant and fee grant API logic has been extracted into a shared `useAutoSignApi` hook for reuse across enable and disable flows.
+
 </Update>
 
-<Update label="2025-11-18" description="v2.1.0" tags={["Feature"]}>
-  ## v2.1.0
+<Update label="November 18, 2025" description="v2.1.0" tags={["New feature"]}>
 
-  - **autosign:** Implement auto-sign and settings pages
-  - **send-nft:** Add IBC NFT transfer parameter generation
+  ## Autosign
+
+  InterwovenKit now includes a complete autosign system. When enabled, transactions are automatically signed using a Privy embedded wallet with authz delegation, removing the need for manual wallet approval on each transaction.
+
+  The implementation includes an enable modal with configurable duration options (10 minutes, 1 hour, 1 day, 7 days, or until revoked), website domain verification, a settings page for managing active grants with live expiration countdowns, and a revoke flow. The signing layer wraps messages in `MsgExec` for authz-delegated execution.
+
+  New pages include: autosign enable modal, receive page with QR code, settings page, and manage autosign page with per-grant revocation.
+
+  ## IBC NFT transfers
+
+  Send NFT now supports IBC transfers across all VM types. The implementation includes VM-specific parameter generation for EVM (class ID and token ID mapping), Move (collection name resolution), and Wasm (ICS721 contract mapping). Each handler resolves the appropriate IBC class trace for cross-chain NFT transfers.
+
+  ## Improvements
+
+  - Extracted a reusable `NftHeader` component, replacing duplicate header implementations.
+  - Added a generic `Dropdown` component built on Base UI Select.
+  - Replaced the reject button text with a close icon in the transaction request view.
+  - Added CSS property ordering via stylelint.
+
 </Update>
 
-<Update label="2025-10-16" description="v2.0.6" tags={["Feature", "Bug Fix"]}>
-  ## v2.0.6
+<Update label="October 16, 2025" description="v2.0.6" tags={["New feature", "Improvement", "Bug fix"]}>
 
-  ### Features
+  ## Deleted chain fallback
 
-  - **chains:** Add `profiles.json` fallback for deleted chains
-  - **nft:** Validate NFT transferability before sending
-  - **signer:** Fetch public key from REST API first
-  - **wallet:** Display chain value and NFT count in `ChainSelect`
-  - **wallet:** Display disabled message on send forms
+  Chains that have been removed from the registry are no longer treated as missing. InterwovenKit now fetches `profiles.json` as a fallback and returns minimal chain information for deleted chains, preventing crashes when users have assets on deprecated rollups. The Skip bridge also uses this fallback for chain resolution.
 
-  ### Bug fixes
+  ## NFT transfer validation
 
-  - **balance:** Disable max button when balance is zero
-  - **nft:** Remove conditional rendering for NFT thumbnails
-  - **send:** Throw error only when assetlist is missing
+  Before sending an NFT, InterwovenKit now simulates the transfer transaction. If the simulation fails (indicating a non-transferable NFT), the send button is disabled with a "Non-transferable NFT" message.
+
+  ## REST API public key fetching
+
+  The signer now attempts to fetch the account's public key from the Initia L1 REST API before falling back to signature-based derivation. Retrieved public keys are cached in localStorage for subsequent uses, reducing the number of signing prompts needed.
+
+  ## Improvements
+
+  - Chain selector now displays the total USD value and NFT count for each chain.
+  - Send forms display contextual disabled messages explaining why submission is blocked.
+  - Dependencies updated to React 19.2.0, wagmi 2.17.2, and cosmjs 0.36.1.
+
+  ## Bug fixes
+
+  - Max button is now disabled when the balance is zero.
+  - Fixed NFT thumbnail rendering by removing conditional display logic.
+  - Send page no longer throws an error when the asset list is empty if a denom is available in navigation state.
+
 </Update>
 
-<Update label="2025-10-15" description="v2.0.5" tags={["Feature", "Bug Fix"]}>
-  ## v2.0.5
+<Update label="October 15, 2025" description="v2.0.5" tags={["New feature", "Bug fix"]}>
 
-  ### Features
+  ## Collapsible fee breakdown
 
-  - **config:** Add configurable glyph URL
-  - **tx:** Add collapsible fee breakdown
+  When a transaction fee exceeds the user's balance, a new collapsible panel shows a detailed breakdown of the spend amount, fee amount, total, and current balance. Fee display precision has also been increased to 8 decimal places for very small fee amounts that previously showed as `0.000000`.
 
-  ### Bug fixes
+  ## Configurable glyph URL
 
-  - **drawer:** Add `onClick` handler to backdrop
-  - **portfolio:** Show chains with balance regardless of value
-  - **send:** Add error handling for missing primary asset
+  The `glyphUrl` configuration option lets you specify a custom URL for loading glyph assets, replacing the previously hardcoded URL. Default values are set for mainnet and testnet.
+
+  ## Bug fixes
+
+  - Fixed drawer backdrop not responding to clicks in production by adding an explicit `onClick` handler.
+  - Chain dropdown now shows all chains with a balance, regardless of their USD value.
+  - Send page now throws a descriptive error when the primary asset is missing instead of failing silently.
+
 </Update>
 
-<Update label="2025-10-01" description="v2.0.4" tags={["Feature"]}>
-  ## v2.0.4
+<Update label="October 1, 2025" description="v2.0.4" tags={["Improvement"]}>
 
-  - **tx:** Add timeout and interval parameters
+  ## Transaction timing parameters
+
+  `requestTxBlock`, `submitTxBlock`, and `waitForTxConfirmation` now accept `timeoutMs` and `intervalMs` parameters for configuring transaction polling behavior. The default poll interval has been reduced from 1000ms to 500ms for faster confirmation detection. Error handling was also improved by returning `Error` objects from `normalizeError` instead of plain strings.
+
 </Update>
 
-<Update label="2025-09-30" description="v2.0.3" tags={["Feature", "Bug Fix"]}>
-  ## v2.0.3
+<Update label="September 30, 2025" description="v2.0.3" tags={["New feature", "Improvement", "Bug fix"]}>
 
-  ### Features
+  ## Custom fee handling
 
-  - **interface:** Add custom fee handling support
-  - **form:** Add paste handling for formatted numbers
-  - **form:** Improve focus management
-  - **tx:** Improve fee selector UI design
-  - **bridge:** Improve route selection UI
-  - **bridge:** Group history items by date
+  A new `TxParams` interface and `submitTxBlock`/`submitTxSync` functions give developers programmatic control over transaction fee configuration, enabling custom fee logic beyond the built-in fee selector.
 
-  ### Bug fixes
+  ## Bridge UI improvements
 
-  - **bridge:** Handle sequence conflicts in same-chain op hook transactions
+  The bridge has received several UI improvements. Route selection now shows loading skeletons and redesigned option cards. Bridge history items are grouped by date with time-only timestamps. The fee selector separates the amount display from the token selector for clarity.
+
+  ## Improvements
+
+  - Numeric inputs now handle pasted formatted numbers (e.g., `1,234,567.890`) by stripping grouping separators.
+  - Modals use trap-focus behavior for better accessibility, with `tabIndex=-1` on auxiliary buttons.
+
+  ## Bug fixes
+
+  - Fixed sequence conflicts in same-chain OP hook transactions by incrementing the account sequence by 2 for parallel message execution.
+
 </Update>
 
-<Update label="2025-09-30" description="v2.0.2" tags={["Feature"]}>
-  ## v2.0.2
+<Update label="September 30, 2025" description="v2.0.2" tags={["Improvement"]}>
 
-  - Change indexer URL
+  ## Improvements
+
+  - Switched to dedicated indexer endpoints for chain data queries, improving response times and reliability.
+  - Fee denom fetching is now optimized to skip transaction queries when only a single fee token is available.
+  - Activity list guards against entries with missing timestamps to prevent rendering errors.
+
 </Update>
 
-<Update label="2025-09-30" description="v2.0.1" tags={["Bug Fix"]}>
-  ## v2.0.1
+<Update label="September 30, 2025" description="v2.0.1" tags={["Bug fix"]}>
 
-  - **nft:** Use `collection_addr` and `token_id` for unique key
+  ## Bug fixes
+
+  - Fixed NFT deduplication by using `collection_addr` combined with `token_id` as the unique key instead of token ID alone, preventing collisions across different NFT collections.
+
 </Update>
