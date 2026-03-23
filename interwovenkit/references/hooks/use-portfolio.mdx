@@ -76,6 +76,8 @@ control methods:
 
 - The portfolio view only includes chains and assets that have non‑zero
   balances.
+- `totalValue` sums listed asset groups. Assets in `unlistedAssets` are returned
+  separately and are not included in that total.
 
 ## Type reference (advanced)
 
@@ -102,6 +104,8 @@ type PortfolioAssetGroup = {
   symbol: string
   logoUrl: string
   assets: PortfolioAssetItem[]
+  totalValue: number
+  totalAmount: number
 }
 
 type PortfolioAssetItem = {
