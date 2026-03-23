@@ -65,15 +65,50 @@ Finds the optimal transfer route between a source and destination asset across s
 <ResponseField name="required_op_hook" type="boolean">Whether an OP hook is required for this route.</ResponseField>
 
 <RequestExample>
-```json
-{
-  "amount_in": "1000000",
-  "source_asset_chain_id": "interwoven-1",
-  "source_asset_denom": "uinit",
-  "dest_asset_chain_id": "8453",
-  "dest_asset_denom": "0x...",
-  "allow_unsafe": true
-}
+```bash cURL
+curl -X POST https://router-api.initia.xyz/v2/fungible/route \
+  -H "Content-Type: application/json" \
+  -d '{
+    "amount_in": "1000000",
+    "source_asset_chain_id": "interwoven-1",
+    "source_asset_denom": "uinit",
+    "dest_asset_chain_id": "8453",
+    "dest_asset_denom": "0x...",
+    "allow_unsafe": true
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch("https://router-api.initia.xyz/v2/fungible/route", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    amount_in: "1000000",
+    source_asset_chain_id: "interwoven-1",
+    source_asset_denom: "uinit",
+    dest_asset_chain_id: "8453",
+    dest_asset_denom: "0x...",
+    allow_unsafe: true,
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://router-api.initia.xyz/v2/fungible/route",
+    json={
+        "amount_in": "1000000",
+        "source_asset_chain_id": "interwoven-1",
+        "source_asset_denom": "uinit",
+        "dest_asset_chain_id": "8453",
+        "dest_asset_denom": "0x...",
+        "allow_unsafe": True,
+    },
+)
+data = response.json()
 ```
 </RequestExample>
 

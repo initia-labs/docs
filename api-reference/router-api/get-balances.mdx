@@ -37,15 +37,50 @@ Returns token balances and USD values for given addresses across multiple chains
 </ResponseField>
 
 <RequestExample>
-```json
-{
-  "chains": {
-    "interwoven-1": {
-      "address": "init1abc...",
-      "denoms": ["uinit"]
+```bash cURL
+curl -X POST https://router-api.initia.xyz/v2/info/balances \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chains": {
+      "interwoven-1": {
+        "address": "init1abc...",
+        "denoms": ["uinit"]
+      }
     }
-  }
-}
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch("https://router-api.initia.xyz/v2/info/balances", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    chains: {
+      "interwoven-1": {
+        address: "init1abc...",
+        denoms: ["uinit"],
+      },
+    },
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://router-api.initia.xyz/v2/info/balances",
+    json={
+        "chains": {
+            "interwoven-1": {
+                "address": "init1abc...",
+                "denoms": ["uinit"],
+            }
+        }
+    },
+)
+data = response.json()
 ```
 </RequestExample>
 

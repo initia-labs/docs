@@ -75,16 +75,53 @@ Computes routes and generates transaction messages for cross-chain NFT transfers
 </ResponseField>
 
 <RequestExample>
-```json
-{
-  "from_address": "init1abc...",
-  "from_chain_id": "echelon-1",
-  "to_address": "init1def...",
-  "to_chain_id": "yominet-1",
-  "token_ids": ["1", "2"],
-  "collection_address": "0xabc...",
-  "class_id": "wasm.init1.../nft-transfer/channel-0/..."
-}
+```bash cURL
+curl -X POST https://router-api.initia.xyz/nft \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from_address": "init1abc...",
+    "from_chain_id": "echelon-1",
+    "to_address": "init1def...",
+    "to_chain_id": "yominet-1",
+    "token_ids": ["1", "2"],
+    "collection_address": "0xabc...",
+    "class_id": "wasm.init1.../nft-transfer/channel-0/..."
+  }'
+```
+
+```javascript JavaScript
+const response = await fetch("https://router-api.initia.xyz/nft", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    from_address: "init1abc...",
+    from_chain_id: "echelon-1",
+    to_address: "init1def...",
+    to_chain_id: "yominet-1",
+    token_ids: ["1", "2"],
+    collection_address: "0xabc...",
+    class_id: "wasm.init1.../nft-transfer/channel-0/...",
+  }),
+});
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://router-api.initia.xyz/nft",
+    json={
+        "from_address": "init1abc...",
+        "from_chain_id": "echelon-1",
+        "to_address": "init1def...",
+        "to_chain_id": "yominet-1",
+        "token_ids": ["1", "2"],
+        "collection_address": "0xabc...",
+        "class_id": "wasm.init1.../nft-transfer/channel-0/...",
+    },
+)
+data = response.json()
 ```
 </RequestExample>
 
