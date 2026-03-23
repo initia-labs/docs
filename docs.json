@@ -638,6 +638,10 @@
     "dark": "/logo/logo_dark.svg"
   },
   "api": {
+    "playground": {
+      "display": "interactive",
+      "proxy": true
+    },
     "mdx": {
       "server": [
         "https://router-api.initia.xyz",
