@@ -1,12 +1,12 @@
 ---
-title: 'Get chains'
+title: 'Get Chains'
 description: 'List supported chains.'
 api: 'GET https://router-api.initia.xyz/v2/info/chains'
 ---
 
-Returns the list of supported chains. Merges chains from the Skip API with Initia registry chains. The response is cached.
+Returns the list of all supported chains available for cross-chain transfers. You can optionally filter by specific chain IDs.
 
-## Query parameters
+## Query Parameters
 
 <ParamField query="chain_ids" type="string">
   Comma-separated list of chain IDs to filter by.

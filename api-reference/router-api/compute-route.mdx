@@ -1,18 +1,12 @@
 ---
-title: 'Compute route'
+title: 'Compute Route'
 description: 'Compute the optimal transfer route between a source and destination asset.'
 api: 'POST https://router-api.initia.xyz/v2/fungible/route'
 ---
 
-Evaluates multiple transfer strategies (IBC, LayerZero, OP bridge, iUSD, Minitswap, ERC-20 wrapping, L2 deposits/withdrawals) and returns the optimal route. Includes USD value estimation and high-price-impact warnings (>5%).
+Finds the optimal transfer route between a source and destination asset across supported chains. Returns the expected output amount, USD value estimates, and the list of operations needed to execute the transfer.
 
-## Headers
-
-<ParamField header="interwovenkit-version" type="string">
-  Widget version string for feature gating.
-</ParamField>
-
-## Request body
+## Request Body
 
 <ParamField body="amount_in" type="string" required>
   Amount to send in the smallest denomination (e.g. `"1000000"` for 1 INIT).

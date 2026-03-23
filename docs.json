@@ -536,15 +536,7 @@
             "pages": [
               "api-reference/router-api/introduction",
               {
-                "group": "General",
-                "icon": "heart-pulse",
-                "pages": [
-                  "api-reference/router-api/health",
-                  "api-reference/router-api/deployment"
-                ]
-              },
-              {
-                "group": "Assets & chains",
+                "group": "Assets & Chains",
                 "icon": "coins",
                 "pages": [
                   "api-reference/router-api/get-assets",
@@ -557,12 +549,11 @@
                 "icon": "route",
                 "pages": [
                   "api-reference/router-api/compute-route",
-                  "api-reference/router-api/generate-messages",
-                  "api-reference/router-api/op-hook"
+                  "api-reference/router-api/generate-transaction"
                 ]
               },
               {
-                "group": "Transactions",
+                "group": "Tracking Transactions",
                 "icon": "arrow-right-arrow-left",
                 "pages": [
                   "api-reference/router-api/track-transaction",
@@ -574,13 +565,6 @@
                 "icon": "image",
                 "pages": [
                   "api-reference/router-api/nft-transfer"
-                ]
-              },
-              {
-                "group": "RPC",
-                "icon": "server",
-                "pages": [
-                  "api-reference/router-api/rpc-proxy"
                 ]
               }
             ]
@@ -655,7 +639,11 @@
   },
   "api": {
     "mdx": {
-      "server": ["https://rest.testnet.initia.xyz"]
+      "server": [
+        "https://router-api.initia.xyz",
+        "https://router-api.initiation-2.initia.xyz",
+        "https://rest.testnet.initia.xyz"
+      ]
     }
   },
   "appearance": {

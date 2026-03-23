@@ -5,38 +5,28 @@ description: 'Overview of the Initia Router API for cross-chain asset transfers,
 
 The Router API provides cross-chain transfer routing for the Initia ecosystem. It computes optimal routes across IBC, LayerZero, Optimistic bridges, and other pathways, then generates the transaction messages needed to execute transfers.
 
-## Base URL
-
-```
-https://router-api.initia.xyz
-```
-
 ## Capabilities
 
-- **Asset discovery** — Query supported fungible assets and chains across Initia and external networks
-- **Route computation** — Find optimal transfer paths between any supported source and destination
-- **Transaction generation** — Get signable transaction messages for computed routes
-- **Transaction tracking** — Monitor cross-chain transfer progress
-- **NFT transfers** — Bridge NFTs across Initia L1 and L2 chains via ICS-721
-- **Balance queries** — Fetch token balances and USD values across multiple chains
+- **Asset Discovery** — Query supported fungible assets and chains across Initia and external networks
+- **Route Computation** — Find optimal transfer paths between any supported source and destination
+- **Transaction Generation** — Get signable transaction messages for computed routes
+- **Transaction Tracking** — Monitor cross-chain transfer progress
+- **NFT Transfers** — Bridge NFTs across Initia L1 and L2 chains via ICS-721
+- **Balance Queries** — Fetch token balances and USD values across multiple chains
 
-## Endpoint groups
+## Endpoint Groups
 
 <Columns cols={2}>
-  <Card title="Assets & chains" icon="coins" href="/api-reference/router-api/get-assets">
+  <Card title="Assets & Chains" icon="coins" href="/api-reference/router-api/get-assets">
     Query supported assets, chains, and balances.
   </Card>
   <Card title="Routing" icon="route" href="/api-reference/router-api/compute-route">
     Compute transfer routes and generate transaction messages.
   </Card>
-  <Card title="Transactions" icon="arrow-right-arrow-left" href="/api-reference/router-api/track-transaction">
+  <Card title="Tracking Transactions" icon="arrow-right-arrow-left" href="/api-reference/router-api/track-transaction">
     Track and monitor cross-chain transfers.
   </Card>
-  <Card title="NFT transfers" icon="image" href="/api-reference/router-api/nft-transfer">
+  <Card title="NFT Transfers" icon="image" href="/api-reference/router-api/nft-transfer">
     Bridge NFTs across Initia chains.
   </Card>
 </Columns>
-
-## Authentication
-
-The Router API does not require authentication. All endpoints are publicly accessible.

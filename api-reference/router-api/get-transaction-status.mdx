@@ -1,12 +1,12 @@
 ---
-title: 'Get transaction status'
+title: 'Get Transaction Status'
 description: 'Get the status of a tracked cross-chain transaction.'
 api: 'GET https://router-api.initia.xyz/v2/tx/status'
 ---
 
-Returns the current status of a previously tracked transaction, including transfer state across chains.
+Returns the current status of a previously tracked transaction, including the transfer state across each hop in the route.
 
-## Query parameters
+## Query Parameters
 
 <ParamField query="tx_hash" type="string" required>
   The transaction hash to check.

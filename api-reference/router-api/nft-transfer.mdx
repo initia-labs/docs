@@ -1,16 +1,16 @@
 ---
-title: 'NFT transfer'
+title: 'NFT Transfer'
 description: 'Compute NFT transfer routes and generate transaction messages.'
 api: 'POST https://router-api.initia.xyz/nft'
 ---
 
-Computes NFT transfer routes and generates transaction messages for cross-chain NFT transfers within the Initia ecosystem. Supports:
+Computes routes and generates transaction messages for cross-chain NFT transfers within the Initia ecosystem. Supports:
 
 - **Same-chain transfers** — EVM, Move, and Wasm chains
 - **Single-hop IBC** — L2 to L1 or L1 to L2 via ICS-721
 - **Multi-hop** — L2 to L1 to L2 (two IBC hops)
 
-## Request body
+## Request Body
 
 <ParamField body="from_address" type="string" required>
   Sender address.

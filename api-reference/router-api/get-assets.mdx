@@ -1,12 +1,12 @@
 ---
-title: 'Get assets'
+title: 'Get Assets'
 description: 'List supported fungible assets across chains.'
 api: 'GET https://router-api.initia.xyz/v2/fungible/assets'
 ---
 
-Returns a map of supported fungible assets across all chains. Merges assets from the Skip API (for non-Initia chains) with assets from the Initia registry. The response is cached.
+Returns a map of supported fungible assets across all chains. You can optionally filter by specific chain IDs.
 
-## Query parameters
+## Query Parameters
 
 <ParamField query="chain_ids" type="string">
   Comma-separated list of chain IDs to filter by (e.g. `"1,42161,interwoven-1"`). Returns all supported chains if omitted.
