@@ -27,6 +27,10 @@ const MAINNET: {
   routerApiUrl: 'https://router-api.initia.xyz'
   glyphUrl: 'https://glyph.initia.xyz'
   usernamesModuleAddress: '0x72ed9b26ecdcd6a21d304df50f19abfdbe31d2c02f60c84627844620a45940ef'
+  lockStakeModuleAddress: '0x3a886b32a802582f2e446e74d4a24d1d7ed01adf46d2a8f65c5723887e708789'
+  minityUrl: 'https://portfolio-api.minity.xyz'
+  dexUrl: 'https://dex-api.initia.xyz'
+  vipUrl: 'https://vip-api.initia.xyz'
   theme: 'dark'
 }
 ```
@@ -37,6 +41,11 @@ const MAINNET: {
   username contract. This is the same for all apps using mainnet and it
   represents the deployed contract address that handles username lookups (e.g.,
   resolving `alice.init` to an address)
+- `lockStakeModuleAddress`: On-chain module address used for lock/stake position
+  queries
+- `minityUrl`: Base URL for Minity-backed portfolio data
+- `dexUrl`: Base URL for DEX-backed portfolio and position data
+- `vipUrl`: Base URL for VIP-backed portfolio and position data
 - `theme`: Default theme is `"dark"`, but can be overridden to `"light"` when
   using the preset
 
