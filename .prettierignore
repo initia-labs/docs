@@ -2,4 +2,9 @@ developers/developer-guides/vm-specific-tutorials/movevm/building-move-modules.m
 developers/developer-guides/vm-specific-tutorials/movevm/setting-up.mdx
 developers/developer-guides/vm-specific-tutorials/movevm/your-first-module.mdx
 developers/developer-guides/integrating-initia-apps/initiadex.mdx
+developers/developer-guides/tools/clis/initiad-cli/introduction.mdx
+developers/developer-guides/tools/clis/minitiad-cli/introduction.mdx
+developers/developer-guides/tools/sdks/initia-js/quickstart.mdx
+developers/running-nodes/manual-setup/node-configuration.mdx
+resources/developer/initia-l1.mdx
 hackathon/*
