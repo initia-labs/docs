@@ -545,6 +545,8 @@ type InterwovenKitResult = {
   openConnect: () => void
   openWallet: () => void
   openBridge: (defaultValues?: Partial<FormValues>) => void
+  openDeposit: (params: OpenDepositParams) => void
+  openWithdraw: (params: OpenWithdrawParams) => void
   disconnect: () => void
   autoSign: AutoSignState
   estimateGas: (
@@ -580,6 +582,25 @@ type FormValues = {
   slippagePercent: string
 }
 
+type AssetOption = {
+  denom: string
+  chainId: string
+}
+
+type OpenDepositParams = {
+  denoms: string[]
+  chainId?: string
+  srcOptions?: AssetOption[]
+  recipientAddress?: string
+}
+
+type OpenWithdrawParams = {
+  denoms: string[]
+  chainId?: string
+  dstOptions?: AssetOption[]
+  recipientAddress?: string
+}
+
 type TxRequest = {
   messages: EncodeObject[]
   memo?: string
@@ -607,6 +628,7 @@ type WaitForTxOptions = {
 type AutoSignState = {
   expiredAtByChain: Record<string, Date | null | undefined>
   isEnabledByChain: Record<string, boolean>
+  granteeByChain: Record<string, string | undefined>
   isLoading: boolean
   enable: (chainId?: string) => Promise<void>
   disable: (chainId?: string) => Promise<void>
