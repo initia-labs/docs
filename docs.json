@@ -224,8 +224,8 @@
                   "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
                   {
                     "group": "Creating ERC20s",
-                    "icon": "file-code",
                     "pages": [
+                      "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/initiaerc20",
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
                     ]
@@ -553,9 +553,9 @@
                       "resources/developer/contract-references/evm/cosmos",
                       "resources/developer/contract-references/evm/erc20-acl",
                       "resources/developer/contract-references/evm/erc20-registry",
+                      "resources/developer/contract-references/evm/erc20",
                       "resources/developer/contract-references/evm/initia-erc20",
-                      "resources/developer/contract-references/evm/erc20-factory",
-                      "resources/developer/contract-references/evm/initia-custom-erc20"
+                      "resources/developer/contract-references/evm/erc20-factory"
                     ]
                   }
                 ]
