@@ -59,7 +59,7 @@ export function getTxHash(tx: Uint8Array): string {
 ```
 
 Finally, we can create the main function to sign the transaction and compare the
-transaction hash. Let's call this function `offlineSingingTest`.
+transaction hash. Let's call this function `offlineSigningTest`.
 
 To start, we will create two `RESTClient` instances. One that is connected to
 the network, and one that is offline. We will be using the offline REST client
@@ -168,7 +168,7 @@ export function getTxHash(tx: Uint8Array): string {
   return Buffer.from(txbytes.slice(0, 32)).toString(`hex`).toUpperCase()
 }
 
-async function offlineSingingTest() {
+async function offlineSigningTest() {
   // rest client that is not connected
   const offlineRestClient = new RESTClient(``, {
     chainId: chainId,
@@ -215,5 +215,5 @@ async function offlineSingingTest() {
   console.log(txHash === broadcastRes.txhash)
 }
 
-offlineSingingTest()
+offlineSigningTest()
 ```

@@ -111,7 +111,7 @@ _For more information on metadata, please refer to
 minimize slippage, the user should provide liquidity in proportion with the
 current ratio. The Move module interface is as follows:
 
-```bash
+```move
 public entry fun provide_liquidity_script(
     account: &signer,
     pair: Object<Config>,
@@ -285,7 +285,7 @@ public entry fun single_asset_provide_liquidity_script(
 `withdraw_liquidity` allows users to provide liquidity tokens and receive
 `coin_a` and `coin_b`. The Move module interface is as follows:
 
-```bash
+```move
 public entry fun withdraw_liquidity_script(
     account: &signer,
     pair: Object<Config>,
@@ -934,4 +934,3 @@ if (require.main === module) {
 
 ```
 </CodeGroup>
-```

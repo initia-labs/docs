@@ -95,8 +95,8 @@ public entry fun provide(
 Before withdrawing your liquidity, you must first unbond your LP tokens. This
 process takes 7 days to complete.
 
-Minitswap depositors take risk of L2 fraud. By having 7-day unbonding period,
-all depositors will share the responsibility of L2 fraud equally.
+Minitswap depositors take the risk of L2 fraud. By having a 7-day unbonding
+period, all depositors will share the responsibility of L2 fraud equally.
 
 **Move Function Interface:**
 
@@ -364,9 +364,9 @@ public fun swap_simulation(
 ): (u64, u64) // (return amount, fee amount)
 ```
 
-- `offer_asset_metadata`: Metadata of the provided coin.
-- `return_asset_metadata`: Metadata of the coin that will be returned.
-- `amount`: Coin amount provided.
+- `offer_metadata`: Metadata of the provided coin.
+- `return_metadata`: Metadata of the coin that will be returned.
+- `offer_amount`: Coin amount provided.
 
 **Example Usage:**
 
@@ -468,8 +468,6 @@ public entry fun finalize_arb(
   withdrawal.
 - `storage_root`: Root hash representing the storage related to the withdrawal.
 - `latest_block_hash`: The hash of the latest L2 block to ensure consistency.
-
-To obtain the required arguments, you should
 
 **Example Usage:**
 
@@ -607,7 +605,7 @@ To obtain the required arguments, you should
 
         if (msgs.length === 0) return;
         const signedTx = await wallet.createAndSignTx({ msgs });
-        console.log(await restClient..broadcastSync(signedTx));
+        console.log(await restClient.tx.broadcastSync(signedTx));
     }
 
     async function getPools(): Promise<Pools[]> {

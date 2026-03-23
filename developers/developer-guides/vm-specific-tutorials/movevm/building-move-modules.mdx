@@ -260,7 +260,7 @@ Deploy your compiled module to the blockchain network.
 <CodeGroup>
 ```bash Initia L1
 initiad move deploy \
-  --path .
+  --path . \
   --upgrade-policy COMPATIBLE \
   --from example \
   --gas auto --gas-adjustment 1.5 \
@@ -270,7 +270,7 @@ initiad move deploy \
 ```
 ```bash Move Rollups
 minitiad move deploy \
-  --path .
+  --path . \
   --upgrade-policy COMPATIBLE \
   --from example \
   --gas auto --gas-adjustment 1.5 \
