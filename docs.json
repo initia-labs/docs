@@ -538,33 +538,37 @@
               {
                 "group": "Assets & Chains",
                 "icon": "coins",
+                "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": [
-                  "api-reference/router-api/get-assets",
-                  "api-reference/router-api/get-chains",
-                  "api-reference/router-api/get-balances"
+                  "GET /v2/fungible/assets",
+                  "GET /v2/info/chains",
+                  "POST /v2/info/balances"
                 ]
               },
               {
                 "group": "Routing",
                 "icon": "route",
+                "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": [
-                  "api-reference/router-api/compute-route",
-                  "api-reference/router-api/generate-transaction"
+                  "POST /v2/fungible/route",
+                  "POST /v2/fungible/msgs"
                 ]
               },
               {
                 "group": "Tracking Transactions",
                 "icon": "arrow-right-arrow-left",
+                "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": [
-                  "api-reference/router-api/track-transaction",
-                  "api-reference/router-api/get-transaction-status"
+                  "POST /v2/tx/track",
+                  "GET /v2/tx/status"
                 ]
               },
               {
                 "group": "NFT",
                 "icon": "image",
+                "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": [
-                  "api-reference/router-api/nft-transfer"
+                  "POST /nft"
                 ]
               }
             ]
@@ -638,16 +642,13 @@
     "dark": "/logo/logo_dark.svg"
   },
   "api": {
+    "openapi": "api-reference/router-api/openapi.yaml",
     "playground": {
       "display": "interactive",
       "proxy": true
     },
     "mdx": {
-      "server": [
-        "https://router-api.initia.xyz",
-        "https://router-api.initiation-2.initia.xyz",
-        "https://rest.testnet.initia.xyz"
-      ]
+      "server": "https://rest.testnet.initia.xyz"
     }
   },
   "appearance": {
