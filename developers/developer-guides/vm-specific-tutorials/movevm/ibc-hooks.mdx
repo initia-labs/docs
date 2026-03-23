@@ -38,14 +38,14 @@ type HookData struct {
 // AsyncCallback is data wrapper which is required
 // when we implement async callback.
 type AsyncCallback struct {
- // callback id should be issued form the executor contract
+ // callback id should be issued from the executor contract
  Id            uint64 `json:"id"`
  ModuleAddress string `json:"module_address"`
  ModuleName    string `json:"module_name"`
 }
 
 type MsgExecute struct {
- // Sender is the that actor that signed the messages
+ // Sender is the actor that signed the messages
  Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
  // ModuleAddress is the address of the module deployer
  ModuleAddress string `protobuf:"bytes,2,opt,name=module_address,json=moduleAddress,proto3" json:"module_address,omitempty"`
@@ -87,7 +87,7 @@ So our constructed move message that we execute will look like:
 
 ```go
 msg := MsgExecuteContract{
- // Sender is the that actor that signed the messages
+ // Sender is the actor that signed the messages
  Sender: "init1-hash-of-channel-and-sender",
  // ModuleAddress is the address of the module deployer
  ModuleAddress: packet.data.memo["move"]["message"]["module_address"],
@@ -184,7 +184,7 @@ In Move hooks, post packet execution:
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
 packet. To allow contracts to listen on the ack of specific packets, we provide
-Ack callbacks. The contract, which wants to receive ack callback, have to
+Ack callbacks. The contract, which wants to receive ack callback, has to
 implement two functions.
 
 - ibc_ack
@@ -203,7 +203,7 @@ public entry fun ibc_timeout(
 )
 ```
 
-Also when a contract make IBC transfer request, it should provide async callback
+Also when a contract makes an IBC transfer request, it should provide async callback
 data through memo field.
 
 - `memo['move']['async_callback']['id']`: the async callback id is assigned from

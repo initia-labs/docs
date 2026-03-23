@@ -22,7 +22,7 @@ mkdir initia-erc20
 cd initia-erc20
 ```
 
-Next, we will initialize a new Foundry project side that directory.
+Next, we will initialize a new Foundry project inside that directory.
 
 ```sh
 forge init
@@ -59,7 +59,7 @@ import "initia-evm-contracts/src/InitiaCustomERC20.sol";
 Next, we need to extend the `InitiaCustomERC20` contract and add the constructor
 to initialize the contract with the name, symbol, and decimals of our custom
 ERC20. For this tutorial, we will simply customize the base contract by adding a
-logic to mint tokens to the contract deployer. during deployment.
+logic to mint tokens to the contract deployer during deployment.
 
 ```solidity src/NewInitiaERC20.sol
 // SPDX-License-Identifier: MIT

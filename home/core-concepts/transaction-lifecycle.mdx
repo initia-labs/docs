@@ -10,7 +10,7 @@ step-by-step lifecycle of a transaction.
 
 1. **Transaction Submission**: When a transaction is submitted, it undergoes a
    check_tx process before it's allowed into the mempool. If it's valid, it
-   enters the mempool; If it's invalid, an error response is delivered.
+   enters the mempool; if it's invalid, an error response is delivered.
 2. **Mempool Validation**: A transaction must pass the check_tx process before
    it's added to the mempool. After each block is created, the mempool performs
    a recheck_tx on the remaining transactions, filtering out any that failed due

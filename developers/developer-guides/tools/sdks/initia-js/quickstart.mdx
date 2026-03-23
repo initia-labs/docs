@@ -35,11 +35,11 @@ const restClient = new RESTClient('https://rest.testnet.initia.xyz');
 (async () => { const chainId = await restClient.tendermint.chainId();
 console.log(chainId); })();
 
-````
+```
 Next, we will run the script.
 ```bash
 npx ts-node src/quickstart.ts
-````
+```
 
 If you get `initiation-2` as the output, then your installation was successful!
 

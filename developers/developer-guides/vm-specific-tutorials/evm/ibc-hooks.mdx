@@ -36,14 +36,14 @@ type HookData struct {
 // AsyncCallback is data wrapper which is required
 // when we implement async callback.
 type AsyncCallback struct {
- // callback id should be issued form the executor contract
+ // callback id should be issued from the executor contract
  Id            uint64 `json:"id"`
  ContractAddr  string `json:"contract_addr"`
 }
 
 // MsgCall is a message to call an Ethereum contract.
 type MsgCall struct {
- // Sender is the that actor that signed the messages
+ // Sender is the actor that signed the messages
  Sender string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
  // ContractAddr is the contract address to be executed.
  // It can be cosmos address or hex encoded address.
@@ -71,7 +71,7 @@ So our constructed EVM call message that we execute will look like:
 
 ```go
 msg := MsgCall{
- // Sender is the that actor that signed the messages
+ // Sender is the actor that signed the messages
  Sender: "init1-hash-of-channel-and-sender",
  // ContractAddr is the contract address to be executed.
  // It can be cosmos address or hex encoded address.
@@ -117,7 +117,7 @@ An ICS20 packet is formatted correctly for evmhooks iff the following all hold:
 - [x] `memo` is not blank
 - [x] `memo` is valid JSON
 - [x] `memo` has at least one key, with value `"evm"`
-- [x] `memo["evm"]["message"]` has exactly five entries, `"contract_addr"` and
+- [x] `memo["evm"]["message"]` has exactly two entries, `"contract_addr"` and
       `"input"`
 - [x] `receiver` == "" || `receiver` ==
       `"module_address::module_name::function_name"`
@@ -137,7 +137,7 @@ incorrectly, then evmhooks returns an error.
 
 Pre evm hooks:
 
-- Ensure the incoming IBC packet is cryptogaphically valid
+- Ensure the incoming IBC packet is cryptographically valid
 - Ensure the incoming IBC packet is not timed out.
 
 In evm hooks, pre packet execution:
@@ -156,7 +156,7 @@ In evm hooks, post packet execution:
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
 packet. To allow contracts to listen on the ack of specific packets, we provide
-Ack callbacks. The contract, which wants to receive ack callback, have to
+Ack callbacks. The contract, which wants to receive ack callback, has to
 implement two functions.
 
 - ibc_ack
@@ -169,7 +169,7 @@ interface IIBCAsyncCallback {
 }
 ```
 
-Also when a contract make IBC transfer request, it should provide async callback
+Also when a contract makes an IBC transfer request, it should provide async callback
 data through memo field.
 
 - `memo['evm']['async_callback']['id']`: the async callback id is assigned from
@@ -190,7 +190,7 @@ Write and deploy a simple
 [counter contract](https://github.com/initia-labs/minievm/blob/main/x/evm/contracts/counter/Counter.sol)
 to Initia.
 
-```soliditiy
+```solidity
 contract Counter is IIBCAsyncCallback {
     uint256 public count;
     event increased(uint256 oldCount, uint256 newCount);
@@ -221,7 +221,7 @@ contract Counter is IIBCAsyncCallback {
 ## Step 2. Update IBC hook ACL for the contract
 
 IBC hook has strong power to execute any functions in counterparty chain and
-this can be used for fishing easily. So, we need to set the ACL for the contract
+this can be used for phishing easily. So, we need to set the ACL for the contract
 to prevent unauthorized access. To update MiniEVM ACL, you need to use
 `MsgExecuteMessages` in OPchild module.
 
