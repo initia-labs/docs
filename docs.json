@@ -529,6 +529,65 @@
         ]
       },
       {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Router API",
+            "pages": [
+              "api-reference/router-api/introduction",
+              {
+                "group": "General",
+                "icon": "heart-pulse",
+                "pages": [
+                  "api-reference/router-api/health",
+                  "api-reference/router-api/deployment"
+                ]
+              },
+              {
+                "group": "Assets & chains",
+                "icon": "coins",
+                "pages": [
+                  "api-reference/router-api/get-assets",
+                  "api-reference/router-api/get-chains",
+                  "api-reference/router-api/get-balances"
+                ]
+              },
+              {
+                "group": "Routing",
+                "icon": "route",
+                "pages": [
+                  "api-reference/router-api/compute-route",
+                  "api-reference/router-api/generate-messages",
+                  "api-reference/router-api/op-hook"
+                ]
+              },
+              {
+                "group": "Transactions",
+                "icon": "arrow-right-arrow-left",
+                "pages": [
+                  "api-reference/router-api/track-transaction",
+                  "api-reference/router-api/get-transaction-status"
+                ]
+              },
+              {
+                "group": "NFT",
+                "icon": "image",
+                "pages": [
+                  "api-reference/router-api/nft-transfer"
+                ]
+              },
+              {
+                "group": "RPC",
+                "icon": "server",
+                "pages": [
+                  "api-reference/router-api/rpc-proxy"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Resources",
         "groups": [
           {

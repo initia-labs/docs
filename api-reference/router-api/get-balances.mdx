@@ -1,0 +1,68 @@
+---
+title: 'Get balances'
+description: 'Get token balances for addresses across multiple chains.'
+api: 'POST https://router-api.initia.xyz/v2/info/balances'
+---
+
+Returns token balances and USD values for given addresses across multiple chains. Uses direct REST queries and price data for Initia chains.
+
+## Request body
+
+<ParamField body="chains" type="object" required>
+  A map of chain IDs to address and denomination queries.
+  <Expandable title="chain entry">
+    <ParamField body="address" type="string" required>
+      Account address on the chain.
+    </ParamField>
+    <ParamField body="denoms" type="string[]" required>
+      List of token denominations to query.
+    </ParamField>
+  </Expandable>
+</ParamField>
+
+## Response
+
+<ResponseField name="chains" type="object">
+  A map of chain IDs to balance results.
+  <Expandable title="chain entry">
+    <ResponseField name="denoms" type="object">
+      A map of denominations to balance details.
+      <Expandable title="denom entry">
+        <ResponseField name="amount" type="string">Raw token amount.</ResponseField>
+        <ResponseField name="price_usd" type="string">Current USD price per token.</ResponseField>
+        <ResponseField name="value_usd" type="string">Total USD value of the balance.</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```json
+{
+  "chains": {
+    "interwoven-1": {
+      "address": "init1abc...",
+      "denoms": ["uinit"]
+    }
+  }
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "chains": {
+    "interwoven-1": {
+      "denoms": {
+        "uinit": {
+          "amount": "1000000",
+          "price_usd": "1.50",
+          "value_usd": "1.50"
+        }
+      }
+    }
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,65 @@
+---
+title: 'Get assets'
+description: 'List supported fungible assets across chains.'
+api: 'GET https://router-api.initia.xyz/v2/fungible/assets'
+---
+
+Returns a map of supported fungible assets across all chains. Merges assets from the Skip API (for non-Initia chains) with assets from the Initia registry. The response is cached.
+
+## Query parameters
+
+<ParamField query="chain_ids" type="string">
+  Comma-separated list of chain IDs to filter by (e.g. `"1,42161,interwoven-1"`). Returns all supported chains if omitted.
+</ParamField>
+
+## Response
+
+<ResponseField name="chain_to_assets_map" type="object">
+  A map of chain IDs to their supported assets.
+  <Expandable title="chain entry">
+    <ResponseField name="assets" type="object[]">
+      Array of asset objects.
+      <Expandable title="asset properties">
+        <ResponseField name="chain_id" type="string">Chain ID where the asset exists.</ResponseField>
+        <ResponseField name="denom" type="string">Asset denomination.</ResponseField>
+        <ResponseField name="decimals" type="number">Number of decimal places.</ResponseField>
+        <ResponseField name="symbol" type="string">Asset ticker symbol.</ResponseField>
+        <ResponseField name="name" type="string">Human-readable asset name.</ResponseField>
+        <ResponseField name="logo_uri" type="string">URL to the asset logo.</ResponseField>
+        <ResponseField name="is_cw20" type="boolean">Whether the asset is a CW20 token.</ResponseField>
+        <ResponseField name="is_evm" type="boolean">Whether the asset is an EVM token.</ResponseField>
+        <ResponseField name="is_svm" type="boolean">Whether the asset is an SVM token.</ResponseField>
+        <ResponseField name="origin_chain_id" type="string">Chain ID where the asset originated.</ResponseField>
+        <ResponseField name="origin_denom" type="string">Original denomination on the origin chain.</ResponseField>
+        <ResponseField name="trace" type="string">IBC trace path.</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json 200
+{
+  "chain_to_assets_map": {
+    "interwoven-1": {
+      "assets": [
+        {
+          "chain_id": "interwoven-1",
+          "denom": "uinit",
+          "decimals": 6,
+          "symbol": "INIT",
+          "name": "Initia",
+          "logo_uri": "https://raw.githubusercontent.com/.../init.png",
+          "is_cw20": false,
+          "is_evm": false,
+          "is_svm": false,
+          "origin_chain_id": "interwoven-1",
+          "origin_denom": "uinit",
+          "trace": ""
+        }
+      ]
+    }
+  }
+}
+```
+</ResponseExample>

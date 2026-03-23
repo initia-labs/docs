@@ -1,0 +1,110 @@
+---
+title: 'Generate messages'
+description: 'Generate transaction messages for a computed route.'
+api: 'POST https://router-api.initia.xyz/v2/fungible/msgs'
+---
+
+Given a route from [`/v2/fungible/route`](/api-reference/router-api/compute-route), generates the transaction messages needed to execute the transfer. Returns signable transaction payloads for Cosmos, EVM, or SVM chains.
+
+## Headers
+
+<ParamField header="interwovenkit-version" type="string">
+  Widget version string for feature gating.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount_in" type="string" required>
+  Input amount in smallest denomination.
+</ParamField>
+
+<ParamField body="amount_out" type="string" required>
+  Expected output amount from the route response.
+</ParamField>
+
+<ParamField body="source_asset_chain_id" type="string" required>
+  Source chain ID.
+</ParamField>
+
+<ParamField body="source_asset_denom" type="string" required>
+  Source asset denomination.
+</ParamField>
+
+<ParamField body="dest_asset_chain_id" type="string" required>
+  Destination chain ID.
+</ParamField>
+
+<ParamField body="dest_asset_denom" type="string" required>
+  Destination asset denomination.
+</ParamField>
+
+<ParamField body="address_list" type="string[]" required>
+  Ordered list of addresses for each hop in the route (minimum 2).
+</ParamField>
+
+<ParamField body="operations" type="object[]" required>
+  Route operations from the `/v2/fungible/route` response.
+</ParamField>
+
+<ParamField body="slippage_tolerance_percent" type="string" required>
+  Slippage tolerance as a percentage (e.g. `"1"` for 1%).
+</ParamField>
+
+<ParamField body="signed_op_hook" type="object">
+  Signed OP hook data, required when the route has `required_op_hook: true`.
+  <Expandable title="properties">
+    <ParamField body="hook" type="string" required>Hook data.</ParamField>
+    <ParamField body="signer" type="string" required>Signer address.</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="ignore_blacklist" type="boolean" default="false">
+  Include blacklisted networks.
+</ParamField>
+
+## Response
+
+<ResponseField name="txs" type="object[]">
+  Array of transaction objects. Each can be a `cosmos_tx`, `evm_tx`, or `svm_tx`.
+  <Expandable title="cosmos_tx example">
+    <ResponseField name="cosmos_tx" type="object">
+      <Expandable title="properties">
+        <ResponseField name="chain_id" type="string">Target chain ID.</ResponseField>
+        <ResponseField name="msgs" type="object[]">Array of Cosmos SDK messages.</ResponseField>
+        <ResponseField name="signer_address" type="string">Address that must sign the transaction.</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<RequestExample>
+```json
+{
+  "amount_in": "1000000",
+  "amount_out": "999000",
+  "source_asset_chain_id": "interwoven-1",
+  "source_asset_denom": "uinit",
+  "dest_asset_chain_id": "8453",
+  "dest_asset_denom": "0x...",
+  "address_list": ["init1abc...", "0xdef..."],
+  "operations": [],
+  "slippage_tolerance_percent": "1"
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "txs": [
+    {
+      "cosmos_tx": {
+        "chain_id": "interwoven-1",
+        "msgs": [],
+        "signer_address": "init1abc..."
+      }
+    }
+  ]
+}
+```
+</ResponseExample>

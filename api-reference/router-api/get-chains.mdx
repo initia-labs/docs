@@ -1,0 +1,64 @@
+---
+title: 'Get chains'
+description: 'List supported chains.'
+api: 'GET https://router-api.initia.xyz/v2/info/chains'
+---
+
+Returns the list of supported chains. Merges chains from the Skip API with Initia registry chains. The response is cached.
+
+## Query parameters
+
+<ParamField query="chain_ids" type="string">
+  Comma-separated list of chain IDs to filter by.
+</ParamField>
+
+<ParamField query="ignore_blacklist" type="boolean" default="false">
+  If `true`, includes blacklisted networks in the response.
+</ParamField>
+
+## Response
+
+<ResponseField name="chains" type="object[]">
+  Array of supported chain objects.
+  <Expandable title="chain properties">
+    <ResponseField name="chain_id" type="string">Unique chain identifier.</ResponseField>
+    <ResponseField name="chain_name" type="string">Human-readable chain name.</ResponseField>
+    <ResponseField name="chain_type" type="string">Chain type (e.g. `cosmos`, `evm`).</ResponseField>
+    <ResponseField name="pfm_enabled" type="boolean">Whether Packet Forward Middleware is enabled.</ResponseField>
+    <ResponseField name="supports_memo" type="boolean">Whether the chain supports IBC memo.</ResponseField>
+    <ResponseField name="logo_uri" type="string">URL to the chain logo.</ResponseField>
+    <ResponseField name="bech32_prefix" type="string">Bech32 address prefix (Cosmos chains).</ResponseField>
+    <ResponseField name="fee_assets" type="object[]">Accepted fee assets on the chain.</ResponseField>
+    <ResponseField name="rest" type="string">REST API endpoint URL.</ResponseField>
+    <ResponseField name="rpc" type="string">RPC endpoint URL.</ResponseField>
+    <ResponseField name="evm_fee_asset" type="object">
+      EVM fee asset details (EVM chains only).
+      <Expandable title="properties">
+        <ResponseField name="decimals" type="number">Token decimals.</ResponseField>
+        <ResponseField name="name" type="string">Token name.</ResponseField>
+        <ResponseField name="symbol" type="string">Token symbol.</ResponseField>
+      </Expandable>
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json 200
+{
+  "chains": [
+    {
+      "chain_id": "interwoven-1",
+      "chain_name": "Initia",
+      "chain_type": "cosmos",
+      "pfm_enabled": true,
+      "supports_memo": true,
+      "logo_uri": "https://raw.githubusercontent.com/.../initia.png",
+      "bech32_prefix": "init",
+      "fee_assets": [],
+      "rest": "https://rest.initia.xyz",
+      "rpc": "https://rpc.initia.xyz"
+    }
+  ]
+}
+```
+</ResponseExample>

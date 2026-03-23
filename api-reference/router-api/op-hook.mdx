@@ -1,0 +1,55 @@
+---
+title: 'Generate OP hook'
+description: 'Generate Optimistic hook data for ERC-20 rollup transfers.'
+api: 'POST https://router-api.initia.xyz/op-hook'
+---
+
+Generates OP (Optimistic) hook information for transfers that require an ERC-20 rollup withdrawal step. Use this when a route from [`/v2/fungible/route`](/api-reference/router-api/compute-route) returns `required_op_hook: true`.
+
+## Request body
+
+<ParamField body="source_address" type="string" required>
+  Sender address.
+</ParamField>
+
+<ParamField body="source_asset_chain_id" type="string" required>
+  Source chain ID.
+</ParamField>
+
+<ParamField body="source_asset_denom" type="string" required>
+  Source asset denomination.
+</ParamField>
+
+<ParamField body="dest_address" type="string" required>
+  Recipient address.
+</ParamField>
+
+<ParamField body="dest_asset_chain_id" type="string" required>
+  Destination chain ID.
+</ParamField>
+
+<ParamField body="dest_asset_denom" type="string" required>
+  Destination asset denomination.
+</ParamField>
+
+<RequestExample>
+```json
+{
+  "source_address": "0xabc...",
+  "source_asset_chain_id": "8453",
+  "source_asset_denom": "0x...",
+  "dest_address": "init1abc...",
+  "dest_asset_chain_id": "echelon-1",
+  "dest_asset_denom": "l2/..."
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "hook": "0x...",
+  "signer": "0xabc..."
+}
+```
+</ResponseExample>

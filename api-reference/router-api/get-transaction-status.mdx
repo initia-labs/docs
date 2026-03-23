@@ -1,0 +1,34 @@
+---
+title: 'Get transaction status'
+description: 'Get the status of a tracked cross-chain transaction.'
+api: 'GET https://router-api.initia.xyz/v2/tx/status'
+---
+
+Returns the current status of a previously tracked transaction, including transfer state across chains.
+
+## Query parameters
+
+<ParamField query="tx_hash" type="string" required>
+  The transaction hash to check.
+</ParamField>
+
+<ParamField query="chain_id" type="string" required>
+  The chain ID where the transaction was submitted.
+</ParamField>
+
+<ResponseExample>
+```json 200
+{
+  "tx_hash": "ABCDEF1234567890...",
+  "chain_id": "interwoven-1",
+  "status": "STATE_COMPLETED",
+  "transfer_sequence": [
+    {
+      "src_chain_id": "interwoven-1",
+      "dst_chain_id": "8453",
+      "state": "TRANSFER_SUCCESS"
+    }
+  ]
+}
+```
+</ResponseExample>

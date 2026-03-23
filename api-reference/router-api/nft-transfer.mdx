@@ -1,0 +1,102 @@
+---
+title: 'NFT transfer'
+description: 'Compute NFT transfer routes and generate transaction messages.'
+api: 'POST https://router-api.initia.xyz/nft'
+---
+
+Computes NFT transfer routes and generates transaction messages for cross-chain NFT transfers within the Initia ecosystem. Supports:
+
+- **Same-chain transfers** — EVM, Move, and Wasm chains
+- **Single-hop IBC** — L2 to L1 or L1 to L2 via ICS-721
+- **Multi-hop** — L2 to L1 to L2 (two IBC hops)
+
+## Request body
+
+<ParamField body="from_address" type="string" required>
+  Sender address.
+</ParamField>
+
+<ParamField body="from_chain_id" type="string" required>
+  Source chain ID.
+</ParamField>
+
+<ParamField body="to_address" type="string" required>
+  Recipient address.
+</ParamField>
+
+<ParamField body="to_chain_id" type="string" required>
+  Destination chain ID.
+</ParamField>
+
+<ParamField body="token_ids" type="string[]" required>
+  Token IDs to transfer (maximum 30).
+</ParamField>
+
+<ParamField body="collection_address" type="string" required>
+  NFT collection contract address. Pass an empty string for Move chains.
+</ParamField>
+
+<ParamField body="class_id" type="string">
+  IBC class ID. Required for cross-chain transfers.
+</ParamField>
+
+<ParamField body="class_trace" type="object">
+  IBC class trace for multi-hop transfers.
+  <Expandable title="properties">
+    <ParamField body="path" type="string" required>IBC trace path.</ParamField>
+    <ParamField body="base_class_id" type="string" required>Base class ID.</ParamField>
+  </Expandable>
+</ParamField>
+
+<ParamField body="object_addresses" type="string[]">
+  Move object addresses (maximum 30). Required for same-chain Move transfers.
+</ParamField>
+
+<ParamField body="l1_recover_address" type="string">
+  L1 recovery address for L2 → L1 → L2 transfers. Defaults to `from_address`.
+</ParamField>
+
+<ParamField body="outgoing_proxy" type="string">
+  Outgoing proxy contract address (Wasm chains).
+</ParamField>
+
+<ParamField body="timeout" type="number" default="1800">
+  IBC timeout in seconds.
+</ParamField>
+
+<ParamField body="ignore_blacklist" type="boolean" default="false">
+  Include blacklisted networks.
+</ParamField>
+
+## Response
+
+<ResponseField name="msgs" type="object[]">
+  Array of transaction messages appropriate for the source chain's VM type (Cosmos `MsgTransfer`, EVM contract calls, Move execute messages, or Wasm execute messages).
+</ResponseField>
+
+<RequestExample>
+```json
+{
+  "from_address": "init1abc...",
+  "from_chain_id": "echelon-1",
+  "to_address": "init1def...",
+  "to_chain_id": "yominet-1",
+  "token_ids": ["1", "2"],
+  "collection_address": "0xabc...",
+  "class_id": "wasm.init1.../nft-transfer/channel-0/..."
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "msgs": [
+    {
+      "typeUrl": "/ibc.applications.nft_transfer.v1.MsgTransfer",
+      "value": {}
+    }
+  ]
+}
+```
+</ResponseExample>

@@ -1,0 +1,102 @@
+---
+title: 'Compute route'
+description: 'Compute the optimal transfer route between a source and destination asset.'
+api: 'POST https://router-api.initia.xyz/v2/fungible/route'
+---
+
+Evaluates multiple transfer strategies (IBC, LayerZero, OP bridge, iUSD, Minitswap, ERC-20 wrapping, L2 deposits/withdrawals) and returns the optimal route. Includes USD value estimation and high-price-impact warnings (>5%).
+
+## Headers
+
+<ParamField header="interwovenkit-version" type="string">
+  Widget version string for feature gating.
+</ParamField>
+
+## Request body
+
+<ParamField body="amount_in" type="string" required>
+  Amount to send in the smallest denomination (e.g. `"1000000"` for 1 INIT).
+</ParamField>
+
+<ParamField body="source_asset_chain_id" type="string" required>
+  Source chain ID.
+</ParamField>
+
+<ParamField body="source_asset_denom" type="string" required>
+  Source asset denomination.
+</ParamField>
+
+<ParamField body="dest_asset_chain_id" type="string" required>
+  Destination chain ID.
+</ParamField>
+
+<ParamField body="dest_asset_denom" type="string" required>
+  Destination asset denomination.
+</ParamField>
+
+<ParamField body="allow_unsafe" type="boolean" default="true">
+  Allow routes that may have higher risk.
+</ParamField>
+
+<ParamField body="go_fast" type="boolean">
+  Use Go Fast bridging. Automatically determined if not set.
+</ParamField>
+
+<ParamField body="is_op_withdraw" type="boolean">
+  Force an Optimistic withdrawal route.
+</ParamField>
+
+<ParamField body="ignore_blacklist" type="boolean" default="false">
+  Include blacklisted networks in route computation.
+</ParamField>
+
+## Response
+
+<ResponseField name="amount_in" type="string">Input amount.</ResponseField>
+<ResponseField name="amount_out" type="string">Expected output amount.</ResponseField>
+<ResponseField name="source_asset_chain_id" type="string">Source chain ID.</ResponseField>
+<ResponseField name="source_asset_denom" type="string">Source asset denom.</ResponseField>
+<ResponseField name="dest_asset_chain_id" type="string">Destination chain ID.</ResponseField>
+<ResponseField name="dest_asset_denom" type="string">Destination asset denom.</ResponseField>
+<ResponseField name="operations" type="object[]">Ordered list of transfer operations to execute.</ResponseField>
+<ResponseField name="usd_amount_in" type="string">USD value of the input amount.</ResponseField>
+<ResponseField name="usd_amount_out" type="string">USD value of the output amount.</ResponseField>
+<ResponseField name="warning" type="object">
+  Price impact warning (present when impact exceeds 5%).
+  <Expandable title="properties">
+    <ResponseField name="type" type="string">Warning type (e.g. `BAD_PRICE_WARNING`).</ResponseField>
+    <ResponseField name="message" type="string">Human-readable warning message.</ResponseField>
+  </Expandable>
+</ResponseField>
+<ResponseField name="required_op_hook" type="boolean">Whether an OP hook is required for this route.</ResponseField>
+
+<RequestExample>
+```json
+{
+  "amount_in": "1000000",
+  "source_asset_chain_id": "interwoven-1",
+  "source_asset_denom": "uinit",
+  "dest_asset_chain_id": "8453",
+  "dest_asset_denom": "0x...",
+  "allow_unsafe": true
+}
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200
+{
+  "amount_in": "1000000",
+  "amount_out": "999000",
+  "source_asset_chain_id": "interwoven-1",
+  "source_asset_denom": "uinit",
+  "dest_asset_chain_id": "8453",
+  "dest_asset_denom": "0x...",
+  "operations": [],
+  "usd_amount_in": "1.50",
+  "usd_amount_out": "1.49",
+  "warning": null,
+  "required_op_hook": false
+}
+```
+</ResponseExample>
