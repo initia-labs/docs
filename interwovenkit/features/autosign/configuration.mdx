@@ -115,8 +115,8 @@ Before enabling autosign, decide which mode fits your application:
   - Automatically allows default contract execution messages for the chain
   - Does **not** allow token transfers, staking, or other non-default messages
 
-- **Per-Chain Configuration
-  (`enableAutoSign: { "chain-id": ["msg.type.Url", ...] }`)**
+- **Per-Chain Configuration**
+  (`enableAutoSign: { "chain-id": ["msg.type.Url", ...] }`)
   - Required if your app sends tokens, delegates, or uses multiple chains
   - You must explicitly list every allowed message type
 
