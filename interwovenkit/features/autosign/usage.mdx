@@ -11,6 +11,12 @@ Once autosign is configured, you can enable and manage it in your application
 using the `autoSign` object from `useInterwovenKit()`. This guide covers how to
 use autosign in your code.
 
+<Note>
+  This page assumes autosign is already configured on `InterwovenKitProvider`.
+  See [Configuration](./configuration) and [Provider
+  Setup](../../references/setup/providers) first.
+</Note>
+
 ## Accessing Autosign
 
 The `autoSign` object is available via the `useInterwovenKit()` hook:
@@ -100,14 +106,14 @@ When `autoSign.enable()` is called:
   custom duration.
 </Step>
 
-<Step title="Ghost Wallet Creation">
-  Privy creates an embedded wallet if one does not exist. This happens
-  automatically in the background.
+<Step title="Wallet Derivation">
+  InterwovenKit requests a signature from the connected wallet and derives a
+  dedicated AutoSign wallet for the current app origin.
 </Step>
 
 <Step title="Permission Grant">
   The user signs a single transaction to grant `authz` and `feegrant`
-  permissions to the ghost wallet.
+  permissions to the AutoSign wallet.
 </Step>
 
 <Step title="Activation">
@@ -122,7 +128,7 @@ or rejects if the user cancels or an error occurs.
 
 Once autosign is enabled, you can send transactions without user confirmation
 using `submitTxBlock`. This method signs and broadcasts transactions directly
-using the ghost wallet.
+using the AutoSign wallet when the transaction matches the configured grants.
 
 ```tsx
 import { calculateFee, GasPrice } from '@cosmjs/stargate'

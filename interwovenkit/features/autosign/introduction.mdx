@@ -1,17 +1,18 @@
 ---
 title: Introduction
 description:
-  Learn about autosign and ghost wallets for seamless transaction signing.
+  Learn about autosign and dedicated signing wallets for seamless transaction
+  signing.
 icon: robot
 ---
 
 ## Overview
 
 Autosign enables your application to send transactions automatically without
-requiring user confirmation for each transaction. This feature uses an embedded
-wallet (also known as a ghost wallet) to sign specific transactions on behalf of
-users, providing a seamless user experience while maintaining security through
-granular permission controls.
+requiring user confirmation for each transaction. This feature uses a dedicated
+signing wallet derived from the connected wallet's signature to sign specific
+transactions on behalf of users, providing a seamless user experience while
+maintaining security through granular permission controls.
 
 <Info>
   Autosign is built on the Cosmos SDK's `authz` and `feegrant` modules, allowing
@@ -19,18 +20,20 @@ granular permission controls.
   and when permissions expire.
 </Info>
 
-## What Are Ghost Wallets?
+## What Is the AutoSign Wallet?
 
-Ghost wallets are embedded wallets that act as authorized signers for your
-application. When autosign is enabled, InterwovenKit creates a ghost wallet that
-receives permission from the user's main wallet to sign specific transaction
-types automatically.
+The AutoSign wallet is a dedicated signer that InterwovenKit derives from the
+connected wallet's signature flow. When autosign is enabled, InterwovenKit uses
+that derived wallet as the grantee for the authz and feegrant permissions needed
+to sign approved transaction types automatically.
 
-Key characteristics of ghost wallets:
+Key characteristics of the AutoSign wallet:
 
-- **Separate Address**: Each ghost wallet has its own blockchain address
-- **Managed Automatically**: InterwovenKit handles key management and wallet
-  lifecycle
+- **Separate Address**: Each AutoSign wallet has its own blockchain address
+- **Derived Per App Origin**: InterwovenKit derives the wallet from a signed
+  message scoped to the current origin
+- **Managed Automatically**: InterwovenKit handles derivation and wallet
+  lifecycle in the app
 - **Scoped Permissions**: Can only sign transactions you've explicitly
   authorized
 - **Time-Limited**: Permissions expire after a set duration
@@ -48,21 +51,21 @@ types on specific chains. This is configured through the `enableAutoSign` prop
 in `InterwovenKitProvider`.
 
 </Step>
-<Step title="Ghost Wallet Creation">
+<Step title="Wallet Derivation">
 
-InterwovenKit creates an embedded wallet (ghost wallet) that signs transactions
-on the user's behalf. This wallet is created automatically when the user enables
-autosign.
+InterwovenKit asks the connected wallet to sign a derivation message and uses
+that signature to derive a dedicated AutoSign wallet for the current app origin.
 
 </Step>
 <Step title="Grant Authorization">
 
-The user's main wallet grants permission to the ghost wallet via Cosmos SDK's
+The user's main wallet grants permission to the AutoSign wallet via Cosmos SDK's
 `authz` and `feegrant` modules:
 
-- **Authz grants**: Authorize the ghost wallet to execute specific message types
-- **Feegrant**: Allows the ghost wallet to pay transaction fees on behalf of the
-  user
+- **Authz grants**: Authorize the AutoSign wallet to execute specific message
+  types
+- **Feegrant**: Allows the AutoSign wallet to pay transaction fees on behalf of
+  the user
 
 The user signs a single transaction to create these grants.
 
@@ -73,7 +76,7 @@ When transactions match the granted permissions:
 
 1. InterwovenKit validates that the transaction message types match the grants
 2. InterwovenKit checks that permissions haven't expired
-3. The ghost wallet automatically signs the transaction
+3. The AutoSign wallet automatically signs the transaction
 4. The transaction is broadcast without user interaction
 
 </Step>
@@ -104,8 +107,8 @@ Autosign maintains security through several mechanisms:
 
 - **Scoped Permissions**: Only specific message types can be auto-signed. For
   example, you might grant permission for `/minievm.evm.v1.MsgCall` but not for
-  `/cosmos.bank.v1beta1.MsgSend`, ensuring the ghost wallet can only execute the
-  exact operations you've authorized.
+  `/cosmos.bank.v1beta1.MsgSend`, ensuring the AutoSign wallet can only execute
+  the exact operations you've authorized.
 - **Time-Limited Grants**: All autosign permissions have expiration dates. Users
   can set expiration times when enabling autosign, and permissions automatically
   expire, requiring re-authorization.

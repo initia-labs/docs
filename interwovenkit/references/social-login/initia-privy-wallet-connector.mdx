@@ -6,14 +6,14 @@ title: initiaPrivyWalletConnector
 
 - Wagmi connector that enables social login (email, Google, X) in your wagmi
   connector list.
-- Social logins only. Does not require `PrivyProvider`.
+- Use it to add Initia's bundled social-login entry to your wagmi connector
+  list.
 
 ## Prerequisites
 
 - Must be used with wagmi `createConfig`.
-- If you need AutoSign or embedded wallet features, use
-  `initiaPrivyWalletConnector` with `PrivyProvider` (see
-  [Provider Setup](../setup/providers)).
+- Use this helper when you want Initia's bundled social-login connector in your
+  wagmi config.
 
 ## Quickstart
 
@@ -55,6 +55,6 @@ Type `Connector` is from `wagmi`.
 
 ## Notes
 
-- Enables social login options without requiring `PrivyProvider`.
+- Enables Initia's bundled social-login option.
 - Use alongside other wagmi connectors (MetaMask, WalletConnect, etc.).
 - Display name: "Connect Socials".
