@@ -203,8 +203,8 @@ public entry fun ibc_timeout(
 )
 ```
 
-Also when a contract makes an IBC transfer request, it should provide async callback
-data through memo field.
+Also when a contract makes an IBC transfer request, it should provide async
+callback data through memo field.
 
 - `memo['move']['async_callback']['id']`: the async callback id is assigned from
   the contract. so later it will be passed as an argument of ibc_ack and

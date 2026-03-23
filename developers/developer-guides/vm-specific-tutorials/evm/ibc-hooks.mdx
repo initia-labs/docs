@@ -169,8 +169,8 @@ interface IIBCAsyncCallback {
 }
 ```
 
-Also when a contract makes an IBC transfer request, it should provide async callback
-data through memo field.
+Also when a contract makes an IBC transfer request, it should provide async
+callback data through memo field.
 
 - `memo['evm']['async_callback']['id']`: the async callback id is assigned from
   the contract. so later it will be passed as argument of `ibc_ack` and
@@ -221,8 +221,8 @@ contract Counter is IIBCAsyncCallback {
 ## Step 2. Update IBC hook ACL for the contract
 
 IBC hook has strong power to execute any functions in counterparty chain and
-this can be used for phishing easily. So, we need to set the ACL for the contract
-to prevent unauthorized access. To update MiniEVM ACL, you need to use
+this can be used for phishing easily. So, we need to set the ACL for the
+contract to prevent unauthorized access. To update MiniEVM ACL, you need to use
 `MsgExecuteMessages` in OPchild module.
 
 ````typescript

@@ -262,8 +262,8 @@ pub fn simple_transfer(
 ## Step 2. Update IBC hook ACL for the contract
 
 IBC hook has strong power to execute any functions in counterparty chain and
-this can be used for phishing easily. So, we need to set the ACL for the contract
-to prevent unauthorized access. To update MiniWasm ACL, you need to use
+this can be used for phishing easily. So, we need to set the ACL for the
+contract to prevent unauthorized access. To update MiniWasm ACL, you need to use
 `MsgExecuteMessages` in OPchild module.
 
 ```typescript
