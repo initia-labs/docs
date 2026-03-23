@@ -535,6 +535,7 @@
             "group": "Router API",
             "pages": [
               "api-reference/router-api/introduction",
+              "api-reference/router-api/usage",
               {
                 "group": "Assets & Chains",
                 "icon": "coins",

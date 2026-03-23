@@ -260,7 +260,7 @@ paths:
       description: |-
         This is the first step when bridging tokens between chains. Call this endpoint with your source and destination assets to find the optimal transfer route. The response includes the expected output amount, USD value estimates, and an ordered list of operations.
 
-        After receiving a route, pass the full response (including `operations`) to the [Generate Transaction](/api-reference/router-api/openapi/generate-transaction) endpoint to get signable transaction messages you can broadcast.
+        After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
       tags:
         - Routing
       requestBody:
@@ -380,7 +380,7 @@ paths:
       operationId: generateTransaction
       summary: Generate Transaction
       description: |-
-        This is the second step when bridging tokens. After computing a route with [Compute Route](/api-reference/router-api/openapi/compute-route), pass the route details and your addresses to this endpoint. It returns signable transaction messages that you can broadcast to the source chain.
+        This is the second step when bridging tokens. After computing a route with Compute Route (`POST /v2/fungible/route`), pass the route details and your addresses to this endpoint. It returns signable transaction messages that you can broadcast to the source chain.
 
         The typical flow is: **Compute Route** → **Generate Transaction** → sign and broadcast → **Track Transaction**.
       tags:
@@ -501,7 +501,7 @@ paths:
       description: |-
         Registers a transaction for cross-chain tracking. Call this once with the transaction hash and chain ID immediately after broadcasting. This is required before you can poll the transaction status.
 
-        After calling this endpoint, use [Get Transaction Status](/api-reference/router-api/openapi/get-transaction-status) to poll for progress updates.
+        After calling this endpoint, use Get Transaction Status (`GET /v2/tx/status`) to poll for progress updates.
       tags:
         - Tracking Transactions
       requestBody:
@@ -543,7 +543,7 @@ paths:
       operationId: getTransactionStatus
       summary: Get Transaction Status
       description: |-
-        Polls the current status of a transaction that was previously registered with [Track Transaction](/api-reference/router-api/openapi/track-transaction). Returns the overall status and the state of each hop in the transfer sequence.
+        Polls the current status of a transaction that was previously registered with Track Transaction (`POST /v2/tx/track`). Returns the overall status and the state of each hop in the transfer sequence.
 
         Call this endpoint repeatedly until the status reaches a terminal state (e.g. `STATE_COMPLETED` or `STATE_FAILED`). This is useful for showing transfer progress in your UI.
       tags:

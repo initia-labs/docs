@@ -1,0 +1,96 @@
+---
+title: 'Usage'
+description: 'How to bridge tokens and track transfers using the Router API.'
+---
+
+The Router API handles route computation and transaction generation, but does not broadcast transactions on your behalf. You are responsible for signing and submitting the transaction to the chain. This page walks through the full flow.
+
+## Bridging Tokens
+
+Bridging tokens between chains is a two-step process using the Routing endpoints.
+
+<Steps>
+  <Step title="Compute a route">
+    Call **Compute Route** (`POST /v2/fungible/route`) with the source and destination assets and the amount you want to transfer. The API evaluates available pathways (IBC, LayerZero, Optimistic bridges, etc.) and returns the optimal route, including the expected output amount and an `operations` array describing each hop.
+
+    ```bash
+    curl -X POST https://router-api.initia.xyz/v2/fungible/route \
+      -H "Content-Type: application/json" \
+      -d '{
+        "amount_in": "1000000",
+        "source_asset_chain_id": "interwoven-1",
+        "source_asset_denom": "uinit",
+        "dest_asset_chain_id": "8453",
+        "dest_asset_denom": "0x..."
+      }'
+    ```
+  </Step>
+  <Step title="Generate transaction messages">
+    Pass the route details to **Generate Transaction** (`POST /v2/fungible/msgs`) along with your addresses and slippage tolerance. The API returns signable transaction messages for the source chain.
+
+    ```bash
+    curl -X POST https://router-api.initia.xyz/v2/fungible/msgs \
+      -H "Content-Type: application/json" \
+      -d '{
+        "amount_in": "1000000",
+        "amount_out": "999000",
+        "source_asset_chain_id": "interwoven-1",
+        "source_asset_denom": "uinit",
+        "dest_asset_chain_id": "8453",
+        "dest_asset_denom": "0x...",
+        "address_list": ["init1abc...", "0xdef..."],
+        "operations": [],
+        "slippage_tolerance_percent": "1"
+      }'
+    ```
+  </Step>
+  <Step title="Sign and broadcast">
+    Sign the returned transaction messages with your wallet or SDK, then broadcast to the source chain's RPC endpoint. This step happens outside the Router API.
+  </Step>
+</Steps>
+
+## Tracking Transfers
+
+Cross-chain transfers involve multiple chains and relayers, so they don't complete instantly. The Router API provides two endpoints to monitor progress.
+
+<Steps>
+  <Step title="Register the transaction">
+    After broadcasting, call **Track Transaction** (`POST /v2/tx/track`) once with the transaction hash and the chain ID where you submitted it. This registers the transaction with the tracking service.
+
+    ```bash
+    curl -X POST https://router-api.initia.xyz/v2/tx/track \
+      -H "Content-Type: application/json" \
+      -d '{
+        "tx_hash": "ABCDEF1234567890...",
+        "chain_id": "interwoven-1"
+      }'
+    ```
+
+    <Note>
+      The Router API does not know about your transaction until you register it. This step is required before you can poll for status.
+    </Note>
+  </Step>
+  <Step title="Poll for status">
+    Call **Get Transaction Status** (`GET /v2/tx/status`) repeatedly to check the transfer progress. The response includes the overall status and the state of each hop in the transfer sequence.
+
+    ```bash
+    curl "https://router-api.initia.xyz/v2/tx/status?tx_hash=ABCDEF1234567890...&chain_id=interwoven-1"
+    ```
+
+    Keep polling until the status reaches a terminal state such as `STATE_COMPLETED` or `STATE_FAILED`.
+  </Step>
+</Steps>
+
+## Full Flow Summary
+
+```
+Compute Route → Generate Transaction → Sign & Broadcast → Track Transaction → Poll Status
+```
+
+| Step | Endpoint | Purpose |
+|------|----------|---------|
+| 1 | `POST /v2/fungible/route` | Find the optimal route |
+| 2 | `POST /v2/fungible/msgs` | Get signable transaction messages |
+| 3 | *(your wallet/SDK)* | Sign and broadcast to the chain |
+| 4 | `POST /v2/tx/track` | Register the tx hash for tracking |
+| 5 | `GET /v2/tx/status` | Poll until transfer completes |
