@@ -5,6 +5,32 @@ description: 'How to bridge tokens and track transfers using the Router API.'
 
 The Router API handles route computation and transaction generation, but does not broadcast transactions on your behalf. You are responsible for signing and submitting the transaction to the chain. This page walks through the full flow.
 
+## Flow Overview
+
+```mermaid
+sequenceDiagram
+    participant You
+    participant Router API
+    participant Chain RPC
+
+    You->>Router API: 1. Compute Route
+    Router API-->>You: Route + operations
+
+    You->>Router API: 2. Generate Transaction
+    Router API-->>You: Signable tx messages
+
+    You->>Chain RPC: 3. Sign & broadcast
+    Chain RPC-->>You: tx_hash
+
+    You->>Router API: 4. Track Transaction (tx_hash)
+    Router API-->>You: Registered
+
+    loop Until terminal state
+        You->>Router API: 5. Get Transaction Status
+        Router API-->>You: Status + transfer sequence
+    end
+```
+
 ## Bridging Tokens
 
 Bridging tokens between chains is a two-step process using the Routing endpoints.
@@ -51,11 +77,11 @@ Bridging tokens between chains is a two-step process using the Routing endpoints
 
 ## Tracking Transfers
 
-Cross-chain transfers involve multiple chains and relayers, so they don't complete instantly. The Router API provides two endpoints to monitor progress.
+Because you sign and broadcast the transaction yourself (outside the Router API), the API has no knowledge of your transaction until you explicitly provide the transaction hash. You must register the transaction before you can monitor its cross-chain progress.
 
 <Steps>
   <Step title="Register the transaction">
-    After broadcasting, call **Track Transaction** (`POST /v2/tx/track`) once with the transaction hash and the chain ID where you submitted it. This registers the transaction with the tracking service.
+    After broadcasting, call **Track Transaction** (`POST /v2/tx/track`) once with the transaction hash and the chain ID where you submitted it. This registers the transaction with the tracking service so it can begin watching for relay events and bridge confirmations across chains.
 
     ```bash
     curl -X POST https://router-api.initia.xyz/v2/tx/track \
@@ -65,10 +91,6 @@ Cross-chain transfers involve multiple chains and relayers, so they don't comple
         "chain_id": "interwoven-1"
       }'
     ```
-
-    <Note>
-      The Router API does not know about your transaction until you register it. This step is required before you can poll for status.
-    </Note>
   </Step>
   <Step title="Poll for status">
     Call **Get Transaction Status** (`GET /v2/tx/status`) repeatedly to check the transfer progress. The response includes the overall status and the state of each hop in the transfer sequence.
@@ -81,11 +103,7 @@ Cross-chain transfers involve multiple chains and relayers, so they don't comple
   </Step>
 </Steps>
 
-## Full Flow Summary
-
-```
-Compute Route → Generate Transaction → Sign & Broadcast → Track Transaction → Poll Status
-```
+## Endpoint Reference
 
 | Step | Endpoint | Purpose |
 |------|----------|---------|
