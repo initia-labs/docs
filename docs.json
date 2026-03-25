@@ -538,7 +538,6 @@
               "api-reference/router-api/usage",
               {
                 "group": "Assets & Chains",
-                "icon": "coins",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": [
                   "GET /v2/fungible/assets",
@@ -548,19 +547,16 @@
               },
               {
                 "group": "Routing",
-                "icon": "route",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /v2/fungible/route", "POST /v2/fungible/msgs"]
               },
               {
                 "group": "Tracking Transactions",
-                "icon": "arrow-right-arrow-left",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /v2/tx/track", "GET /v2/tx/status"]
               },
               {
                 "group": "NFT",
-                "icon": "image",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /nft"]
               }
