@@ -357,9 +357,9 @@ paths:
                   required_chain_addresses:
                     type: array
                     description: >-
-                      All chain IDs that require an address, in order of
-                      usage by operations in the route. Use this to populate
-                      the address_list parameter in the Generate Transaction
+                      All chain IDs that require an address, in order of usage
+                      by operations in the route. Use this to populate the
+                      address_list parameter in the Generate Transaction
                       request.
                     items:
                       type: string
