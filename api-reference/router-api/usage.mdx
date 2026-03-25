@@ -3,7 +3,9 @@ title: 'Usage'
 description: 'How to bridge tokens and track transfers using the Router API.'
 ---
 
-The Router API handles route computation and transaction generation, but does not broadcast transactions on your behalf. You are responsible for signing and submitting the transaction to the chain. This page walks through the full flow.
+The Router API handles route computation and transaction generation, but does
+not broadcast transactions on your behalf. You are responsible for signing and
+submitting the transaction to the chain. This page walks through the full flow.
 
 ## Flow Overview
 
@@ -33,7 +35,8 @@ sequenceDiagram
 
 ## Bridging Tokens
 
-Bridging tokens between chains is a two-step process using the Routing endpoints.
+Bridging tokens between chains is a two-step process using the Routing
+endpoints.
 
 <Steps>
   <Step title="Compute a route">
@@ -50,6 +53,7 @@ Bridging tokens between chains is a two-step process using the Routing endpoints
         "dest_asset_denom": "0x..."
       }'
     ```
+
   </Step>
   <Step title="Generate transaction messages">
     Pass the route details to **Generate Transaction** (`POST /v2/fungible/msgs`) along with your addresses and slippage tolerance. The API returns signable transaction messages for the source chain.
@@ -69,6 +73,7 @@ Bridging tokens between chains is a two-step process using the Routing endpoints
         "slippage_tolerance_percent": "1"
       }'
     ```
+
   </Step>
   <Step title="Sign and broadcast">
     Sign the returned transaction messages with your wallet or SDK, then broadcast to the source chain's RPC endpoint. This step happens outside the Router API.
@@ -77,7 +82,10 @@ Bridging tokens between chains is a two-step process using the Routing endpoints
 
 ## Tracking Transfers
 
-Because you sign and broadcast the transaction yourself (outside the Router API), the API has no knowledge of your transaction until you explicitly provide the transaction hash. You must register the transaction before you can monitor its cross-chain progress.
+Because you sign and broadcast the transaction yourself (outside the Router
+API), the API has no knowledge of your transaction until you explicitly provide
+the transaction hash. You must register the transaction before you can monitor
+its cross-chain progress.
 
 <Steps>
   <Step title="Register the transaction">
@@ -91,6 +99,7 @@ Because you sign and broadcast the transaction yourself (outside the Router API)
         "chain_id": "interwoven-1"
       }'
     ```
+
   </Step>
   <Step title="Poll for status">
     Call **Get Transaction Status** (`GET /v2/tx/status`) repeatedly to check the transfer progress. The response includes the overall status and the state of each hop in the transfer sequence.
@@ -100,15 +109,16 @@ Because you sign and broadcast the transaction yourself (outside the Router API)
     ```
 
     Keep polling until the status reaches a terminal state such as `STATE_COMPLETED` or `STATE_FAILED`.
+
   </Step>
 </Steps>
 
 ## Endpoint Reference
 
-| Step | Endpoint | Purpose |
-|------|----------|---------|
-| 1 | `POST /v2/fungible/route` | Find the optimal route |
-| 2 | `POST /v2/fungible/msgs` | Get signable transaction messages |
-| 3 | *(your wallet/SDK)* | Sign and broadcast to the chain |
-| 4 | `POST /v2/tx/track` | Register the tx hash for tracking |
-| 5 | `GET /v2/tx/status` | Poll until transfer completes |
+| Step | Endpoint                  | Purpose                           |
+| ---- | ------------------------- | --------------------------------- |
+| 1    | `POST /v2/fungible/route` | Find the optimal route            |
+| 2    | `POST /v2/fungible/msgs`  | Get signable transaction messages |
+| 3    | _(your wallet/SDK)_       | Sign and broadcast to the chain   |
+| 4    | `POST /v2/tx/track`       | Register the tx hash for tracking |
+| 5    | `GET /v2/tx/status`       | Poll until transfer completes     |

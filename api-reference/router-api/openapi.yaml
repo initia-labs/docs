@@ -13,13 +13,17 @@ paths:
     get:
       operationId: getAssets
       summary: Get Assets
-      description: Returns a map of supported fungible assets across all chains. You can optionally filter by specific chain IDs.
+      description:
+        Returns a map of supported fungible assets across all chains. You can
+        optionally filter by specific chain IDs.
       tags:
         - Assets & Chains
       parameters:
         - name: chain_ids
           in: query
-          description: Comma-separated list of chain IDs to filter by (e.g. "1,42161,interwoven-1"). Returns all supported chains if omitted.
+          description:
+            Comma-separated list of chain IDs to filter by (e.g.
+            "1,42161,interwoven-1"). Returns all supported chains if omitted.
           required: false
           schema:
             type: string
@@ -71,10 +75,12 @@ paths:
                                 description: Whether the asset is an SVM token.
                               origin_chain_id:
                                 type: string
-                                description: Chain ID where the asset originated.
+                                description:
+                                  Chain ID where the asset originated.
                               origin_denom:
                                 type: string
-                                description: Original denomination on the origin chain.
+                                description:
+                                  Original denomination on the origin chain.
                               trace:
                                 type: string
                                 description: IBC trace path.
@@ -93,12 +99,14 @@ paths:
                         is_svm: false
                         origin_chain_id: interwoven-1
                         origin_denom: uinit
-                        trace: ""
+                        trace: ''
   /v2/info/chains:
     get:
       operationId: getChains
       summary: Get Chains
-      description: Returns the list of all supported chains available for cross-chain transfers. You can optionally filter by specific chain IDs.
+      description:
+        Returns the list of all supported chains available for cross-chain
+        transfers. You can optionally filter by specific chain IDs.
       tags:
         - Assets & Chains
       parameters:
@@ -129,10 +137,11 @@ paths:
                           description: Human-readable chain name.
                         chain_type:
                           type: string
-                          description: "Chain type (e.g. cosmos, evm)."
+                          description: 'Chain type (e.g. cosmos, evm).'
                         pfm_enabled:
                           type: boolean
-                          description: Whether Packet Forward Middleware is enabled.
+                          description:
+                            Whether Packet Forward Middleware is enabled.
                         supports_memo:
                           type: boolean
                           description: Whether the chain supports IBC memo.
@@ -182,7 +191,9 @@ paths:
     post:
       operationId: getBalances
       summary: Get Balances
-      description: Returns token balances and USD values for given addresses across multiple chains.
+      description:
+        Returns token balances and USD values for given addresses across
+        multiple chains.
       tags:
         - Assets & Chains
       requestBody:
@@ -196,7 +207,8 @@ paths:
               properties:
                 chains:
                   type: object
-                  description: A map of chain IDs to address and denomination queries.
+                  description:
+                    A map of chain IDs to address and denomination queries.
                   additionalProperties:
                     type: object
                     required:
@@ -250,9 +262,9 @@ paths:
                   interwoven-1:
                     denoms:
                       uinit:
-                        amount: "1000000"
-                        price_usd: "1.50"
-                        value_usd: "1.50"
+                        amount: '1000000'
+                        price_usd: '1.50'
+                        value_usd: '1.50'
   /v2/fungible/route:
     post:
       operationId: computeRoute
@@ -278,7 +290,9 @@ paths:
               properties:
                 amount_in:
                   type: string
-                  description: Amount to send in the smallest denomination (e.g. "1000000" for 1 INIT).
+                  description:
+                    Amount to send in the smallest denomination (e.g. "1000000"
+                    for 1 INIT).
                 source_asset_chain_id:
                   type: string
                   description: Source chain ID.
@@ -297,20 +311,22 @@ paths:
                   description: Allow routes that may have higher risk.
                 go_fast:
                   type: boolean
-                  description: Use Go Fast bridging. Automatically determined if not set.
+                  description:
+                    Use Go Fast bridging. Automatically determined if not set.
                 is_op_withdraw:
                   type: boolean
                   description: Force an Optimistic withdrawal route.
                 ignore_blacklist:
                   type: boolean
                   default: false
-                  description: Include blacklisted networks in route computation.
+                  description:
+                    Include blacklisted networks in route computation.
             example:
-              amount_in: "1000000"
+              amount_in: '1000000'
               source_asset_chain_id: interwoven-1
               source_asset_denom: uinit
-              dest_asset_chain_id: "8453"
-              dest_asset_denom: "0x..."
+              dest_asset_chain_id: '8453'
+              dest_asset_denom: '0x...'
               allow_unsafe: true
       responses:
         '200':
@@ -352,7 +368,8 @@ paths:
                   warning:
                     type: object
                     nullable: true
-                    description: Price impact warning (present when impact exceeds 5%).
+                    description:
+                      Price impact warning (present when impact exceeds 5%).
                     properties:
                       type:
                         type: string
@@ -364,15 +381,15 @@ paths:
                     type: boolean
                     description: Whether an OP hook is required for this route.
               example:
-                amount_in: "1000000"
-                amount_out: "999000"
+                amount_in: '1000000'
+                amount_out: '999000'
                 source_asset_chain_id: interwoven-1
                 source_asset_denom: uinit
-                dest_asset_chain_id: "8453"
-                dest_asset_denom: "0x..."
+                dest_asset_chain_id: '8453'
+                dest_asset_denom: '0x...'
                 operations: []
-                usd_amount_in: "1.50"
-                usd_amount_out: "1.49"
+                usd_amount_in: '1.50'
+                usd_amount_out: '1.49'
                 warning: null
                 required_op_hook: false
   /v2/fungible/msgs:
@@ -422,21 +439,27 @@ paths:
                   description: Destination asset denomination.
                 address_list:
                   type: array
-                  description: Ordered list of addresses for each hop in the route (minimum 2).
+                  description:
+                    Ordered list of addresses for each hop in the route (minimum
+                    2).
                   minItems: 2
                   items:
                     type: string
                 operations:
                   type: array
-                  description: Route operations from the /v2/fungible/route response.
+                  description:
+                    Route operations from the /v2/fungible/route response.
                   items:
                     type: object
                 slippage_tolerance_percent:
                   type: string
-                  description: 'Slippage tolerance as a percentage (e.g. "1" for 1%).'
+                  description:
+                    'Slippage tolerance as a percentage (e.g. "1" for 1%).'
                 signed_op_hook:
                   type: object
-                  description: Signed OP hook data, required when the route has required_op_hook true.
+                  description:
+                    Signed OP hook data, required when the route has
+                    required_op_hook true.
                   properties:
                     hook:
                       type: string
@@ -449,17 +472,17 @@ paths:
                   default: false
                   description: Include blacklisted networks.
             example:
-              amount_in: "1000000"
-              amount_out: "999000"
+              amount_in: '1000000'
+              amount_out: '999000'
               source_asset_chain_id: interwoven-1
               source_asset_denom: uinit
-              dest_asset_chain_id: "8453"
-              dest_asset_denom: "0x..."
+              dest_asset_chain_id: '8453'
+              dest_asset_denom: '0x...'
               address_list:
                 - init1abc...
-                - "0xdef..."
+                - '0xdef...'
               operations: []
-              slippage_tolerance_percent: "1"
+              slippage_tolerance_percent: '1'
       responses:
         '200':
           description: Successful response
@@ -470,7 +493,9 @@ paths:
                 properties:
                   txs:
                     type: array
-                    description: Array of transaction objects. Each can be a cosmos_tx, evm_tx, or svm_tx.
+                    description:
+                      Array of transaction objects. Each can be a cosmos_tx,
+                      evm_tx, or svm_tx.
                     items:
                       type: object
                       properties:
@@ -487,7 +512,8 @@ paths:
                                 type: object
                             signer_address:
                               type: string
-                              description: Address that must sign the transaction.
+                              description:
+                                Address that must sign the transaction.
               example:
                 txs:
                   - cosmos_tx:
@@ -593,7 +619,7 @@ paths:
                 status: STATE_COMPLETED
                 transfer_sequence:
                   - src_chain_id: interwoven-1
-                    dst_chain_id: "8453"
+                    dst_chain_id: '8453'
                     state: TRANSFER_SUCCESS
   /nft:
     post:
@@ -640,7 +666,9 @@ paths:
                     type: string
                 collection_address:
                   type: string
-                  description: NFT collection contract address. Pass an empty string for Move chains.
+                  description:
+                    NFT collection contract address. Pass an empty string for
+                    Move chains.
                 class_id:
                   type: string
                   description: IBC class ID. Required for cross-chain transfers.
@@ -656,13 +684,17 @@ paths:
                       description: Base class ID.
                 object_addresses:
                   type: array
-                  description: Move object addresses (maximum 30). Required for same-chain Move transfers.
+                  description:
+                    Move object addresses (maximum 30). Required for same-chain
+                    Move transfers.
                   maxItems: 30
                   items:
                     type: string
                 l1_recover_address:
                   type: string
-                  description: L1 recovery address for L2 to L1 to L2 transfers. Defaults to from_address.
+                  description:
+                    L1 recovery address for L2 to L1 to L2 transfers. Defaults
+                    to from_address.
                 outgoing_proxy:
                   type: string
                   description: Outgoing proxy contract address (Wasm chains).
@@ -680,9 +712,9 @@ paths:
               to_address: init1def...
               to_chain_id: yominet-1
               token_ids:
-                - "1"
-                - "2"
-              collection_address: "0xabc..."
+                - '1'
+                - '2'
+              collection_address: '0xabc...'
               class_id: wasm.init1.../nft-transfer/channel-0/...
       responses:
         '200':
@@ -694,7 +726,9 @@ paths:
                 properties:
                   msgs:
                     type: array
-                    description: Array of transaction messages appropriate for the source chain's VM type.
+                    description:
+                      Array of transaction messages appropriate for the source
+                      chain's VM type.
                     items:
                       type: object
                       properties:
