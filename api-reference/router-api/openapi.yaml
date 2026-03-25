@@ -1,0 +1,788 @@
+openapi: 3.1.0
+info:
+  title: Router API
+  description: Cross-chain transfer routing API for the Initia ecosystem.
+  version: 1.0.0
+servers:
+  - url: https://router-api.initia.xyz
+    description: Mainnet
+  - url: https://router-api.initiation-2.initia.xyz
+    description: Testnet
+paths:
+  /v2/fungible/assets:
+    get:
+      operationId: getAssets
+      summary: Get Assets
+      description:
+        Returns a map of supported fungible assets across all chains. You can
+        optionally filter by specific chain IDs.
+      tags:
+        - Assets & Chains
+      parameters:
+        - name: chain_ids
+          in: query
+          description:
+            Comma-separated list of chain IDs to filter by (e.g.
+            "1,42161,interwoven-1"). Returns all supported chains if omitted.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chain_to_assets_map:
+                    type: object
+                    description: A map of chain IDs to their supported assets.
+                    additionalProperties:
+                      type: object
+                      properties:
+                        assets:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              chain_id:
+                                type: string
+                                description: Chain ID where the asset exists.
+                              denom:
+                                type: string
+                                description: Asset denomination.
+                              decimals:
+                                type: integer
+                                description: Number of decimal places.
+                              symbol:
+                                type: string
+                                description: Asset ticker symbol.
+                              name:
+                                type: string
+                                description: Human-readable asset name.
+                              logo_uri:
+                                type: string
+                                description: URL to the asset logo.
+                              is_cw20:
+                                type: boolean
+                                description: Whether the asset is a CW20 token.
+                              is_evm:
+                                type: boolean
+                                description: Whether the asset is an EVM token.
+                              is_svm:
+                                type: boolean
+                                description: Whether the asset is an SVM token.
+                              origin_chain_id:
+                                type: string
+                                description:
+                                  Chain ID where the asset originated.
+                              origin_denom:
+                                type: string
+                                description:
+                                  Original denomination on the origin chain.
+                              trace:
+                                type: string
+                                description: IBC trace path.
+              example:
+                chain_to_assets_map:
+                  interwoven-1:
+                    assets:
+                      - chain_id: interwoven-1
+                        denom: uinit
+                        decimals: 6
+                        symbol: INIT
+                        name: Initia
+                        logo_uri: https://raw.githubusercontent.com/.../init.png
+                        is_cw20: false
+                        is_evm: false
+                        is_svm: false
+                        origin_chain_id: interwoven-1
+                        origin_denom: uinit
+                        trace: ''
+  /v2/info/chains:
+    get:
+      operationId: getChains
+      summary: Get Chains
+      description:
+        Returns the list of all supported chains available for cross-chain
+        transfers. You can optionally filter by specific chain IDs.
+      tags:
+        - Assets & Chains
+      parameters:
+        - name: chain_ids
+          in: query
+          description: Comma-separated list of chain IDs to filter by.
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chains:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chain_id:
+                          type: string
+                          description: Unique chain identifier.
+                        chain_name:
+                          type: string
+                          description: Human-readable chain name.
+                        chain_type:
+                          type: string
+                          description: 'Chain type (e.g. cosmos, evm).'
+                        pfm_enabled:
+                          type: boolean
+                          description:
+                            Whether Packet Forward Middleware is enabled.
+                        supports_memo:
+                          type: boolean
+                          description: Whether the chain supports IBC memo.
+                        logo_uri:
+                          type: string
+                          description: URL to the chain logo.
+                        bech32_prefix:
+                          type: string
+                          description: Bech32 address prefix (Cosmos chains).
+                        fee_assets:
+                          type: array
+                          description: Accepted fee assets on the chain.
+                          items:
+                            type: object
+                        rest:
+                          type: string
+                          description: REST API endpoint URL.
+                        rpc:
+                          type: string
+                          description: RPC endpoint URL.
+                        evm_fee_asset:
+                          type: object
+                          description: EVM fee asset details (EVM chains only).
+                          properties:
+                            decimals:
+                              type: integer
+                              description: Token decimals.
+                            name:
+                              type: string
+                              description: Token name.
+                            symbol:
+                              type: string
+                              description: Token symbol.
+              example:
+                chains:
+                  - chain_id: interwoven-1
+                    chain_name: Initia
+                    chain_type: cosmos
+                    pfm_enabled: true
+                    supports_memo: true
+                    logo_uri: https://raw.githubusercontent.com/.../initia.png
+                    bech32_prefix: init
+                    fee_assets: []
+                    rest: https://rest.initia.xyz
+                    rpc: https://rpc.initia.xyz
+  /v2/info/balances:
+    post:
+      operationId: getBalances
+      summary: Get Balances
+      description:
+        Returns token balances and USD values for given addresses across
+        multiple chains.
+      tags:
+        - Assets & Chains
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - chains
+              properties:
+                chains:
+                  type: object
+                  description:
+                    A map of chain IDs to address and denomination queries.
+                  additionalProperties:
+                    type: object
+                    required:
+                      - address
+                      - denoms
+                    properties:
+                      address:
+                        type: string
+                        description: Account address on the chain.
+                      denoms:
+                        type: array
+                        description: List of token denominations to query.
+                        items:
+                          type: string
+            example:
+              chains:
+                interwoven-1:
+                  address: init1abc...
+                  denoms:
+                    - uinit
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chains:
+                    type: object
+                    description: A map of chain IDs to balance results.
+                    additionalProperties:
+                      type: object
+                      properties:
+                        denoms:
+                          type: object
+                          additionalProperties:
+                            type: object
+                            properties:
+                              amount:
+                                type: string
+                                description: Raw token amount.
+                              price_usd:
+                                type: string
+                                description: Current USD price per token.
+                              value_usd:
+                                type: string
+                                description: Total USD value of the balance.
+              example:
+                chains:
+                  interwoven-1:
+                    denoms:
+                      uinit:
+                        amount: '1000000'
+                        price_usd: '1.50'
+                        value_usd: '1.50'
+  /v2/fungible/route:
+    post:
+      operationId: computeRoute
+      summary: Compute Route
+      description: |-
+        This is the first step when bridging tokens between chains. Call this endpoint with your source and destination assets to find the optimal transfer route. The response includes the expected output amount, USD value estimates, and an ordered list of operations.
+
+        After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
+      tags:
+        - Routing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount_in
+                - source_asset_chain_id
+                - source_asset_denom
+                - dest_asset_chain_id
+                - dest_asset_denom
+              properties:
+                amount_in:
+                  type: string
+                  description:
+                    Amount to send in the smallest denomination (e.g. "1000000"
+                    for 1 INIT).
+                source_asset_chain_id:
+                  type: string
+                  description: Source chain ID.
+                source_asset_denom:
+                  type: string
+                  description: Source asset denomination.
+                dest_asset_chain_id:
+                  type: string
+                  description: Destination chain ID.
+                dest_asset_denom:
+                  type: string
+                  description: Destination asset denomination.
+                allow_unsafe:
+                  type: boolean
+                  default: true
+                  description: Allow routes that may have higher risk.
+                go_fast:
+                  type: boolean
+                  description:
+                    Use Go Fast bridging. Automatically determined if not set.
+                is_op_withdraw:
+                  type: boolean
+                  description: Force an Optimistic withdrawal route.
+            example:
+              amount_in: '1000000'
+              source_asset_chain_id: interwoven-1
+              source_asset_denom: uinit
+              dest_asset_chain_id: '8453'
+              dest_asset_denom: '0x...'
+              allow_unsafe: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  amount_in:
+                    type: string
+                    description: Input amount.
+                  amount_out:
+                    type: string
+                    description: Expected output amount.
+                  source_asset_chain_id:
+                    type: string
+                    description: Source chain ID.
+                  source_asset_denom:
+                    type: string
+                    description: Source asset denom.
+                  dest_asset_chain_id:
+                    type: string
+                    description: Destination chain ID.
+                  dest_asset_denom:
+                    type: string
+                    description: Destination asset denom.
+                  operations:
+                    type: array
+                    description: Ordered list of transfer operations to execute.
+                    items:
+                      type: object
+                  required_chain_addresses:
+                    type: array
+                    description: >-
+                      All chain IDs that require an address, in order of usage
+                      by operations in the route. Use this to populate the
+                      address_list parameter in the Generate Transaction
+                      request.
+                    items:
+                      type: string
+                  usd_amount_in:
+                    type: string
+                    description: USD value of the input amount.
+                  usd_amount_out:
+                    type: string
+                    description: USD value of the output amount.
+                  warning:
+                    type: object
+                    nullable: true
+                    description:
+                      Price impact warning (present when impact exceeds 5%).
+                    properties:
+                      type:
+                        type: string
+                        description: Warning type (e.g. BAD_PRICE_WARNING).
+                      message:
+                        type: string
+                        description: Human-readable warning message.
+                  required_op_hook:
+                    type: boolean
+                    description: Whether an OP hook is required for this route.
+              example:
+                amount_in: '1000000'
+                amount_out: '999000'
+                source_asset_chain_id: interwoven-1
+                source_asset_denom: uinit
+                dest_asset_chain_id: '8453'
+                dest_asset_denom: '0x...'
+                operations: []
+                required_chain_addresses:
+                  - interwoven-1
+                  - '8453'
+                usd_amount_in: '1.50'
+                usd_amount_out: '1.49'
+                warning: null
+                required_op_hook: false
+  /v2/fungible/msgs:
+    post:
+      operationId: generateTransaction
+      summary: Generate Transaction
+      description: |-
+        This is the second step when bridging tokens. After computing a route with Compute Route (`POST /v2/fungible/route`), pass the route details and your addresses to this endpoint. It returns signable transaction messages that you can broadcast to the source chain.
+
+        The typical flow is: **Compute Route** → **Generate Transaction** → sign and broadcast → **Track Transaction**.
+      tags:
+        - Routing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - amount_in
+                - amount_out
+                - source_asset_chain_id
+                - source_asset_denom
+                - dest_asset_chain_id
+                - dest_asset_denom
+                - address_list
+                - operations
+                - slippage_tolerance_percent
+              properties:
+                amount_in:
+                  type: string
+                  description: Input amount in smallest denomination.
+                amount_out:
+                  type: string
+                  description: Expected output amount from the route response.
+                source_asset_chain_id:
+                  type: string
+                  description: Source chain ID.
+                source_asset_denom:
+                  type: string
+                  description: Source asset denomination.
+                dest_asset_chain_id:
+                  type: string
+                  description: Destination chain ID.
+                dest_asset_denom:
+                  type: string
+                  description: Destination asset denomination.
+                address_list:
+                  type: array
+                  description:
+                    Array of recipient and/or sender address for each chain in
+                    the path, corresponding to the required_chain_addresses
+                    array returned from a route request.
+                  minItems: 2
+                  items:
+                    type: string
+                operations:
+                  type: array
+                  description:
+                    Route operations from the /v2/fungible/route response.
+                  items:
+                    type: object
+                slippage_tolerance_percent:
+                  type: string
+                  description:
+                    'Slippage tolerance as a percentage (e.g. "1" for 1%).'
+                signed_op_hook:
+                  type: object
+                  description:
+                    Signed OP hook data, required when the route has
+                    required_op_hook true.
+                  properties:
+                    hook:
+                      type: string
+                      description: Hook data.
+                    signer:
+                      type: string
+                      description: Signer address.
+                ignore_blacklist:
+                  type: boolean
+                  default: false
+                  description: Include blacklisted networks.
+            example:
+              amount_in: '1000000'
+              amount_out: '999000'
+              source_asset_chain_id: interwoven-1
+              source_asset_denom: uinit
+              dest_asset_chain_id: '8453'
+              dest_asset_denom: '0x...'
+              address_list:
+                - init1abc...
+                - '0xdef...'
+              operations: []
+              slippage_tolerance_percent: '1'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  txs:
+                    type: array
+                    description:
+                      Array of transaction objects. Each can be a cosmos_tx,
+                      evm_tx, or svm_tx.
+                    items:
+                      type: object
+                      properties:
+                        cosmos_tx:
+                          type: object
+                          properties:
+                            chain_id:
+                              type: string
+                              description: Target chain ID.
+                            msgs:
+                              type: array
+                              description: Array of Cosmos SDK messages.
+                              items:
+                                type: object
+                            signer_address:
+                              type: string
+                              description:
+                                Address that must sign the transaction.
+              example:
+                txs:
+                  - cosmos_tx:
+                      chain_id: interwoven-1
+                      msgs: []
+                      signer_address: init1abc...
+  /v2/tx/track:
+    post:
+      operationId: trackTransaction
+      summary: Track Transaction
+      description: |-
+        Registers a transaction for cross-chain tracking. Call this once with the transaction hash and chain ID immediately after broadcasting. This is required before you can poll the transaction status.
+
+        After calling this endpoint, use Get Transaction Status (`GET /v2/tx/status`) to poll for progress updates.
+      tags:
+        - Tracking Transactions
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - tx_hash
+                - chain_id
+              properties:
+                tx_hash:
+                  type: string
+                  description: The transaction hash to track.
+                chain_id:
+                  type: string
+                  description: The chain ID where the transaction was submitted.
+            example:
+              tx_hash: ABCDEF1234567890...
+              chain_id: interwoven-1
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tx_hash:
+                    type: string
+                    description: Hash of the tracked transaction.
+                  explorer_link:
+                    type: string
+                    description: Link to the transaction on a block explorer.
+              example:
+                tx_hash: 87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
+                explorer_link: https://scan.initia.xyz/strat-1/txs/87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
+  /v2/tx/status:
+    get:
+      operationId: getTransactionStatus
+      summary: Get Transaction Status
+      description: |-
+        Polls the current status of a transaction that was previously registered with Track Transaction (`POST /v2/tx/track`). Returns the overall status and the state of each hop in the transfer sequence.
+
+        Call this endpoint repeatedly until the status reaches a terminal state (e.g. `STATE_COMPLETED` or `STATE_FAILED`). This is useful for showing transfer progress in your UI.
+      tags:
+        - Tracking Transactions
+      parameters:
+        - name: tx_hash
+          in: query
+          required: true
+          description: The transaction hash to check.
+          schema:
+            type: string
+        - name: chain_id
+          in: query
+          required: true
+          description: The chain ID where the transaction was submitted.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  state:
+                    type: string
+                    description: >-
+                      Overall end-to-end transaction state (e.g.
+                      STATE_SUBMITTED, STATE_PENDING, STATE_COMPLETED_SUCCESS,
+                      STATE_COMPLETED_ERROR, STATE_ABANDONED,
+                      STATE_PENDING_ERROR).
+                  transfers:
+                    type: array
+                    description: Transfer status for all transfers in the route.
+                    items:
+                      type: object
+                  transfer_sequence:
+                    type: array
+                    description: >-
+                      Deprecated. Flat list of transfer events in sequence
+                      order.
+                    items:
+                      type: object
+                      properties:
+                        src_chain_id:
+                          type: string
+                        dst_chain_id:
+                          type: string
+                        state:
+                          type: string
+                  next_blocking_transfer:
+                    type: object
+                    nullable: true
+                    description: >-
+                      The next transfer that is blocking progress, if any.
+                    properties:
+                      transfer_sequence_index:
+                        type: integer
+                  transfer_asset_release:
+                    type: object
+                    nullable: true
+                    description: Information about released assets.
+                    properties:
+                      chain_id:
+                        type: string
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                        nullable: true
+                      released:
+                        type: boolean
+                  error:
+                    type: object
+                    nullable: true
+                    description: Error details if the transaction failed.
+              example:
+                state: STATE_COMPLETED_SUCCESS
+                transfers: []
+                transfer_sequence:
+                  - src_chain_id: interwoven-1
+                    dst_chain_id: '8453'
+                    state: TRANSFER_SUCCESS
+                next_blocking_transfer: null
+                transfer_asset_release: null
+                error: null
+  /nft:
+    post:
+      operationId: nftTransfer
+      summary: NFT Transfer
+      description: |-
+        Computes routes and generates transaction messages for cross-chain NFT transfers within the Initia ecosystem. Supports:
+        - Same-chain transfers (EVM, Move, and Wasm chains)
+        - Single-hop IBC (L2 to L1 or L1 to L2 via ICS-721)
+        - Multi-hop (L2 to L1 to L2, two IBC hops)
+      tags:
+        - NFT
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - from_address
+                - from_chain_id
+                - to_address
+                - to_chain_id
+                - token_ids
+                - collection_address
+              properties:
+                from_address:
+                  type: string
+                  description: Sender address.
+                from_chain_id:
+                  type: string
+                  description: Source chain ID.
+                to_address:
+                  type: string
+                  description: Recipient address.
+                to_chain_id:
+                  type: string
+                  description: Destination chain ID.
+                token_ids:
+                  type: array
+                  description: Token IDs to transfer (maximum 30).
+                  maxItems: 30
+                  items:
+                    type: string
+                collection_address:
+                  type: string
+                  description:
+                    NFT collection contract address. Pass an empty string for
+                    Move chains.
+                class_id:
+                  type: string
+                  description: IBC class ID. Required for cross-chain transfers.
+                class_trace:
+                  type: object
+                  description: IBC class trace for multi-hop transfers.
+                  properties:
+                    path:
+                      type: string
+                      description: IBC trace path.
+                    base_class_id:
+                      type: string
+                      description: Base class ID.
+                object_addresses:
+                  type: array
+                  description:
+                    Move object addresses (maximum 30). Required for same-chain
+                    Move transfers.
+                  maxItems: 30
+                  items:
+                    type: string
+                l1_recover_address:
+                  type: string
+                  description:
+                    L1 recovery address for L2 to L1 to L2 transfers. Defaults
+                    to from_address.
+                outgoing_proxy:
+                  type: string
+                  description: Outgoing proxy contract address (Wasm chains).
+                timeout:
+                  type: integer
+                  default: 1800
+                  description: IBC timeout in seconds.
+                ignore_blacklist:
+                  type: boolean
+                  default: false
+                  description: Include blacklisted networks.
+            example:
+              from_address: init1abc...
+              from_chain_id: echelon-1
+              to_address: init1def...
+              to_chain_id: yominet-1
+              token_ids:
+                - '1'
+                - '2'
+              collection_address: '0xabc...'
+              class_id: wasm.init1.../nft-transfer/channel-0/...
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msgs:
+                    type: array
+                    description:
+                      Array of transaction messages appropriate for the source
+                      chain's VM type.
+                    items:
+                      type: object
+                      properties:
+                        typeUrl:
+                          type: string
+                        value:
+                          type: object
+              example:
+                msgs:
+                  - typeUrl: /ibc.applications.nft_transfer.v1.MsgTransfer
+                    value: {}
