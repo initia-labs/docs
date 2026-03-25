@@ -10,13 +10,15 @@ mechanism enabling this is a `memo` field on every ICS20 or ICS721 transfer
 packet as of
 [IBC v3.4.0](https://medium.com/the-interchain-foundation/moving-beyond-simple-token-transfers-d42b2b1dc29b).
 Wasm hooks is an IBC middleware that parses an ICS20 transfer, and if the memo
-field is of a particular form, executes a wasm contract call. This section details the
-memo format for wasm contract calls, and the execution guarantees provided.
+field is of a particular form, executes a wasm contract call. This section
+details the memo format for wasm contract calls, and the execution guarantees
+provided.
 
 # Cosmwasm Contract Execution Format
 
-Before diving into the IBC metadata format, here is the CosmWasm execute
-message format, showing the fields that need to be set. The CosmWasm `MsgExecuteContract` is defined
+Before diving into the IBC metadata format, here is the CosmWasm execute message
+format, showing the fields that need to be set. The CosmWasm
+`MsgExecuteContract` is defined
 [here](https://github.com/CosmWasm/wasmd/blob/4fe2fbc8f322efdaf187e2e5c99ce32fd1df06f0/x/wasm/types/tx.pb.go#L340-L349)
 as the following type:
 
@@ -46,11 +48,11 @@ type MsgExecuteContract struct {
 
 Here is where each of these fields comes from:
 
-- `Sender`: The sender of an IBC packet cannot be trusted, as the counterparty chain
-  has full ability to lie about it. This sender must not be confused
-  for a particular user or module address on Initia. So the sender is replaced
-  with an account to represent the sender prefixed by the channel and a wasm
-  module prefix. This is done by setting the sender to
+- `Sender`: The sender of an IBC packet cannot be trusted, as the counterparty
+  chain has full ability to lie about it. This sender must not be confused for a
+  particular user or module address on Initia. So the sender is replaced with an
+  account to represent the sender prefixed by the channel and a wasm module
+  prefix. This is done by setting the sender to
   Bech32(Hash("ibc-wasm-hook-intermediary" || channelID || sender)), where the
   channelId is the channel id on the local chain.
 - `Contract`: This field should be directly obtained from the ICS-20 packet
@@ -63,9 +65,9 @@ Here is where each of these fields comes from:
 
 <Note>
   Due to a [bug](https://x.com/SCVSecurity/status/1682329758020022272) in the
-  packet forward middleware, the sender from chains that use
-  PFM cannot be trusted. Until that is fixed, chains should not trust the sender on
-  contracts executed via IBC hooks.
+  packet forward middleware, the sender from chains that use PFM cannot be
+  trusted. Until that is fixed, chains should not trust the sender on contracts
+  executed via IBC hooks.
 </Note>
 
 ```go
@@ -83,8 +85,8 @@ msg := MsgExecuteContract{
 
 # ICS20 packet structure
 
-Given the details above, here is the implied ICS20 packet data
-structure. ICS20 is JSON native, so JSON is used for the memo format.
+Given the details above, here is the implied ICS20 packet data structure. ICS20
+is JSON native, so JSON is used for the memo format.
 
 ```json
 {
@@ -150,8 +152,8 @@ In Wasm hooks, post packet execution:
 # Ack callbacks
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
-packet. To allow contracts to listen on the ack of specific packets, the framework provides
-Ack callbacks.
+packet. To allow contracts to listen on the ack of specific packets, the
+framework provides Ack callbacks.
 
 ## Design
 
@@ -162,11 +164,11 @@ only the IBC packet sender can set the callback.
 ## Use Case
 
 The crosschain swaps implementation sends an IBC transfer. If the transfer were
-to fail, the sender needs to be able to retrieve their funds (which
-would otherwise be stuck in the contract). To do this, users can
-retrieve the funds after the timeout has passed, but without the ack
-information, there is no guarantee that the send hasn't failed (i.e.: returned an
-error ack notifying that the receiving chain didn't accept it)
+to fail, the sender needs to be able to retrieve their funds (which would
+otherwise be stuck in the contract). To do this, users can retrieve the funds
+after the timeout has passed, but without the ack information, there is no
+guarantee that the send hasn't failed (i.e.: returned an error ack notifying
+that the receiving chain didn't accept it)
 
 # Implementation
 
