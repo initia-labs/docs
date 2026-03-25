@@ -35,9 +35,9 @@ StableSwap pool design:
 
 - **Rate Limiting**: To protect against manipulation, the net amount of
   IbcOpINIT tokens that can be swapped back into INIT tokens is limited. This
-  means that even if a malicious actor manages to acquire or create a large
-  amount of IbcOpINIT tokens on their rollup, the number of tokens that can be
-  swapped back into regular INIT tokens remains restricted.
+  means that even if a malicious actor acquires or creates a large amount of
+  IbcOpINIT tokens on their rollup, the number of tokens that can be swapped
+  back into regular INIT tokens remains restricted.
 - **Single INIT Token Pool**: To minimize liquidity fragmentation, there is a
   single INIT token pool that can be paired with multiple IbcOpINIT token pools,
   instead of having separate INIT token pools for each rollup.

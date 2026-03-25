@@ -63,13 +63,13 @@ type MsgExecute struct {
 }
 ```
 
-So we detail where we want to get each of these fields from:
+Here is where each of these fields comes from:
 
-- `Sender`: We cannot trust the sender of an IBC packet, the counter-party chain
-  has full ability to lie about it. We cannot risk this sender being confused
-  for a particular user or module address on Initia. So we replace the sender
-  with an account to represent the sender prefixed by the channel and a Move
-  module prefix. This is done by setting the sender to
+- `Sender`: The sender of an IBC packet cannot be trusted, as the counter-party
+  chain has full ability to lie about it. This sender must not be confused for a
+  particular user or module address on Initia. So the sender is replaced with an
+  account to represent the sender prefixed by the channel and a Move module
+  prefix. This is done by setting the sender to
   `Bech32(Hash(Hash("ibc-move-hook-intermediary") + channelID/sender))`, where
   the channelId is the channel id on the local chain.
 - `ModuleAddress`: This field should be directly obtained from the ICS-20 packet
@@ -83,7 +83,7 @@ So we detail where we want to get each of these fields from:
 - `Args`: This field should be directly obtained from the ICS-20 packet
   metadata.
 
-So our constructed move message that we execute will look like:
+The constructed move message looks like:
 
 ```go
 msg := MsgExecuteContract{
@@ -107,8 +107,8 @@ msg := MsgExecuteContract{
 
 # ICS20 Packet Structure
 
-So given the details above, we propagate the implied ICS20 packet data
-structure. ICS20 is JSON native, so we use JSON for the memo format.
+Given the details above, here is the implied ICS20 packet data structure. ICS20
+is JSON native, so JSON is used for the memo format.
 
 ```json
 {
@@ -150,8 +150,8 @@ An ICS20 packet is formatted correctly for movehooks if the following all hold:
 - [x] `receiver` == "" || `receiver` ==
       `"module_address::module_name::function_name"`
 
-We consider an ICS20 packet as directed towards movehooks if all of the
-following hold:
+An ICS20 packet is considered directed towards movehooks if all of the following
+hold:
 
 - [x] `memo` is not blank
 - [x] `memo` is valid JSON
@@ -183,9 +183,9 @@ In Move hooks, post packet execution:
 # Async Callback
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
-packet. To allow contracts to listen on the ack of specific packets, we provide
-Ack callbacks. The contract, which wants to receive ack callback, has to
-implement two functions.
+packet. To allow contracts to listen on the ack of specific packets, the
+framework provides Ack callbacks. The contract, which wants to receive ack
+callback, has to implement two functions.
 
 - ibc_ack
 - ibc_timeout
@@ -241,10 +241,10 @@ module deployer::example {
 }
 ```
 
-## Step 2. Update IBC hook ACL for the contract
+## Step 2. Update IBC Hook ACL for the Contract
 
 IBC hooks have the power to execute any function on the counterparty chain,
-which can easily be exploited for phishing. Therefore, we need to set the ACL
+which can easily be exploited for phishing. Therefore, you need to set the ACL
 for the contract to prevent unauthorized access.
 
 ```typescript
@@ -306,7 +306,7 @@ Response:
 
 ## Step 3. Execute IBC Hooks Message
 
-After the contract is deployed and the ACL is set, we can execute the IBC hooks
+After the contract is deployed and the ACL is set, you can execute the IBC hooks
 message to call the contract.
 
 ```typescript

@@ -12,9 +12,8 @@ introduced in
 
 # EVM Contract Execution Format
 
-Before we dive into the IBC metadata format, let's take a look at the hook data
-format and address which fields we need to be setting. The EVM `MsgCall` is
-defined
+Before diving into the IBC metadata format, take a look at the hook data format
+and the fields that need to be set. The EVM `MsgCall` is defined
 [here](https://github.com/initia-labs/minievm/blob/main/x/evm/types/tx.pb.go)
 and other types are defined
 [here](https://github.com/initia-labs/minievm/blob/main/app/ibc-hooks/message.go).
@@ -53,13 +52,13 @@ type MsgCall struct {
 }
 ```
 
-So we detail where we want to get each of these fields from:
+Here is where each of these fields comes from:
 
-- `Sender`: We cannot trust the sender of an IBC packet, the counter-party chain
-  has full ability to lie about it. We cannot risk this sender being confused
-  for a particular user or module address on Initia. So we replace the sender
-  with an account to represent the sender prefixed by the channel and an evm
-  module prefix. This is done by setting the sender to
+- `Sender`: The sender of an IBC packet cannot be trusted, as the counter-party
+  chain has full ability to lie about it. This sender must not be confused for a
+  particular user or module address on Initia. So we replace the sender with an
+  account to represent the sender prefixed by the channel and an evm module
+  prefix. This is done by setting the sender to
   `Bech32(Hash(Hash("ibc-evm-hook-intermediary") + channelID/sender))`, where
   the channelId is the channel id on the local chain.
 - `ContractAddr`: This field should be directly obtained from the ICS-20 packet
@@ -67,7 +66,7 @@ So we detail where we want to get each of these fields from:
 - `Input`: This field should be directly obtained from the ICS-20 packet
   metadata.
 
-So our constructed EVM call message that we execute will look like:
+The constructed EVM call message looks like:
 
 ```go
 msg := MsgCall{
@@ -83,8 +82,8 @@ msg := MsgCall{
 
 # ICS20 packet structure
 
-So given the details above, we propagate the implied ICS20 packet data
-structure. ICS20 is JSON native, so we use JSON for the memo format.
+Given the details above, here is the implied ICS20 packet data structure. ICS20
+is JSON native, so we use JSON for the memo format.
 
 ```json
 {
@@ -122,8 +121,8 @@ An ICS20 packet is formatted correctly for evmhooks iff the following all hold:
 - [x] `receiver` == "" || `receiver` ==
       `"module_address::module_name::function_name"`
 
-We consider an ICS20 packet as directed towards evmhooks iff all of the
-following hold:
+An ICS20 packet is considered directed towards evmhooks iff all of the following
+hold:
 
 - `memo` is not blank
 - `memo` is valid JSON
@@ -155,9 +154,9 @@ In evm hooks, post packet execution:
 # Async Callback
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
-packet. To allow contracts to listen on the ack of specific packets, we provide
-Ack callbacks. The contract, which wants to receive ack callback, has to
-implement two functions.
+packet. To allow contracts to listen on the ack of specific packets, the
+framework provides Ack callbacks. The contract that wants to receive ack
+callbacks must implement two functions.
 
 - ibc_ack
 - ibc_timeout
@@ -218,11 +217,11 @@ contract Counter is IIBCAsyncCallback {
 }
 ```
 
-## Step 2. Update IBC hook ACL for the contract
+## Step 2. Update IBC Hook ACL for the Contract
 
-IBC hook has strong power to execute any functions in counterparty chain and
-this can be used for phishing easily. So, we need to set the ACL for the
-contract to prevent unauthorized access. To update MiniEVM ACL, you need to use
+IBC hooks have the power to execute any functions on the counterparty chain and
+this can be used for phishing easily. So, you need to set the ACL for the
+contract to prevent unauthorized access. To update MiniEVM ACL, use
 `MsgExecuteMessages` in OPchild module.
 
 ````typescript

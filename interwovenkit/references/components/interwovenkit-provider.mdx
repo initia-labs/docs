@@ -89,13 +89,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 | `enableAutoSign`         | `boolean \| Record<string, string[]>` | `undefined`                         | Enables AutoSign and optionally whitelists chains and message types. `true` enables the default message type for the current default chain. `Record<string, string[]>` is a per-chain allowlist of message type URLs |
 | `autoSignFeePolicy`      | `Record<string, AutoSignFeePolicy>`   | `undefined`                         | Optional per-chain fee policy overrides for AutoSign gas multiplier and allowed fee denoms                                                                                                                           |
 
-## Return value
+## Return Value
 
 Renders `children` and mounts the InterwovenKit UI shell.
 
 ## Examples
 
-### Custom chain configuration
+### Custom Chain Configuration
 
 ```tsx
 import type { Chain } from '@initia/initia-registry-types'
@@ -145,7 +145,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 - For end-to-end setup examples, see [Provider Setup](../setup/providers).
 
-## Type reference (advanced)
+## Type Reference (Advanced)
 
 ```ts
 type InterwovenKitProviderProps = React.PropsWithChildren<Partial<Config>>
