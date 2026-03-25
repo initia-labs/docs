@@ -25,7 +25,6 @@
             "pages": [
               {
                 "group": "Initia & Rollups",
-                "icon": "sitemap",
                 "pages": [
                   "home/core-concepts/initia-and-rollups/high-level-architecture",
                   "home/core-concepts/initia-and-rollups/initia-l1",
@@ -63,7 +62,6 @@
               },
               {
                 "group": "Interwoven Stack",
-                "icon": "waves-sine",
                 "pages": [
                   "home/core-concepts/interwoven-stack/introduction",
                   {
@@ -84,7 +82,6 @@
               },
               {
                 "group": "Vested Interest Program",
-                "icon": "award",
                 "pages": [
                   "home/core-concepts/vip/introduction",
                   "home/core-concepts/vip/architecture",
@@ -97,7 +94,6 @@
               "home/core-concepts/initiadex",
               {
                 "group": "Enshrined Liquidity",
-                "icon": "droplet",
                 "pages": [
                   "home/core-concepts/enshrined-liquidity/introduction",
                   "home/core-concepts/enshrined-liquidity/whitelisting-and-rewards"
@@ -105,7 +101,6 @@
               },
               {
                 "group": "Minitswap",
-                "icon": "rotate",
                 "pages": [
                   "home/core-concepts/minitswap/introduction",
                   "home/core-concepts/minitswap/architecture",
@@ -114,7 +109,6 @@
               },
               {
                 "group": "INIT Token",
-                "icon": "coins",
                 "pages": ["home/core-concepts/init-token/tokenomics"]
               }
             ]
@@ -158,7 +152,6 @@
               "nodes-and-rollups/deploying-rollups/deploy",
               {
                 "group": "Indexing",
-                "icon": "database",
                 "pages": [
                   {
                     "group": "Rollytics",
@@ -209,22 +202,18 @@
           },
           {
             "group": "Quick Guides",
-            "icon": "book",
             "pages": ["developers/developer-guides/guides/exchange-integration"]
           },
           {
             "group": "VM Specific Tutorials",
-            "icon": "book",
             "pages": [
               {
                 "group": "EVM",
-                "icon": "ethereum",
                 "pages": [
                   "developers/developer-guides/vm-specific-tutorials/evm/address-conversion",
                   "developers/developer-guides/vm-specific-tutorials/evm/cosmos-coin-to-erc20",
                   {
                     "group": "Creating ERC20s",
-                    "icon": "file-code",
                     "pages": [
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-standard-erc20s",
                       "developers/developer-guides/vm-specific-tutorials/evm/creating-erc20s/creating-custom-erc20s"
@@ -237,7 +226,6 @@
               },
               {
                 "group": "MoveVM",
-                "icon": "note-sticky",
                 "pages": [
                   "developers/developer-guides/vm-specific-tutorials/movevm/setting-up",
                   "developers/developer-guides/vm-specific-tutorials/movevm/building-move-modules",
@@ -249,7 +237,6 @@
               },
               {
                 "group": "WasmVM",
-                "icon": "rust",
                 "pages": [
                   "developers/developer-guides/vm-specific-tutorials/wasmvm/connect-oracles",
                   "developers/developer-guides/vm-specific-tutorials/wasmvm/ibc-hooks"
@@ -262,21 +249,18 @@
             "pages": [
               {
                 "group": "Initia Registry",
-                "icon": "file-code",
                 "pages": [
                   "developers/developer-guides/integrating-initia-apps/registry/introduction"
                 ]
               },
               {
                 "group": "DEX",
-                "icon": "swap",
                 "pages": [
                   "developers/developer-guides/integrating-initia-apps/initiadex"
                 ]
               },
               {
                 "group": "VIP",
-                "icon": "award",
                 "pages": [
                   "developers/developer-guides/integrating-initia-apps/vip/integrate-vip",
                   "developers/developer-guides/integrating-initia-apps/vip/whitelist-rollup-for-vip",
@@ -286,7 +270,6 @@
               },
               {
                 "group": "Usernames",
-                "icon": "user",
                 "pages": [
                   "developers/developer-guides/integrating-initia-apps/usernames"
                 ]
@@ -295,11 +278,9 @@
           },
           {
             "group": "Tools",
-            "icon": "screwdriver-wrench",
             "pages": [
               {
                 "group": "SDKs",
-                "icon": "toolbox",
                 "pages": [
                   {
                     "group": "InitiaJS",
@@ -322,7 +303,6 @@
               },
               {
                 "group": "CLIs",
-                "icon": "terminal",
                 "pages": [
                   {
                     "group": "Weave CLI",
@@ -362,7 +342,6 @@
               },
               {
                 "group": "Indexers",
-                "icon": "database",
                 "pages": [
                   {
                     "group": "Rollup Indexers",
@@ -381,7 +360,6 @@
               },
               {
                 "group": "Oracles",
-                "icon": "list-ol",
                 "pages": [
                   {
                     "group": "Connect",
@@ -403,7 +381,6 @@
           },
           {
             "group": "Programs",
-            "icon": "flag",
             "pages": [
               {
                 "group": "Initiate Hackathon",
@@ -460,7 +437,6 @@
             "pages": [
               {
                 "group": "Autosign",
-                "icon": "wand-sparkles",
                 "pages": [
                   "interwovenkit/features/autosign/introduction",
                   "interwovenkit/features/autosign/configuration",
@@ -470,7 +446,6 @@
               },
               {
                 "group": "Transfers",
-                "icon": "swap",
                 "pages": ["interwovenkit/features/transfers/deposit-withdraw"]
               }
             ]
@@ -538,7 +513,6 @@
               "resources/developer/initia-l1",
               {
                 "group": "Deployed Contracts",
-                "icon": "file-code",
                 "pages": [
                   "resources/developer/deployed-contracts/initia",
                   "resources/developer/deployed-contracts/minievm"
@@ -546,7 +520,6 @@
               },
               {
                 "group": "Contracts References",
-                "icon": "asterisk",
                 "pages": [
                   {
                     "group": "EVM",
