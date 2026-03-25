@@ -316,11 +316,6 @@ paths:
                 is_op_withdraw:
                   type: boolean
                   description: Force an Optimistic withdrawal route.
-                ignore_blacklist:
-                  type: boolean
-                  default: false
-                  description:
-                    Include blacklisted networks in route computation.
             example:
               amount_in: '1000000'
               source_asset_chain_id: interwoven-1
@@ -359,6 +354,15 @@ paths:
                     description: Ordered list of transfer operations to execute.
                     items:
                       type: object
+                  required_chain_addresses:
+                    type: array
+                    description: >-
+                      All chain IDs that require an address, in order of
+                      usage by operations in the route. Use this to populate
+                      the address_list parameter in the Generate Transaction
+                      request.
+                    items:
+                      type: string
                   usd_amount_in:
                     type: string
                     description: USD value of the input amount.
@@ -388,6 +392,9 @@ paths:
                 dest_asset_chain_id: '8453'
                 dest_asset_denom: '0x...'
                 operations: []
+                required_chain_addresses:
+                  - interwoven-1
+                  - '8453'
                 usd_amount_in: '1.50'
                 usd_amount_out: '1.49'
                 warning: null
@@ -440,8 +447,9 @@ paths:
                 address_list:
                   type: array
                   description:
-                    Ordered list of addresses for each hop in the route (minimum
-                    2).
+                    Array of recipient and/or sender address for each chain in
+                    the path, corresponding to the required_chain_addresses
+                    array returned from a route request.
                   minItems: 2
                   items:
                     type: string
@@ -559,11 +567,13 @@ paths:
                 properties:
                   tx_hash:
                     type: string
-                  chain_id:
+                    description: Hash of the tracked transaction.
+                  explorer_link:
                     type: string
+                    description: Link to the transaction on a block explorer.
               example:
-                tx_hash: ABCDEF1234567890...
-                chain_id: interwoven-1
+                tx_hash: 87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
+                explorer_link: https://scan.initia.xyz/strat-1/txs/87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
   /v2/tx/status:
     get:
       operationId: getTransactionStatus
@@ -595,15 +605,23 @@ paths:
               schema:
                 type: object
                 properties:
-                  tx_hash:
+                  state:
                     type: string
-                  chain_id:
-                    type: string
-                  status:
-                    type: string
-                    description: Transaction status.
+                    description: >-
+                      Overall end-to-end transaction state (e.g.
+                      STATE_SUBMITTED, STATE_PENDING, STATE_COMPLETED_SUCCESS,
+                      STATE_COMPLETED_ERROR, STATE_ABANDONED,
+                      STATE_PENDING_ERROR).
+                  transfers:
+                    type: array
+                    description: Transfer status for all transfers in the route.
+                    items:
+                      type: object
                   transfer_sequence:
                     type: array
+                    description: >-
+                      Deprecated. Flat list of transfer events in sequence
+                      order.
                     items:
                       type: object
                       properties:
@@ -613,14 +631,42 @@ paths:
                           type: string
                         state:
                           type: string
+                  next_blocking_transfer:
+                    type: object
+                    nullable: true
+                    description: >-
+                      The next transfer that is blocking progress, if any.
+                    properties:
+                      transfer_sequence_index:
+                        type: integer
+                  transfer_asset_release:
+                    type: object
+                    nullable: true
+                    description: Information about released assets.
+                    properties:
+                      chain_id:
+                        type: string
+                      denom:
+                        type: string
+                      amount:
+                        type: string
+                        nullable: true
+                      released:
+                        type: boolean
+                  error:
+                    type: object
+                    nullable: true
+                    description: Error details if the transaction failed.
               example:
-                tx_hash: ABCDEF1234567890...
-                chain_id: interwoven-1
-                status: STATE_COMPLETED
+                state: STATE_COMPLETED_SUCCESS
+                transfers: []
                 transfer_sequence:
                   - src_chain_id: interwoven-1
                     dst_chain_id: '8453'
                     state: TRANSFER_SUCCESS
+                next_blocking_transfer: null
+                transfer_asset_release: null
+                error: null
   /nft:
     post:
       operationId: nftTransfer
