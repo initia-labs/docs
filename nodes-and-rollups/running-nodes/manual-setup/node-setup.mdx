@@ -12,7 +12,7 @@ sudo apt-get install -y build-essential curl wget jq
 
 ## Install the Initia Daemon
 
-Then, we need to clone the Initia repository and checkout the latest or desired
+Clone the Initia repository and check out the latest or desired
 version.
 
 ```sh
@@ -21,7 +21,7 @@ cd initia
 git checkout [version]
 ```
 
-Once we have the correct version, we can build the binary. This will install the
+Once the correct version is checked out, build the binary. This installs the
 `initiad` executable to your `GOPATH` environment variable.
 
 ```sh
@@ -57,7 +57,7 @@ export PATH=$PATH:$(go env GOPATH)/bin
 
 </Tip>
 
-## Increase file descriptors limit
+## Increase File Descriptors Limit
 
 Linux systems by default set the maximum number of file descriptors that can be
 opened by a process to 1024. It is recommended that you increase this amount.
