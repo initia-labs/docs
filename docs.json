@@ -625,6 +625,48 @@
       "server": "https://rest.testnet.initia.xyz"
     }
   },
+  "redirects": [
+    {
+      "source": "/developers/developer-guides/tools/indexers/indexer-introduction",
+      "destination": "/api-reference/rollup-indexer/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-account",
+      "destination": "/api-reference/transactions/get-transactions-by-account",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-height",
+      "destination": "/api-reference/transactions/get-transactions-by-height",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-hash",
+      "destination": "/api-reference/transactions/get-transaction-by-hash",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-collections-by-account",
+      "destination": "/api-reference/nfts/get-nft-collections-by-account",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-collection-details",
+      "destination": "/api-reference/nfts/get-nft-collection-details",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-tokens-by-collection",
+      "destination": "/api-reference/nfts/get-nft-tokens-by-collection",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-tokens-by-account",
+      "destination": "/api-reference/nfts/get-nft-tokens-by-account",
+      "permanent": true
+    }
+  ],
   "appearance": {
     "default": "dark"
   },
