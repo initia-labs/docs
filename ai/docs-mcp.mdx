@@ -1,0 +1,129 @@
+---
+title: Docs MCP
+description:
+  Connect your AI coding agent to Initia docs via the Model Context Protocol.
+---
+
+The Initia documentation provides a
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that
+allows AI coding agents to search the docs directly from your IDE.
+
+## What Is MCP
+
+The Model Context Protocol is an open standard that lets AI applications connect
+to external data sources. The Initia Docs MCP server exposes a search tool that
+your agent can use to find relevant documentation based on natural language
+queries.
+
+## Setup
+
+<Tabs>
+  <Tab title="Cursor">
+    Add the following to your Cursor MCP configuration (`.cursor/mcp.json`):
+
+    ```json
+    {
+      "mcpServers": {
+        "initia-docs": {
+          "url": "https://docs.initia.xyz/mcp"
+        }
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="Claude Code">
+    Add the MCP server using the Claude Code CLI:
+
+    ```bash
+    claude mcp add initia-docs https://docs.initia.xyz/mcp
+    ```
+
+    Or add it to your `.mcp.json` configuration:
+
+    ```json
+    {
+      "mcpServers": {
+        "initia-docs": {
+          "type": "http",
+          "url": "https://docs.initia.xyz/mcp"
+        }
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="Windsurf">
+    Add the following to your Windsurf MCP configuration:
+
+    ```json
+    {
+      "mcpServers": {
+        "initia-docs": {
+          "serverUrl": "https://docs.initia.xyz/mcp"
+        }
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="VS Code">
+    Add the following to your VS Code settings (`.vscode/mcp.json`):
+
+    ```json
+    {
+      "servers": {
+        "initia-docs": {
+          "type": "http",
+          "url": "https://docs.initia.xyz/mcp"
+        }
+      }
+    }
+    ```
+
+  </Tab>
+  <Tab title="Other MCP-Compatible Tools">
+    For any tool that supports MCP, use the following endpoint:
+
+    ```
+    https://docs.initia.xyz/mcp
+    ```
+
+    Consult your tool's documentation for how to add an MCP server. The Initia
+    Docs MCP server uses the standard HTTP-based MCP transport.
+
+  </Tab>
+</Tabs>
+
+## Mintlify Native MCP
+
+The Initia docs are built with [Mintlify](https://mintlify.com), which provides
+native MCP support. You can access the MCP server directly from any
+documentation page using the built-in contextual options. Look for the **MCP**,
+**Cursor**, or **VS Code** buttons on any page to connect your AI tools.
+
+## How It Works
+
+Once configured, your agent can:
+
+1. **Search** the docs using your natural language query
+2. **Retrieve** relevant documentation content
+3. **Use** that context to generate accurate responses and code
+
+## Example Usage
+
+With the MCP server connected, try asking your agent:
+
+- "How do I deploy a rollup on Initia?"
+- "What hooks does InterwovenKit provide?"
+- "Show me how to create an ERC20 on MiniEVM."
+- "What is the Router API and how do I compute a route?"
+
+## Inline Documentation Access
+
+Initia documentation pages also include buttons to quickly use page content with
+AI tools:
+
+- **Copy as Markdown** — copy the page content for pasting into an LLM
+- **Open in ChatGPT** — open the page content directly in ChatGPT
+- **Open in Claude** — open the page content directly in Claude

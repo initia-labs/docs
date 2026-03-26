@@ -1,0 +1,47 @@
+---
+title: Overview
+description: Tools and resources to help AI agents and LLMs build with Initia.
+---
+
+Initia provides tools to help AI coding agents and LLMs work with the Interwoven
+Stack. These give your tools the context they need to generate accurate code for
+contracts, frontends, and rollup operations.
+
+## Available Tools
+
+<CardGroup cols={3}>
+  <Card title="Agent Skills" icon="brain" href="/ai/agent-skills">
+    A skill that teaches AI agents how to build on Initia end-to-end.
+  </Card>
+  <Card title="llms.txt" icon="file-lines" href="/ai/llms-txt">
+    A structured index of all Initia documentation pages for LLM context.
+  </Card>
+  <Card title="Docs MCP" icon="plug" href="/ai/docs-mcp">
+    A Model Context Protocol server for searching Initia docs from your IDE.
+  </Card>
+</CardGroup>
+
+## When to Use Each Tool
+
+| Tool             | Best for                                                 | Setup                                     |
+| ---------------- | -------------------------------------------------------- | ----------------------------------------- |
+| **Agent Skills** | Building full-stack apps (contracts, frontends, rollups) | `npx skills add initia-labs/agent-skills` |
+| **llms.txt**     | Giving an LLM broad context about all docs               | Paste the URL into your LLM context       |
+| **Docs MCP**     | Targeted search of docs from your IDE                    | Add the MCP server endpoint to your IDE   |
+
+## Getting Started
+
+<Steps>
+  <Step title="Choose your tool">
+    If you are building a full app, start with **Agent Skills**. For quick
+    reference lookups, use the **Docs MCP**. To give an LLM broad context in a
+    single prompt, use **llms.txt**.
+  </Step>
+  <Step title="Set up your environment">
+    Follow the setup instructions on the respective tool page.
+  </Step>
+  <Step title="Start building">
+    Use natural language prompts to scaffold contracts, build frontends, and
+    manage rollup operations.
+  </Step>
+</Steps>
