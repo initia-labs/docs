@@ -1,13 +1,18 @@
 ---
 title: Docs MCP
-description: Connect your AI coding agent to Initia docs via the Model Context Protocol for semantic search.
+description: Connect your AI coding agent to Initia docs via the Model Context Protocol.
 ---
 
-The Initia documentation provides a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that allows AI coding agents to semantically search the docs directly from your IDE. Instead of manually copying documentation into your prompts, your agent can query the docs on demand.
+The Initia documentation provides a
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that
+allows AI coding agents to search the docs directly from your IDE.
 
 ## What Is MCP
 
-The Model Context Protocol is an open standard that lets AI applications connect to external data sources and tools. The Initia Docs MCP server exposes a search tool that your AI agent can use to find relevant documentation based on natural language queries.
+The Model Context Protocol is an open standard that lets AI applications connect
+to external data sources. The Initia Docs MCP server exposes a search tool that
+your agent can use to find relevant documentation based on natural language
+queries.
 
 ## Setup
 
@@ -79,41 +84,41 @@ The Model Context Protocol is an open standard that lets AI applications connect
     https://docs.initia.xyz/mcp
     ```
 
-    Consult your tool's documentation for how to add an MCP server. The Initia Docs MCP server uses the standard HTTP-based MCP transport.
+    Consult your tool's documentation for how to add an MCP server. The Initia
+    Docs MCP server uses the standard HTTP-based MCP transport.
   </Tab>
 </Tabs>
 
 ## Mintlify Native MCP
 
-The Initia docs are built with [Mintlify](https://mintlify.com), which provides native MCP support. This means you can also access the MCP server directly from any Initia documentation page using the built-in contextual options. Look for the **MCP**, **Cursor**, or **VS Code** buttons on any page to quickly connect your AI tools to that page's content.
-
-You can also add the Initia Docs MCP server to your IDE using the one-click setup links available on documentation pages.
+The Initia docs are built with [Mintlify](https://mintlify.com), which provides
+native MCP support. You can access the MCP server directly from any
+documentation page using the built-in contextual options. Look for the **MCP**,
+**Cursor**, or **VS Code** buttons on any page to connect your AI tools.
 
 ## How It Works
 
-Once configured, your AI agent gains access to a search tool that queries the Initia documentation. When you ask your agent a question about Initia, it can:
+Once configured, your agent can:
 
 1. **Search** the docs using your natural language query
 2. **Retrieve** relevant documentation content
 3. **Use** that context to generate accurate responses and code
 
-This means your agent always has access to the latest Initia documentation without you needing to manually copy content into your prompts.
-
 ## Example Usage
 
-With the MCP server connected, you can ask your AI agent questions like:
+With the MCP server connected, try asking your agent:
 
 - "How do I deploy a rollup on Initia?"
 - "What hooks does InterwovenKit provide?"
 - "Show me how to create an ERC20 on MiniEVM."
 - "What is the Router API and how do I compute a route?"
 
-Your agent will automatically search the Initia docs and use the results to provide accurate, contextual answers.
-
 ## Inline Documentation Access
 
-In addition to the MCP server, Initia documentation pages include inline copy buttons that let you quickly use documentation content with AI tools. Look for the following options on any documentation page:
+Initia documentation pages also include buttons to quickly use page content with
+AI tools:
 
 - **Copy as Markdown** — copy the page content for pasting into an LLM
 - **Open in ChatGPT** — open the page content directly in ChatGPT
 - **Open in Claude** — open the page content directly in Claude
+

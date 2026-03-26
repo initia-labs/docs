@@ -3,48 +3,46 @@ title: AI Tools Overview
 description: Tools and resources to help AI agents and LLMs build with Initia.
 ---
 
-Initia provides a set of AI-ready tools to help developers build on the Interwoven Stack using AI coding agents, LLMs, and IDE assistants. Whether you are using Cursor, Claude Code, Copilot, or another AI-powered development environment, these resources give your tools the context they need to generate accurate, up-to-date code.
+Initia provides tools to help AI coding agents and LLMs work with the Interwoven
+Stack. These give your tools the context they need to generate accurate code for
+contracts, frontends, and rollup operations.
 
 ## Available Tools
 
 <CardGroup cols={3}>
   <Card title="Agent Skills" icon="brain" href="/ai/agent-skills">
-    Install the Initia Appchain Dev skill to give your AI agent end-to-end
-    knowledge of contracts, frontends, and rollup operations.
+    A skill that teaches AI agents how to build on Initia end-to-end.
   </Card>
   <Card title="llms.txt" icon="file-lines" href="/ai/llms-txt">
-    A structured text file that provides LLMs with a complete index of the Initia
-    documentation.
+    A structured index of all Initia documentation pages for LLM context.
   </Card>
   <Card title="Docs MCP" icon="plug" href="/ai/docs-mcp">
-    Connect your AI coding agent to Initia docs via the Model Context Protocol
-    for semantic search.
+    A Model Context Protocol server for searching Initia docs from your IDE.
   </Card>
 </CardGroup>
 
 ## When to Use Each Tool
 
-| Tool | Best for | Setup |
-| --- | --- | --- |
-| **Agent Skills** | Building full-stack apps on Initia (contracts, frontends, rollups) | `npx skills add initia-labs/agent-skills` |
-| **llms.txt** | Giving an LLM broad context about all Initia documentation | Paste the URL into your LLM context |
-| **Docs MCP** | Targeted semantic search of Initia docs from your IDE | Add the MCP server endpoint to your IDE config |
+| Tool              | Best for                                      | Setup                                       |
+| ----------------- | --------------------------------------------- | ------------------------------------------- |
+| **Agent Skills**  | Building full-stack apps (contracts, frontends, rollups) | `npx skills add initia-labs/agent-skills`   |
+| **llms.txt**      | Giving an LLM broad context about all docs    | Paste the URL into your LLM context         |
+| **Docs MCP**      | Targeted search of docs from your IDE         | Add the MCP server endpoint to your IDE     |
 
 ## Getting Started
 
 <Steps>
   <Step title="Choose your tool">
-    Pick the tool that matches your workflow. If you are building a full app with
-    contracts and a frontend, start with **Agent Skills**. If you need quick
-    reference lookups, use the **Docs MCP**. If you want to give an LLM broad
-    context in a single prompt, use **llms.txt**.
+    If you are building a full app, start with **Agent Skills**. For quick
+    reference lookups, use the **Docs MCP**. To give an LLM broad context in a
+    single prompt, use **llms.txt**.
   </Step>
   <Step title="Set up your environment">
-    Follow the setup instructions on the respective tool page to integrate with
-    your AI coding agent or IDE.
+    Follow the setup instructions on the respective tool page.
   </Step>
   <Step title="Start building">
     Use natural language prompts to scaffold contracts, build frontends, and
-    manage rollup operations on Initia.
+    manage rollup operations.
   </Step>
 </Steps>
+

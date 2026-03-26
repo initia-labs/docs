@@ -3,7 +3,9 @@ title: Agent Skills
 description: Agent skills for building with Initia
 ---
 
-The [Initia Appchain Dev skill](https://github.com/initia-labs/agent-skills) is a skill that gives AI coding agents comprehensive knowledge about building on Initia. Once installed, your agent can help with:
+The [Initia Appchain Dev skill](https://github.com/initia-labs/agent-skills) is
+a skill that teaches AI coding agents how to build on Initia. Once installed,
+your agent can help with:
 
 - **Appchain deployment** using the Weave CLI
 - **Smart contract development** across all supported VMs
@@ -47,19 +49,22 @@ You should see one skill named `initia-appchain-dev`.
 
 ## What the Skill Covers
 
-The skill provides your AI agent with detailed reference material organized by layer:
+The skill provides reference material organized by layer:
 
-| Layer | Coverage |
-| --- | --- |
-| **Contracts** | Move, Wasm, and EVM contract scaffolding, building, deploying, and testing |
-| **Frontend (InterwovenKit)** | Provider setup, wallet connection, transactions, auto-sign, bridge integration |
-| **Frontend (EVM JSON-RPC)** | wagmi + viem setup for pure EVM apps |
-| **Appchain Operations** | Weave CLI commands, rollup config schema, runtime discovery |
-| **Troubleshooting** | Common errors and recovery steps across all layers |
+| Layer                        | Coverage                                                                     |
+| ---------------------------- | ---------------------------------------------------------------------------- |
+| **Contracts**                | Move, Wasm, and EVM contract scaffolding, building, deploying, and testing   |
+| **Frontend (InterwovenKit)** | Provider setup, wallet connection, transactions, auto-sign, bridge           |
+| **Frontend (EVM JSON-RPC)**  | wagmi + viem setup for pure EVM apps                                         |
+| **Appchain Operations**      | Weave CLI commands, rollup config schema, runtime discovery                  |
+| **Troubleshooting**          | Common errors and recovery steps across all layers                           |
 
 ## skill.md
 
-The Initia docs also provide a `skill.md` file at [docs.initia.xyz/skill.md](https://docs.initia.xyz/skill.md). This is a lightweight skill file that teaches AI agents how to work with the Initia documentation site itself. You can add it to your agent with:
+The Initia docs also provide a `skill.md` file at
+[docs.initia.xyz/skill.md](https://docs.initia.xyz/skill.md). This is a
+lightweight skill file that teaches AI agents how to work with the documentation
+site itself. To add it:
 
 ```bash
 npx skills add docs.initia.xyz/skill.md
@@ -67,20 +72,22 @@ npx skills add docs.initia.xyz/skill.md
 
 ## Example Prompts
 
-Once the skill is installed, you can use prompts like:
+Once the skill is installed, try prompts like:
 
 - "Scaffold an EVM contract on Initia and add an oracle read function."
-- "Set up InterwovenKit providers in my Next.js app and implement wallet connect."
+- "Set up InterwovenKit providers in my Next.js app and implement wallet
+  connect."
 - "Create a `weave` launch config for a testnet EVM rollup."
 - "My rollup is not producing blocks. Help me debug it step by step."
-- "Convert this `0x...` address to Initia bech32 and add it to genesis accounts."
+- "Convert this `0x...` address to Initia bech32 and add it to genesis
+  accounts."
 
 ## Reference Material Included
 
-The skill bundles detailed references that your agent reads on demand:
+The skill bundles references that your agent reads on demand:
 
 - **Common tasks** — funding, address conversion, token precision
-- **Contracts** — Move / Wasm / EVM specific development guides
+- **Contracts** — Move / Wasm / EVM development guides
 - **Frontend (InterwovenKit)** — provider setup, hooks, transactions
 - **Frontend (EVM JSON-RPC)** — wagmi + viem integration
 - **End-to-end recipes** — full workflows from contract to frontend
@@ -93,10 +100,13 @@ The skill bundles detailed references that your agent reads on demand:
 
 The skill repository is open source.
 
-1. Fork the [initia-labs/agent-skills](https://github.com/initia-labs/agent-skills) repository
+1. Fork the
+   [initia-labs/agent-skills](https://github.com/initia-labs/agent-skills)
+   repository
 2. Edit the relevant reference files in the `skill/references/` directory
 3. Run the quality checks to validate your changes:
    ```bash
    ./scripts/ci-check.sh
    ```
 4. Submit a pull request with a description of what you changed and why
+

@@ -3,51 +3,57 @@ title: llms.txt
 description: Use llms.txt to give LLMs structured context about the Initia documentation.
 ---
 
-The Initia docs provide `llms.txt` and `llms-full.txt` files that follow the [llms.txt standard](https://llmstxt.org) for making websites more accessible to language models. These files give LLMs structured context about the documentation so they can generate more accurate responses about Initia.
+The Initia docs provide `llms.txt` and `llms-full.txt` files following the
+[llms.txt standard](https://llmstxt.org) for making documentation accessible to
+language models.
 
 ## llms.txt
 
-The `llms.txt` file is a lightweight index of every page in the Initia documentation. It contains the title and URL of each page, giving LLMs a structured map of all available content.
+A lightweight index of every page in the Initia documentation, containing the
+title and URL of each page.
 
 ```
 https://docs.initia.xyz/llms.txt
 ```
 
-Use `llms.txt` when you want to give an LLM a quick overview of what documentation exists without loading the full content. This is useful for:
+Use `llms.txt` to give an LLM an overview of available documentation without
+loading the full content. This is useful for:
 
-- Helping an LLM understand the scope of Initia documentation
-- Letting an LLM decide which pages to fetch based on a user's question
-- Adding lightweight context to a conversation without consuming a large context window
+- Letting an LLM understand the scope of Initia documentation
+- Letting an LLM decide which pages to fetch based on a question
+- Adding lightweight context without consuming a large context window
 
 ## llms-full.txt
 
-The `llms-full.txt` file contains the complete text of every documentation page in a single file. This gives LLMs the full content of the docs in one request.
+The complete text of every documentation page in a single file.
 
 ```
 https://docs.initia.xyz/llms-full.txt
 ```
 
-Use `llms-full.txt` when you need comprehensive coverage and your LLM has a large enough context window. This is useful for:
+Use `llms-full.txt` when you need comprehensive coverage and your LLM has a
+large enough context window. This is useful for:
 
 - Deep research across multiple documentation topics
-- Giving an LLM full context to answer complex questions about Initia
-- Pre-loading an AI coding agent with complete Initia knowledge
+- Answering complex questions that span several areas of Initia
+- Pre-loading an AI coding agent with complete documentation
 
 <Warning>
-  The `llms-full.txt` file contains the full text of every documentation page.
-  Check the file size before loading it to ensure it fits within your LLM's
-  context window.
+  `llms-full.txt` contains the full text of every documentation page. Check the
+  file size before loading to ensure it fits within your LLM's context window.
 </Warning>
 
 ## Using With AI Tools
 
 ### Paste Into an LLM Chat
 
-Copy the contents of `llms.txt` or `llms-full.txt` and paste it into your conversation with an LLM. The LLM can then reference the documentation to answer questions about Initia.
+Copy the contents of `llms.txt` or `llms-full.txt` and paste it into your
+conversation with an LLM to provide documentation context.
 
 ### Load in Your IDE
 
-Many AI-powered IDEs and coding agents allow you to add documentation context. You can point them to the `llms.txt` URL:
+Many AI-powered IDEs allow you to add documentation context. Point them to the
+`llms.txt` URL:
 
 <CodeGroup>
 
@@ -62,3 +68,4 @@ as context for the LLM
 ```
 
 </CodeGroup>
+
