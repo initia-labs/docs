@@ -5,8 +5,8 @@ description: 'Overview of the Indexer API for querying indexed chain data.'
 
 All Initia Stack chains come with a built-in indexer that automatically indexes
 and stores all relevant data on the chain. This data is exposed through a REST
-API that you can use to query historical and current data, including account
-transactions, NFTs owned by an account, and more.
+API that you can use to query historical and current data, including blocks,
+transactions, NFTs, and token holders.
 
 ## Base URLs
 
@@ -26,7 +26,31 @@ the chain you want to query.
 
 ## Features
 
-- **Transaction queries** — Look up transactions by account address, block
-  height, or transaction hash
-- **NFT queries** — Retrieve NFT collections and tokens by account or
-  collection address
+- **Block queries** — List blocks, look up blocks by height, and get average
+  block time
+- **Transaction queries** — List transactions, look up by account, block height,
+  or transaction hash, with optional message type filtering
+- **EVM transaction queries** — Query EVM-specific transactions and internal
+  transactions (available on EVM chains only)
+- **NFT queries** — Retrieve collections and tokens by account, name, or
+  collection address, and look up NFT transaction history
+- **Rich list** — Get ranked token holder lists for any denomination
+
+## Pagination
+
+All list endpoints support cursor-based and offset-based pagination through
+query parameters:
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `pagination.key` | string | Cursor key for the next page. |
+| `pagination.offset` | integer | Number of records to skip. |
+| `pagination.limit` | integer | Maximum records to return (default: 100). |
+| `pagination.count_total` | boolean | Include total count in response (default: `true`). |
+| `pagination.reverse` | boolean | Descending order when `true` (default: `true`). |
+
+## EVM-only endpoints
+
+Endpoints under the **EVM Transactions** and **EVM Internal Transactions**
+groups are only available on EVM chains (e.g., evm-1). These return a `404`
+on non-EVM chains.

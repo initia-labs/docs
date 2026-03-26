@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Indexer API
-  description: Query indexed data including transactions and NFTs across Initia Stack chains.
+  description: Query indexed data including transactions, blocks, NFTs, and token holders across Initia Stack chains.
   version: 1.0.0
 servers:
   - url: https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz
@@ -11,20 +11,18 @@ servers:
   - url: https://rollytics-api-wasm-1.anvil.asia-southeast.initia.xyz
     description: wasm-1 (testnet)
 paths:
-  /indexer/tx/v1/txs/by_account/{account}:
+  /indexer/block/v1/blocks:
     get:
-      operationId: getTransactionsByAccount
-      summary: Get transactions by account
-      description: Returns all transactions for a given account address.
+      operationId: getBlocks
+      summary: Get blocks
+      description: Returns a paginated list of blocks.
       tags:
-        - Transactions
+        - Blocks
       parameters:
-        - name: account
-          in: path
-          description: The account address to retrieve transactions for.
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationReverse'
       responses:
         '200':
           description: Successful response
@@ -32,22 +30,17 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  txs:
-                    type: array
-                    items:
-                      type: object
-  /indexer/tx/v1/txs/by_height/{height}:
+  /indexer/block/v1/blocks/{height}:
     get:
-      operationId: getTransactionsByHeight
-      summary: Get transactions by height
-      description: Returns all transactions at a given block height.
+      operationId: getBlockByHeight
+      summary: Get block by height
+      description: Returns a specific block by its height.
       tags:
-        - Transactions
+        - Blocks
       parameters:
         - name: height
           in: path
-          description: The block height to retrieve transactions from.
+          description: The block height.
           required: true
           schema:
             type: integer
@@ -58,11 +51,123 @@ paths:
             application/json:
               schema:
                 type: object
+        '404':
+          description: Block not found
+  /indexer/block/v1/avg_blocktime:
+    get:
+      operationId: getAvgBlockTime
+      summary: Get average block time
+      description: Returns the average block time in seconds, computed over the most recent blocks.
+      tags:
+        - Blocks
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
                 properties:
-                  txs:
-                    type: array
-                    items:
-                      type: object
+                  avg_block_time:
+                    type: number
+                    description: Average block time in seconds.
+  /indexer/tx/v1/txs:
+    get:
+      operationId: getTransactions
+      summary: Get transactions
+      description: Returns a paginated list of transactions. You can optionally filter by message type.
+      tags:
+        - Transactions
+      parameters:
+        - name: msgs
+          in: query
+          description: 'Message types to filter by (comma-separated). Example: `cosmos.bank.v1beta1.MsgSend,initia.move.v1.MsgExecute`.'
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/tx/v1/txs/by_account/{account}:
+    get:
+      operationId: getTransactionsByAccount
+      summary: Get transactions by account
+      description: Returns transactions associated with a specific account address.
+      tags:
+        - Transactions
+      parameters:
+        - name: account
+          in: path
+          description: The account address.
+          required: true
+          schema:
+            type: string
+        - name: is_signer
+          in: query
+          description: When `true`, only returns transactions where the account was the signer. Defaults to `false`.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: msgs
+          in: query
+          description: 'Message types to filter by (comma-separated). Example: `cosmos.bank.v1beta1.MsgSend`.'
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/tx/v1/txs/by_height/{height}:
+    get:
+      operationId: getTransactionsByHeight
+      summary: Get transactions by height
+      description: Returns all transactions at a given block height.
+      tags:
+        - Transactions
+      parameters:
+        - name: height
+          in: path
+          description: The block height.
+          required: true
+          schema:
+            type: integer
+        - name: msgs
+          in: query
+          description: 'Message types to filter by (comma-separated).'
+          required: false
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
   /indexer/tx/v1/txs/{tx_hash}:
     get:
       operationId: getTransactionByHash
@@ -73,10 +178,246 @@ paths:
       parameters:
         - name: tx_hash
           in: path
-          description: The transaction hash to retrieve details for.
+          description: The transaction hash.
           required: true
           schema:
             type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Transaction not found
+  /indexer/tx/v1/evm-txs:
+    get:
+      operationId: getEvmTransactions
+      summary: Get EVM transactions
+      description: Returns a paginated list of EVM transactions. Only available on EVM chains.
+      tags:
+        - EVM Transactions
+      parameters:
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-txs/by_account/{account}:
+    get:
+      operationId: getEvmTransactionsByAccount
+      summary: Get EVM transactions by account
+      description: Returns EVM transactions associated with a specific account. Only available on EVM chains.
+      tags:
+        - EVM Transactions
+      parameters:
+        - name: account
+          in: path
+          description: The account address.
+          required: true
+          schema:
+            type: string
+        - name: is_signer
+          in: query
+          description: When `true`, only returns transactions where the account was the signer.
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-txs/by_height/{height}:
+    get:
+      operationId: getEvmTransactionsByHeight
+      summary: Get EVM transactions by height
+      description: Returns EVM transactions at a specific block height. Only available on EVM chains.
+      tags:
+        - EVM Transactions
+      parameters:
+        - name: height
+          in: path
+          description: The block height.
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-txs/{tx_hash}:
+    get:
+      operationId: getEvmTransactionByHash
+      summary: Get EVM transaction by hash
+      description: Returns a specific EVM transaction by its hash. Only available on EVM chains.
+      tags:
+        - EVM Transactions
+      parameters:
+        - name: tx_hash
+          in: path
+          description: The transaction hash.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Transaction not found or EVM routes not available
+  /indexer/tx/v1/evm-internal-txs:
+    get:
+      operationId: getEvmInternalTransactions
+      summary: Get EVM internal transactions
+      description: Returns a paginated list of EVM internal transactions. Only available on EVM chains with internal transaction indexing enabled.
+      tags:
+        - EVM Internal Transactions
+      parameters:
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-internal-txs/by_account/{account}:
+    get:
+      operationId: getEvmInternalTransactionsByAccount
+      summary: Get EVM internal transactions by account
+      description: Returns EVM internal transactions associated with a specific account. Only available on EVM chains.
+      tags:
+        - EVM Internal Transactions
+      parameters:
+        - name: account
+          in: path
+          description: The account address.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-internal-txs/by_height/{height}:
+    get:
+      operationId: getEvmInternalTransactionsByHeight
+      summary: Get EVM internal transactions by height
+      description: Returns EVM internal transactions at a specific block height. Only available on EVM chains.
+      tags:
+        - EVM Internal Transactions
+      parameters:
+        - name: height
+          in: path
+          description: The block height.
+          required: true
+          schema:
+            type: integer
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: EVM routes are not available on this chain
+  /indexer/tx/v1/evm-internal-txs/{tx_hash}:
+    get:
+      operationId: getEvmInternalTransactionsByHash
+      summary: Get EVM internal transactions by hash
+      description: Returns EVM internal transactions for a specific transaction hash. Only available on EVM chains.
+      tags:
+        - EVM Internal Transactions
+      parameters:
+        - name: tx_hash
+          in: path
+          description: The transaction hash.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Transaction not found or EVM routes not available
+  /indexer/nft/v1/collections:
+    get:
+      operationId: getNftCollections
+      summary: Get NFT collections
+      description: Returns a paginated list of all NFT collections.
+      tags:
+        - NFTs
+      parameters:
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
       responses:
         '200':
           description: Successful response
@@ -88,13 +429,65 @@ paths:
     get:
       operationId: getNftCollectionsByAccount
       summary: Get NFT collections by account
-      description: Returns all NFT collections owned by the specified account.
+      description: Returns NFT collections that contain tokens owned by the specified account.
       tags:
         - NFTs
       parameters:
         - name: account
           in: path
-          description: The account address to get NFT collections for.
+          description: The account address.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/nft/v1/collections/by_name/{name}:
+    get:
+      operationId: getNftCollectionsByName
+      summary: Get NFT collections by name
+      description: Returns NFT collections matching the specified name.
+      tags:
+        - NFTs
+      parameters:
+        - name: name
+          in: path
+          description: The collection name to search for.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/nft/v1/collections/{collection_addr}:
+    get:
+      operationId: getNftCollectionDetails
+      summary: Get NFT collection details
+      description: Returns the details of a specific NFT collection by its address.
+      tags:
+        - NFTs
+      parameters:
+        - name: collection_addr
+          in: path
+          description: The collection address.
           required: true
           schema:
             type: string
@@ -105,25 +498,49 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  collections:
-                    type: array
-                    items:
-                      type: object
-  /indexer/nft/v1/collections/{collection_addr}:
+        '404':
+          description: NFT collection not found
+  /indexer/nft/v1/tokens/by_account/{account}:
     get:
-      operationId: getNftCollectionDetails
-      summary: Get NFT collection details
-      description: Returns the details of a specific NFT collection.
+      operationId: getNftTokensByAccount
+      summary: Get NFT tokens by account
+      description: Returns NFT tokens owned by the specified account. You can optionally filter by collection address and token ID.
       tags:
         - NFTs
       parameters:
-        - name: collection_addr
+        - name: account
           in: path
-          description: The address of the NFT collection to retrieve details for.
+          description: The account address.
           required: true
           schema:
             type: string
+        - name: collection_addr
+          in: query
+          description: Filter by collection address.
+          required: false
+          schema:
+            type: string
+        - name: token_id
+          in: query
+          description: Filter by token ID.
+          required: false
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: 'Field to order results by. Options: `token_id`, `height`.'
+          required: false
+          schema:
+            type: string
+            enum:
+              - token_id
+              - height
+            default: token_id
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
       responses:
         '200':
           description: Successful response
@@ -135,16 +552,37 @@ paths:
     get:
       operationId: getNftTokensByCollection
       summary: Get NFT tokens by collection
-      description: Returns all NFT tokens within a specific collection.
+      description: Returns all NFT tokens within a specific collection. You can optionally filter by token ID.
       tags:
         - NFTs
       parameters:
         - name: collection_addr
           in: path
-          description: The address of the NFT collection to retrieve tokens from.
+          description: The collection address.
           required: true
           schema:
             type: string
+        - name: token_id
+          in: query
+          description: Filter by token ID.
+          required: false
+          schema:
+            type: string
+        - name: order_by
+          in: query
+          description: 'Field to order results by. Options: `token_id`, `height`.'
+          required: false
+          schema:
+            type: string
+            enum:
+              - token_id
+              - height
+            default: token_id
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
       responses:
         '200':
           description: Successful response
@@ -152,25 +590,31 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  tokens:
-                    type: array
-                    items:
-                      type: object
-  /indexer/nft/v1/tokens/by_account/{account}:
+  /indexer/nft/v1/txs/{collection_addr}/{token_id}:
     get:
-      operationId: getNftTokensByAccount
-      summary: Get NFT tokens by account
-      description: Returns all NFT tokens owned by the specified account.
+      operationId: getNftTransactions
+      summary: Get NFT transactions
+      description: Returns transactions related to a specific NFT identified by its collection address and token ID.
       tags:
         - NFTs
       parameters:
-        - name: account
+        - name: collection_addr
           in: path
-          description: The account address to get NFT tokens for.
+          description: The collection address.
           required: true
           schema:
             type: string
+        - name: token_id
+          in: path
+          description: The token ID.
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
       responses:
         '200':
           description: Successful response
@@ -178,8 +622,69 @@ paths:
             application/json:
               schema:
                 type: object
-                properties:
-                  tokens:
-                    type: array
-                    items:
-                      type: object
+  /indexer/richlist/v1/{denom}:
+    get:
+      operationId: getTokenHolders
+      summary: Get token holders
+      description: Returns a ranked list of token holders for a specific denomination, ordered by amount.
+      tags:
+        - Rich List
+      parameters:
+        - name: denom
+          in: path
+          description: 'The token denomination. Use URL encoding for denoms containing `/` (e.g., `l2%2F...`).'
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/paginationKey'
+        - $ref: '#/components/parameters/paginationOffset'
+        - $ref: '#/components/parameters/paginationLimit'
+        - $ref: '#/components/parameters/paginationCountTotal'
+        - $ref: '#/components/parameters/paginationReverse'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+components:
+  parameters:
+    paginationKey:
+      name: pagination.key
+      in: query
+      description: Cursor key for pagination.
+      required: false
+      schema:
+        type: string
+    paginationOffset:
+      name: pagination.offset
+      in: query
+      description: Number of records to skip.
+      required: false
+      schema:
+        type: integer
+    paginationLimit:
+      name: pagination.limit
+      in: query
+      description: Maximum number of records to return. Defaults to 100.
+      required: false
+      schema:
+        type: integer
+        default: 100
+    paginationCountTotal:
+      name: pagination.count_total
+      in: query
+      description: Whether to return the total count. Defaults to `true`.
+      required: false
+      schema:
+        type: boolean
+        default: true
+    paginationReverse:
+      name: pagination.reverse
+      in: query
+      description: When `true`, returns results in descending order. Defaults to `true`.
+      required: false
+      schema:
+        type: boolean
+        default: true
