@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: Rollup Indexer API
-  description: Query indexed rollup data including transactions and NFTs across Initia rollups.
+  title: Indexer API
+  description: Query indexed data including transactions and NFTs across Initia Stack chains.
   version: 1.0.0
 servers:
   - url: https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz

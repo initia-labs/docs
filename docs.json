@@ -522,7 +522,7 @@
             ]
           },
           {
-            "group": "Rollup Indexer API",
+            "group": "Indexer API",
             "pages": [
               "api-reference/rollup-indexer/introduction",
               {

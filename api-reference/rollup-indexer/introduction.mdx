@@ -1,26 +1,25 @@
 ---
 title: 'Introduction'
-description: 'Overview of the Rollup Indexer API for querying indexed rollup data.'
+description: 'Overview of the Indexer API for querying indexed chain data.'
 ---
 
-All rollups come with a built-in indexer that automatically indexes and stores
-all relevant data on the chain. This data is exposed through a REST API
-that you can use to query historical and current data, including account
+All Initia Stack chains come with a built-in indexer that automatically indexes
+and stores all relevant data on the chain. This data is exposed through a REST
+API that you can use to query historical and current data, including account
 transactions, NFTs owned by an account, and more.
 
 ## Base URLs
 
-Each rollup has its own indexer endpoint. Select the appropriate base URL for
-the rollup you want to query.
+Each chain has its own indexer endpoint. Select the appropriate base URL for
+the chain you want to query.
 
 <Note>
   The URLs below are **testnet endpoints** for demonstration and testing
-  purposes. In production, each rollup chain will have its own unique indexer
-  URL.
+  purposes. In production, each chain will have its own unique indexer URL.
 </Note>
 
-| Rollup | Base URL (testnet) |
-| ------ | ------------------ |
+| Chain | Base URL (testnet) |
+| ----- | ------------------ |
 | evm-1 | `https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz` |
 | move-1 | `https://rollytics-api-move-1.anvil.asia-southeast.initia.xyz` |
 | wasm-1 | `https://rollytics-api-wasm-1.anvil.asia-southeast.initia.xyz` |
