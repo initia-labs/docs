@@ -340,7 +340,7 @@
                   }
                 ]
               },
-              
+
               {
                 "group": "Oracles",
                 "pages": [
@@ -584,9 +584,7 @@
               {
                 "group": "Rich List",
                 "openapi": "api-reference/rollup-indexer/openapi.yaml",
-                "pages": [
-                  "GET /indexer/richlist/v1/{denom}"
-                ]
+                "pages": ["GET /indexer/richlist/v1/{denom}"]
               }
             ]
           }

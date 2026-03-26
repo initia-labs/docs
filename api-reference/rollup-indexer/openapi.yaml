@@ -1,7 +1,9 @@
 openapi: 3.1.0
 info:
   title: Indexer API
-  description: Query indexed data including transactions, blocks, NFTs, and token holders across Initia Stack chains.
+  description:
+    Query indexed data including transactions, blocks, NFTs, and token holders
+    across Initia Stack chains.
   version: 1.0.0
 servers:
   - url: https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz
@@ -67,7 +69,9 @@ paths:
     get:
       operationId: getAvgBlockTime
       summary: Get average block time
-      description: Returns the average block time in seconds, computed over the most recent blocks.
+      description:
+        Returns the average block time in seconds, computed over the most recent
+        blocks.
       tags:
         - Blocks
       responses:
@@ -85,13 +89,17 @@ paths:
     get:
       operationId: getTransactions
       summary: Get transactions
-      description: Returns a paginated list of transactions. You can optionally filter by message type.
+      description:
+        Returns a paginated list of transactions. You can optionally filter by
+        message type.
       tags:
         - Transactions
       parameters:
         - name: msgs
           in: query
-          description: 'Message types to filter by (comma-separated). Example: `cosmos.bank.v1beta1.MsgSend,initia.move.v1.MsgExecute`.'
+          description:
+            'Message types to filter by (comma-separated). Example:
+            `cosmos.bank.v1beta1.MsgSend,initia.move.v1.MsgExecute`.'
           required: false
           schema:
             type: string
@@ -118,7 +126,8 @@ paths:
     get:
       operationId: getTransactionsByAccount
       summary: Get transactions by account
-      description: Returns transactions associated with a specific account address.
+      description:
+        Returns transactions associated with a specific account address.
       tags:
         - Transactions
       parameters:
@@ -130,14 +139,18 @@ paths:
             type: string
         - name: is_signer
           in: query
-          description: When `true`, only returns transactions where the account was the signer. Defaults to `false`.
+          description:
+            When `true`, only returns transactions where the account was the
+            signer. Defaults to `false`.
           required: false
           schema:
             type: boolean
             default: false
         - name: msgs
           in: query
-          description: 'Message types to filter by (comma-separated). Example: `cosmos.bank.v1beta1.MsgSend`.'
+          description:
+            'Message types to filter by (comma-separated). Example:
+            `cosmos.bank.v1beta1.MsgSend`.'
           required: false
           schema:
             type: string
@@ -229,7 +242,9 @@ paths:
     get:
       operationId: getEvmTransactions
       summary: Get EVM transactions
-      description: Returns a paginated list of EVM transactions. Only available on EVM chains.
+      description:
+        Returns a paginated list of EVM transactions. Only available on EVM
+        chains.
       tags:
         - EVM Transactions
       parameters:
@@ -258,7 +273,9 @@ paths:
     get:
       operationId: getEvmTransactionsByAccount
       summary: Get EVM transactions by account
-      description: Returns EVM transactions associated with a specific account. Only available on EVM chains.
+      description:
+        Returns EVM transactions associated with a specific account. Only
+        available on EVM chains.
       tags:
         - EVM Transactions
       parameters:
@@ -270,7 +287,9 @@ paths:
             type: string
         - name: is_signer
           in: query
-          description: When `true`, only returns transactions where the account was the signer.
+          description:
+            When `true`, only returns transactions where the account was the
+            signer.
           required: false
           schema:
             type: boolean
@@ -300,7 +319,9 @@ paths:
     get:
       operationId: getEvmTransactionsByHeight
       summary: Get EVM transactions by height
-      description: Returns EVM transactions at a specific block height. Only available on EVM chains.
+      description:
+        Returns EVM transactions at a specific block height. Only available on
+        EVM chains.
       tags:
         - EVM Transactions
       parameters:
@@ -335,7 +356,9 @@ paths:
     get:
       operationId: getEvmTransactionByHash
       summary: Get EVM transaction by hash
-      description: Returns a specific EVM transaction by its hash. Only available on EVM chains.
+      description:
+        Returns a specific EVM transaction by its hash. Only available on EVM
+        chains.
       tags:
         - EVM Transactions
       parameters:
@@ -361,7 +384,9 @@ paths:
     get:
       operationId: getEvmInternalTransactions
       summary: Get EVM internal transactions
-      description: Returns a paginated list of EVM internal transactions. Only available on EVM chains with internal transaction indexing enabled.
+      description:
+        Returns a paginated list of EVM internal transactions. Only available on
+        EVM chains with internal transaction indexing enabled.
       tags:
         - EVM Internal Transactions
       parameters:
@@ -390,7 +415,9 @@ paths:
     get:
       operationId: getEvmInternalTransactionsByAccount
       summary: Get EVM internal transactions by account
-      description: Returns EVM internal transactions associated with a specific account. Only available on EVM chains.
+      description:
+        Returns EVM internal transactions associated with a specific account.
+        Only available on EVM chains.
       tags:
         - EVM Internal Transactions
       parameters:
@@ -425,7 +452,9 @@ paths:
     get:
       operationId: getEvmInternalTransactionsByHeight
       summary: Get EVM internal transactions by height
-      description: Returns EVM internal transactions at a specific block height. Only available on EVM chains.
+      description:
+        Returns EVM internal transactions at a specific block height. Only
+        available on EVM chains.
       tags:
         - EVM Internal Transactions
       parameters:
@@ -460,7 +489,9 @@ paths:
     get:
       operationId: getEvmInternalTransactionsByHash
       summary: Get EVM internal transactions by hash
-      description: Returns EVM internal transactions for a specific transaction hash. Only available on EVM chains.
+      description:
+        Returns EVM internal transactions for a specific transaction hash. Only
+        available on EVM chains.
       tags:
         - EVM Internal Transactions
       parameters:
@@ -522,7 +553,9 @@ paths:
     get:
       operationId: getNftCollectionsByAccount
       summary: Get NFT collections by account
-      description: Returns NFT collections that contain tokens owned by the specified account.
+      description:
+        Returns NFT collections that contain tokens owned by the specified
+        account.
       tags:
         - NFTs
       parameters:
@@ -588,7 +621,8 @@ paths:
     get:
       operationId: getNftCollectionDetails
       summary: Get NFT collection details
-      description: Returns the details of a specific NFT collection by its address.
+      description:
+        Returns the details of a specific NFT collection by its address.
       tags:
         - NFTs
       parameters:
@@ -614,7 +648,9 @@ paths:
     get:
       operationId: getNftTokensByAccount
       summary: Get NFT tokens by account
-      description: Returns NFT tokens owned by the specified account. You can optionally filter by collection address and token ID.
+      description:
+        Returns NFT tokens owned by the specified account. You can optionally
+        filter by collection address and token ID.
       tags:
         - NFTs
       parameters:
@@ -638,7 +674,8 @@ paths:
             type: string
         - name: order_by
           in: query
-          description: 'Field to order results by. Options: `token_id`, `height`.'
+          description:
+            'Field to order results by. Options: `token_id`, `height`.'
           required: false
           schema:
             type: string
@@ -669,7 +706,9 @@ paths:
     get:
       operationId: getNftTokensByCollection
       summary: Get NFT tokens by collection
-      description: Returns all NFT tokens within a specific collection. You can optionally filter by token ID.
+      description:
+        Returns all NFT tokens within a specific collection. You can optionally
+        filter by token ID.
       tags:
         - NFTs
       parameters:
@@ -687,7 +726,8 @@ paths:
             type: string
         - name: order_by
           in: query
-          description: 'Field to order results by. Options: `token_id`, `height`.'
+          description:
+            'Field to order results by. Options: `token_id`, `height`.'
           required: false
           schema:
             type: string
@@ -718,7 +758,9 @@ paths:
     get:
       operationId: getNftTransactions
       summary: Get NFT transactions
-      description: Returns transactions related to a specific NFT identified by its collection address and token ID.
+      description:
+        Returns transactions related to a specific NFT identified by its
+        collection address and token ID.
       tags:
         - NFTs
       parameters:
@@ -757,13 +799,17 @@ paths:
     get:
       operationId: getTokenHolders
       summary: Get token holders
-      description: Returns a ranked list of token holders for a specific denomination, ordered by amount.
+      description:
+        Returns a ranked list of token holders for a specific denomination,
+        ordered by amount.
       tags:
         - Rich List
       parameters:
         - name: denom
           in: path
-          description: 'The token denomination. Use URL encoding for denoms containing `/` (e.g., `l2%2F...`).'
+          description:
+            'The token denomination. Use URL encoding for denoms containing `/`
+            (e.g., `l2%2F...`).'
           required: true
           schema:
             type: string
@@ -799,7 +845,8 @@ components:
         next_key:
           type: string
           nullable: true
-          description: Cursor key for the next page. Null when there are no more results.
+          description:
+            Cursor key for the next page. Null when there are no more results.
         total:
           type: string
           description: Total number of records matching the query.
@@ -817,7 +864,8 @@ components:
           description: Block hash (hex-encoded).
         block_time:
           type: string
-          description: Time between this block and the previous block, in milliseconds.
+          description:
+            Time between this block and the previous block, in milliseconds.
         timestamp:
           type: string
           description: Block timestamp in RFC 3339 format.
@@ -869,7 +917,8 @@ components:
           description: Error codespace, if the transaction failed.
         code:
           type: integer
-          description: Response code. `0` indicates success; non-zero indicates an error.
+          description:
+            Response code. `0` indicates success; non-zero indicates an error.
         data:
           type: string
           description: Hex-encoded result data.
@@ -892,7 +941,8 @@ components:
           description: Gas consumed by the transaction.
         tx:
           type: object
-          description: The full transaction body including messages and signatures.
+          description:
+            The full transaction body including messages and signatures.
         timestamp:
           type: string
           description: Transaction timestamp in RFC 3339 format.
@@ -913,10 +963,13 @@ components:
         contractAddress:
           type: string
           nullable: true
-          description: Address of the contract created, if this was a contract creation transaction.
+          description:
+            Address of the contract created, if this was a contract creation
+            transaction.
         cumulativeGasUsed:
           type: string
-          description: Total gas used in the block up to and including this transaction.
+          description:
+            Total gas used in the block up to and including this transaction.
         effectiveGasPrice:
           type: string
           description: Effective gas price paid (hex-encoded).
@@ -980,7 +1033,8 @@ components:
           description: Log index in the block.
         removed:
           type: boolean
-          description: Whether the log was removed due to a chain reorganization.
+          description:
+            Whether the log was removed due to a chain reorganization.
     EvmInternalTx:
       type: object
       properties:
@@ -998,7 +1052,8 @@ components:
           description: Index of this internal transaction in the trace.
         type:
           type: string
-          description: 'Call type (e.g., `CALL`, `DELEGATECALL`, `STATICCALL`, `CREATE`).'
+          description:
+            'Call type (e.g., `CALL`, `DELEGATECALL`, `STATICCALL`, `CREATE`).'
         from:
           type: string
           description: Sender address.
@@ -1132,7 +1187,8 @@ components:
     paginationReverse:
       name: pagination.reverse
       in: query
-      description: When `true`, returns results in descending order. Defaults to `true`.
+      description:
+        When `true`, returns results in descending order. Defaults to `true`.
       required: false
       schema:
         type: boolean
