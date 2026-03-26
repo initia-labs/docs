@@ -413,20 +413,6 @@
         ]
       },
       {
-        "tab": "AI",
-        "groups": [
-          {
-            "group": "AI",
-            "pages": [
-              "ai/overview",
-              "ai/agent-skills",
-              "ai/llms-txt",
-              "ai/docs-mcp"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "InterwovenKit",
         "groups": [
           {
@@ -550,6 +536,20 @@
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /nft"]
               }
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "AI",
+        "groups": [
+          {
+            "group": "AI",
+            "pages": [
+              "ai/overview",
+              "ai/agent-skills",
+              "ai/llms-txt",
+              "ai/docs-mcp"
             ]
           }
         ]

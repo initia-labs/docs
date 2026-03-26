@@ -3,33 +3,49 @@ title: llms.txt
 description: Use llms.txt to give LLMs structured context about the Initia documentation.
 ---
 
-The Initia docs provide an `llms.txt` file — a structured text document that gives LLMs a complete index of all documentation pages. This follows the [llms.txt standard](https://llmstxt.org) for making websites more accessible to language models.
+The Initia docs provide `llms.txt` and `llms-full.txt` files that follow the [llms.txt standard](https://llmstxt.org) for making websites more accessible to language models. These files give LLMs structured context about the documentation so they can generate more accurate responses about Initia.
 
-## What is llms.txt
+## llms.txt
 
-The `llms.txt` file is a text document served at the root of the documentation site that lists every page with its title and URL. It gives LLMs a structured map of all available content, making it easy to find relevant information without browsing.
-
-## How to access it
-
-The file is available at:
+The `llms.txt` file is a lightweight index of every page in the Initia documentation. It contains the title and URL of each page, giving LLMs a structured map of all available content.
 
 ```
 https://docs.initia.xyz/llms.txt
 ```
 
-You can also access the full-content version that includes the complete text of every page:
+Use `llms.txt` when you want to give an LLM a quick overview of what documentation exists without loading the full content. This is useful for:
+
+- Helping an LLM understand the scope of Initia documentation
+- Letting an LLM decide which pages to fetch based on a user's question
+- Adding lightweight context to a conversation without consuming a large context window
+
+## llms-full.txt
+
+The `llms-full.txt` file contains the complete text of every documentation page in a single file. This gives LLMs the full content of the docs in one request.
 
 ```
 https://docs.initia.xyz/llms-full.txt
 ```
 
-## Using llms.txt with AI tools
+Use `llms-full.txt` when you need comprehensive coverage and your LLM has a large enough context window. This is useful for:
 
-### Paste into an LLM chat
+- Deep research across multiple documentation topics
+- Giving an LLM full context to answer complex questions about Initia
+- Pre-loading an AI coding agent with complete Initia knowledge
 
-Copy the contents of `llms.txt` and paste it into your conversation with an LLM to give it an overview of all available Initia documentation. You can then ask the LLM to look up specific topics by following the URLs.
+<Warning>
+  The `llms-full.txt` file contains the full text of every documentation page.
+  Check the file size before loading it to ensure it fits within your LLM's
+  context window.
+</Warning>
 
-### Load in your IDE
+## Using With AI Tools
+
+### Paste Into an LLM Chat
+
+Copy the contents of `llms.txt` or `llms-full.txt` and paste it into your conversation with an LLM. The LLM can then reference the documentation to answer questions about Initia.
+
+### Load in Your IDE
 
 Many AI-powered IDEs and coding agents allow you to add documentation context. You can point them to the `llms.txt` URL:
 
@@ -46,24 +62,3 @@ as context for the LLM
 ```
 
 </CodeGroup>
-
-### Use llms-full.txt for deep context
-
-If your LLM has a large enough context window, you can use `llms-full.txt` to load the complete documentation content in a single request. This is useful when you need comprehensive coverage rather than targeted lookups.
-
-<Warning>
-  The `llms-full.txt` file contains the full text of every documentation page.
-  Check the file size before loading it to ensure it fits within your LLM's
-  context window.
-</Warning>
-
-## What is included
-
-The `llms.txt` file covers all sections of the Initia documentation:
-
-- **Home** — core concepts, architecture, tokenomics
-- **Developers** — tutorials, SDKs, CLIs, contract references
-- **Nodes and Rollups** — deployment, indexing, validators
-- **InterwovenKit** — frontend integration, hooks, components
-- **API Reference** — Router API endpoints
-- **Resources** — network info, deployed contracts, security audits

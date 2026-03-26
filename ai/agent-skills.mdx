@@ -1,13 +1,13 @@
 ---
-title: Agent skills
+title: Agent Skills
 description: Give your AI coding agent end-to-end knowledge of Initia development with the Initia Appchain Dev skill.
 ---
 
 The [Initia Appchain Dev skill](https://github.com/initia-labs/agent-skills) is a single-skill package that gives AI coding agents comprehensive knowledge about building on Initia. Once installed, your agent can help with:
 
 - **Appchain deployment** using the Weave CLI
-- **Smart contract development** across all supported VMs (Move, Wasm, EVM)
-- **Frontend integration** for both direct EVM JSON-RPC (`wagmi` + `viem`) and InterwovenKit (`@initia/interwovenkit-react`)
+- **Smart contract development** across all supported VMs
+- **Frontend integration** including using InterwovenKit
 
 ## Installation
 
@@ -17,7 +17,7 @@ The [Initia Appchain Dev skill](https://github.com/initia-labs/agent-skills) is 
 npx skills add initia-labs/agent-skills
 ```
 
-### Manual installation
+### Manual Installation
 
 ```bash
 git clone https://github.com/initia-labs/agent-skills
@@ -37,7 +37,7 @@ For a custom destination:
 ./install.sh --path /custom/path/initia-appchain-dev
 ```
 
-### Verify installation
+### Verify Installation
 
 ```bash
 npx skills add . --list
@@ -45,7 +45,7 @@ npx skills add . --list
 
 You should see one skill named `initia-appchain-dev`.
 
-## What the skill covers
+## What the Skill Covers
 
 The skill provides your AI agent with detailed reference material organized by layer:
 
@@ -54,18 +54,18 @@ The skill provides your AI agent with detailed reference material organized by l
 | **Contracts** | Move, Wasm, and EVM contract scaffolding, building, deploying, and testing |
 | **Frontend (InterwovenKit)** | Provider setup, wallet connection, transactions, auto-sign, bridge integration |
 | **Frontend (EVM JSON-RPC)** | wagmi + viem setup for pure EVM apps |
-| **Appchain operations** | Weave CLI commands, rollup config schema, runtime discovery |
+| **Appchain Operations** | Weave CLI commands, rollup config schema, runtime discovery |
 | **Troubleshooting** | Common errors and recovery steps across all layers |
 
-## Supported AI agents
+## skill.md
 
-The skill works with any AI coding agent that supports the skills format, including:
+The Initia docs also provide a `skill.md` file at [docs.initia.xyz/skill.md](https://docs.initia.xyz/skill.md). This is a lightweight skill file that teaches AI agents how to work with the Initia documentation site itself. You can add it to your agent with:
 
-- [OpenAI Codex](https://openai.com/index/openai-codex/)
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-- Other agents that support the [skills.sh](https://skills.sh) format
+```bash
+npx skills add docs.initia.xyz/skill.md
+```
 
-## Example prompts
+## Example Prompts
 
 Once the skill is installed, you can use prompts like:
 
@@ -75,7 +75,7 @@ Once the skill is installed, you can use prompts like:
 - "My rollup is not producing blocks. Help me debug it step by step."
 - "Convert this `0x...` address to Initia bech32 and add it to genesis accounts."
 
-## Reference material included
+## Reference Material Included
 
 The skill bundles detailed references that your agent reads on demand:
 
@@ -88,3 +88,15 @@ The skill bundles detailed references that your agent reads on demand:
 - **Weave CLI commands** — complete CLI reference
 - **Rollup config schema** — launch configuration format
 - **Troubleshooting** — error diagnosis and recovery
+
+## Contributing
+
+The Initia Appchain Dev skill is open source. If you find gaps in the skill's knowledge, incorrect guidance, or want to add coverage for new features, you can contribute directly:
+
+1. Fork the [initia-labs/agent-skills](https://github.com/initia-labs/agent-skills) repository
+2. Edit the relevant reference files in the `skill/references/` directory
+3. Run the quality checks to validate your changes:
+   ```bash
+   ./scripts/ci-check.sh
+   ```
+4. Submit a pull request with a description of what you changed and why
