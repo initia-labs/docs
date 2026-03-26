@@ -1,0 +1,90 @@
+---
+title: Agent skills
+description: Give your AI coding agent end-to-end knowledge of Initia development with the Initia Appchain Dev skill.
+---
+
+The [Initia Appchain Dev skill](https://github.com/initia-labs/agent-skills) is a single-skill package that gives AI coding agents comprehensive knowledge about building on Initia. Once installed, your agent can help with:
+
+- **Appchain deployment** using the Weave CLI
+- **Smart contract development** across all supported VMs (Move, Wasm, EVM)
+- **Frontend integration** for both direct EVM JSON-RPC (`wagmi` + `viem`) and InterwovenKit (`@initia/interwovenkit-react`)
+
+## Installation
+
+### Using skills.sh
+
+```bash
+npx skills add initia-labs/agent-skills
+```
+
+### Manual installation
+
+```bash
+git clone https://github.com/initia-labs/agent-skills
+cd agent-skills
+./install.sh
+```
+
+For a project-local install:
+
+```bash
+./install.sh --project
+```
+
+For a custom destination:
+
+```bash
+./install.sh --path /custom/path/initia-appchain-dev
+```
+
+### Verify installation
+
+```bash
+npx skills add . --list
+```
+
+You should see one skill named `initia-appchain-dev`.
+
+## What the skill covers
+
+The skill provides your AI agent with detailed reference material organized by layer:
+
+| Layer | Coverage |
+| --- | --- |
+| **Contracts** | Move, Wasm, and EVM contract scaffolding, building, deploying, and testing |
+| **Frontend (InterwovenKit)** | Provider setup, wallet connection, transactions, auto-sign, bridge integration |
+| **Frontend (EVM JSON-RPC)** | wagmi + viem setup for pure EVM apps |
+| **Appchain operations** | Weave CLI commands, rollup config schema, runtime discovery |
+| **Troubleshooting** | Common errors and recovery steps across all layers |
+
+## Supported AI agents
+
+The skill works with any AI coding agent that supports the skills format, including:
+
+- [OpenAI Codex](https://openai.com/index/openai-codex/)
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- Other agents that support the [skills.sh](https://skills.sh) format
+
+## Example prompts
+
+Once the skill is installed, you can use prompts like:
+
+- "Scaffold an EVM contract on Initia and add an oracle read function."
+- "Set up InterwovenKit providers in my Next.js app and implement wallet connect."
+- "Create a `weave` launch config for a testnet EVM rollup."
+- "My rollup is not producing blocks. Help me debug it step by step."
+- "Convert this `0x...` address to Initia bech32 and add it to genesis accounts."
+
+## Reference material included
+
+The skill bundles detailed references that your agent reads on demand:
+
+- **Common tasks** — funding, address conversion, token precision
+- **Contracts** — Move / Wasm / EVM specific development guides
+- **Frontend (InterwovenKit)** — provider setup, hooks, transactions
+- **Frontend (EVM JSON-RPC)** — wagmi + viem integration
+- **End-to-end recipes** — full workflows from contract to frontend
+- **Runtime discovery** — auto-detecting chain ID, VM, endpoints
+- **Weave CLI commands** — complete CLI reference
+- **Rollup config schema** — launch configuration format
+- **Troubleshooting** — error diagnosis and recovery

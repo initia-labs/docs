@@ -1,0 +1,105 @@
+---
+title: Docs MCP
+description: Connect your AI coding agent to Initia docs via the Model Context Protocol for semantic search.
+---
+
+The Initia documentation provides a [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server that allows AI coding agents to semantically search the docs directly from your IDE. Instead of manually copying documentation into your prompts, your agent can query the docs on demand.
+
+## What is MCP
+
+The Model Context Protocol is an open standard that lets AI applications connect to external data sources and tools. The Initia Docs MCP server exposes a search tool that your AI agent can use to find relevant documentation based on natural language queries.
+
+## Setup
+
+### Cursor
+
+Add the following to your Cursor MCP configuration (`.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "initia-docs": {
+      "url": "https://docs.initia.xyz/mcp"
+    }
+  }
+}
+```
+
+### Claude Code
+
+Add the MCP server using the Claude Code CLI:
+
+```bash
+claude mcp add initia-docs https://docs.initia.xyz/mcp
+```
+
+Or add it to your `.mcp.json` configuration:
+
+```json
+{
+  "mcpServers": {
+    "initia-docs": {
+      "type": "http",
+      "url": "https://docs.initia.xyz/mcp"
+    }
+  }
+}
+```
+
+### Windsurf
+
+Add the following to your Windsurf MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "initia-docs": {
+      "serverUrl": "https://docs.initia.xyz/mcp"
+    }
+  }
+}
+```
+
+### VS Code with Copilot
+
+Add the following to your VS Code settings (`.vscode/mcp.json`):
+
+```json
+{
+  "servers": {
+    "initia-docs": {
+      "type": "http",
+      "url": "https://docs.initia.xyz/mcp"
+    }
+  }
+}
+```
+
+## How it works
+
+Once configured, your AI agent gains access to a search tool that queries the Initia documentation. When you ask your agent a question about Initia, it can:
+
+1. **Search** the docs using your natural language query
+2. **Retrieve** relevant documentation content
+3. **Use** that context to generate accurate responses and code
+
+This means your agent always has access to the latest Initia documentation without you needing to manually copy content into your prompts.
+
+## Example usage
+
+With the MCP server connected, you can ask your AI agent questions like:
+
+- "How do I deploy a rollup on Initia?"
+- "What hooks does InterwovenKit provide?"
+- "Show me how to create an ERC20 on MiniEVM."
+- "What is the Router API and how do I compute a route?"
+
+Your agent will automatically search the Initia docs and use the results to provide accurate, contextual answers.
+
+## Inline documentation access
+
+In addition to the MCP server, Initia documentation pages include inline copy buttons that let you quickly use documentation content with AI tools. Look for the following options on any documentation page:
+
+- **Copy as Markdown** — copy the page content for pasting into an LLM
+- **Open in ChatGPT** — open the page content directly in ChatGPT
+- **Open in Claude** — open the page content directly in Claude

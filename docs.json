@@ -413,6 +413,20 @@
         ]
       },
       {
+        "tab": "AI",
+        "groups": [
+          {
+            "group": "AI",
+            "pages": [
+              "ai/overview",
+              "ai/agent-skills",
+              "ai/llms-txt",
+              "ai/docs-mcp"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "InterwovenKit",
         "groups": [
           {
