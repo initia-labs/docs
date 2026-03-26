@@ -1,0 +1,185 @@
+openapi: 3.1.0
+info:
+  title: Rollup Indexer API
+  description: Query indexed rollup data including transactions and NFTs across Initia rollups.
+  version: 1.0.0
+servers:
+  - url: https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz
+    description: evm-1
+  - url: https://rollytics-api-move-1.anvil.asia-southeast.initia.xyz
+    description: move-1
+  - url: https://rollytics-api-wasm-1.anvil.asia-southeast.initia.xyz
+    description: wasm-1
+paths:
+  /indexer/tx/v1/txs/by_account/{account}:
+    get:
+      operationId: getTransactionsByAccount
+      summary: Get transactions by account
+      description: Returns all transactions for a given account address.
+      tags:
+        - Transactions
+      parameters:
+        - name: account
+          in: path
+          description: The account address to retrieve transactions for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      type: object
+  /indexer/tx/v1/txs/by_height/{height}:
+    get:
+      operationId: getTransactionsByHeight
+      summary: Get transactions by height
+      description: Returns all transactions at a given block height.
+      tags:
+        - Transactions
+      parameters:
+        - name: height
+          in: path
+          description: The block height to retrieve transactions from.
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      type: object
+  /indexer/tx/v1/txs/{tx_hash}:
+    get:
+      operationId: getTransactionByHash
+      summary: Get transaction by hash
+      description: Returns a specific transaction by its hash.
+      tags:
+        - Transactions
+      parameters:
+        - name: tx_hash
+          in: path
+          description: The transaction hash to retrieve details for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/nft/v1/collections/by_account/{account}:
+    get:
+      operationId: getNftCollectionsByAccount
+      summary: Get NFT collections by account
+      description: Returns all NFT collections owned by the specified account.
+      tags:
+        - NFTs
+      parameters:
+        - name: account
+          in: path
+          description: The account address to get NFT collections for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  collections:
+                    type: array
+                    items:
+                      type: object
+  /indexer/nft/v1/collections/{collection_addr}:
+    get:
+      operationId: getNftCollectionDetails
+      summary: Get NFT collection details
+      description: Returns the details of a specific NFT collection.
+      tags:
+        - NFTs
+      parameters:
+        - name: collection_addr
+          in: path
+          description: The address of the NFT collection to retrieve details for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+  /indexer/nft/v1/tokens/by_collection/{collection_addr}:
+    get:
+      operationId: getNftTokensByCollection
+      summary: Get NFT tokens by collection
+      description: Returns all NFT tokens within a specific collection.
+      tags:
+        - NFTs
+      parameters:
+        - name: collection_addr
+          in: path
+          description: The address of the NFT collection to retrieve tokens from.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      type: object
+  /indexer/nft/v1/tokens/by_account/{account}:
+    get:
+      operationId: getNftTokensByAccount
+      summary: Get NFT tokens by account
+      description: Returns all NFT tokens owned by the specified account.
+      tags:
+        - NFTs
+      parameters:
+        - name: account
+          in: path
+          description: The account address to get NFT tokens for.
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      type: object
