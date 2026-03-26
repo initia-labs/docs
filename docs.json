@@ -340,24 +340,7 @@
                   }
                 ]
               },
-              {
-                "group": "Indexers",
-                "pages": [
-                  {
-                    "group": "Rollup Indexers",
-                    "pages": [
-                      "developers/developer-guides/tools/indexers/indexer-introduction",
-                      "developers/developer-guides/tools/indexers/transactions-by-account",
-                      "developers/developer-guides/tools/indexers/transactions-by-height",
-                      "developers/developer-guides/tools/indexers/transactions-by-hash",
-                      "developers/developer-guides/tools/indexers/nft-collections-by-account",
-                      "developers/developer-guides/tools/indexers/nft-collection-details",
-                      "developers/developer-guides/tools/indexers/nft-tokens-by-collection",
-                      "developers/developer-guides/tools/indexers/nft-tokens-by-account"
-                    ]
-                  }
-                ]
-              },
+
               {
                 "group": "Oracles",
                 "pages": [
@@ -508,6 +491,10 @@
         "tab": "API Reference",
         "groups": [
           {
+            "group": "API Reference",
+            "pages": ["api-reference/introduction"]
+          },
+          {
             "group": "Router API",
             "pages": [
               "api-reference/router-api/introduction",
@@ -535,6 +522,69 @@
                 "group": "NFT",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /nft"]
+              }
+            ]
+          },
+          {
+            "group": "Indexer API",
+            "pages": [
+              "api-reference/rollup-indexer/introduction",
+              {
+                "group": "Blocks",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": [
+                  "GET /indexer/block/v1/blocks",
+                  "GET /indexer/block/v1/blocks/{height}",
+                  "GET /indexer/block/v1/avg_blocktime"
+                ]
+              },
+              {
+                "group": "Transactions",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": [
+                  "GET /indexer/tx/v1/txs",
+                  "GET /indexer/tx/v1/txs/by_account/{account}",
+                  "GET /indexer/tx/v1/txs/by_height/{height}",
+                  "GET /indexer/tx/v1/txs/{tx_hash}"
+                ]
+              },
+              {
+                "group": "EVM Transactions",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": [
+                  "GET /indexer/tx/v1/evm-txs",
+                  "GET /indexer/tx/v1/evm-txs/by_account/{account}",
+                  "GET /indexer/tx/v1/evm-txs/by_height/{height}",
+                  "GET /indexer/tx/v1/evm-txs/{tx_hash}"
+                ]
+              },
+              {
+                "group": "EVM Internal Transactions",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": [
+                  "GET /indexer/tx/v1/evm-internal-txs",
+                  "GET /indexer/tx/v1/evm-internal-txs/by_account/{account}",
+                  "GET /indexer/tx/v1/evm-internal-txs/by_height/{height}",
+                  "GET /indexer/tx/v1/evm-internal-txs/{tx_hash}"
+                ]
+              },
+              {
+                "group": "NFTs",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": [
+                  "GET /indexer/nft/v1/collections",
+                  "GET /indexer/nft/v1/collections/by_account/{account}",
+                  "GET /indexer/nft/v1/collections/by_name/{name}",
+                  "GET /indexer/nft/v1/collections/{collection_addr}",
+                  "GET /indexer/nft/v1/tokens/by_account/{account}",
+                  "GET /indexer/nft/v1/tokens/by_collection/{collection_addr}",
+                  "GET /indexer/nft/v1/txs/{collection_addr}/{token_id}"
+                ]
+              },
+              {
+                "group": "Rich List",
+                "openapi": "api-reference/rollup-indexer/openapi.yaml",
+                "pages": ["GET /indexer/richlist/v1/{denom}"]
               }
             ]
           }
@@ -619,7 +669,10 @@
     "dark": "/logo/logo_dark.svg"
   },
   "api": {
-    "openapi": "api-reference/router-api/openapi.yaml",
+    "openapi": [
+      "api-reference/router-api/openapi.yaml",
+      "api-reference/rollup-indexer/openapi.yaml"
+    ],
     "playground": {
       "display": "interactive",
       "proxy": true
@@ -628,6 +681,48 @@
       "server": "https://rest.testnet.initia.xyz"
     }
   },
+  "redirects": [
+    {
+      "source": "/developers/developer-guides/tools/indexers/indexer-introduction",
+      "destination": "/api-reference/rollup-indexer/introduction",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-account",
+      "destination": "/api-reference/transactions/get-transactions-by-account",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-height",
+      "destination": "/api-reference/transactions/get-transactions-by-height",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/transactions-by-hash",
+      "destination": "/api-reference/transactions/get-transaction-by-hash",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-collections-by-account",
+      "destination": "/api-reference/nfts/get-nft-collections-by-account",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-collection-details",
+      "destination": "/api-reference/nfts/get-nft-collection-details",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-tokens-by-collection",
+      "destination": "/api-reference/nfts/get-nft-tokens-by-collection",
+      "permanent": true
+    },
+    {
+      "source": "/developers/developer-guides/tools/indexers/nft-tokens-by-account",
+      "destination": "/api-reference/nfts/get-nft-tokens-by-account",
+      "permanent": true
+    }
+  ],
   "appearance": {
     "default": "dark"
   },
