@@ -3,6 +3,48 @@ title: Changelog
 description: Additions, updates, and fixes to InterwovenKit
 ---
 
+<Update label="March 25, 2026" description="v2.5.0">
+
+## Accessibility improvements
+
+The widget now includes comprehensive accessibility attributes across all
+interactive elements. Forms, sections, icon-only buttons, collapsible triggers,
+and loading states all carry appropriate ARIA labels and roles. Decorative icons
+are marked as hidden, and semantic landmarks (`<nav>`, `<section>`) improve
+screen reader navigation throughout the widget.
+
+## AUSD deposit source for iUSD
+
+[Deposits](/interwovenkit/features/transfers/deposit-withdraw) now support AUSD
+from Ethereum as an additional source for iUSD transfers, alongside the existing
+USDC source.
+
+## Test wallet factories
+
+New `createTestWalletConnector` and `createTestCosmosWallet` factory functions
+make it easier to set up automated test environments. Developers can create
+in-memory EVM and Cosmos wallets from a mnemonic or private key without needing
+browser extensions or external wallet apps.
+
+## Bug fixes
+
+- EVM bridge transactions that exceed the confirmation timeout now save to
+  history and show a pending notification instead of failing silently.
+- The fee warning in the bridge no longer appears when an alternative gas token
+  has sufficient balance on the source chain.
+- Deposit route errors are handled more gracefully, preserving the last valid
+  route during transient failures and showing clear status messaging.
+- Assets with missing price data now display `$-` instead of `$0` in the deposit
+  and send flows.
+- Deposit validation no longer flags insufficient balance while balances are
+  still loading.
+- Fixed a layout glitch where switching between the modal and drawer caused the
+  container to reset.
+- Renamed user-facing references from "appchain" to "app" for consistency with
+  current Initia terminology.
+
+</Update>
+
 <Update label="March 2, 2026" description="v2.4.6">
 
 ## Optional address in `useUsernameQuery`
