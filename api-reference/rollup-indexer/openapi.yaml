@@ -30,6 +30,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  blocks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Block'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/block/v1/blocks/{height}:
     get:
       operationId: getBlockByHeight
@@ -51,6 +58,9 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  block:
+                    $ref: '#/components/schemas/Block'
         '404':
           description: Block not found
   /indexer/block/v1/avg_blocktime:
@@ -97,6 +107,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/tx/v1/txs/by_account/{account}:
     get:
       operationId: getTransactionsByAccount
@@ -136,6 +153,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/tx/v1/txs/by_height/{height}:
     get:
       operationId: getTransactionsByHeight
@@ -168,6 +192,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/tx/v1/txs/{tx_hash}:
     get:
       operationId: getTransactionByHash
@@ -189,6 +220,9 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  tx:
+                    $ref: '#/components/schemas/Tx'
         '404':
           description: Transaction not found
   /indexer/tx/v1/evm-txs:
@@ -211,6 +245,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-txs/by_account/{account}:
@@ -246,6 +287,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-txs/by_height/{height}:
@@ -274,6 +322,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-txs/{tx_hash}:
@@ -297,6 +352,9 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  tx:
+                    $ref: '#/components/schemas/EvmTx'
         '404':
           description: Transaction not found or EVM routes not available
   /indexer/tx/v1/evm-internal-txs:
@@ -319,6 +377,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  internal_txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmInternalTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-internal-txs/by_account/{account}:
@@ -347,6 +412,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  internal_txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmInternalTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-internal-txs/by_height/{height}:
@@ -375,6 +447,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  internal_txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmInternalTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: EVM routes are not available on this chain
   /indexer/tx/v1/evm-internal-txs/{tx_hash}:
@@ -403,6 +482,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  internal_txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/EvmInternalTx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
         '404':
           description: Transaction not found or EVM routes not available
   /indexer/nft/v1/collections:
@@ -425,6 +511,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  collections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NftCollection'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/nft/v1/collections/by_account/{account}:
     get:
       operationId: getNftCollectionsByAccount
@@ -451,6 +544,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  collections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NftCollection'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/nft/v1/collections/by_name/{name}:
     get:
       operationId: getNftCollectionsByName
@@ -477,6 +577,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  collections:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NftCollection'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/nft/v1/collections/{collection_addr}:
     get:
       operationId: getNftCollectionDetails
@@ -498,6 +605,9 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  collection:
+                    $ref: '#/components/schemas/NftCollection'
         '404':
           description: NFT collection not found
   /indexer/nft/v1/tokens/by_account/{account}:
@@ -548,6 +658,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NftToken'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/nft/v1/tokens/by_collection/{collection_addr}:
     get:
       operationId: getNftTokensByCollection
@@ -590,6 +707,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  tokens:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NftToken'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/nft/v1/txs/{collection_addr}/{token_id}:
     get:
       operationId: getNftTransactions
@@ -622,6 +746,13 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  txs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tx'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
   /indexer/richlist/v1/{denom}:
     get:
       operationId: getTokenHolders
@@ -648,7 +779,325 @@ paths:
             application/json:
               schema:
                 type: object
+                properties:
+                  holders:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/TokenHolder'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
 components:
+  schemas:
+    Pagination:
+      type: object
+      description: Pagination metadata for list responses.
+      properties:
+        previous_key:
+          type: string
+          nullable: true
+          description: Cursor key for the previous page.
+        next_key:
+          type: string
+          nullable: true
+          description: Cursor key for the next page. Null when there are no more results.
+        total:
+          type: string
+          description: Total number of records matching the query.
+    Block:
+      type: object
+      properties:
+        chain_id:
+          type: string
+          description: The chain identifier.
+        height:
+          type: string
+          description: Block height.
+        hash:
+          type: string
+          description: Block hash (hex-encoded).
+        block_time:
+          type: string
+          description: Time between this block and the previous block, in milliseconds.
+        timestamp:
+          type: string
+          description: Block timestamp in RFC 3339 format.
+        gas_used:
+          type: string
+          description: Total gas used in this block.
+        gas_wanted:
+          type: string
+          description: Total gas requested in this block.
+        tx_count:
+          type: string
+          description: Number of transactions in this block.
+        total_fee:
+          type: array
+          description: Total fees collected in this block.
+          items:
+            type: object
+            properties:
+              denom:
+                type: string
+                description: Fee denomination.
+              amount:
+                type: string
+                description: Fee amount.
+        proposer:
+          type: object
+          description: Block proposer information.
+          properties:
+            moniker:
+              type: string
+              description: Validator moniker.
+            identity:
+              type: string
+              description: Validator identity.
+            operator_address:
+              type: string
+              description: Validator operator address.
+    Tx:
+      type: object
+      properties:
+        txhash:
+          type: string
+          description: Transaction hash.
+        height:
+          type: string
+          description: Block height where this transaction was included.
+        codespace:
+          type: string
+          description: Error codespace, if the transaction failed.
+        code:
+          type: integer
+          description: Response code. `0` indicates success; non-zero indicates an error.
+        data:
+          type: string
+          description: Hex-encoded result data.
+        raw_log:
+          type: string
+          description: Raw log output from the transaction.
+        logs:
+          type: array
+          description: Parsed ABCI message logs.
+          items:
+            type: object
+        info:
+          type: string
+          description: Additional information.
+        gas_wanted:
+          type: string
+          description: Gas requested by the transaction.
+        gas_used:
+          type: string
+          description: Gas consumed by the transaction.
+        tx:
+          type: object
+          description: The full transaction body including messages and signatures.
+        timestamp:
+          type: string
+          description: Transaction timestamp in RFC 3339 format.
+        events:
+          type: array
+          description: Events emitted by the transaction.
+          items:
+            type: object
+    EvmTx:
+      type: object
+      properties:
+        blockHash:
+          type: string
+          description: Hash of the block containing this transaction.
+        blockNumber:
+          type: string
+          description: Block number (hex-encoded).
+        contractAddress:
+          type: string
+          nullable: true
+          description: Address of the contract created, if this was a contract creation transaction.
+        cumulativeGasUsed:
+          type: string
+          description: Total gas used in the block up to and including this transaction.
+        effectiveGasPrice:
+          type: string
+          description: Effective gas price paid (hex-encoded).
+        from:
+          type: string
+          description: Sender address.
+        gasUsed:
+          type: string
+          description: Gas consumed by this transaction.
+        logs:
+          type: array
+          description: Event logs emitted during execution.
+          items:
+            $ref: '#/components/schemas/EvmLog'
+        logsBloom:
+          type: string
+          description: Bloom filter for the logs.
+        status:
+          type: string
+          description: '`0x1` for success, `0x0` for failure.'
+        to:
+          type: string
+          description: Recipient address.
+        transactionHash:
+          type: string
+          description: Transaction hash.
+        transactionIndex:
+          type: string
+          description: Index of this transaction in the block.
+        type:
+          type: string
+          description: Transaction type.
+    EvmLog:
+      type: object
+      properties:
+        address:
+          type: string
+          description: Contract address that emitted the log.
+        topics:
+          type: array
+          description: Indexed event topics.
+          items:
+            type: string
+        data:
+          type: string
+          description: Non-indexed event data (hex-encoded).
+        blockNumber:
+          type: string
+          description: Block number (hex-encoded).
+        transactionHash:
+          type: string
+          description: Transaction hash.
+        transactionIndex:
+          type: string
+          description: Transaction index in the block.
+        blockHash:
+          type: string
+          description: Block hash.
+        logIndex:
+          type: string
+          description: Log index in the block.
+        removed:
+          type: boolean
+          description: Whether the log was removed due to a chain reorganization.
+    EvmInternalTx:
+      type: object
+      properties:
+        height:
+          type: integer
+          description: Block height.
+        hash:
+          type: string
+          description: Parent transaction hash.
+        parent_index:
+          type: integer
+          description: Index of the parent call in the trace.
+        index:
+          type: integer
+          description: Index of this internal transaction in the trace.
+        type:
+          type: string
+          description: 'Call type (e.g., `CALL`, `DELEGATECALL`, `STATICCALL`, `CREATE`).'
+        from:
+          type: string
+          description: Sender address.
+        to:
+          type: string
+          description: Recipient address.
+        input:
+          type: string
+          description: Input data (hex-encoded).
+        output:
+          type: string
+          description: Output data (hex-encoded).
+        value:
+          type: string
+          description: Value transferred (hex-encoded).
+        gas:
+          type: string
+          description: Gas provided (hex-encoded).
+        gasUsed:
+          type: string
+          description: Gas consumed (hex-encoded).
+    NftCollection:
+      type: object
+      properties:
+        object_addr:
+          type: string
+          description: Collection contract address.
+        collection:
+          type: object
+          description: Collection details.
+          properties:
+            creator:
+              type: string
+              description: Creator address.
+            name:
+              type: string
+              description: Collection name.
+            origin_name:
+              type: string
+              description: Original collection name.
+            nfts:
+              type: object
+              description: NFT count metadata.
+              properties:
+                handle:
+                  type: string
+                  description: Storage handle.
+                length:
+                  type: integer
+                  description: Total number of NFTs in this collection.
+        height:
+          type: integer
+          description: Block height when the collection was created.
+        timestamp:
+          type: string
+          description: Timestamp in RFC 3339 format.
+    NftToken:
+      type: object
+      properties:
+        collection_addr:
+          type: string
+          description: Collection contract address.
+        collection_name:
+          type: string
+          description: Collection name.
+        collection_origin_name:
+          type: string
+          description: Original collection name.
+        object_addr:
+          type: string
+          description: Token object address (Move chains only).
+        owner:
+          type: string
+          description: Current owner address.
+        nft:
+          type: object
+          description: Token details.
+          properties:
+            token_id:
+              type: string
+              description: Token ID within the collection.
+            uri:
+              type: string
+              description: Token metadata URI.
+        height:
+          type: integer
+          description: Block height of the last update.
+        timestamp:
+          type: string
+          description: Timestamp of the last update in RFC 3339 format.
+    TokenHolder:
+      type: object
+      properties:
+        account:
+          type: string
+          description: Holder address.
+        amount:
+          type: string
+          description: Token balance.
   parameters:
     paginationKey:
       name: pagination.key
