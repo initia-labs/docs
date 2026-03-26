@@ -5,11 +5,11 @@ info:
   version: 1.0.0
 servers:
   - url: https://rollytics-api-evm-1.anvil.asia-southeast.initia.xyz
-    description: evm-1
+    description: evm-1 (testnet)
   - url: https://rollytics-api-move-1.anvil.asia-southeast.initia.xyz
-    description: move-1
+    description: move-1 (testnet)
   - url: https://rollytics-api-wasm-1.anvil.asia-southeast.initia.xyz
-    description: wasm-1
+    description: wasm-1 (testnet)
 paths:
   /indexer/tx/v1/txs/by_account/{account}:
     get:
