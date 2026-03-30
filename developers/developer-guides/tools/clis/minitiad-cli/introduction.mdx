@@ -66,28 +66,22 @@ Before installing minitiad, ensure you have the following requirements:
 <Step title="Clone the Repository">
 First, clone the appropriate repository based on your rollup's VM type:
 
-<Tabs>
-<Tab title="Move">
-```bash
+<CodeGroup>
+```bash Move
 git clone https://github.com/initia-labs/minimove.git
 cd minimove
 ```
-</Tab>
 
-<Tab title="Wasm">
-```bash
+```bash Wasm
 git clone https://github.com/initia-labs/miniwasm.git
 cd miniwasm
 ```
-</Tab>
 
-<Tab title="EVM">
-```bash
+```bash EVM
 git clone https://github.com/initia-labs/minievm.git
 cd minievm
 ```
-</Tab>
-</Tabs>
+</CodeGroup>
 
 <Note>
 Make sure to choose the correct repository that matches your target rollup chain's VM type.
@@ -97,9 +91,8 @@ Make sure to choose the correct repository that matches your target rollup chain
 <Step title="Get Version and Checkout">
 Fetch the current network version and checkout the corresponding tag. Set your rollup chain endpoints first:
 
-<Tabs>
-<Tab title="Using Chain Endpoints">
-```bash
+<CodeGroup>
+```bash Using Chain Endpoints
 # Set your rollup chain endpoints (replace with your specific chain)
 export CHAIN_REST_ENDPOINT="https://rest.your-rollup-chain.com"
 export CHAIN_RPC_ENDPOINT="https://rpc.your-rollup-chain.com"
@@ -110,17 +103,14 @@ export VERSION=$(curl -s $CHAIN_REST_ENDPOINT/cosmos/base/tendermint/v1beta1/nod
 echo "Checking out version: $VERSION"
 git checkout $VERSION
 ```
-</Tab>
 
-<Tab title="Manual Version">
-```bash
+```bash Manual Version
 # Manually set a specific version and checkout
 export VERSION=v0.5.7
 echo "Checking out version: $VERSION"
 git checkout $VERSION
 ```
-</Tab>
-</Tabs>
+</CodeGroup>
 
 <Warning>
   Always use a specific version tag rather than the main branch for production
