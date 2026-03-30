@@ -72,7 +72,7 @@ Here is where each of these fields comes from:
 
 ```go
 msg := MsgExecuteContract{
- // Sender is the that actor that signed the messages
+  // Sender is the actor that signed the messages
  Sender: "init1-hash-of-channel-and-sender",
  // Contract is the address of the smart contract
  Contract: packet.data.memo["wasm"]["contract"],
@@ -115,7 +115,7 @@ An ICS20 packet is formatted correctly for wasmhooks iff the following all hold:
 - [x] `memo` is valid JSON
 - [x] `memo` has at least one key, with value `"wasm"`
 - [x] `memo["wasm"]["message"]` has exactly three entries, `"contract"`, `"msg"`
-      and `"fund"`
+      and `"funds"`
 - [x] `memo["wasm"]["message"]["msg"]` is a valid JSON object
 - [x] `receiver` == "" || `receiver` == `memo["wasm"]["contract"]`
 
