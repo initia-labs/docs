@@ -106,10 +106,10 @@ _For more information on metadata, please refer to
 
 ### Provide Liquidity
 
-`provide_liquidity` enables the users to provide liquidity of both `coin_a` and
-`coin_b` in the specific pair. In order to maximize the LP tokens received and
-minimize slippage, the user should provide liquidity in proportion with the
-current ratio. The Move module interface is as follows:
+`provide_liquidity` enables you to provide liquidity of both `coin_a` and
+`coin_b` in the specific pair. To maximize the LP tokens received and minimize
+slippage, provide liquidity in proportion with the current ratio. The Move module
+interface is as follows:
 
 ```move
 public entry fun provide_liquidity_script(
@@ -193,10 +193,10 @@ public entry fun provide_liquidity_script(
 
 ### Single Asset Provide Liquidity
 
-Instead of providing both tokens in a pair, the user can provide liquidity using
-only one token. Internally, half of the token will be swapped to the other token
-in the pair to provide liquidity, which may result in fees and slippage. The
-Move function interface is as follows:
+Instead of providing both tokens in a pair, you can provide liquidity using only
+one token. Internally, half of the token is swapped to the other token in the
+pair to provide liquidity, which may result in fees and slippage. The Move
+function interface is as follows:
 
 ```move
 public entry fun single_asset_provide_liquidity_script(
@@ -282,8 +282,8 @@ public entry fun single_asset_provide_liquidity_script(
 
 ### Withdraw Liquidity
 
-`withdraw_liquidity` allows users to provide liquidity tokens and receive
-`coin_a` and `coin_b`. The Move module interface is as follows:
+`withdraw_liquidity` allows you to provide liquidity tokens and receive `coin_a`
+and `coin_b`. The Move module interface is as follows:
 
 ```move
 public entry fun withdraw_liquidity_script(
