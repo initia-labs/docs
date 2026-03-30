@@ -224,24 +224,16 @@ this can be used for phishing easily. So, you need to set the ACL for the
 contract to prevent unauthorized access. To update MiniEVM ACL, use
 `MsgExecuteMessages` in OPchild module.
 
-````typescript
+```typescript
 const config = {
   authority: 'init10d07y265gmmuvt4z0w9aw880jnsr700j55nka3',
-  contractAddress: 'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8'
+  contractAddress:
+    'init1436kxs0w2es6xlqpp9rd35e3d0cjnw4sv8j3a7483sgks29jqwgs9nxzw8',
 }
 
-const aclMsg = new MsgUpdateACL(
-  config.authority,
-  config.contractAddress,
-  true
-)
+const aclMsg = new MsgUpdateACL(config.authority, config.contractAddress, true)
 
-const msgs = [
-  new MsgExecuteMessages(
-    proposer.key.accAddress,
-    [aclMsg]
-  )
-]
+const msgs = [new MsgExecuteMessages(proposer.key.accAddress, [aclMsg])]
 const signedTx = await proposer.createAndSignTx({ msgs })
 try {
   const result = await proposer.rest.tx.broadcast(signedTx)
@@ -250,10 +242,11 @@ try {
   console.error('Transaction failed:', error)
   throw error
 }
+```
 
 ```bash
 curl -X GET "https://rest-evm-1.anvil.asia-southeast.initia.xyz/initia/ibchooks/v1/acls" -H "accept: application/json"
-````
+```
 
 Response:
 
