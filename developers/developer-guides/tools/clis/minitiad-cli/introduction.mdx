@@ -67,20 +67,20 @@ Before installing minitiad, ensure you have the following requirements:
 First, clone the appropriate repository based on your rollup's VM type:
 
 <CodeGroup>
-```bash Move
-git clone https://github.com/initia-labs/minimove.git
-cd minimove
-```
+  <CodeBlock filename="Move" language="bash">
+    git clone https://github.com/initia-labs/minimove.git
+    cd minimove
+  </CodeBlock>
 
-```bash Wasm
-git clone https://github.com/initia-labs/miniwasm.git
-cd miniwasm
-```
+  <CodeBlock filename="Wasm" language="bash">
+    git clone https://github.com/initia-labs/miniwasm.git
+    cd miniwasm
+  </CodeBlock>
 
-```bash EVM
-git clone https://github.com/initia-labs/minievm.git
-cd minievm
-```
+  <CodeBlock filename="EVM" language="bash">
+    git clone https://github.com/initia-labs/minievm.git
+    cd minievm
+  </CodeBlock>
 </CodeGroup>
 
 <Note>
@@ -92,24 +92,24 @@ Make sure to choose the correct repository that matches your target rollup chain
 Fetch the current network version and checkout the corresponding tag. Set your rollup chain endpoints first:
 
 <CodeGroup>
-```bash Using Chain Endpoints
-# Set your rollup chain endpoints (replace with your specific chain)
-export CHAIN_REST_ENDPOINT="https://rest.your-rollup-chain.com"
-export CHAIN_RPC_ENDPOINT="https://rpc.your-rollup-chain.com"
+  <CodeBlock filename="Using Chain Endpoints" language="bash">
+    # Set your rollup chain endpoints (replace with your specific chain)
+    export CHAIN_REST_ENDPOINT="https://rest.your-rollup-chain.com"
+    export CHAIN_RPC_ENDPOINT="https://rpc.your-rollup-chain.com"
+    
+    # Get the current rollup version and checkout
+    
+    export VERSION=$(curl -s $CHAIN_REST_ENDPOINT/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+    echo "Checking out version: $VERSION"
+    git checkout $VERSION
+  </CodeBlock>
 
-# Get the current rollup version and checkout
-
-export VERSION=$(curl -s $CHAIN_REST_ENDPOINT/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-
-```bash Manual Version
-# Manually set a specific version and checkout
-export VERSION=v0.5.7
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
+  <CodeBlock filename="Manual Version" language="bash">
+    # Manually set a specific version and checkout
+    export VERSION=v0.5.7
+    echo "Checking out version: $VERSION"
+    git checkout $VERSION
+  </CodeBlock>
 </CodeGroup>
 
 <Warning>

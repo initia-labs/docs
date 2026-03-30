@@ -41,32 +41,32 @@ This guide explains how a rollup can prepare for and integrate Initia's
     We then need to install the `minitiad` CLI that matches the rollup's version.
 
     <CodeGroup>
-    ```bash EVM
-    export MINIEVM_VERSION=1.1.7 # Replace with your rollup's version
+      <CodeBlock filename="EVM" language="bash">
+        export MINIEVM_VERSION=1.1.7 # Replace with your rollup's version
+        
+        git clone https://github.com/initia-labs/minievm.git
+        cd minievm
+        git checkout $MINIEVM_VERSION
+        make install
+      </CodeBlock>
 
-    git clone https://github.com/initia-labs/minievm.git
-    cd minievm
-    git checkout $MINIEVM_VERSION
-    make install
-    ```
+      <CodeBlock filename="MoveVM" language="bash">
+        export MINIMOVE_VERSION=1.0.6
+        
+        git clone https://github.com/initia-labs/minimove.git
+        cd minimove
+        git checkout $MINIMOVE_VERSION # Replace with your rollup's version
+        make install
+      </CodeBlock>
 
-    ```bash MoveVM
-    export MINIMOVE_VERSION=1.0.6
-
-    git clone https://github.com/initia-labs/minimove.git
-    cd minimove
-    git checkout $MINIMOVE_VERSION # Replace with your rollup's version
-    make install
-    ```
-
-    ```bash WasmVM
-    export MINIWASM_VERSION=1.0.6 # Replace with your rollup's version
-
-    git clone https://github.com/initia-labs/miniwasm.git
-    cd miniwasm
-    git checkout $MINIWASM_VERSION
-    make install
-    ```
+      <CodeBlock filename="WasmVM" language="bash">
+        export MINIWASM_VERSION=1.0.6 # Replace with your rollup's version
+        
+        git clone https://github.com/initia-labs/miniwasm.git
+        cd miniwasm
+        git checkout $MINIWASM_VERSION
+        make install
+      </CodeBlock>
     </CodeGroup>
 
   </Step>
