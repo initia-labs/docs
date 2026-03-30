@@ -27,10 +27,10 @@ Minitswap itself is designed as a virtual pool DEX between
 
 <Tooltip tip={INIT}>INIT</Tooltip> and the various
 <Tooltip tip={IbcOpINIT}>IbcOpINIT</Tooltip> tokens for each of the rollups. The
-exchange rates on each swap are determined by the
-[StableSwap](https://docs.curve.finance/stableswap-exchange/overview/) formula.
+[StableSwap](https://docs.curve.finance/stableswap-exchange/overview/) formula
+determines the exchange rates on each swap.
 
-To achieve the above goals, two main improvements are made to the base
+To achieve the above goals, Minitswap makes two main improvements to the base
 StableSwap pool design:
 
 - **Rate Limiting**: To protect against manipulation, the net amount of
@@ -137,9 +137,9 @@ alongside the [Internal Rebalancing](#internal-rebalancing).
 
 The Direct Swap allows any user to directly exchange their $INIT$ tokens for the
 Peg Keeper’s $IbcOpINIT$ tokens. This exchange occurs at the average price at
-which the Peg Keeper has purchased $INIT$ tokens, which could sometimes be lower
-than the price obtained through the traditional swap process. Initially, the
-Direct Swap might not seem attractive due to the Target Ratio being close to
+which the Peg Keeper purchased $INIT$ tokens. This price could sometimes be
+lower than what you would get through the traditional swap process. Initially,
+the Direct Swap might not seem attractive due to the Target Ratio being close to
 0.5. However, as the Peg Keeper’s balance of OP-bridged tokens increases, the
 Direct Swap option becomes more appealing to users.
 
