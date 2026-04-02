@@ -475,10 +475,6 @@ paths:
                     signer:
                       type: string
                       description: Signer address.
-                ignore_blacklist:
-                  type: boolean
-                  default: false
-                  description: Include blacklisted networks.
             example:
               amount_in: '1000000'
               amount_out: '999000'
@@ -528,6 +524,78 @@ paths:
                       chain_id: interwoven-1
                       msgs: []
                       signer_address: init1abc...
+  /op-hook:
+    post:
+      operationId: getOpHook
+      summary: Get OP hook
+      description: |-
+        Generates OP hook data required for certain cross-chain routes that involve Optimistic bridge withdrawals with ERC-20 token conversion. When the Compute Route response includes `required_op_hook: true`, you must call this endpoint to obtain the hook payload before generating transaction messages.
+
+        Pass the returned hook data to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) in the `signed_op_hook` field after signing it.
+      tags:
+        - Routing
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_address
+                - source_asset_chain_id
+                - source_asset_denom
+                - dest_address
+                - dest_asset_chain_id
+                - dest_asset_denom
+              properties:
+                source_address:
+                  type: string
+                  description: Sender address on the source chain.
+                source_asset_chain_id:
+                  type: string
+                  description: Source chain ID.
+                source_asset_denom:
+                  type: string
+                  description: Source asset denomination.
+                dest_address:
+                  type: string
+                  description: Recipient address on the destination chain.
+                dest_asset_chain_id:
+                  type: string
+                  description: Destination chain ID.
+                dest_asset_denom:
+                  type: string
+                  description: Destination asset denomination.
+            example:
+              source_address: init1abc...
+              source_asset_chain_id: echelon-1
+              source_asset_denom: uinit
+              dest_address: '0xdef...'
+              dest_asset_chain_id: '8453'
+              dest_asset_denom: '0x...'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chain_id:
+                    type: string
+                    description:
+                      Chain ID where the hook messages should be executed.
+                  hook:
+                    type: array
+                    description:
+                      Array of EVM messages that form the OP hook payload.
+                    items:
+                      type: object
+              example:
+                chain_id: '8453'
+                hook: []
+        '400':
+          description: Bad request — the route does not support OP withdraw.
   /v2/tx/track:
     post:
       operationId: trackTransaction
@@ -748,10 +816,6 @@ paths:
                   type: integer
                   default: 1800
                   description: IBC timeout in seconds.
-                ignore_blacklist:
-                  type: boolean
-                  default: false
-                  description: Include blacklisted networks.
             example:
               from_address: init1abc...
               from_chain_id: echelon-1
