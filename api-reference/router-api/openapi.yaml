@@ -583,10 +583,12 @@ paths:
                 properties:
                   chain_id:
                     type: string
-                    description: Chain ID where the hook messages should be executed.
+                    description:
+                      Chain ID where the hook messages should be executed.
                   hook:
                     type: array
-                    description: Array of EVM messages that form the OP hook payload.
+                    description:
+                      Array of EVM messages that form the OP hook payload.
                     items:
                       type: object
               example:
