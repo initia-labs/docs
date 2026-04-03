@@ -202,8 +202,6 @@ paths:
           application/json:
             schema:
               type: object
-              required:
-                - chains
               properties:
                 chains:
                   type: object
@@ -363,6 +361,53 @@ paths:
                       request.
                     items:
                       type: string
+                  chain_ids:
+                    type: array
+                    description: >-
+                      Ordered list of all chain IDs involved in the route.
+                    items:
+                      type: string
+                  does_swap:
+                    type: boolean
+                    description: Whether the route involves a token swap.
+                  estimated_amount_out:
+                    type: string
+                    description: Estimated output amount before fees.
+                  estimated_fees:
+                    type: array
+                    description: >-
+                      Estimated fees for the route. Each entry describes a fee
+                      with its amount, behavior, and the originating asset.
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: string
+                          description: Fee amount in the smallest denomination.
+                        fee_behavior:
+                          type: string
+                          description: >-
+                            How the fee is applied (e.g.
+                            FEE_BEHAVIOR_ADDITIONAL for fees charged on top of
+                            the transfer amount).
+                        origin_asset:
+                          type: object
+                          description: >-
+                            The asset in which the fee is denominated.
+                          properties:
+                            denom:
+                              type: string
+                            chain_id:
+                              type: string
+                        usd_amount:
+                          type: string
+                          nullable: true
+                          description: USD value of the fee, if available.
+                  estimated_route_duration_seconds:
+                    type: integer
+                    nullable: true
+                    description: >-
+                      Estimated time in seconds for the route to complete.
                   usd_amount_in:
                     type: string
                     description: USD value of the input amount.
@@ -381,6 +426,14 @@ paths:
                       message:
                         type: string
                         description: Human-readable warning message.
+                  extra_warnings:
+                    type: array
+                    nullable: true
+                    description: >-
+                      Additional warning messages for the route, such as
+                      withdrawal duration notices.
+                    items:
+                      type: string
                   required_op_hook:
                     type: boolean
                     description: Whether an OP hook is required for this route.
@@ -395,9 +448,17 @@ paths:
                 required_chain_addresses:
                   - interwoven-1
                   - '8453'
+                chain_ids:
+                  - interwoven-1
+                  - '8453'
+                does_swap: false
+                estimated_amount_out: '999000'
+                estimated_fees: []
+                estimated_route_duration_seconds: 60
                 usd_amount_in: '1.50'
                 usd_amount_out: '1.49'
                 warning: null
+                extra_warnings: null
                 required_op_hook: false
   /v2/fungible/msgs:
     post:
