@@ -363,6 +363,69 @@ paths:
                       request.
                     items:
                       type: string
+                  chain_ids:
+                    type: array
+                    description: >-
+                      All chain IDs involved in the route, in order of the
+                      transfer path.
+                    items:
+                      type: string
+                  does_swap:
+                    type: boolean
+                    description: Whether the route involves a token swap.
+                  estimated_amount_out:
+                    type: string
+                    description: >-
+                      Estimated output amount before fees and slippage
+                      adjustments.
+                  estimated_fees:
+                    type: array
+                    description: Breakdown of estimated fees for the route.
+                    items:
+                      type: object
+                      properties:
+                        amount:
+                          type: string
+                          description: Fee amount in the fee asset denomination.
+                        usd_amount:
+                          type: string
+                          description: Fee amount in USD.
+                        origin_asset:
+                          type: object
+                          description: Asset used to pay the fee.
+                          properties:
+                            denom:
+                              type: string
+                            chain_id:
+                              type: string
+                        fee_behavior:
+                          type: string
+                          description: >-
+                            How the fee is applied (e.g.
+                            FEE_BEHAVIOR_ADDITIONAL,
+                            FEE_BEHAVIOR_DEDUCTED).
+                  estimated_route_duration_seconds:
+                    type: number
+                    description: >-
+                      Estimated time in seconds for the full route to complete.
+                  txs_required:
+                    type: integer
+                    description: Number of transactions required to execute the route.
+                  swap_venues:
+                    type: array
+                    description: DEX venues used for swaps in the route, if any.
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Swap venue name.
+                        chain_id:
+                          type: string
+                          description: Chain ID where the swap occurs.
+                        logo_uri:
+                          type: string
+                          description: URL to the swap venue logo.
                   usd_amount_in:
                     type: string
                     description: USD value of the input amount.
@@ -381,6 +444,21 @@ paths:
                       message:
                         type: string
                         description: Human-readable warning message.
+                  extra_warnings:
+                    type: array
+                    nullable: true
+                    description: >-
+                      Additional warning messages about the route, such as
+                      withdrawal duration notices.
+                    items:
+                      type: string
+                  extra_infos:
+                    type: array
+                    nullable: true
+                    description: >-
+                      Additional informational messages about the route.
+                    items:
+                      type: string
                   required_op_hook:
                     type: boolean
                     description: Whether an OP hook is required for this route.
@@ -395,9 +473,20 @@ paths:
                 required_chain_addresses:
                   - interwoven-1
                   - '8453'
+                chain_ids:
+                  - interwoven-1
+                  - '8453'
+                does_swap: false
+                estimated_amount_out: '999000'
+                estimated_fees: []
+                estimated_route_duration_seconds: 120
+                txs_required: 1
+                swap_venues: []
                 usd_amount_in: '1.50'
                 usd_amount_out: '1.49'
                 warning: null
+                extra_warnings: null
+                extra_infos: null
                 required_op_hook: false
   /v2/fungible/msgs:
     post:
