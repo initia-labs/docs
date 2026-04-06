@@ -13,9 +13,9 @@ title: Using Connect Oracle
 
 ### Foundry
 
-For this tutorial, we will be using
+For this tutorial, you will be using the
 [Foundry](https://github.com/foundry-rs/foundry) toolkit to develop, compile,
-and deploy our contracts. If you do not have Foundry installed, follow the
+and deploy your contracts. If you do not have Foundry installed, follow the
 [Foundry installation instructions](https://getfoundry.sh/).
 
 ## Setup
@@ -30,15 +30,15 @@ forge init
 
 ## Implementing the Contract
 
-Before writing our contract, we first need to rename the template contract to
+Before writing the contract, first rename the template contract to
 `Oracle.sol`.
 
 ```sh
 mv src/Counter.sol src/Oracle.sol
 ```
 
-We then update the contract from the template to be our oracle contract. We
-declare the `IConnectOracle` interface, which will be used to interact with the
+Then update the contract from the template to be your oracle contract. Declare
+the `IConnectOracle` interface, which will be used to interact with the
 ConnectOracle contract.
 
 ```solidity src/Oracle.sol
@@ -63,7 +63,7 @@ contract Oracle {
     IConnectOracle public connect;
 ```
 
-We then need to define the constructor for our contract. This will be used to
+Next, define the constructor for the contract. This will be used to
 initialize the contract with the ConnectOracle contract address.
 
 <Note>
@@ -85,8 +85,8 @@ The output will look like this:
     }
 ```
 
-Once the constructor is implemented, we move on to defining the different
-functions that our contract will have.
+Once the constructor is implemented, move on to defining the different
+functions that the contract will have.
 
 - `oracle_get_price`: This function will return the price of a single asset pair
 - `oracle_get_prices`: This function will return the price of multiple asset
@@ -112,7 +112,7 @@ functions that our contract will have.
     }
 ```
 
-Our complete contract will then look like this:
+The complete contract will then look like this:
 
 ```solidity src/Oracle.sol
 // SPDX-License-Identifier: MIT
@@ -161,16 +161,16 @@ contract Oracle {
 }
 ```
 
-Running `forge compile` will fail unless we provide a test file that matches the
+Running `forge compile` will fail unless you provide a test file that matches the
 `Oracle.sol` contract. Foundry expects a test file like `Oracle.t.sol` to exist
-and import the contract under test. To resolve this, we will rename the existing
+and import the contract under test. To resolve this, rename the existing
 test file `Counter.t.sol` to `Oracle.t.sol`.
 
 ```sh
 mv test/Counter.t.sol test/Oracle.t.sol
 ```
 
-We will also replace the file contents with placeholder content.
+Also replace the file contents with placeholder content.
 
 ```solidity test/Oracle.t.sol
 // SPDX-License-Identifier: UNLICENSED
@@ -197,10 +197,10 @@ forge compile
 
 ## Deploying the Contract
 
-Now that our contract is compiled and ready, we can deploy it to the MiniEVM. To
-accomplish this, we will use Foundry's `forge script` command. First, we need to
-create a script file to handle the deployment. Create a new file named
-`Oracle.s.sol` in the `script` directory.
+Now that the contract is compiled and ready, you can deploy it to the MiniEVM. To
+accomplish this, use Foundry's `forge script` command. First, create a script
+file to handle the deployment. Create a new file named `Oracle.s.sol` in the
+`script` directory.
 
 ```solidity script/Oracle.s.sol
     // SPDX-License-Identifier: UNLICENSED

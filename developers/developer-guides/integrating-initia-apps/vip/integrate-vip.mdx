@@ -14,7 +14,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
   <Step title="Deploy Your Rollup and Install Minitiad CLI">
     First, launch your rollup. For local deployments, you can use the [Weave CLI](/developers/developer-guides/tools/clis/weave-cli/rollup/introduction) to launch a rollup.
 
-    Once your rollup is running, we need to fetch the rollup's version. To do so, run the following command:
+    Once your rollup is running, fetch the rollup's version by running the following command:
 
     ```bash
     export RPC_URL={YOUR_ROLLUP_RPC_URL}
@@ -38,7 +38,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
     }
     ```
 
-    We then need to install the `minitiad` CLI that matches the rollup's version.
+    Next, install the `minitiad` CLI that matches the rollup's version.
 
     <Tabs>
       <Tab title="EVM">
@@ -75,7 +75,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
 
   </Step>
   <Step title="Create an operator and VIP contract deployer account">
-    Next, we will create a VIP operator account and a VIP contract deployer account to deploy the VIP scoring contract.
+    Next, create a VIP operator account and a VIP contract deployer account to deploy the VIP scoring contract.
     - The VIP operator account will receive the VIP operator rewards
     - The VIP contract deployer account will handle the deployment of the VIP scoring contract.
     
