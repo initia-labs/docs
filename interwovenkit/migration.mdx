@@ -270,7 +270,7 @@ return ( <div> <button onClick={bridge}>Open Bridge</button>
 
 <button onClick={view}>{truncate(address)}</button> </div> ) }
 
-```
+````
 
 ```tsx New (v2)
 import { truncate } from "@initia/utils"
@@ -290,7 +290,7 @@ export default function WalletButton() {
     </div>
   )
 }
-```
+````
 
 </CodeGroup>
 
@@ -314,7 +314,7 @@ console.error("Transaction failed:", error) } }
 
 return <button onClick={handleSubmit}>Submit Transaction</button> }
 
-```
+````
 
 ```tsx New (v2)
 import { useInterwovenKit } from "@initia/interwovenkit-react"
@@ -336,7 +336,7 @@ export default function TransactionComponent() {
 
   return <button onClick={handleSubmit}>Submit Transaction</button>
 }
-```
+````
 
 </CodeGroup>
 
