@@ -4,7 +4,7 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
-<Update label="April 3, 2026" description="v2.6.0" tags={["Feature", "Improvement", "Bug Fix"]}>
+<Update label="April 7, 2026" description="v2.6.0" tags={["Feature", "Improvement", "Bug Fix"]}>
 
 ## Smarter wallet ordering on sign-in
 
@@ -24,10 +24,18 @@ when a new quote arrives.
 
 - Bridge fee warnings now correctly account for the gas token balance remaining
   after the swap, preventing false warnings on large non-max inputs.
+- The bridge now warns when the source gas token balance would be insufficient to
+  cover fees after executing a transfer.
+- Preview fee checks in the bridge are now guarded for external chains,
+  preventing incorrect fee validation on non-Initia sources.
 - Tokens with no available price data now display `$-` instead of `$0` in the
   bridge.
 - The bridge now shows an insufficient-balance error for tokens with a zero
   balance instead of allowing submission.
+- The withdraw button in the deposit flow is now disabled when the balance is
+  zero.
+- The deposit flow now warns when sending the max amount of a gas token would
+  leave no balance to cover the transaction fee.
 - Hex addresses are now accepted as bridge recipients on Initia EVM chains.
 - Fixed a browser compatibility issue where `.toSorted()` was not available in
   some environments.
