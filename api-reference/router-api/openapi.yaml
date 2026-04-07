@@ -426,6 +426,22 @@ paths:
                         logo_uri:
                           type: string
                           description: URL to the swap venue logo.
+                  swap_venue:
+                    type: object
+                    description: Primary DEX venue used for the route's swap.
+                    properties:
+                      name:
+                        type: string
+                        description: Swap venue name.
+                      chain_id:
+                        type: string
+                        description: Chain ID where the swap occurs.
+                      logo_uri:
+                        type: string
+                        description: URL to the swap venue logo.
+                  swap_price_impact_percent:
+                    type: string
+                    description: Estimated price impact percentage for the swap.
                   usd_amount_in:
                     type: string
                     description: USD value of the input amount.
