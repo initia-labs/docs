@@ -58,6 +58,8 @@ endpoints.
   <Step title="Generate transaction messages">
     Pass the route details to **Generate Transaction** (`POST /v2/fungible/msgs`) along with the relevant addresses and slippage tolerance. The API returns signable transaction messages for the source chain.
 
+    If the route response included `required_op_hook: true`, you must first call **Get OP Hook** (`POST /op-hook`) with the source and destination addresses and assets to obtain the hook payload. Sign the hook and include it in the `signed_op_hook` field of the Generate Transaction request.
+
     ```bash
     curl -X POST https://router-api.initia.xyz/v2/fungible/msgs \
       -H "Content-Type: application/json" \
@@ -115,10 +117,11 @@ cross-chain progress can be monitored.
 
 ## Endpoint Reference
 
-| Step | Endpoint                  | Purpose                           |
-| ---- | ------------------------- | --------------------------------- |
-| 1    | `POST /v2/fungible/route` | Find the optimal route            |
-| 2    | `POST /v2/fungible/msgs`  | Get signable transaction messages |
-| 3    | _(wallet/SDK)_            | Sign and broadcast to the chain   |
-| 4    | `POST /v2/tx/track`       | Register the tx hash for tracking |
-| 5    | `GET /v2/tx/status`       | Poll until transfer completes     |
+| Step | Endpoint                  | Purpose                                    |
+| ---- | ------------------------- | ------------------------------------------ |
+| 1    | `POST /v2/fungible/route` | Find the optimal route                     |
+| 1b   | `POST /op-hook`           | Get OP hook data (when `required_op_hook`) |
+| 2    | `POST /v2/fungible/msgs`  | Get signable transaction messages          |
+| 3    | _(wallet/SDK)_            | Sign and broadcast to the chain            |
+| 4    | `POST /v2/tx/track`       | Register the tx hash for tracking          |
+| 5    | `GET /v2/tx/status`       | Poll until transfer completes              |

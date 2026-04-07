@@ -511,7 +511,11 @@
               {
                 "group": "Routing",
                 "openapi": "api-reference/router-api/openapi.yaml",
-                "pages": ["POST /v2/fungible/route", "POST /v2/fungible/msgs"]
+                "pages": [
+                  "POST /v2/fungible/route",
+                  "POST /v2/fungible/msgs",
+                  "POST /op-hook"
+                ]
               },
               {
                 "group": "Tracking Transactions",

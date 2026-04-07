@@ -90,10 +90,10 @@ public entry fun initialize(
 
 # Step 2: Mint Coin
 
-To mint coins, you will use the `0x1::managed_coin::mint` function.
+To mint coins, you will use the `0x1::managed_coin::mint_to` function.
 
 ```move
-public entry fun mint(
+public entry fun mint_to(
     account: &signer,
     dst_addr: address,
     metadata: Object<Metadata>,
@@ -169,7 +169,7 @@ through the `0x1::coin::metadata` view function or by using
 
 <CodeGroup>
   <CodeBlock filename="CLI" language="bash">
-    initiad tx move execute 0x1 managed_coin mint \
+    initiad tx move execute 0x1 managed_coin mint_to \
         --args '["address:0x...", "object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb", "u64:100000000"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
@@ -202,7 +202,7 @@ through the `0x1::coin::metadata` view function or by using
           key.accAddress,
           '0x1',
           'managed_coin',
-          'mint',
+          'mint_to',
           [],
           [
             bcs.address().serialize(key.accAddress).toBase64(),
