@@ -202,6 +202,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - chains
               properties:
                 chains:
                   type: object
@@ -372,7 +374,9 @@ paths:
                     description: Whether the route involves a token swap.
                   estimated_amount_out:
                     type: string
-                    description: Estimated output amount before fees.
+                    description: >-
+                      Estimated output amount before fees and slippage
+                      adjustments.
                   estimated_fees:
                     type: array
                     description: >-
@@ -387,8 +391,8 @@ paths:
                         fee_behavior:
                           type: string
                           description: >-
-                            How the fee is applied (e.g. FEE_BEHAVIOR_ADDITIONAL
-                            for fees charged on top of the transfer amount).
+                            How the fee is applied (e.g.
+                            FEE_BEHAVIOR_ADDITIONAL, FEE_BEHAVIOR_DEDUCTED).
                         origin_asset:
                           type: object
                           description: >-
