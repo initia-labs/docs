@@ -4,6 +4,44 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="April 7, 2026" description="v2.6.0" tags={["Feature", "Improvement", "Bug Fix"]}>
+
+## Smarter wallet ordering on sign-in
+
+The wallet connection screen now sorts sign-in wallets by popularity and
+recency. Your most recently used wallet appears first, followed by widely used
+wallets, so connecting is faster on repeat visits.
+
+## Improved bridge route refresh experience
+
+Bridge and [deposit](/interwovenkit/features/transfers/deposit-withdraw) flows
+now show inline status messages (such as "Refreshing route..." and "Estimating
+gas...") while routes are being updated in the background. The confirm button is
+disabled until fresh data is ready, and stale route errors automatically retry
+when a new quote arrives.
+
+## Bug fixes
+
+- Bridge fee warnings now correctly account for the gas token balance remaining
+  after the swap, preventing false warnings on large non-max inputs.
+- The bridge now warns when the source gas token balance would be insufficient
+  to cover fees after executing a transfer.
+- Preview fee checks in the bridge are now guarded for external chains,
+  preventing incorrect fee validation on non-Initia sources.
+- Tokens with no available price data now display `$-` instead of `$0` in the
+  bridge.
+- The bridge now shows an insufficient-balance error for tokens with a zero
+  balance instead of allowing submission.
+- The withdraw button in the deposit flow is now disabled when the balance is
+  zero.
+- The deposit flow now warns when sending the max amount of a gas token would
+  leave no balance to cover the transaction fee.
+- Hex addresses are now accepted as bridge recipients on Initia EVM chains.
+- Fixed a browser compatibility issue where `.toSorted()` was not available in
+  some environments.
+
+</Update>
+
 <Update label="March 26, 2026" description="v2.5.1" tags={["Bug Fix"]}>
 
 ## Bug fixes
