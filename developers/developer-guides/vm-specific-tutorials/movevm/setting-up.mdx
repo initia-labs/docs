@@ -202,18 +202,15 @@ For testnet development, use the official Initia faucet to get free tokens:
 
 After funding, verify your account has received tokens:
 
-<Tabs>
-<Tab title="Initia L1">
-```bash
-initiad query bank balances [your-address]
-```
-</Tab>
-<Tab title="Move Rollups">
-```bash
-minitiad query bank balances [your-address]
-```
-</Tab>
-</Tabs>
+<CodeGroup>
+  <CodeBlock filename="Initia L1" language="bash">
+    initiad query bank balances [your-address]
+  </CodeBlock>
+
+  <CodeBlock filename="Move Rollups" language="bash">
+    minitiad query bank balances [your-address]
+  </CodeBlock>
+</CodeGroup>
 </Step>
 </Steps>
 

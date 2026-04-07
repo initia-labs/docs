@@ -57,34 +57,28 @@ cd initia
 <Step title="Get Version and Checkout">
 Fetch the current network version and checkout the corresponding tag. Choose the network that matches your intended use case:
 
-<Tabs>
-<Tab title="Mainnet">
-```bash
-# Get the current mainnet version and checkout
-export VERSION=$(curl -s https://rest.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-</Tab>
+<CodeGroup>
+  <CodeBlock filename="Mainnet" language="bash">
+    # Get the current mainnet version and checkout
+    export VERSION=$(curl -s https://rest.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+    echo "Checking out version: $VERSION"
+    git checkout $VERSION
+  </CodeBlock>
 
-<Tab title="Testnet">
-```bash
-# Get the current testnet version and checkout
-export VERSION=$(curl -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-</Tab>
+  <CodeBlock filename="Testnet" language="bash">
+    # Get the current testnet version and checkout
+    export VERSION=$(curl -s https://rest.testnet.initia.xyz/cosmos/base/tendermint/v1beta1/node_info | jq -r '.application_version.version' | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+    echo "Checking out version: $VERSION"
+    git checkout $VERSION
+  </CodeBlock>
 
-<Tab title="Manual">
-```bash
-# Manually set a specific version and checkout
-export VERSION=v0.5.7
-echo "Checking out version: $VERSION"
-git checkout $VERSION
-```
-</Tab>
-</Tabs>
+  <CodeBlock filename="Manual" language="bash">
+    # Manually set a specific version and checkout
+    export VERSION=v0.5.7
+    echo "Checking out version: $VERSION"
+    git checkout $VERSION
+  </CodeBlock>
+</CodeGroup>
 
 <Warning>
   Always use a specific version tag rather than the main branch for production
@@ -137,28 +131,22 @@ initiad --help
 By default, initiad connects to the Initia mainnet. You can configure it to
 connect to different networks:
 
-<Tabs>
-<Tab title="Mainnet">
-```bash
-initiad config chain-id initia-1
-initiad config node https://rpc.initia.xyz:443
-```
-</Tab>
+<CodeGroup>
+  <CodeBlock filename="Mainnet" language="bash">
+    initiad config chain-id initia-1
+    initiad config node https://rpc.initia.xyz:443
+  </CodeBlock>
 
-<Tab title="Testnet">
-```bash
-initiad config chain-id initiation-1
-initiad config node https://rpc.testnet.initia.xyz:443
-```
-</Tab>
+  <CodeBlock filename="Testnet" language="bash">
+    initiad config chain-id initiation-1
+    initiad config node https://rpc.testnet.initia.xyz:443
+  </CodeBlock>
 
-<Tab title="Local Node">
-```bash
-initiad config chain-id local-initia
-initiad config node tcp://localhost:26657
-```
-</Tab>
-</Tabs>
+  <CodeBlock filename="Local Node" language="bash">
+    initiad config chain-id local-initia
+    initiad config node tcp://localhost:26657
+  </CodeBlock>
+</CodeGroup>
 
 ## Next Steps
 

@@ -24,45 +24,43 @@ public entry fun initialize(
 )
 ```
 
-<Tabs>
-    <Tab title="CLI">
-    ```bash
+<CodeGroup>
+  <CodeBlock filename="CLI" language="bash">
     initiad tx move execute 0x1 managed_coin initialize \
         --args '["option<u128>:null", "string:my_coin", "string:MYCOIN", "u8:6", "string:ICON_URI", "string:PROJECT_URI"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
-    ```
-    </Tab>
-    <Tab title="InitiaJS">
-    ```ts
-    import {
-        bcs,
-        RESTClient,
-        MnemonicKey,
-        MsgExecute,
-        Wallet,
-    } from '@initia/initia.js';
+  </CodeBlock>
 
+  <CodeBlock filename="InitiaJS" language="ts">
+    import {
+      bcs,
+      RESTClient,
+      MnemonicKey,
+      MsgExecute,
+      Wallet,
+    } from '@initia/initia.js'
+    
     async function createCoin() {
-    const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+      const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
-    });
-
-    const key = new MnemonicKey({
+      })
+    
+      const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
-    });
-    const wallet = new Wallet(restClient, key);
-
-    const msgs = [
+      })
+      const wallet = new Wallet(restClient, key)
+    
+      const msgs = [
         new MsgExecute(
-        key.accAddress,
-        '0x1',
-        'managed_coin',
-        'initialize',
-        [],
-        [
+          key.accAddress,
+          '0x1',
+          'managed_coin',
+          'initialize',
+          [],
+          [
             // max supply, if you want to set max supply, insert number instead of null
             bcs.option(bcs.u128()).serialize(null).toBase64(),
             bcs.string().serialize('my_coin').toBase64(), // name
@@ -71,26 +69,24 @@ public entry fun initialize(
             bcs.u8().serialize(6).toBase64(),
             bcs.string().serialize('').toBase64(), // icon uri
             bcs.string().serialize('').toBase64(), // project uri
-        ]
+          ],
         ),
-    ];
-
-    // sign tx
-    const signedTx = await wallet.createAndSignTx({ msgs });
-    // send(broadcast) tx
-    restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
-    // {
-    //   height: 0,
-    //   txhash: '40E0D5633D37E207B2463D275F5B479FC67D545B666C37DC7B121ED551FA18FC',
-    //   raw_log: '[]'
-    // }
+      ]
+    
+      // sign tx
+      const signedTx = await wallet.createAndSignTx({ msgs })
+      // send(broadcast) tx
+      restClient.tx.broadcastSync(signedTx).then((res) => console.log(res))
+      // {
+      //   height: 0,
+      //   txhash: '40E0D5633D37E207B2463D275F5B479FC67D545B666C37DC7B121ED551FA18FC',
+      //   raw_log: '[]'
+      // }
     }
-
-    createCoin();
-    ```
-    </Tab>
-
-</Tabs>
+    
+    createCoin()
+  </CodeBlock>
+</CodeGroup>
 
 # Step 2: Mint Coin
 
@@ -111,31 +107,30 @@ through the `0x1::coin::metadata` view function or by using
 
 ## Obtaining Metadata
 
-<Tabs>
-    <Tab title="CLI">
-    ```bash
+<CodeGroup>
+  <CodeBlock filename="CLI" language="bash">
     initiad query move view 0x1 coin metadata \
         --args '["address:0x...", "string:MYCOIN"]' \
         --node [rpc-url]:[rpc-port]
-
+    
     # data: '"0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb"'
-    ```
-    </Tab>
-    <Tab title="InitiaJS">
-    ```ts
+    
+  </CodeBlock>
+
+  <CodeBlock filename="InitiaJS" language="ts">
     import { bcs, RESTClient, MnemonicKey } from '@initia/initia.js';
     import * as crypto from 'crypto';
-
+    
     async function getCoinMetadata() {
         const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
-
+    
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-
+    
         // Method 1: use view function
         restClient.move
             .viewFunction(
@@ -150,14 +145,14 @@ through the `0x1::coin::metadata` view function or by using
             )
             .then(console.log);
         // 0xcf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
-
+    
         // Method 2: use sha3-256
         console.log(coinMetadata(key.accAddress, 'MYCOIN'));
         // cf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
     }
-
+    
     getCoinMetadata();
-
+    
     function coinMetadata(creator: string, symbol: string): string {
         const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe;
         const addrBytes = bcs.address().serialize(creator).toBytes();
@@ -167,88 +162,82 @@ through the `0x1::coin::metadata` view function or by using
         const digest = hash.update(Buffer.from(bytes)).digest();
         return digest.toString('hex');
     }
-    ```
-    </Tab>
-
-</Tabs>
+  </CodeBlock>
+</CodeGroup>
 
 ## Minting Coins
 
-<Tabs>
-    <Tab title="CLI">
-    ```bash
+<CodeGroup>
+  <CodeBlock filename="CLI" language="bash">
     initiad tx move execute 0x1 managed_coin mint_to \
         --args '["address:0x...", "object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb", "u64:100000000"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
-    ```
-    </Tab>
-    <Tab title="InitiaJS">
-    ```ts
+  </CodeBlock>
+
+  <CodeBlock filename="InitiaJS" language="ts">
     import {
-        bcs,
-        RESTClient,
-        MnemonicKey,
-        MsgExecute,
-        Wallet,
-    } from '@initia/initia.js';
-    import * as crypto from 'crypto';
-
+      bcs,
+      RESTClient,
+      MnemonicKey,
+      MsgExecute,
+      Wallet,
+    } from '@initia/initia.js'
+    import * as crypto from 'crypto'
+    
     async function mintCoin() {
-        const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
-            gasPrices: '0.015uinit',
-            gasAdjustment: '1.5',
-        });
-
-        const key = new MnemonicKey({
-            mnemonic: 'beauty sniff protect ...',
-        });
-        const wallet = new Wallet(restClient, key);
-
-        const msgs = [
-            new MsgExecute(
-            key.accAddress,
-            '0x1',
-            'managed_coin',
-            'mint_to',
-            [],
-            [
-                bcs.address().serialize(key.accAddress).toBase64(),
-                bcs
-                .object()
-                .serialize(coinMetadata(key.accAddress, 'MYCOIN'))
-                .toBase64(),
-                bcs.u64().serialize(100000000).toBase64(),
-            ]
-            ),
-        ];
-
-        // sign tx
-        const signedTx = await wallet.createAndSignTx({ msgs });
-        // send(broadcast) tx
-        restClient.tx.broadcastSync(signedTx).then(res => console.log(res));
-        // {
-        //   height: 0,
-        //   txhash: '593827F58F3E811686EC6FFDAD2E27E91DA707965F0FF33093DC071D47A46786',
-        //   raw_log: '[]'
-        // }
+      const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
+        gasPrices: '0.015uinit',
+        gasAdjustment: '1.5',
+      })
+    
+      const key = new MnemonicKey({
+        mnemonic: 'beauty sniff protect ...',
+      })
+      const wallet = new Wallet(restClient, key)
+    
+      const msgs = [
+        new MsgExecute(
+          key.accAddress,
+          '0x1',
+          'managed_coin',
+          'mint_to',
+          [],
+          [
+            bcs.address().serialize(key.accAddress).toBase64(),
+            bcs
+              .object()
+              .serialize(coinMetadata(key.accAddress, 'MYCOIN'))
+              .toBase64(),
+            bcs.u64().serialize(100000000).toBase64(),
+          ],
+        ),
+      ]
+    
+      // sign tx
+      const signedTx = await wallet.createAndSignTx({ msgs })
+      // send(broadcast) tx
+      restClient.tx.broadcastSync(signedTx).then((res) => console.log(res))
+      // {
+      //   height: 0,
+      //   txhash: '593827F58F3E811686EC6FFDAD2E27E91DA707965F0FF33093DC071D47A46786',
+      //   raw_log: '[]'
+      // }
     }
-
-    mintCoin();
-
+    
+    mintCoin()
+    
     function coinMetadata(creator: string, symbol: string): string {
-        const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe;
-        const addrBytes = bcs.address().serialize(creator).toBytes();
-        const seed = Buffer.from(symbol, 'ascii');
-        const bytes = [...addrBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME];
-        const hash = crypto.createHash('SHA3-256');
-        const digest = hash.update(Buffer.from(bytes)).digest();
-        return digest.toString('hex');
+      const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
+      const addrBytes = bcs.address().serialize(creator).toBytes()
+      const seed = Buffer.from(symbol, 'ascii')
+      const bytes = [...addrBytes, ...seed, OBJECT_FROM_SEED_ADDRESS_SCHEME]
+      const hash = crypto.createHash('SHA3-256')
+      const digest = hash.update(Buffer.from(bytes)).digest()
+      return digest.toString('hex')
     }
-    ```
-    </Tab>
-
-</Tabs>
+  </CodeBlock>
+</CodeGroup>
 
 After minting, you can check the balances to verify the minting process.
