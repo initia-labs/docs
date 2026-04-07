@@ -13,23 +13,22 @@ Cosmos bech32 address.
 
 ## Project Setup
 
-First, we need to create a new directory for our project.
+First, create a new directory for your project.
 
 ```sh
 mkdir address-conversion
 cd address-conversion
 ```
 
-Next, we will initialize the project and install the `bech32-converting`
-package.
+Next, initialize the project and install the `bech32-converting` package.
 
 ```sh
 npm init
 npm install bech32-converting
 ```
 
-We then create a new file called `index.js` in the `src` directory where we will
-write our code.
+Then create a new file called `index.js` in the `src` directory where you will
+write your code.
 
 <Note>
   You can use any package that allows you to encode and decode bech32-prefixed
@@ -38,11 +37,11 @@ write our code.
 
 ## Development
 
-For this tutorial, we will assume that we have an EVM address
-`0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636` that we want to convert to a Cosmos
-address, and then convert it back to an EVM address.
+For this tutorial, assume that you have an EVM address
+`0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636` that you want to convert to a
+Cosmos address, and then convert it back to an EVM address.
 
-First, we import the `bech32-converting` package and initialize the variable for
+First, import the `bech32-converting` package and initialize the variable for
 the chain's Bech32 prefix.
 
 ```js src/index.js
@@ -52,8 +51,8 @@ let bech32Address = 'init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr'
 
 ### EVM Address to Cosmos Address
 
-To convert an EVM address to a Cosmos address, we will be using the
-`bech32-converting` package's `toHex` function.
+To convert an EVM address to a Cosmos address, use the `bech32-converting`
+package's `toHex` function.
 
 ```js src/index.js
 const hexAddress = converter('init').toHex(bech32Address)
@@ -62,8 +61,8 @@ console.log(hexAddress) // 0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636
 
 ### Cosmos Address to EVM Address
 
-To convert a Cosmos address to an EVM address, we will be using the
-`bech32-converting` package's `fromHex` function.
+To convert a Cosmos address to an EVM address, use the `bech32-converting`
+package's `fromHex` function.
 
 ```js src/index.js
 bech32Address = converter('init').toBech32(hexAddress)
@@ -84,7 +83,7 @@ bech32Address = converter('init').toBech32(hexAddress)
 console.log(bech32Address) // init1pyq6amga29zfsldw8k26kgvl7a0fhf3kftflmr
 ```
 
-If we run this script, we should see the following output:
+If you run this script, you should see the following output:
 
 ```sh
 0x0901aeeD1d5144987DaE3D95AB219ff75e9bA636

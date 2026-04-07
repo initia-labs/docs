@@ -4,8 +4,8 @@ title: Creating Standard ERC20s via ERC20Factory
 
 [Tutorial GitHub Repository](https://github.com/initia-labs/examples/tree/main/evm/erc20-factory)
 
-For developers looking to create standard ERC20 tokens on EVM rollups, we
-recommend using the
+For developers looking to create standard ERC20 tokens on EVM rollups, the
+recommended approach is to use the
 [ERC20Factory](/resources/developer/contract-references/evm/erc20-factory)
 contract.
 
@@ -28,8 +28,8 @@ npm install dotenv
 
 Create two directories:
 
-- `src`: For our script files.
-- `abis`: For our contract
+- `src`: For your script files.
+- `abis`: For your contract
   [ABIs](https://www.alchemy.com/docs/smart-contract-abi).
 
 ```sh
@@ -104,7 +104,7 @@ ERC20_FACTORY_ADDRESS={{FACTORY_CONTRACT_ADDRESS}}
 
 ### Creating the Chain Configuration File
 
-To interact with the MiniEVM using Viem, we need a chain configuration file.
+To interact with the MiniEVM using Viem, you need a chain configuration file.
 This file contains essential details about the chain, including the chain ID,
 name, native currency, and RPC URLs.
 

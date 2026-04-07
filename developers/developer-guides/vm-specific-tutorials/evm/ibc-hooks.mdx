@@ -56,7 +56,7 @@ Here is where each of these fields comes from:
 
 - `Sender`: The sender of an IBC packet cannot be trusted, as the counter-party
   chain has full ability to lie about it. This sender must not be confused for a
-  particular user or module address on Initia. So we replace the sender with an
+  particular user or module address on Initia. So the sender is replaced with an
   account to represent the sender prefixed by the channel and an evm module
   prefix. This is done by setting the sender to
   `Bech32(Hash(Hash("ibc-evm-hook-intermediary") + channelID/sender))`, where
@@ -180,8 +180,8 @@ callback data through memo field.
 # Tutorials
 
 This tutorial will guide you through the process of deploying an EVM contract
-and calling it from another chain using IBC hooks. We will use IBC hook from
-Initia chain to call an EVM contract on MiniEVM chain in this example.
+and calling it from another chain using IBC hooks. This example uses an IBC hook
+from Initia chain to call an EVM contract on MiniEVM chain.
 
 ## Step 1. Deploy a contract on MiniEVM chain
 
@@ -267,7 +267,7 @@ Response:
 
 ## Step 3. Execute IBC Hooks Message
 
-After the contract is deployed and the ACL is set, we can execute the IBC hooks
+After the contract is deployed and the ACL is set, you can execute the IBC hooks
 message to call the contract.
 
 ```typescript
