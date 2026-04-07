@@ -387,9 +387,8 @@ paths:
                         fee_behavior:
                           type: string
                           description: >-
-                            How the fee is applied (e.g.
-                            FEE_BEHAVIOR_ADDITIONAL for fees charged on top of
-                            the transfer amount).
+                            How the fee is applied (e.g. FEE_BEHAVIOR_ADDITIONAL
+                            for fees charged on top of the transfer amount).
                         origin_asset:
                           type: object
                           description: >-
@@ -408,6 +407,25 @@ paths:
                     nullable: true
                     description: >-
                       Estimated time in seconds for the route to complete.
+                  txs_required:
+                    type: integer
+                    description:
+                      Number of transactions required to execute the route.
+                  swap_venues:
+                    type: array
+                    description: DEX venues used for swaps in the route, if any.
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Swap venue name.
+                        chain_id:
+                          type: string
+                          description: Chain ID where the swap occurs.
+                        logo_uri:
+                          type: string
+                          description: URL to the swap venue logo.
                   usd_amount_in:
                     type: string
                     description: USD value of the input amount.
@@ -455,6 +473,8 @@ paths:
                 estimated_amount_out: '999000'
                 estimated_fees: []
                 estimated_route_duration_seconds: 60
+                txs_required: 1
+                swap_venues: []
                 usd_amount_in: '1.50'
                 usd_amount_out: '1.49'
                 warning: null
