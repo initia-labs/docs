@@ -402,15 +402,15 @@ paths:
                           type: string
                           description: >-
                             How the fee is applied (e.g.
-                            FEE_BEHAVIOR_ADDITIONAL,
-                            FEE_BEHAVIOR_DEDUCTED).
+                            FEE_BEHAVIOR_ADDITIONAL, FEE_BEHAVIOR_DEDUCTED).
                   estimated_route_duration_seconds:
                     type: number
                     description: >-
                       Estimated time in seconds for the full route to complete.
                   txs_required:
                     type: integer
-                    description: Number of transactions required to execute the route.
+                    description:
+                      Number of transactions required to execute the route.
                   swap_venues:
                     type: array
                     description: DEX venues used for swaps in the route, if any.
@@ -452,13 +452,6 @@ paths:
                       withdrawal duration notices.
                     items:
                       type: string
-                  extra_infos:
-                    type: array
-                    nullable: true
-                    description: >-
-                      Additional informational messages about the route.
-                    items:
-                      type: string
                   required_op_hook:
                     type: boolean
                     description: Whether an OP hook is required for this route.
@@ -486,7 +479,6 @@ paths:
                 usd_amount_out: '1.49'
                 warning: null
                 extra_warnings: null
-                extra_infos: null
                 required_op_hook: false
   /v2/fungible/msgs:
     post:
