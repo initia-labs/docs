@@ -366,8 +366,7 @@ paths:
                   chain_ids:
                     type: array
                     description: >-
-                      All chain IDs involved in the route, in order of the
-                      transfer path.
+                      Ordered list of all chain IDs involved in the route.
                     items:
                       type: string
                   does_swap:
@@ -380,33 +379,38 @@ paths:
                       adjustments.
                   estimated_fees:
                     type: array
-                    description: Breakdown of estimated fees for the route.
+                    description: >-
+                      Estimated fees for the route. Each entry describes a fee
+                      with its amount, behavior, and the originating asset.
                     items:
                       type: object
                       properties:
                         amount:
                           type: string
-                          description: Fee amount in the fee asset denomination.
-                        usd_amount:
-                          type: string
-                          description: Fee amount in USD.
-                        origin_asset:
-                          type: object
-                          description: Asset used to pay the fee.
-                          properties:
-                            denom:
-                              type: string
-                            chain_id:
-                              type: string
+                          description: Fee amount in the smallest denomination.
                         fee_behavior:
                           type: string
                           description: >-
                             How the fee is applied (e.g.
                             FEE_BEHAVIOR_ADDITIONAL, FEE_BEHAVIOR_DEDUCTED).
+                        origin_asset:
+                          type: object
+                          description: >-
+                            The asset in which the fee is denominated.
+                          properties:
+                            denom:
+                              type: string
+                            chain_id:
+                              type: string
+                        usd_amount:
+                          type: string
+                          nullable: true
+                          description: USD value of the fee, if available.
                   estimated_route_duration_seconds:
-                    type: number
+                    type: integer
+                    nullable: true
                     description: >-
-                      Estimated time in seconds for the full route to complete.
+                      Estimated time in seconds for the route to complete.
                   txs_required:
                     type: integer
                     description:
@@ -464,7 +468,7 @@ paths:
                     type: array
                     nullable: true
                     description: >-
-                      Additional warning messages about the route, such as
+                      Additional warning messages for the route, such as
                       withdrawal duration notices.
                     items:
                       type: string
@@ -488,7 +492,7 @@ paths:
                 does_swap: false
                 estimated_amount_out: '999000'
                 estimated_fees: []
-                estimated_route_duration_seconds: 120
+                estimated_route_duration_seconds: 60
                 txs_required: 1
                 swap_venues: []
                 usd_amount_in: '1.50'

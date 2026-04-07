@@ -9,8 +9,8 @@ importance is cross-chain swaps, which is an extremely powerful primitive. The
 mechanism enabling this is a `memo` field on every ICS20 and ICS721 transfer
 packet as of IBC v3.4.0. Move hooks is an IBC middleware that parses an ICS20
 transfer, and if the memo field is of a particular form, executes a Move
-contract call. We now detail the memo format for Move contract calls, and the
-execution guarantees provided.
+contract call. The following sections detail the memo format for Move contract
+calls, and the execution guarantees provided.
 
 # Move Contract Execution Format
 
@@ -217,8 +217,8 @@ callback data through memo field.
 # Tutorials
 
 This tutorial will guide you through the process of deploying a Move contract
-and calling it from another chain using IBC hooks. We will use IBC hook from
-chain to call a Move contract on Initia chain in this example (L2 -> L1).
+and calling it from another chain using IBC hooks. This example uses an IBC hook
+from chain to call a Move contract on Initia chain (L2 -> L1).
 
 ## Step 1. Deploy a Move contract
 
