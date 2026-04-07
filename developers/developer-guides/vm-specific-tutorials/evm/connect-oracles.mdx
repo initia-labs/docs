@@ -30,8 +30,7 @@ forge init
 
 ## Implementing the Contract
 
-Before writing the contract, first rename the template contract to
-`Oracle.sol`.
+Before writing the contract, first rename the template contract to `Oracle.sol`.
 
 ```sh
 mv src/Counter.sol src/Oracle.sol
@@ -63,8 +62,8 @@ contract Oracle {
     IConnectOracle public connect;
 ```
 
-Next, define the constructor for the contract. This will be used to
-initialize the contract with the ConnectOracle contract address.
+Next, define the constructor for the contract. This will be used to initialize
+the contract with the ConnectOracle contract address.
 
 <Note>
 The ConnectOracle contract is on MiniEVM precompiles. You can get its address by querying `${REST_URL}/minievm/evm/v1/connect_oracle` where `${REST_URL}` refers to the REST endpoint URL of the rollup.
@@ -85,8 +84,8 @@ The output will look like this:
     }
 ```
 
-Once the constructor is implemented, move on to defining the different
-functions that the contract will have.
+Once the constructor is implemented, move on to defining the different functions
+that the contract will have.
 
 - `oracle_get_price`: This function will return the price of a single asset pair
 - `oracle_get_prices`: This function will return the price of multiple asset
@@ -161,9 +160,9 @@ contract Oracle {
 }
 ```
 
-Running `forge compile` will fail unless you provide a test file that matches the
-`Oracle.sol` contract. Foundry expects a test file like `Oracle.t.sol` to exist
-and import the contract under test. To resolve this, rename the existing
+Running `forge compile` will fail unless you provide a test file that matches
+the `Oracle.sol` contract. Foundry expects a test file like `Oracle.t.sol` to
+exist and import the contract under test. To resolve this, rename the existing
 test file `Counter.t.sol` to `Oracle.t.sol`.
 
 ```sh
@@ -197,8 +196,8 @@ forge compile
 
 ## Deploying the Contract
 
-Now that the contract is compiled and ready, you can deploy it to the MiniEVM. To
-accomplish this, use Foundry's `forge script` command. First, create a script
+Now that the contract is compiled and ready, you can deploy it to the MiniEVM.
+To accomplish this, use Foundry's `forge script` command. First, create a script
 file to handle the deployment. Create a new file named `Oracle.s.sol` in the
 `script` directory.
 

@@ -56,10 +56,10 @@ pragma solidity ^0.8.24;
 import "initia-evm-contracts/src/InitiaCustomERC20.sol";
 ```
 
-Next, extend the `InitiaCustomERC20` contract and add the constructor
-to initialize the contract with the name, symbol, and decimals of your custom
-ERC20. For this tutorial, you will simply customize the base contract by adding a
-logic to mint tokens to the contract deployer during deployment.
+Next, extend the `InitiaCustomERC20` contract and add the constructor to
+initialize the contract with the name, symbol, and decimals of your custom
+ERC20. For this tutorial, you will simply customize the base contract by adding
+a logic to mint tokens to the contract deployer during deployment.
 
 ```solidity src/NewInitiaERC20.sol
 // SPDX-License-Identifier: MIT
@@ -98,8 +98,8 @@ mv test/Counter.t.sol test/NewInitiaERC20.t.sol
 mv script/Counter.s.sol script/NewInitiaERC20.s.sol
 ```
 
-Now replace the contents of the `NewInitiaERC20.t.sol` file with the
-following placeholder content.
+Now replace the contents of the `NewInitiaERC20.t.sol` file with the following
+placeholder content.
 
 ```solidity test/NewInitiaERC20.t.sol
 // SPDX-License-Identifier: UNLICENSED
@@ -155,8 +155,8 @@ Compiler run successful!
 
 ## Deploying the Contract
 
-Now that the contract is compiled and ready, you can deploy it to the MiniEVM. To
-accomplish this, use Foundry's `forge create` command
+Now that the contract is compiled and ready, you can deploy it to the MiniEVM.
+To accomplish this, use Foundry's `forge create` command
 
 <Warning>
   **Security Note:** In this tutorial, a private key is exported directly in the

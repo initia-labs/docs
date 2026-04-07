@@ -20,8 +20,7 @@ mkdir cosmos-coin-to-erc20
 cd cosmos-coin-to-erc20
 ```
 
-Next, initialize the project and create an `index.js` file in a `src`
-directory.
+Next, initialize the project and create an `index.js` file in a `src` directory.
 
 ```sh
 npm init
@@ -31,11 +30,11 @@ touch src/index.js
 ## Development
 
 For this tutorial, assume that you have an ERC20 token address
-`0x5E5f1a92eECA58053E8364630b66763aa6265Ab0` that you want to convert to a Cosmos
-coin denom, and then convert it back to an ERC20 token address.
+`0x5E5f1a92eECA58053E8364630b66763aa6265Ab0` that you want to convert to a
+Cosmos coin denom, and then convert it back to an ERC20 token address.
 
-First, initialize the variable for the chain's REST endpoint and the ERC20
-token address.
+First, initialize the variable for the chain's REST endpoint and the ERC20 token
+address.
 
 ```js src/index.js
 const restUrl = `https://rest-evm-1.anvil.asia-southeast.initia.xyz`
@@ -67,8 +66,8 @@ evm/5E5f1a92eECA58053E8364630b66763aa6265Ab0
 
 ### Cosmos Denom to ERC20 Address
 
-To convert a Cosmos coin denom back to an ERC20 token address, use
-the REST's `/minievm/evm/v1/contracts/by_denom?denom={denom}` endpoint.
+To convert a Cosmos coin denom back to an ERC20 token address, use the REST's
+`/minievm/evm/v1/contracts/by_denom?denom={denom}` endpoint.
 
 ```js src/index.js
 // previous code

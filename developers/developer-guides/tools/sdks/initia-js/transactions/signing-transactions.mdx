@@ -61,10 +61,10 @@ export function getTxHash(tx: Uint8Array): string {
 Finally, create the main function to sign the transaction and compare the
 transaction hash. Let's call this function `offlineSigningTest`.
 
-To start, create two `RESTClient` instances. One that is connected to
-the network, and one that is offline. You will use the offline REST client
-to sign the transaction, and the online REST client to broadcast the transaction
-to later compare.
+To start, create two `RESTClient` instances. One that is connected to the
+network, and one that is offline. You will use the offline REST client to sign
+the transaction, and the online REST client to broadcast the transaction to
+later compare.
 
 ```ts
 const offlineRestClient = new RESTClient(``, {
@@ -79,10 +79,10 @@ const onlineRestClient = new RESTClient(restUrl, {
 })
 ```
 
-Next, generate the wallet client, as well as define the message, gas
-limit, and fee for the transaction. You need to define the latter two because you
-will be signing the transaction completely offline without interacting with the
-network or any nodes.
+Next, generate the wallet client, as well as define the message, gas limit, and
+fee for the transaction. You need to define the latter two because you will be
+signing the transaction completely offline without interacting with the network
+or any nodes.
 
 ```ts
 // set up key
@@ -113,9 +113,9 @@ Once you have all of that, create the transaction by calling
   transaction.
 - `fee`: The fee for the transaction.
 
-and returns a signed transaction object. Then convert the signed
-transaction object to a byte array and compute the transaction hash using the
-helper function created earlier.
+and returns a signed transaction object. Then convert the signed transaction
+object to a byte array and compute the transaction hash using the helper
+function created earlier.
 
 ```ts
 const signedTx = await wallet.createAndSignTx({
@@ -129,10 +129,10 @@ const signedTxBytes = signedTx.toBytes()
 const txHash = getTxHash(signedTxBytes)
 ```
 
-Finally, if you want to broadcast the transaction to the network later, you can do
-so by using the `onlineRestClient` client. If you then retrieve the transaction
-hash from the online REST client and compare it to the transaction hash you
-computed earlier, you should see that they match.
+Finally, if you want to broadcast the transaction to the network later, you can
+do so by using the `onlineRestClient` client. If you then retrieve the
+transaction hash from the online REST client and compare it to the transaction
+hash you computed earlier, you should see that they match.
 
 ```ts
 const broadcastRes = await onlineRestClient.tx.broadcastSync(signedTx)

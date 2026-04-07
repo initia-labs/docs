@@ -11,8 +11,8 @@ SDK modules.
 In this tutorial, you'll explore several examples demonstrating how to leverage
 these helper functions to retrieve key data points efficiently using the SDK.
 
-For demonstration purposes, assume that all of these examples are
-implemented in a file named `src/query.ts`.
+For demonstration purposes, assume that all of these examples are implemented in
+a file named `src/query.ts`.
 
 ## Querying Account Balance
 
@@ -38,14 +38,14 @@ const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
   processing.
 </Note>
 
-Next, create a function to query the balance of an account. This
-function will take in an address and return the balance of the account.
+Next, create a function to query the balance of an account. This function will
+take in an address and return the balance of the account.
 
 Note that the response from the query is paginated, so you need to handle the
 pagination properly in the function. Specifically, responses that are paginated
 will return a `next_key` in the pagination object, which you can use to get the
-next page of results. Then keep looping through the results until you
-have all the pages, which you will know is the case when `next_key` is `null`.
+next page of results. Then keep looping through the results until you have all
+the pages, which you will know is the case when `next_key` is `null`.
 
 ```ts
 async function queryBalance(address: string) {
