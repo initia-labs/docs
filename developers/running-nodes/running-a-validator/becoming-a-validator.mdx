@@ -4,11 +4,11 @@ title: Becoming a Validator
 
 <Note>
   Before proceeding to create a validator, first make sure that your Initia node
-  is fully synced to the latest height. This can be done by comparing the latest
+  is fully synced to the latest height. You can verify this by comparing the latest
   block height of your node with those of the network.
 </Note>
 
-## Create the Validator Account
+## Create the validator account
 
 First, you need to create an account for your validator. This account will be
 used to run the validator node. To do so, you can run the following command:
@@ -19,7 +19,7 @@ initiad keys add validator
 
 You then need to fund that account with the network's gas token.
 
-## Register the Validator
+## Register the validator
 
 Once you have funded the validator account, you can send a `CreateValidator`
 transaction to the network to register as a validator.
@@ -52,7 +52,7 @@ initiad tx mstaking create-validator \\
 Once the message is submitted and successfully confirmed, your validator will be
 active and participating in the network.
 
-## Checking Validator Activeness
+## Checking validator activeness
 
 Finally, to check whether your validator is active, you can run the following
 command:
@@ -71,7 +71,7 @@ proposing and signing blocks.
   delegations.
 </Note>
 
-## Secure Your Validator Keys
+## Secure your validator keys
 
 Protecting and having a contingency backup plan for your keys will help mitigate
 catastrophic hardware or software failures of the node. It is a good practice to

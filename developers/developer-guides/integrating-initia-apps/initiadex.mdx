@@ -2,7 +2,7 @@
 title: Interacting with InitiaDEX
 ---
 
-## Creating New Pools
+## Creating new pools
 
 InitiaDEX allows anyone to create a liquidity pool.
 
@@ -98,9 +98,9 @@ _For more information on metadata, please refer to
   </CodeBlock>
 </CodeGroup>
 
-## How to Provide Liquidity
+## How to provide liquidity
 
-### Provide Liquidity
+### Provide liquidity
 
 `provide_liquidity` enables you to provide liquidity of both `coin_a` and
 `coin_b` in the specific pair. To maximize the LP tokens received and minimize
@@ -183,7 +183,7 @@ public entry fun provide_liquidity_script(
   </CodeBlock>
 </CodeGroup>
 
-### Single Asset Provide Liquidity
+### Single asset provide liquidity
 
 Instead of providing both tokens in a pair, you can provide liquidity using only
 one token. Internally, half of the token is swapped to the other token in the
@@ -266,9 +266,9 @@ public entry fun single_asset_provide_liquidity_script(
   </CodeBlock>
 </CodeGroup>
 
-## How to Withdraw Liquidity
+## How to withdraw liquidity
 
-### Withdraw Liquidity
+### Withdraw liquidity
 
 `withdraw_liquidity` allows you to provide liquidity tokens and receive `coin_a`
 and `coin_b`. The Move module interface is as follows:
@@ -349,9 +349,9 @@ public entry fun withdraw_liquidity_script(
   </CodeBlock>
 </CodeGroup>
 
-## How to Swap Pair
+## How to swap pair
 
-### Swap Simulation
+### Swap simulation
 
 `swap_simulation` is a view function to estimate the return value of said swap.
 
@@ -499,9 +499,9 @@ public entry fun swap_script(
   </CodeBlock>
 </CodeGroup>
 
-## How to Delegate LP Tokens
+## How to delegate LP tokens
 
-### Whitelist a Pair
+### Whitelist a pair
 
 To delegate your LP tokens to a validator, you need to whitelist the LP token
 first. You can use
@@ -571,7 +571,7 @@ to whitelist the LP token.
 
 </Tabs>
 
-### Delegate LP Tokens
+### Delegate LP tokens
 
 After whitelisting the LP token, you can delegate your LP tokens to a validator.
 You can use `MsgDelegate` to delegate LP tokens.
@@ -605,7 +605,7 @@ You can use `MsgDelegate` to delegate LP tokens.
   </CodeBlock>
 </CodeGroup>
 
-## Example Code
+## Example code
 
 The following example demonstrates the above functions in a single script using
 InitiaJS.

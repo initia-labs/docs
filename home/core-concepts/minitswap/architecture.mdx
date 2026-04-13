@@ -42,9 +42,9 @@ StableSwap pool design:
   single INIT token pool that can be paired with multiple IbcOpINIT token pools,
   instead of having separate INIT token pools for each rollup.
 
-## Swap Mechanisms
+## Swap mechanisms
 
-### Initia L1 to Rollups
+### Initia L1 to rollups
 
 <Frame caption="Initia L1 to Rollups Minitswap Flow">
   ![Initia L1 to Rollups Minitswap Flow](/images/minitswap/minitswap_l1_l2.png)
@@ -125,7 +125,7 @@ expire.
 4. **Final Outcome**: If the swap is successful, the user receives $INIT$ tokens
    in their wallet on Initia L1.
 
-### Direct Swap
+### Direct swap
 
 In addition to the standard directional swap explained above, Minitswap also
 offers a unique **Direct Swap** option. As more
@@ -143,7 +143,7 @@ the Direct Swap might not seem attractive due to the Target Ratio being close to
 0.5. However, as the Peg Keeper’s balance of OP-bridged tokens increases, the
 Direct Swap option becomes more appealing to users.
 
-## Swap Logic
+## Swap logic
 
 ### Parameters
 
@@ -161,7 +161,7 @@ $$
 
 ### Mechanisms
 
-#### Peg Keeper Swaps
+#### Peg keeper swaps
 
 <Frame caption="Peg Keeper Swaps">
   ![Peg Keeper Swaps](/images/minitswap/minitswap_peg_keeper_swaps.png)
@@ -200,7 +200,7 @@ Note that the Peg Keeper Swap check is done
 - _after_ an L1 -> L2 swap to make sure the user's swap rate doesn't get
   affected by the Peg Keeper Swap
 
-#### Internal Rebalancing
+#### Internal rebalancing
 
 <Frame caption="Internal Rebalancing">
   ![Internal Rebalancing](/images/minitswap/minitswap_internal_rebalancing.png)

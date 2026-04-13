@@ -5,7 +5,7 @@ title: Node Configuration
 Once you have `initiad` installed and created the `initiad.service` file, you
 can now proceed to starting your node.
 
-## Configuring Node Network Settings
+## Configuring node network settings
 
 ### Initialization
 
@@ -37,12 +37,12 @@ is necessary to be able to recover the node in case of hardware or other
 failure. It is important to keep this file secure and never share it with
 anyone. Back up this file somewhere safe and secure.
 
-### Replacing Genesis File
+### Replacing genesis file
 
-Once the node is initialized, we then need to replace the generated
+Once the node is initialized, replace the generated
 `genesis.json` file with the one for the network you are joining.
 
-To do this, we need to download the `genesis.json` file for the network you are
+To do this, download the `genesis.json` file for the network you are
 joining and replace the one in the `~/.initia/config/` directory.
 
 <CodeGroup>
@@ -55,12 +55,11 @@ curl -Ls https://storage.googleapis.com/init-common-genesis/initiation-2/genesis
 Refer to the [Networks](/resources/developer/initia-l1) section of the docs to
 find the `genesis-url` for the network you are joining.
 
-### Configuring Peers and Gas Prices
+### Configuring peers and gas prices
 
-To connect to the network, we need to define a set of seed and/or peer nodes for
-our node to sync block and transaction data. Additionally, we must define the
-correct prices for the network to enable our node to validate transactions
-correctly.
+To connect to the network, define a set of seed and/or peer nodes for
+your node to sync block and transaction data. Additionally, define the correct
+prices for the network to enable your node to validate transactions correctly.
 
 <CodeGroup>
 ```sh initiation-2
@@ -81,9 +80,9 @@ sed -E -i \
 ```
 </CodeGroup>
 
-## Updating Address Book
+## Updating address book
 
-We need to update the address book for the network we are joining.
+Update the address book for the network you are joining.
 
 To do this, run the following command:
 

@@ -2,8 +2,8 @@
 title: Multisig
 ---
 
-Multi Signature (multisig) allows multiple users to sign a transaction before it
-is broadcasted to the network.
+Multi Signature (multisig) lets multiple users sign a transaction before
+broadcasting it to the network.
 
 This ensures that no single user can execute a transaction unilaterally, adding
 an extra layer of security and trust.
@@ -14,7 +14,7 @@ collectively, such as corporate treasuries or joint accounts.
 In this tutorial, you will explore how to create and manage multisignature
 accounts, proposals, and execute them using the `InitiaJS` library.
 
-## Create Multisig Accounts
+## Create multisig accounts
 
 Creating a multisig account is the first step in setting up a multi-approval
 system.
@@ -58,7 +58,7 @@ const msgCreateNonWeightedMultisigAccount = new MsgExecute(
 )
 ```
 
-## Create a Proposal
+## Create a proposal
 
 Once the multisig account is established, members can create proposals for
 actions that require collective approval.
@@ -143,7 +143,7 @@ const msgCreateProposal = new MsgExecute(
 )
 ```
 
-## Vote Proposal
+## Vote proposal
 
 Members of the multisig account can vote on active proposals. Each member can
 choose to approve or reject a proposal.
@@ -175,7 +175,7 @@ const msgVoteProposal1 = new MsgExecute(
 )
 ```
 
-## Execute Proposal
+## Execute proposal
 
 After a proposal has received enough approvals, it can be executed.
 
@@ -205,7 +205,7 @@ const msgExecuteProposal = new MsgExecute(
 )
 ```
 
-## Full Example
+## Full example
 
 Below are two summarized examples demonstrating how to create a multisig
 account, create a proposal, vote on it, and execute it using `InitiaJS`:

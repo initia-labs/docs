@@ -6,10 +6,10 @@ description: Open deposit and withdraw modals for cross-chain transfers.
 ## Overview
 
 Use `openDeposit` and `openWithdraw` from `useInterwovenKit()` to launch the
-built-in deposit and withdraw flows. These modals guide users through moving
+built-in deposit and withdraw flows. These modals guide you through moving
 assets between chains without you rebuilding the UI.
 
-## Basic Usage
+## Basic usage
 
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
@@ -38,7 +38,7 @@ function TransferButtons() {
 }
 ```
 
-## Defaults and Requirements
+## Defaults and requirements
 
 - `chainId` defaults to the current chain.
 - `recipientAddress` defaults to your connected wallet address.
@@ -47,11 +47,11 @@ function TransferButtons() {
 - A wallet must be connected, or the call throws an error.
 - `denoms` must be a non-empty array.
 
-## Optional Asset Options
+## Optional asset options
 
 Use `srcOptions` or `dstOptions` to limit the asset list shown in the modal.
 
-## Full Example
+## Full example
 
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
@@ -103,7 +103,7 @@ function ScopedTransferButtons() {
 }
 ```
 
-## Related Reference
+## Related reference
 
 See [`useInterwovenKit`](../../references/hooks/use-interwovenkit) for parameter
 signatures and types.

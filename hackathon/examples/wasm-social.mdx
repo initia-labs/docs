@@ -38,7 +38,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Unit Test the Smart Contract
+## Step 1: Create and unit test the smart contract
 
 Instruct your AI agent to create the Rust (Wasm) contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
@@ -194,7 +194,7 @@ mod tests {
 
 </Accordion>
 
-## Step 2: Deploy to your Appchain
+## Step 2: Deploy to your appchain
 
 Now that the logic is verified, build and publish the contract to your appchain
 using the Gas Station account.
@@ -268,7 +268,7 @@ minitiad q tx <YOUR_TX_HASH> --output json | jq -r '.events[] | select(.type=="i
 
 </Accordion>
 
-## Step 3: Smoke Test the Deployed Contract On-Chain
+## Step 3: Smoke test the deployed contract on-chain
 
 Before frontend integration, smoke test your deployed contract directly on
 chain.
@@ -299,7 +299,7 @@ minitiad query wasm contract-state smart <YOUR_CONTRACT_ADDRESS> '{"get_messages
 
 </Accordion>
 
-## Step 4: Create a Frontend
+## Step 4: Create a frontend
 
 Let's create a UI to display and post messages.
 
@@ -741,7 +741,7 @@ export default App
 
 </Accordion>
 
-## Step 5: Wallet Funding and UI Verification
+## Step 5: Wallet funding and UI verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
@@ -775,7 +775,7 @@ To make your MemoBoard natively integrated with the Initia stack, you can
 replace long, complex addresses with human-readable Initia Usernames (e.g.,
 `vitalik.init`).
 
-## Step 6: Register your .init Name
+## Step 6: Register your .init name
 
 Before updating your code, you should register a `primary username` for your
 wallet on the Initia testnet.
@@ -789,7 +789,7 @@ wallet on the Initia testnet.
 4.  Click `Register` and approve the transaction. Once resolved, your new
     `.init` name will appear in the top-right corner of the Initia App.
 
-## Step 7: Update the Frontend
+## Step 7: Update the frontend
 
 Your AI agent knows how to integrate Initia Usernames. Simply ask it to
 update your board.
@@ -1102,13 +1102,13 @@ export default function App() {
 
 </Accordion>
 
-### Native Feature Verification
+### Native feature verification
 
 1. Connect your wallet in `memoboard-frontend`.
 2. Confirm the header button shows your `.init` username (not only a truncated address).
 3. Post a message and confirm the sender label for your message uses your username.
 
-## Next Steps
+## Next steps
 
 Now that you've mastered a Wasm application, you're ready to build your own
 idea! Ensure your project meets all the

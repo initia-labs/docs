@@ -5,12 +5,12 @@ title: VIP Scoring
 ## Introduction
 
 The VIP Program employs a scoring system designed to allocate esINIT rewards to
-users. This system evaluates users based on their activities and contributions
+users. This system evaluates you based on your activities and contributions
 within a specific rollup. The specific scoring policy varies between each
 rollup, and the respective rollup team conducts the scoring process on-chain
 directly.
 
-### Scoring Phase
+### Scoring phase
 
 First, during each epoch, rollup teams score their users based on their activity
 through a `vip_score` contract.
@@ -25,18 +25,18 @@ performed by the deployer until the deployer is changed or removed.
 Once the scoring for an epoch is complete, the scores must be finalized by
 calling a function on the `vip_score` contract.
 
-### Snapshotting Phase
+### Snapshotting phase
 
 Once finalized, the VIP Agent snapshots and submits the scores from all rollups,
 storing them in the Initia L1 VIP module. The Agent is an actor selected through
 Initia L1 governance. After all snapshots have been taken and stored, the esINIT
-rewards are distributed to the users.
+rewards are distributed to you.
 
-### Claiming Phase
+### Claiming phase
 
-Finally, the user can claim the distributed rewards.
+Finally, you can claim the distributed rewards.
 
-### VIP Criteria & Scoring Policies
+### VIP criteria & scoring policies
 
 #### Transparency
 
@@ -47,7 +47,7 @@ Finally, the user can claim the distributed rewards.
    actions, criteria, distribution methodologies, and any calculations involved.
 3. All scoring methodologies need to be transparent and verifiable by anyone.
 
-#### Scoring Criteria
+#### Scoring criteria
 
 4. Points may be allocated based on a user's usage of other chains within the
    Interwoven Economy, provided that the usage is relevant and beneficial to the

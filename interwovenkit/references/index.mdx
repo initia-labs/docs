@@ -8,7 +8,7 @@ React applications.
 
 InterwovenKit is designed around a single provider (`InterwovenKitProvider`)
 that configures network and UI behavior, with hooks layered on top for state, UI
-control, and transactions. Most users start by configuring
+control, and transactions. You typically start by configuring
 `InterwovenKitProvider` with a preset (`MAINNET` or `TESTNET`), then use hooks
 like `useInterwovenKit` or `useAddress` to read connection state and trigger UI
 flows. The API is organized into:
@@ -23,7 +23,7 @@ flows. The API is organized into:
 - **Social Login**: Wagmi and RainbowKit helpers for social login
   (`initiaPrivyWalletConnector`, `initiaPrivyWallet`)
 
-## Common Starting Points
+## Common starting points
 
 - **Provider setup**: See [Provider Setup](./setup/providers) for complete
   configuration (basic setup or AutoSign)

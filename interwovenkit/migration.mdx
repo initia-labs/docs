@@ -15,7 +15,7 @@ improved TypeScript support, and a more intuitive API.
   with consistent naming - Enhanced error handling
 </Note>
 
-## Step-by-Step Migration
+## Step-by-step migration
 
 <Steps>
   <Step title="Update Package Installation">
@@ -166,9 +166,9 @@ improved TypeScript support, and a more intuitive API.
   </Step>
 </Steps>
 
-## API Migration Guide
+## API migration guide
 
-### Provider Configuration Changes
+### Provider configuration changes
 
 <CodeGroup>
 ```tsx Legacy (v1)
@@ -192,7 +192,7 @@ improved TypeScript support, and a more intuitive API.
 
 </CodeGroup>
 
-#### Bridge Configuration Migration
+#### Bridge configuration migration
 
 <CodeGroup>
 ```tsx Legacy (v1) - Provider Level
@@ -236,7 +236,7 @@ export default function Home() {
   calls, providing more flexibility and better user experience.
 </Note>
 
-#### Removed Provider Props
+#### Removed provider props
 
 The following props are no longer supported:
 
@@ -251,9 +251,9 @@ The following props are no longer supported:
   instead.
 </Info>
 
-### Hook and Method Changes
+### Hook and method changes
 
-#### Wallet Connection Interface
+#### Wallet connection interface
 
 <CodeGroup>
 ```tsx Legacy (v1)
@@ -298,7 +298,7 @@ export default function WalletButton() {
   Ensure your entire application is wrapped with `<InterwovenKitProvider>` at the root level for the hooks to function properly.
 </Warning>
 
-#### Transaction Handling
+#### Transaction handling
 
 <CodeGroup>
 ```tsx Legacy (v1)
@@ -348,9 +348,9 @@ export default function TransactionComponent() {
   details.
 </Tip>
 
-## Advanced Integration
+## Advanced integration
 
-### Working With @initia/initia.js
+### Working with @initia/initia.js
 
 For complex transaction building, InterwovenKit seamlessly integrates with
 `@initia/initia.js`:
@@ -403,7 +403,7 @@ export default function SendTransaction() {
 }
 ```
 
-## Migration Checklist
+## Migration checklist
 
 <AccordionGroup>
   <Accordion title="✅ Package & Dependencies">

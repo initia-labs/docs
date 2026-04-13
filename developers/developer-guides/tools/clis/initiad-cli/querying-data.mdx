@@ -15,7 +15,7 @@ The general syntax for querying data is:
 initiad query [module-name] [query-name] [args] [flags]
 ```
 
-## Querying Account Balance
+## Querying account balance
 
 After receiving tokens to your address, you can view your account's balance
 like:
@@ -30,7 +30,7 @@ initiad query bank balances $ADDRESS --node $NODE_URL
 #   denom: uinit
 ```
 
-## Querying Blocks
+## Querying blocks
 
 You can query a single block by its height or hash using the following command:
 
@@ -42,7 +42,7 @@ initiad query block --type=height $BLOCK_HEIGHT --node $NODE_URL
 initiad query block --type=hash $BLOCK_HASH --node $NODE_URL
 ```
 
-## Querying Transactions
+## Querying transactions
 
 You can query a single transaction by its hash using the following command:
 
@@ -62,7 +62,7 @@ initiad query tx $TX_HASH --node $NODE_URL
 #     ...
 ```
 
-## Querying Params
+## Querying params
 
 You can query the module parameters using the following command:
 
@@ -90,7 +90,7 @@ initiad query move params --node $NODE_URL
 # script_enabled: true
 ```
 
-## Querying Oracle
+## Querying oracle
 
 If a node has the oracle module enabled, you can query the currency pairs and
 price using the following commands:

@@ -2,7 +2,7 @@
 title: Node Setup
 ---
 
-## Install and Update Required Packages
+## Install and update required packages
 
 ```sh
 sudo apt-get update && \
@@ -10,10 +10,9 @@ sudo apt-get upgrade -y && \
 sudo apt-get install -y build-essential curl wget jq
 ```
 
-## Install the Initia Daemon
+## Install the Initia daemon
 
-Then, we need to clone the Initia repository and checkout the latest or desired
-version.
+Next, clone the Initia repository and check out the latest or desired version.
 
 ```sh
 git clone https://github.com/initia-labs/initia
@@ -21,7 +20,7 @@ cd initia
 git checkout [version]
 ```
 
-Once we have the correct version, we can build the binary. This will install the
+Once you have the correct version, build the binary. This will install the
 `initiad` executable to your `GOPATH` environment variable.
 
 ```sh
@@ -60,7 +59,7 @@ export PATH=$PATH:$(go env GOPATH)/bin
 ## Increase file descriptors limit
 
 Linux systems by default set the maximum number of file descriptors that can be
-opened by a process to 1024. It is recommended that you increase this amount.
+opened by a process to 1024. You should increase this amount.
 
 To do so, modify `/etc/security/limits.conf` to increase the amount. The
 `nofile` is the number of files a process may open at a time.
@@ -74,10 +73,9 @@ To do so, modify `/etc/security/limits.conf` to increase the amount. The
 * hard nofile 65535
 ```
 
-## Register Initia as a Service
+## Register Initia as a service
 
-While you can run your initia node manually, it is recommended that you register
-it as a Linux service. This will allow you to more easily manage your node and
+While you can run your initia node manually, you should register it as a Linux service. This will allow you to more easily manage your node and
 also to run it as a background process.
 
 To do so, create a file at `/etc/systemd/system/initiad.service` with the

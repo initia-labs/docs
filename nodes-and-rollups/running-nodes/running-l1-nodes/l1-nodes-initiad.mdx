@@ -8,7 +8,7 @@ This guide provides step-by-step instructions for setting up and running an
 Initia L1 node. It covers everything from system requirements to connecting to
 the Initia network.
 
-## System Requirements
+## System requirements
 
 Before proceeding, ensure your system meets the following requirements:
 
@@ -29,7 +29,7 @@ Before proceeding, ensure your system meets the following requirements:
 
 There are two ways to install the `initiad` CLI:
 
-### Option 1: Building from Source
+### Option 1: Building from source
 
 <Steps>
 <Step title="Install Prerequisites">
@@ -79,15 +79,15 @@ initiad version
 </Step>
 </Steps>
 
-### Option 2: Using Pre-built Binaries
+### Option 2: Using pre-built binaries
 
 Download pre-built `initiad` binaries from the
 [releases page](https://github.com/initia-labs/initia/releases). Choose the
 appropriate version for your operating system.
 
-## System Configuration
+## System configuration
 
-### File Descriptor Limits
+### File descriptor limits
 
 Initia requires a higher number of file descriptors than the default Linux
 limit. Adjust the system limits by adding the following to
@@ -98,7 +98,7 @@ limit. Adjust the system limits by adding the following to
 * hard nofile 65535
 ```
 
-## Node Setup
+## Node setup
 
 ### Initialization
 
@@ -122,7 +122,7 @@ Note that:
   result in permanent node inaccessibility.
 </Warning>
 
-### Network Configuration
+### Network configuration
 
 #### Endpoints
 
@@ -136,10 +136,10 @@ An Initia node provides multiple endpoints that you can enable or disable.
 | P2P           | Gossip P2P Network      | `~/.initia/config/config.toml` |
 
 <Info>
-  Validator nodes are not recommended to expose these endpoints publicly.
+  Do not expose these endpoints publicly on validator nodes.
 </Info>
 
-#### Configuration Examples
+#### Configuration examples
 
 1. **API Configuration** (`~/.initia/config/app.toml`):
 
@@ -168,7 +168,7 @@ laddr = "tcp://0.0.0.0:26657"
 laddr = "tcp://0.0.0.0:26656"
 ```
 
-### External Address Configuration
+### External address configuration
 
 To allow external nodes to connect to your node, configure the external address
 in `config.toml`:
@@ -185,7 +185,7 @@ You can automatically set your public IP using:
 sed -i -e 's/external_address = \"\"/external_address = \"'$(curl httpbin.org/ip | jq -r .origin)':26656\"/g' ~/.initia/config/config.toml
 ```
 
-## Connecting to Initia Network
+## Connecting to Initia network
 
 To fully connect to the network, you first need to download the genesis file,
 configure your peers, and sync the node.
@@ -196,7 +196,7 @@ configure your peers, and sync the node.
   page](/resources/developer/initia-l1).
 </Note>
 
-### Genesis File
+### Genesis file
 
 To start syncing the node, you first need to download the genesis file.
 
@@ -204,7 +204,7 @@ To start syncing the node, you first need to download the genesis file.
 wget $GENESIS_FILE_URL -O $HOME/.initia/config/genesis.json
 ```
 
-### Network Configuration
+### Network configuration
 
 Once the genesis file is downloaded, you can configure the persistent peers in
 `~/.initia/config/config.toml`:
@@ -216,13 +216,13 @@ persistent_peers = "peer1@ip1:port1,peer2@ip2:port2"
 Replace `peer1@ip1:port1,peer2@ip2:port2` with the list of peers for the network
 you want to join.
 
-### State Sync & Snapshots
+### State sync & snapshots
 
 To sync the node, you can use the
 [state sync](https://github.com/tendermint/tendermint/blob/v0.34.x/spec/p2p/messages/state-sync.md)
 feature.
 
-## Running as a Service (Optional)
+## Running as a service (optional)
 
 To run Initia as a system service, create an `initiad.service` file in
 `/etc/systemd/system`:
@@ -260,7 +260,7 @@ journalctl -t initiad -f # Follow logs in real-time
 journalctl -t initiad -n <number> # View last N lines
 ```
 
-## Cosmovisor (Optional)
+## Cosmovisor (optional)
 
 If you want automatic binary upgrades, set up Cosmovisor after completing all
 steps above. In the Cosmovisor setup, the `<path-to-executable>` refers to your

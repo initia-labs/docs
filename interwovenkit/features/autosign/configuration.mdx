@@ -20,7 +20,7 @@ Before configuring autosign, ensure you have:
   tree and base setup, see [Provider Setup](../../references/setup/providers).
 </Note>
 
-## Setting Up Autosign
+## Setting up autosign
 
 <Steps>
 <Step title="Install Dependencies">
@@ -103,9 +103,9 @@ export default function Providers({ children }: PropsWithChildren) {
 </Step>
 </Steps>
 
-## Configuring Autosign Permissions
+## Configuring autosign permissions
 
-### Choose Your Autosign Mode
+### Choose your autosign mode
 
 Before enabling autosign, decide which mode fits your application:
 
@@ -126,7 +126,7 @@ boolean option and use the per-chain permissions in the
 Most production applications will eventually require the per-chain
 configuration.
 
-### Simple Configuration (Limited)
+### Simple configuration (limited)
 
 This option only enables autosign for default contract execution messages and is
 intentionally restrictive.
@@ -150,7 +150,7 @@ When using boolean configuration, InterwovenKit automatically:
   - **MiniWasm**: `/cosmwasm.wasm.v1.MsgExecuteContract`
   - **MiniMove**: `/initia.move.v1.MsgExecute`
 
-### Advanced Configuration (Explicit Permissions)
+### Advanced configuration (explicit permissions)
 
 For multi-chain applications or when you need custom message types, specify
 autosign permissions per chain:

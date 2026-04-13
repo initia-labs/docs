@@ -23,7 +23,7 @@ the rollup's users and operators.
   section.
 </Note>
 
-## Rewards Distribution
+## Rewards distribution
 
 At each rewards distribution stage $t$, the total VIP rewards for that stage
 $R_t$ are distributed amongst each rollup ecosystem. The distribution is split
@@ -34,7 +34,7 @@ into multiple steps:
 2. Distributing the rewards to each rollup's users.
 3. Distributing the rewards to each rollup's operators.
 
-### Rewards Split Between Rollups
+### Rewards split between rollups
 
 At each stage $t$, the total VIP rewards for that stage $R_t$ are distributed
 amongst each rollup ecosystem. The total rewards are then split into two pools:
@@ -66,7 +66,7 @@ Where:
 - $R_{W,m,t}$ represents the portion of rewards from the Weight Pool $R_W$
   allocated to rollup $m$ at stage $t$.
 
-#### Balance Pool
+#### Balance pool
 
 The Balance Pool aims to encourage rollups to find new and interesting uses for
 the INIT token by distributing rewards based on the proportion of INIT supply on
@@ -84,7 +84,7 @@ Where:
 - $I_{m,t}$ is the amount of INIT tokens locked by rollup $m$ during the stage.
 - $N_{t}$ is the total number of rollups in the stage.
 
-#### Weight Pool
+#### Weight pool
 
 The Weight Pool ($R_W$) rewards rollups based on their weight value, which is
 determined by a gauge weight voting process similar to protocols such as
@@ -100,7 +100,7 @@ Where:
 - $W_{m,t}$ is the weight of rollup $m$ during the stage.
 - $N_{t}$ is the total number of rollups in the stage.
 
-### Distribution to Rollup Users
+### Distribution to rollup users
 
 Once the rewards each rollup receives for a given stage are known, these rewards
 are then further distributed to the users of the rollup. The amount of VIP
@@ -131,7 +131,7 @@ Where:
 - $S_{u,m,t}$ is the score of the user on rollup $m$ during stage $t$.
 - $N_{u,m,t}$ is the total number of users on rollup $m$ during stage $t$.
 
-### Distribution to Rollup Operators
+### Distribution to rollup operators
 
 To ensure that rollup operators are also incentivized to keep their rollups
 active and useful, they can set an `operatorCommissionRate`, $c$. This rate
@@ -158,13 +158,13 @@ $$
 R_{u,m,t} = (1-c_{m}) R_{m,t} \frac{S_{u,m,t}}{\sum_{i=1}^{N_{u,m,t}} S_{i,m,t}}
 $$
 
-## Rewards Vesting
+## Rewards vesting
 
 Rewards from the VIP program are given in the form of escrowed INIT tokens
 (esINIT). These tokens are initially non-transferable and can be vested in
 multiple ways depending on whether the receiver is the user or rollup operator.
 
-### User Vesting
+### User vesting
 
 These tokens are initially non-transferable and can be vested in two ways:
 
@@ -177,7 +177,7 @@ These tokens are initially non-transferable and can be vested in two ways:
   ![VIP User Vesting](/images/vip/vip_rewards_vesting_users.png)
 </Frame>
 
-#### Maintaining a VIP Score
+#### Maintaining a VIP score
 
 **Vesting Process**
 
@@ -281,19 +281,19 @@ Explanation
    score 40, so they unlock 1.6 INIT from Stage 1 and the full 1.2 INIT from
    Stage 2, totaling 2.8 INIT.
 
-#### Converting to LP Lock-Staked Position
+#### Converting to LP lock-staked position
 
 Maintaining the score over several periods can be challenging for some users.
 Therefore, VIP allows you to convert your esINIT into a locked, stake-locked
 INIT:TOKEN LP position on the InitiaDEX for pairs whitelisted on Enshrined
 Liquidity. You provide the TOKEN side of the pair.
 
-When creating a lock-staked position, users can choose the duration for locking
-their LP position. The length of this lock will determine their voting power on
+When creating a lock-staked position, you can choose the duration for locking
+your LP position. The length of this lock determines your voting power on
 VIP gauge votes. However, when lock-staking through VIP, a minimum lock duration
 of 26 weeks is enforced.
 
-### Operator Vesting
+### Operator vesting
 
 <Frame caption="VIP Rollup Operator Vesting">
   ![VIP Operator Vesting](/images/vip/vip_rewards_vesting_operators.png)

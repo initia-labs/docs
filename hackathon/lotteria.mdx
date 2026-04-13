@@ -39,7 +39,7 @@ Move is the smart contract language for the MoveVM track on Initia. In
 Lotteria, the Move module handles all the core lottery logic: creating rounds,
 buying tickets, drawing winners, and distributing prizes.
 
-### Setting Up the Move Package
+### Setting up the Move package
 
 Create a `move/` directory in your project root with the following structure:
 
@@ -86,7 +86,7 @@ The `InitiaStdlib` dependency gives you access to core modules like `coin`,
 `signer`, `event`, and `object`, which are essential building blocks for any
 onchain application.
 
-### Writing the Lottery Module
+### Writing the lottery module
 
 The lottery module manages the full lifecycle of a lottery round. Here is a
 breakdown of the key components.
@@ -188,7 +188,7 @@ public fun get_ticket_price(): u64 {
 }
 ```
 
-### Building and Deploying the Module
+### Building and deploying the module
 
 Build the module to check for compilation errors:
 
@@ -281,7 +281,7 @@ npm install
 npm install @initia/interwovenkit-react
 ```
 
-### Setting Up the Provider
+### Setting up the provider
 
 Wrap your application with `InterwovenKitProvider`. This is the top-level
 context that makes wallet state and transaction methods available throughout
@@ -343,7 +343,7 @@ function App() {
 }
 ```
 
-### Connecting a Wallet
+### Connecting a wallet
 
 The `useInterwovenKit` hook provides everything you need for wallet connection.
 Here is a simplified wallet connection component based on the wallet controls in Lotteria's
@@ -377,7 +377,7 @@ displays the user's Initia username (if they have one) or a truncated version
 of their address. Clicking the button calls `openWallet` to open the wallet
 detail panel.
 
-### Depositing Assets
+### Depositing assets
 
 Users need tokens on your appchain to interact with it. InterwovenKit provides
 a built-in deposit flow that handles cross-chain bridging. Here is the
@@ -423,7 +423,7 @@ uses `initiation-2` on testnet and `interwoven-1` on mainnet.
 The component only renders when a wallet is connected (`address` is truthy),
 since depositing requires an active wallet session.
 
-### Sending Transactions
+### Sending transactions
 
 To interact with your Move module from the frontend, use `requestTxSync` to
 construct and send transactions:
@@ -477,7 +477,7 @@ function BuyTicketButton() {
 The `requestTxSync` method prompts the user's wallet to sign and broadcast the
 transaction. It returns the transaction hash on success.
 
-### Querying Onchain State
+### Querying onchain state
 
 To query and read data using the view functions of your Move module, you can utilize the chain's REST endpoint as follows:
 
@@ -501,7 +501,7 @@ Query for automatic refetching.
 
 # 3. Connecting to the Chain
 
-### Chain Configuration
+### Chain configuration
 
 Your appchain runs locally after `weave init`. The default endpoints are:
 
@@ -513,7 +513,7 @@ Your appchain runs locally after `weave init`. The default endpoints are:
 These endpoints are what your frontend uses to query state and broadcast
 transactions.
 
-### Bridging Assets via IBC
+### Bridging assets via IBC
 
 Once the IBC Relayer is running (see
 [Set Up Your Appchain](/hackathon/get-started)), you can bridge INIT
@@ -524,7 +524,7 @@ The bridge flow works through IBC transfer channels that the relayer
 establishes between Initia L1 and your rollup. Users can send tokens from L1 to
 your chain, and the tokens arrive as IBC-denominated assets.
 
-### Frontend Development Workflow
+### Frontend development workflow
 
 A practical development loop looks like this:
 

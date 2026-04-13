@@ -41,19 +41,19 @@ These services should be deployed separately.
 You are responsible for provisioning and operating Postgres (managed service or
 self-hosted).
 
-### Resource Guidance
+### Resource guidance
 
 - Run **Indexer** and **API** on separate machines to avoid resource contention
 - Recommended starting spec (each service): 1 CPU / 2 GB memory
 - Plan initial disk space for index growth (20-50 GB to start; scale as needed)
 
-### Supported VM Types
+### Supported VM types
 
 - Move
 - Wasm
 - EVM
 
-## Deployment Recommendations
+## Deployment recommendations
 
 - Start with modest resources and scale as chain activity grows
 
@@ -89,7 +89,7 @@ rollytics api
 Initial sync speed varies by chain activity and infrastructure (reference: ~1M
 blocks/day). Use `/status` to track catch-up progress.
 
-### Docker Quickstart (Optional)
+### Docker quickstart (optional)
 
 Rollytics is available as a container image:
 
@@ -126,7 +126,7 @@ docker run --rm \
 
 For non-EVM rollups, omit `JSON_RPC_URL`.
 
-### VM-Specific Defaults
+### VM-specific defaults
 
 - **EVM**: internal transaction indexing is enabled by default
 - **Move/Wasm**: internal transaction indexing is disabled by default
@@ -134,7 +134,7 @@ For non-EVM rollups, omit `JSON_RPC_URL`.
 Setting `INTERNAL_TX=true` for Move or Wasm rollups is not supported and will be
 ignored.
 
-## Step 2: Verify Sync Status
+## Step 2: Verify sync status
 
 Wait until the indexer has fully caught up.
 
@@ -195,7 +195,7 @@ Disable KV Indexer in `~/.minitia/config/app.toml`:
 enable = false
 ```
 
-## Step 6: Reclaim Disk Space
+## Step 6: Reclaim disk space
 
 Reclaim disk space using one of the following approaches:
 
@@ -211,7 +211,7 @@ Reclaim disk space using one of the following approaches:
 - State-sync from an existing node
 - Retire the old node
 
-### Important Notes
+### Important notes
 
 - KV Indexer is no longer actively maintained
 - All future indexing improvements will be added only to Rollytics

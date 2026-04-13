@@ -31,7 +31,7 @@ With minitiad, you can:
   users of other Cosmos-based chains, specifically optimized for Initia rollups.
 </Info>
 
-## VM Types and Repositories
+## VM types and repositories
 
 Different Initia rollup chains use different Virtual Machines (VMs), and each
 requires a specific minitiad implementation:
@@ -143,32 +143,32 @@ After installation, verify that minitiad is correctly installed and accessible:
   repository you cloned.
 </Note>
 
-### Check CLI Version
+### Check CLI version
 
 ```bash
 minitiad version
 # Output: v0.5.7
 ```
 
-### Verify Installation Path
+### Verify installation path
 
 ```bash
 which minitiad
 # Output: /Users/username/go/bin/minitiad (or your $GOPATH/bin path)
 ```
 
-### Check Available Commands
+### Check available commands
 
 ```bash
 minitiad --help
 ```
 
-## Network Configuration
+## Network configuration
 
 Configure the CLI to connect to your specific rollup chain by setting the
 appropriate endpoints:
 
-### Setting Chain Endpoints
+### Setting chain endpoints
 
 ```bash
 # Set your rollup chain endpoints
@@ -186,7 +186,7 @@ minitiad config node $CHAIN_RPC_ENDPOINT
   Initia rollup has its own unique endpoints and chain ID.
 </Warning>
 
-## Next Steps
+## Next steps
 
 Now that you have minitiad installed and configured, you can start building and
 deploying applications on Initia rollup chains. The specific workflow will

@@ -39,7 +39,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Unit Test the Smart Contract
+## Step 1: Create and unit test the smart contract
 
 Instead of writing the code yourself, instruct your AI agent to do it for you
 using the `initia-appchain-dev` skill. Your AI agent will generate the contract
@@ -205,7 +205,7 @@ If the build succeeds and the tests pass, BlockForge is ready to deploy.
 
 </Accordion>
 
-## Step 2: Deploy to your Appchain
+## Step 2: Deploy to your appchain
 
 Now that the logic is verified, build and publish the contract to your live
 appchain using the Gas Station account.
@@ -261,7 +261,7 @@ minitiad move deploy --build \
 
 </Accordion>
 
-## Step 3: Smoke Test the Deployed Contract On-Chain
+## Step 3: Smoke test the deployed contract on-chain
 
 Before frontend work, smoke test the deployed module directly on chain. This
 keeps contract/module debugging separate from UI integration.
@@ -308,7 +308,7 @@ minitiad query move resource <YOUR_WALLET_ADDRESS> <YOUR_MODULE_HEX_ADDRESS>::it
 
 </Accordion>
 
-## Step 4: Create a Frontend
+## Step 4: Create a frontend
 
 A game needs a user interface. Let's create one using the `initia-appchain-dev`
 skill.
@@ -594,7 +594,7 @@ Render `<Game />` from `src/App.jsx`.
   </Tip>
 </Accordion>
 
-## Step 5: Wallet Funding and UI Verification
+## Step 5: Wallet funding and UI verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
@@ -631,7 +631,7 @@ from a one-time signature. Your primary wallet then grants this `Ghost Wallet`
 permission (`Authz`) to execute specific functions and use its balance for
 fees (`Feegrant`), allowing for seamless, session-based gameplay.
 
-## Step 6: Update the Frontend
+## Step 6: Update the frontend
 
 You can enable session-based signing by modifying your provider configuration
 and adding a toggle in your UI.
@@ -1144,7 +1144,7 @@ This reference assumes:
 - inventory reads use `rest.move.resource` with a hex struct tag.
 </Accordion>
 
-### Native Feature Verification
+### Native feature verification
 
 1. Connect your wallet in `blockforge-frontend`.
 2. Enable Auto-sign and approve the one-time Auto-sign setup.
@@ -1152,7 +1152,7 @@ This reference assumes:
 4. Disable Auto-sign.
 5. Click `Mint Shard` again and confirm a wallet signature prompt is required.
 
-## Next Steps
+## Next steps
 
 Now that you've mastered a Move application, you're ready to build your own
 idea! Ensure your project meets all the

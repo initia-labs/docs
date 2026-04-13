@@ -11,7 +11,7 @@ address and a Cosmos coin denom.
 
 - [NodeJS](https://nodejs.org)
 
-## Project Setup
+## Project setup
 
 First, create a new directory for your project.
 
@@ -41,7 +41,7 @@ const restUrl = `https://rest-evm-1.anvil.asia-southeast.initia.xyz`
 const erc20Address = '0x5E5f1a92eECA58053E8364630b66763aa6265Ab0'
 ```
 
-### ERC20 to Cosmos Denom
+### ERC20 to Cosmos denom
 
 To actually do the conversion, use the REST's
 `/minievm/evm/v1/denoms/{contractAddress}` endpoint.
@@ -64,7 +64,7 @@ token's Cosmos coin denom.
 evm/5E5f1a92eECA58053E8364630b66763aa6265Ab0
 ```
 
-### Cosmos Denom to ERC20 Address
+### Cosmos denom to ERC20 address
 
 To convert a Cosmos coin denom back to an ERC20 token address, use the REST's
 `/minievm/evm/v1/contracts/by_denom?denom={denom}` endpoint.

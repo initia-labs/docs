@@ -19,7 +19,7 @@ title: useUsernameQuery
 
 ## Quickstart
 
-### Connected Wallet
+### Connected wallet
 
 Call `useUsernameQuery()` with no arguments to resolve the username for the
 currently connected wallet.
@@ -36,7 +36,7 @@ function Username() {
 }
 ```
 
-### Specific Address
+### Specific address
 
 Pass an address to resolve the username for that address instead of the
 connected wallet.
@@ -57,7 +57,7 @@ function SenderUsername({ address }: { address: string }) {
   configurations, see [Provider Setup](../setup/providers).
 </Note>
 
-## Return Value
+## Return value
 
 ```ts
 function useUsernameQuery(address?: string): UseQueryResult<string | null>

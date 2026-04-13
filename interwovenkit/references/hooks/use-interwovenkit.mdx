@@ -44,7 +44,7 @@ function ConnectButton() {
   configurations, see [Provider Setup](../setup/providers).
 </Note>
 
-## Account Information
+## Account information
 
 The hook provides multiple address formats and account details for the currently
 connected wallet:
@@ -100,7 +100,7 @@ function AccountInfo() {
 }
 ```
 
-## UI Controls
+## UI controls
 
 The hook provides methods for controlling wallet-related UI components:
 
@@ -137,7 +137,7 @@ The hook provides methods for controlling wallet-related UI components:
   Disconnects the current wallet connection.
 </ParamField>
 
-### Bridge Form Values
+### Bridge form values
 
 The `openBridge` method accepts optional `FormValues` to pre-populate the bridge
 form:
@@ -243,7 +243,7 @@ function DepositWithdrawButtons() {
 For a full walkthrough, see
 [Deposit and Withdraw](../../features/transfers/deposit-withdraw).
 
-## Transaction Methods
+## Transaction methods
 
 The hook provides utilities for estimating, simulating, signing, and sending
 transactions on the blockchain:
@@ -309,7 +309,7 @@ transactions on the blockchain:
   `requestTxBlock` when you need the complete transaction result immediately.
 </Tip>
 
-### Transaction Request Interface
+### Transaction request interface
 
 The `TxRequest` interface defines parameters for transaction operations that
 include gas estimation:
@@ -343,7 +343,7 @@ include gas estimation:
   Coins to spend for the transaction fee.
 </ParamField>
 
-### Transaction Params Interface
+### Transaction params interface
 
 The `TxParams` interface defines parameters for transactions with pre-calculated
 fees:
@@ -365,7 +365,7 @@ fees:
   Pre-calculated fee for the transaction.
 </ParamField>
 
-### Transaction Confirmation Options
+### Transaction confirmation options
 
 The `WaitForTxOptions` interface defines parameters for tracking transaction
 confirmation:
@@ -388,7 +388,7 @@ confirmation:
   500 (0.5 seconds).
 </ParamField>
 
-### Transaction Examples
+### Transaction examples
 
 ```tsx
 import { useInterwovenKit } from '@initia/interwovenkit-react'
@@ -529,7 +529,7 @@ function AutoSignControls() {
 - `submitTx*` methods sign and broadcast directly without UI.
 - `waitForTxConfirmation` polls until confirmed or timeout.
 
-## Type Reference (Advanced)
+## Type reference (advanced)
 
 ```ts
 function useInterwovenKit(): InterwovenKitResult

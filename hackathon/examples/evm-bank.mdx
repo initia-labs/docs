@@ -38,7 +38,7 @@ Before you start, verify that your local infrastructure is healthy.
 Using the `initia-appchain-dev` skill, please verify that my appchain, executor bot, and relayer are running and that my Gas Station account has a balance.
 ```
 
-## Step 1: Create and Unit Test the Smart Contract
+## Step 1: Create and unit test the smart contract
 
 Instruct your AI agent to create the Solidity contract using the
 `initia-appchain-dev` skill. Your AI agent will generate the contract and
@@ -111,7 +111,7 @@ contract MiniBank {
 }
 ```
 
-### Unit Testing with Foundry
+### Unit testing with Foundry
 
 To verify your contract's logic, create a test file named `MiniBank.t.sol` in
 the `test` directory.
@@ -165,7 +165,7 @@ forge test
 
 </Accordion>
 
-## Step 2: Deploy to your Appchain
+## Step 2: Deploy to your appchain
 
 Now that the logic is verified, build and publish the contract to your live
 appchain using the Gas Station account.
@@ -216,7 +216,7 @@ minitiad q tx <YOUR_TX_HASH> --node http://localhost:26657 --output json | jq -r
 
 </Accordion>
 
-## Step 3: Smoke Test the Deployed Contract On-Chain
+## Step 3: Smoke test the deployed contract on-chain
 
 Before moving to frontend integration, smoke test the deployed contract
 directly on chain from the CLI. This isolates contract-level issues before UI
@@ -278,7 +278,7 @@ echo "tokens: $(cast --from-wei $(cast to-dec $RAW) ether)"
 
 </Accordion>
 
-## Step 4: Create a Frontend
+## Step 4: Create a frontend
 
 Let's create a simple UI to interact with our bank.
 
@@ -821,7 +821,7 @@ export default Bank
 
 </Accordion>
 
-## Step 5: Wallet Funding and UI Verification
+## Step 5: Wallet funding and UI verification
 
 Ask your AI agent to fund your browser wallet, then verify frontend behavior
 manually in the browser:
@@ -864,7 +864,7 @@ seamless UI to bridge tokens into your application for use.
   easier liquidity access, and immediate utility in your app).
 </Tip>
 
-## Step 6: Update the Frontend
+## Step 6: Update the frontend
 
 The `useInterwovenKit()` hook provides `openBridge`, which opens the bridge
 modal for moving assets between chains.
@@ -1280,13 +1280,13 @@ This reference assumes:
 - the Vite dev server is restarted after any `.env` change.
 </Accordion>
 
-### Native Feature Verification
+### Native feature verification
 
 1. Connect your wallet in `minibank-frontend`.
 2. Click `Bridge Funds`.
 3. Confirm the Interwoven Bridge modal opens.
 
-## Next Steps
+## Next steps
 
 Now that you've mastered an EVM application, you're ready to build your own
 idea! Ensure your project meets all the

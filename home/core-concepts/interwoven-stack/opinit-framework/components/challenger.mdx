@@ -22,7 +22,7 @@ The primary responsibilities of the Challenger include:
    - Ensure that the next `MsgProposeOutput` is submitted within the expected
      time frame.
 
-## Detailed Architecture
+## Detailed architecture
 
 The Challenger architecture is designed to ensure that interactions between
 Initia (L1) and rollup (L2) are correctly validated, securing internal processes
@@ -30,7 +30,7 @@ within the Initia ecosystem. Each part of the architecture is tailored to handle
 specific challenges while maintaining the security and reliability of the
 Initia-rollup interactions.
 
-### Deposit Challenges
+### Deposit challenges
 
 Deposits from L1 to L2 must follow a strict verification process to ensure that
 tokens are correctly transferred between chains.
@@ -63,7 +63,7 @@ type Deposit struct {
 }
 ```
 
-### Output Challenges
+### Output challenges
 
 **Outputs**, which represent state changes in the L2 chain, must be correctly
 submitted to maintain the synchronization between L1 and L2.
@@ -93,7 +93,7 @@ type Output struct {
 }
 ```
 
-### Oracle Challenges
+### Oracle challenges
 
 Oracles serve as external data providers for the blockchain, and any failure in
 updating their data can lead to inaccuracies within the system.
@@ -118,7 +118,7 @@ type Oracle struct {
 }
 ```
 
-### Rollback Challenges (TBA)
+### Rollback challenges (TBA)
 
 If a challenge is created and the event is not finalized within the timeout
 period, it is possible to rollback before the challenge is finalized. This

@@ -30,9 +30,9 @@ function MyComponent() {
 }
 ```
 
-## Enabling Autosign
+## Enabling autosign
 
-To enable autosign, call the `enable()` method. This opens a drawer where users
+To enable autosign, call the `enable()` method. This opens a drawer where you
 confirm the autosign setup and select an expiration duration.
 
 The following examples show client components for enabling and disabling
@@ -83,7 +83,7 @@ export default function ToggleAutosignButton() {
 }
 ```
 
-### Enabling for a Specific Chain
+### Enabling for a specific chain
 
 Specify a chain ID to enable autosign for a particular chain:
 
@@ -91,17 +91,17 @@ Specify a chain ID to enable autosign for a particular chain:
 await autoSign.enable('interwoven-1')
 ```
 
-### What Happens When Enabled
+### What happens when enabled
 
 When `autoSign.enable()` is called:
 
 <Steps>
 <Step title="Drawer Opens">
-  A drawer appears asking the user to confirm autosign setup, showing which permissions will be granted.
+  A drawer appears asking you to confirm autosign setup, showing which permissions will be granted.
 </Step>
 
 <Step title="Expiration Selection">
-  The user can select an expiration duration from available defaults or use a
+  You can select an expiration duration from available defaults or use a
   custom duration.
 </Step>
 
@@ -111,7 +111,7 @@ When `autoSign.enable()` is called:
 </Step>
 
 <Step title="Permission Grant">
-  The user signs a single transaction to grant `authz` and `feegrant`
+  You sign a single transaction to grant `authz` and `feegrant`
   permissions to the AutoSign wallet.
 </Step>
 
@@ -123,7 +123,7 @@ When `autoSign.enable()` is called:
 The method returns a Promise that resolves when autosign is successfully enabled
 or rejects if the user cancels or an error occurs.
 
-## Sending Transactions with Autosign
+## Sending transactions with autosign
 
 Once autosign is enabled, you can send transactions without user confirmation
 using `submitTxBlock`. This method signs and broadcasts transactions directly
@@ -177,12 +177,12 @@ function SendWithAutosign() {
   requiring user confirmation, use `requestTxBlock` instead.
 </Tip>
 
-## Disabling Autosign
+## Disabling autosign
 
-Users can disable autosign at any time. This revokes all grants for the selected
+You can disable autosign at any time. This revokes all grants for the selected
 chain and prevents further automatic signing.
 
-### Checking Autosign Status
+### Checking autosign status
 
 Use the `isEnabledByChain` property to check if autosign is active for a chain:
 

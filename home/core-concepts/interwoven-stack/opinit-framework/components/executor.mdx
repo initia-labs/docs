@@ -18,9 +18,9 @@ The primary responsibilities of the Executor include:
 4. **Relaying Oracle Update (Optional):** Relaying oracle price feed updates to
    the rollup
 
-## Detailed Architecture
+## Detailed architecture
 
-### Transfer Token from L1 to L2 (Deposit)
+### Transfer token from L1 to L2 (Deposit)
 
 The token deposit process begins when a user submits a deposit transaction on
 the Initia L1 chain. Once the transaction is confirmed, the Bridge Executor
@@ -47,7 +47,7 @@ sequenceDiagram
     R->>R: Mint tokens to user on L2
 ```
 
-### Transfer Token from L2 to L1 (Withdrawal)
+### Transfer token from L2 to L1 (Withdrawal)
 
 The token withdrawal process begins when a user submits a withdrawal transaction
 on the rollup. Once the transaction is confirmed, the Bridge Executor retrieves
@@ -91,7 +91,7 @@ any malicious activity can be detected and addressed. If a challenge is
 submitted, the withdrawal is canceled. If no challenge is submitted, the
 transaction is finalized and the tokens are released to the user on Initia L1.
 
-### Oracle Updates
+### Oracle updates
 
 The executor process is, when enabled on the rollup, also responsible for
 relaying the latest [Connect](https://github.com/skip-mev/connect) oracle data
@@ -116,7 +116,7 @@ sequenceDiagram
     end
 ```
 
-### DA Batch Submission
+### DA batch submission
 
 Lastly, the Executor is responsible for batching and submitting transaction data
 to Celestia.
