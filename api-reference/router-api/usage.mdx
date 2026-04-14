@@ -4,7 +4,8 @@ description: 'How to bridge tokens and track transfers using the Router API.'
 ---
 
 The Router API handles route computation and transaction generation, but does
-not broadcast transactions. Your application signs and submits the transaction to the chain. This page walks through the full flow.
+not broadcast transactions. Your application signs and submits the transaction
+to the chain. This page walks through the full flow.
 
 ## Flow Overview
 
@@ -83,10 +84,9 @@ endpoints.
 
 ## Tracking transfers
 
-Because you sign and broadcast the transaction outside the Router API,
-the API does not know about the transaction until you provide the transaction
-hash. You must register the transaction before you can monitor its cross-chain
-progress.
+Because you sign and broadcast the transaction outside the Router API, the API
+does not know about the transaction until you provide the transaction hash. You
+must register the transaction before you can monitor its cross-chain progress.
 
 <Steps>
   <Step title="Register the transaction">
