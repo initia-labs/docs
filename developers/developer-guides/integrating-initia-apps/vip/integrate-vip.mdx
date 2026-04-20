@@ -75,7 +75,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
     - The VIP operator account will receive the VIP operator rewards
     - The VIP contract deployer account will handle the deployment of the VIP scoring contract.
     
-    If you have an existing account you want to use for these roles, you can use the `--recover` option to recover it using a BIP39 mnemonic phrase. If you do not have a mnemonic phrase, you can create a new account without this option.
+    If you have an existing account for these roles, use the `--recover` option to recover it with a BIP39 mnemonic phrase. If you do not have a mnemonic phrase, create a new account without this option.
 
     ```bash
     export OPERATOR_KEY_NAME=operator
@@ -100,7 +100,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
   <Step title="Deploy the VIP Scoring Contract">
     In this step, you will deploy the VIP scoring contract that tracks addresses and scores. To do so, follow the steps based on your rollup's VM.
 
-      The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, choose the example for your network and run either the curl request or the TypeScript example. Both will query the VIP module store on L1 and return the current VIP stage information.
+      The VIP scoring contract must specify the stage at which the rollup participates in VIP when deployed. To retrieve the current VIP stage, select the example for your network and run the curl request or the TypeScript example. Both query the VIP module store on L1 and return the current stage information.
       <Tabs>
         <Tab title="Mainnet (interwoven-1)">
         ```bash curl
@@ -153,7 +153,10 @@ This guide explains how a rollup can prepare for and integrate Initia's
         forge build
         ```
 
-        Deploy the contract. Make sure to set the `JSON_RPC_URL`, `PRIVATE_KEY`, and `INIT_STAGE` environment variables before running the script. Set `JSON_RPC_URL` to your rollup’s RPC endpoint, `PRIVATE_KEY` to the VIP contract deployer key, and `INIT_STAGE` to the starting VIP stage number.
+        Deploy the contract. Before running the script, set these environment variables:
+        - `JSON_RPC_URL`: your rollup's RPC endpoint
+        - `PRIVATE_KEY`: the VIP contract deployer key
+        - `INIT_STAGE`: the starting VIP stage number
 
         To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
 
@@ -181,7 +184,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
         git clone https://github.com/initia-labs/vip-score-move.git
         ```
 
-        Set the `vip_score.move` deployer address in the `Move.toml` file. This address will be used to deploy the contract and interact with it.
+        Set the `vip_score.move` deployer address in the `Move.toml` file. You will use this address to deploy and interact with the contract.
 
         ```toml
         [addresses]
@@ -247,7 +250,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
         echo "$RESP" | jq -r '.events[]| select(.type=="store_code").attributes[]| select(.key=="code_id").value'
         ```
 
-        The output will be the code ID of the uploaded contract, which you will use to instantiate the contract. To get `INIT_STAGE`, you can check the current VIP stage by using the curl request or the TypeScript example provided in the previous note.
+        The output is the code ID of the uploaded contract, which you will use to instantiate it. To get `INIT_STAGE`, check the current VIP stage using the curl request or TypeScript example from the previous note.
 
         ```bash
         export ADDRESS=$(minitiad keys show $KEY_NAME -a)
@@ -268,7 +271,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
       </Tab>
     </Tabs>
 
-    Save the deployed contract address. It will be required for the VIP whitelist proposal.
+    Save the deployed contract address. You will need it for the VIP whitelist proposal.
 
   </Step>
   <Step title="Register the Rollup in the Initia Registry">
@@ -282,7 +285,7 @@ This guide explains how a rollup can prepare for and integrate Initia's
 
   </Step>
   <Step title="Whitelist VIP Proposal">
-    Draft a forum post with the whitelist template and include your operator address, scoring policy, and VIP score contract address. The full procedure is described in the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelist-rollup-for-vip) guide. This proposal is required only for mainnet rollups. For testnet deployments, contact the Initia team directly to have your rollup whitelisted.
+    Draft a forum post with the whitelist template. Include your operator address, scoring policy, and VIP score contract address. See the [Whitelisting Rollup for VIP](/developers/developer-guides/integrating-initia-apps/vip/whitelist-rollup-for-vip) guide for the full procedure. This proposal is required only for mainnet rollups. For testnet deployments, contact the Initia team directly.
   </Step>
   <Step title="Operate the VIP Scoring Contract">
     Each VIP stage follows the same sequence of steps. Use the methods below to update scores and finalize each stage.

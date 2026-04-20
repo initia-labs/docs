@@ -40,7 +40,7 @@ endpoints.
 
 <Steps>
   <Step title="Compute a route">
-    Call **Compute Route** (`POST /v2/fungible/route`) with the source and destination assets and the amount to transfer. The API evaluates available pathways (IBC, LayerZero, Optimistic bridges, etc.) and returns the optimal route, including the expected output amount and an `operations` array describing each hop.
+    Call **Compute Route** (`POST /v2/fungible/route`) with the source and destination assets and the amount to transfer. The API evaluates available pathways (IBC, LayerZero, Optimistic bridges, etc.) and returns the optimal route, including the expected output amount and an `operations` array for each hop.
 
     ```bash
     curl -X POST https://router-api.initia.xyz/v2/fungible/route \
@@ -58,7 +58,7 @@ endpoints.
   <Step title="Generate transaction messages">
     Pass the route details to **Generate Transaction** (`POST /v2/fungible/msgs`) along with the relevant addresses and slippage tolerance. The API returns signable transaction messages for the source chain.
 
-    If the route response included `required_op_hook: true`, you must first call **Get OP Hook** (`POST /op-hook`) with the source and destination addresses and assets to obtain the hook payload. Sign the hook and include it in the `signed_op_hook` field of the Generate Transaction request.
+    If the route response included `required_op_hook: true`, first call **Get OP Hook** (`POST /op-hook`) with the source and destination addresses and assets to obtain the hook payload. Then sign the hook and include it in the `signed_op_hook` field of the Generate Transaction request.
 
     ```bash
     curl -X POST https://router-api.initia.xyz/v2/fungible/msgs \
@@ -91,7 +91,7 @@ cross-chain progress can be monitored.
 
 <Steps>
   <Step title="Register the transaction">
-    After broadcasting, call **Track Transaction** (`POST /v2/tx/track`) once with the transaction hash and the chain ID where it was submitted. This registers the transaction with the tracking service so it can begin watching for relay events and bridge confirmations across chains.
+    After broadcasting, call **Track Transaction** (`POST /v2/tx/track`) once with the transaction hash and the chain ID where it was submitted. This registers the transaction so the tracking service can watch for relay events and bridge confirmations.
 
     ```bash
     curl -X POST https://router-api.initia.xyz/v2/tx/track \
