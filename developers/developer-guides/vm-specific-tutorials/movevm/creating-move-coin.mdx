@@ -24,16 +24,19 @@ public entry fun initialize(
 )
 ```
 
-<CodeGroup>
-  <CodeBlock filename="CLI" language="bash">
+<Tabs>
+  <Tab title="CLI">
+    ```bash
     initiad tx move execute 0x1 managed_coin initialize \
         --args '["option<u128>:null", "string:my_coin", "string:MYCOIN", "u8:6", "string:ICON_URI", "string:PROJECT_URI"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
-  </CodeBlock>
+    ```
+  </Tab>
 
-  <CodeBlock filename="InitiaJS" language="ts">
+  <Tab title="InitiaJS">
+    ```ts
     import {
       bcs,
       RESTClient,
@@ -41,18 +44,18 @@ public entry fun initialize(
       MsgExecute,
       Wallet,
     } from '@initia/initia.js'
-    
+
     async function createCoin() {
       const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
       })
-    
+
       const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
       })
       const wallet = new Wallet(restClient, key)
-    
+
       const msgs = [
         new MsgExecute(
           key.accAddress,
@@ -72,7 +75,7 @@ public entry fun initialize(
           ],
         ),
       ]
-    
+
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs })
       // send(broadcast) tx
@@ -83,10 +86,11 @@ public entry fun initialize(
       //   raw_log: '[]'
       // }
     }
-    
+
     createCoin()
-  </CodeBlock>
-</CodeGroup>
+    ```
+  </Tab>
+</Tabs>
 
 # Step 2: Mint Coin
 
@@ -107,30 +111,32 @@ through the `0x1::coin::metadata` view function or by using
 
 ## Obtaining Metadata
 
-<CodeGroup>
-  <CodeBlock filename="CLI" language="bash">
+<Tabs>
+  <Tab title="CLI">
+    ```bash
     initiad query move view 0x1 coin metadata \
         --args '["address:0x...", "string:MYCOIN"]' \
         --node [rpc-url]:[rpc-port]
-    
-    # data: '"0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb"'
-    
-  </CodeBlock>
 
-  <CodeBlock filename="InitiaJS" language="ts">
+    # data: '"0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb"'
+    ```
+  </Tab>
+
+  <Tab title="InitiaJS">
+    ```ts
     import { bcs, RESTClient, MnemonicKey } from '@initia/initia.js';
     import * as crypto from 'crypto';
-    
+
     async function getCoinMetadata() {
         const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
             gasPrices: '0.015uinit',
             gasAdjustment: '1.5',
         });
-    
+
         const key = new MnemonicKey({
             mnemonic: 'beauty sniff protect ...',
         });
-    
+
         // Method 1: use view function
         restClient.move
             .viewFunction(
@@ -145,14 +151,14 @@ through the `0x1::coin::metadata` view function or by using
             )
             .then(console.log);
         // 0xcf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
-    
+
         // Method 2: use sha3-256
         console.log(coinMetadata(key.accAddress, 'MYCOIN'));
         // cf921815f2b4827930ac01b3116ed3caad08ccd443f9df6eb22cd5344a548660
     }
-    
+
     getCoinMetadata();
-    
+
     function coinMetadata(creator: string, symbol: string): string {
         const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe;
         const addrBytes = bcs.address().serialize(creator).toBytes();
@@ -162,21 +168,25 @@ through the `0x1::coin::metadata` view function or by using
         const digest = hash.update(Buffer.from(bytes)).digest();
         return digest.toString('hex');
     }
-  </CodeBlock>
-</CodeGroup>
+    ```
+  </Tab>
+</Tabs>
 
 ## Minting Coins
 
-<CodeGroup>
-  <CodeBlock filename="CLI" language="bash">
+<Tabs>
+  <Tab title="CLI">
+    ```bash
     initiad tx move execute 0x1 managed_coin mint_to \
         --args '["address:0x...", "object:0x2d81ce0b6708fccc77a537d3d1abac8c9f1f674f4f76390e3e78a89a52d4aacb", "u64:100000000"]' \
         --from [key-name] \
         --gas auto --gas-adjustment 1.5 --gas-prices 0.015uinit \
         --node [rpc-url]:[rpc-port] --chain-id [chain-id]
-  </CodeBlock>
+    ```
+  </Tab>
 
-  <CodeBlock filename="InitiaJS" language="ts">
+  <Tab title="InitiaJS">
+    ```ts
     import {
       bcs,
       RESTClient,
@@ -185,18 +195,18 @@ through the `0x1::coin::metadata` view function or by using
       Wallet,
     } from '@initia/initia.js'
     import * as crypto from 'crypto'
-    
+
     async function mintCoin() {
       const restClient = new RESTClient('https://rest.testnet.initia.xyz', {
         gasPrices: '0.015uinit',
         gasAdjustment: '1.5',
       })
-    
+
       const key = new MnemonicKey({
         mnemonic: 'beauty sniff protect ...',
       })
       const wallet = new Wallet(restClient, key)
-    
+
       const msgs = [
         new MsgExecute(
           key.accAddress,
@@ -214,7 +224,7 @@ through the `0x1::coin::metadata` view function or by using
           ],
         ),
       ]
-    
+
       // sign tx
       const signedTx = await wallet.createAndSignTx({ msgs })
       // send(broadcast) tx
@@ -225,9 +235,9 @@ through the `0x1::coin::metadata` view function or by using
       //   raw_log: '[]'
       // }
     }
-    
+
     mintCoin()
-    
+
     function coinMetadata(creator: string, symbol: string): string {
       const OBJECT_FROM_SEED_ADDRESS_SCHEME = 0xfe
       const addrBytes = bcs.address().serialize(creator).toBytes()
@@ -237,7 +247,8 @@ through the `0x1::coin::metadata` view function or by using
       const digest = hash.update(Buffer.from(bytes)).digest()
       return digest.toString('hex')
     }
-  </CodeBlock>
-</CodeGroup>
+    ```
+  </Tab>
+</Tabs>
 
 After minting, you can check the balances to verify the minting process.
