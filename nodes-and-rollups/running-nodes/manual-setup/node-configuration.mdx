@@ -75,9 +75,9 @@ sed -E -i \
 
 sed -E -i \
  "s/persistent_peers = \".\*\"/persistent_peers = \"${PERSISTENT_PEERS}\"/" \
- $HOME/.initia/config/config.toml
+  $HOME/.initia/config/config.toml
 
-````
+```
 </CodeGroup>
 
 ## Updating Address Book
@@ -90,6 +90,6 @@ To do this, run the following command:
 ```sh initiation-2
 curl -Ls https://storage.googleapis.com/init-common-genesis/initiation-2/addrbook.json > \
     $HOME/.initia/config/addrbook.json
-````
+```
 
 </CodeGroup>

@@ -55,7 +55,7 @@ const wallet: Wallet = new Wallet(restClient, key)
 const sendMsg: MsgSend = new MsgSend(senderAddress, recipientAddress, amount)
 ```
 
-Finally, create the function to send the transaction.
+Next, create the function to send the transaction.
 
 - First, create the transaction by calling `wallet.createAndSignTx`. This
   function takes in the raw message object, signs it using the `wallet`, and
