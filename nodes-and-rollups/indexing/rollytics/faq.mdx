@@ -5,7 +5,7 @@ description:
   Indexer.'
 ---
 
-## What is Rollytics?
+## What Is Rollytics?
 
 Rollytics is Initia's production indexing service that replaces the legacy KV
 Indexer. Unlike KV Indexer, which runs inside each RPC node and duplicates index
@@ -19,7 +19,7 @@ Key benefits:
 - Simplifies operations (reindexing happens in one place)
 - Improves RPC node performance by removing indexing overhead
 
-## Can we keep using KV Indexer?
+## Can We Keep Using KV Indexer?
 
 Yes, but it is **not recommended**.
 
@@ -32,12 +32,12 @@ KV Indexer:
 
 Rollytics is the long-term supported indexing solution for Initia rollups.
 
-## Will services break if we don’t migrate?
+## Will Services Break if We Don’t Migrate?
 
 No immediate breakage is expected, but migration is recommended before
 production scale.
 
-## Is Rollytics compatible with existing KV Indexer endpoints?
+## Is Rollytics Compatible with Existing KV Indexer Endpoints?
 
 Yes, Rollytics is fully compatible with KV Indexer endpoints.
 
@@ -50,7 +50,7 @@ Rollytics exposes a KV Indexer endpoint-compatible HTTP API, which means:
 This allows Rollytics to act as a drop-in replacement, making migration
 straightforward and low-risk.
 
-## Can Rollytics run alongside KV Indexer?
+## Can Rollytics Run Alongside KV Indexer?
 
 Yes, and this is the recommended migration approach.
 
@@ -63,7 +63,7 @@ You can:
 
 This approach requires no downtime and allows easy rollback.
 
-## Does Rollytics require archival nodes?
+## Does Rollytics Require Archival Nodes?
 
 Yes.
 
@@ -73,17 +73,17 @@ The indexer needs access to **historical data from genesis**, which requires:
 - REST endpoint
 - JSON-RPC endpoint for EVM rollups
 
-## What Postgres version is required?
+## What Postgres Version Is Required?
 
 Postgres 15+ is compatible.
 
-## How many Rollytics instances should we run?
+## How Many Rollytics Instances Should We Run?
 
 - **Indexer**: one per chain
 - **API**: one or more, depending on query load
 - **Postgres**: one primary database, with replicas if needed
 
-## What data does Rollytics index?
+## What Data Does Rollytics Index?
 
 Rollytics indexes:
 
@@ -93,15 +93,15 @@ Rollytics indexes:
 - EVM transactions
 - Internal EVM transactions (EVM rollups only)
 
-## Which VM types are supported?
+## Which VM Types Are Supported?
 
 Rollytics supports Move, Wasm, and EVM rollups.
 
-## Does Rollytics support internal EVM transactions?
+## Does Rollytics Support Internal EVM Transactions?
 
 Yes. For EVM rollups, internal transaction indexing is enabled by default.
 
-## Where is the API reference?
+## Where Is the API Reference?
 
 The API reference is documented separately and mirrors the KV Indexer endpoint
 structure.
