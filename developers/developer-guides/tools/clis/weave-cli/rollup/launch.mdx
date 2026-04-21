@@ -65,7 +65,7 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
 
 <Tabs>
   <Tab title="Start">
-    ```bash weave rollup start ```
+    <CodeBlock language="bash">{`weave rollup start`}</CodeBlock>
     <Note>
       Note that `launch` command already starts the rollup node for you. This
       command is only needed if you have stopped the node and want to start it
@@ -76,10 +76,15 @@ weave rollup launch --with-config <path-to-config-file> --vm <move|wasm|evm>
       Whether to run the rollup node in the background.
     </ParamField>
   </Tab>
-  <Tab title="Stop">```bash weave rollup stop ```</Tab>
-  <Tab title="Restart">```bash weave rollup restart ```</Tab>
+  <Tab title="Stop">
+    <CodeBlock language="bash">{`weave rollup stop`}</CodeBlock>
+  </Tab>
+  <Tab title="Restart">
+    <CodeBlock language="bash">{`weave rollup restart`}</CodeBlock>
+  </Tab>
   <Tab title="View logs">
-    ```bash weave rollup log ``` **Available Flags**
+    <CodeBlock language="bash">{`weave rollup log`}</CodeBlock>
+    **Available Flags**
     <ParamField path="-n" type="number" default="100">
       The number of lines to display from the end of the logs.
     </ParamField>
