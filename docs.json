@@ -526,6 +526,11 @@
                 "group": "NFT",
                 "openapi": "api-reference/router-api/openapi.yaml",
                 "pages": ["POST /nft"]
+              },
+              {
+                "group": "RPC",
+                "openapi": "api-reference/router-api/openapi.yaml",
+                "pages": ["POST /api/rpc/{chainId}"]
               }
             ]
           },
