@@ -1,12 +1,16 @@
 ---
 title: Integrating Dune Analytics
 description:
-  Build analytics-driven Initia applications by bridging onchain state with Dune's historical data.
+  Build analytics-driven Initia applications by bridging onchain state with
+  Dune's historical data.
 ---
 
 ## Overview
 
-While live contract reads tell you what's happening *right now*, analytics provide the context of your application's growth and health. Integrating Dune Analytics allows you to provide users with historical insights, network-wide benchmarks, and aggregate metrics.
+While live contract reads tell you what's happening _right now_, analytics
+provide the context of your application's growth and health. Integrating Dune
+Analytics allows you to provide users with historical insights, network-wide
+benchmarks, and aggregate metrics.
 
 <CardGroup cols={3}>
   <Card title="Initia App" icon="cube">
@@ -24,23 +28,31 @@ While live contract reads tell you what's happening *right now*, analytics provi
 
 Ensure you have the following before starting:
 
-- **Dune API Key:** Obtained from your [Dune settings](https://dune.com/settings/profile) (select **API keys** from the sidebar).
-- **Saved Query IDs:** The numeric IDs for the queries you want to display. Open [Dune Queries](https://dune.com/queries) to create or inspect them.
+- **Dune API Key:** Obtained from your
+  [Dune settings](https://dune.com/settings/profile) (select **API keys** from
+  the sidebar).
+- **Saved Query IDs:** The numeric IDs for the queries you want to display. Open
+  [Dune Queries](https://dune.com/queries) to create or inspect them.
 - **Node.js Environment:** To run the backend proxy and frontend application.
 
 ## Step 1: Backend Implementation
 
-Your backend acts as a secure proxy, ensuring your `DUNE_API_KEY` is never exposed to the frontend.
+Your backend acts as a secure proxy, ensuring your `DUNE_API_KEY` is never
+exposed to the frontend.
 
 <Note>
-  **Pattern:** The backend proxy pattern is language-agnostic. The examples here use Node.js and Express, but the same security model applies in Python, Go, Rust, or any server-side stack.
+  **Pattern:** The backend proxy pattern is language-agnostic. The examples here
+  use Node.js and Express, but the same security model applies in Python, Go,
+  Rust, or any server-side stack.
 </Note>
 
 ### 1. Setup and Configuration
 
-Create an `api/` directory, a `src/` folder inside it, and install the required dependencies:
+Create an `api/` directory, a `src/` folder inside it, and install the required
+dependencies:
 
-The backend example uses `express` for routing, `cors` for origin control, and `dotenv` for environment variables.
+The backend example uses `express` for routing, `cors` for origin control, and
+`dotenv` for environment variables.
 
 ```bash
 mkdir api && cd api
@@ -74,7 +86,8 @@ FRONTEND_ORIGIN=http://localhost:5173
 
 ### 2. Proxy Server
 
-This Express server validates requests and proxies them to Dune. It keeps `DUNE_API_KEY` server-side and only forwards allowed query IDs.
+This Express server validates requests and proxies them to Dune. It keeps
+`DUNE_API_KEY` server-side and only forwards allowed query IDs.
 
 ```js api/src/server.js
 import 'dotenv/config'
@@ -149,7 +162,10 @@ app.get('/api/dune/query/:queryId/results', async (req, res) => {
       .send(bodyText)
   } catch (error) {
     res.status(502).json({
-      error: error instanceof Error ? error.message : 'Failed to fetch Dune results.',
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch Dune results.',
     })
   }
 })
@@ -171,7 +187,8 @@ Switch to your frontend directory before setting environment variables:
 cd ../frontend
 ```
 
-Add your backend's base URL and query IDs to your public environment variables (e.g., `.env`):
+Add your backend's base URL and query IDs to your public environment variables
+(e.g., `.env`):
 
 ```env frontend/.env
 VITE_DUNE_API_BASE_URL=http://localhost:4000/api
@@ -185,53 +202,68 @@ VITE_DUNE_QUERY_ID_WALLETS=3456789
 Use this helper to abstract the backend API call:
 
 ```ts frontend/src/lib/dune.ts
-const DUNE_API_BASE_URL = import.meta.env.VITE_DUNE_API_BASE_URL ?? 'http://localhost:4000/api'
+const DUNE_API_BASE_URL =
+  import.meta.env.VITE_DUNE_API_BASE_URL ?? 'http://localhost:4000/api'
 
 export async function fetchLatestDuneResult(queryId: string, limit = 8) {
   if (!queryId) {
-    throw new Error('Missing Dune query ID. Update the frontend .env with your Dune query IDs.')
+    throw new Error(
+      'Missing Dune query ID. Update the frontend .env with your Dune query IDs.',
+    )
   }
 
-  const response = await fetch(`${DUNE_API_BASE_URL}/dune/query/${queryId}/results?limit=${limit}`)
+  const response = await fetch(
+    `${DUNE_API_BASE_URL}/dune/query/${queryId}/results?limit=${limit}`,
+  )
   if (!response.ok) {
     const text = await response.text()
-    throw new Error(text || `Dune request failed with status ${response.status}`)
+    throw new Error(
+      text || `Dune request failed with status ${response.status}`,
+    )
   }
   return response.json()
 }
 ```
 
 <Note>
-  **Limit:** The backend proxy supports `?limit=` on the results endpoint, and the frontend helper exposes it as the optional `limit` argument.
+  **Limit:** The backend proxy supports `?limit=` on the results endpoint, and
+  the frontend helper exposes it as the optional `limit` argument.
 </Note>
 
 ## Step 3: Mapping Multiple Queries
 
-Use stable **Application Keys** to map your UI components to specific Dune Query IDs. This allows you to update queries on the backend without changing frontend code.
+Use stable **Application Keys** to map your UI components to specific Dune Query
+IDs. This allows you to update queries on the backend without changing frontend
+code.
 
 ```ts frontend/src/lib/dune.ts
 export const DUNE_QUERY_MAP = {
   overview: {
     title: 'Network Overview',
-    description: 'A high-level summary of Initia transaction activity and chain health.',
+    description:
+      'A high-level summary of Initia transaction activity and chain health.',
     queryId: import.meta.env.VITE_DUNE_QUERY_ID_OVERVIEW,
   },
   bridges: {
     title: 'Bridge Routes',
-    description: 'Cross-chain transfer flow across Initia bridge routes and assets.',
+    description:
+      'Cross-chain transfer flow across Initia bridge routes and assets.',
     queryId: import.meta.env.VITE_DUNE_QUERY_ID_BRIDGES,
   },
   wallets: {
     title: 'Message Activity',
-    description: 'Readable message activity showing what kinds of actions wallets are taking.',
+    description:
+      'Readable message activity showing what kinds of actions wallets are taking.',
     queryId: import.meta.env.VITE_DUNE_QUERY_ID_WALLETS,
   },
 }
 
-export const DUNE_QUERY_OPTIONS = Object.entries(DUNE_QUERY_MAP).map(([key, value]) => ({
-  key,
-  ...value,
-}))
+export const DUNE_QUERY_OPTIONS = Object.entries(DUNE_QUERY_MAP).map(
+  ([key, value]) => ({
+    key,
+    ...value,
+  }),
+)
 
 export function getQueryConfig(queryKey) {
   return DUNE_QUERY_MAP[queryKey] ?? DUNE_QUERY_MAP.overview
@@ -277,27 +309,31 @@ export function Analytics() {
   </Step>
   <Step title="Verify Backend">
     Confirm your proxy is live by visiting `http://localhost:4000/api/health` in
-    your browser or running:
-    ```bash
-    curl http://localhost:4000/api/health
-    ```
+    your browser or running: ```bash curl http://localhost:4000/api/health ```
   </Step>
   <Step title="Verify Results">
-    Launch your app and refresh a query to confirm the frontend renders data and the backend logs successful requests.
+    Launch your app and refresh a query to confirm the frontend renders data and
+    the backend logs successful requests.
   </Step>
 </Steps>
 
 ## Troubleshooting and Security Tips
 
-- **API Key Security:** **Never** expose `DUNE_API_KEY` in your frontend. It must remain server-side.
-- **Source of Truth:** Dune is an analytics layer, not your contract's source of truth. Keep critical validation and state transitions onchain.
-- **Access Control:** Always use the `DUNE_ALLOWED_QUERY_IDS` allowlist on your backend to prevent unauthorized proxying.
-- **Data Freshness:** Dune's results endpoint returns the latest saved execution, not necessarily a fresh one.
-- **Maintainability:** Use Application Keys (like `overview`) in your UI components instead of hardcoding numeric IDs.
+- **API Key Security:** **Never** expose `DUNE_API_KEY` in your frontend. It
+  must remain server-side.
+- **Source of Truth:** Dune is an analytics layer, not your contract's source of
+  truth. Keep critical validation and state transitions onchain.
+- **Access Control:** Always use the `DUNE_ALLOWED_QUERY_IDS` allowlist on your
+  backend to prevent unauthorized proxying.
+- **Data Freshness:** Dune's results endpoint returns the latest saved
+  execution, not necessarily a fresh one.
+- **Maintainability:** Use Application Keys (like `overview`) in your UI
+  components instead of hardcoding numeric IDs.
 
 ## Advanced: Saving Preferences Onchain (Optional)
 
-For personalized experiences, you can store a user's selected analytics view on the Initia rollup.
+For personalized experiences, you can store a user's selected analytics view on
+the Initia rollup.
 
 ```solidity
 struct SavedView {
@@ -320,19 +356,19 @@ struct SavedView {
 
 These are example tables frequently used for Initia analytics:
 
-| Table | Recommended Use |
-|---|---|
-| `initia.transactions` | Network activity and gas trends. |
+| Table                     | Recommended Use                        |
+| ------------------------- | -------------------------------------- |
+| `initia.transactions`     | Network activity and gas trends.       |
 | `initia.bridge_transfers` | Asset flow and bridge route analytics. |
-| `initia.tx_messages` | Detailed message-type activity. |
+| `initia.tx_messages`      | Detailed message-type activity.        |
 
 ### Choosing the Right Tool
 
-| Feature | [Initia Indexer](/api-reference/rollup-indexer/introduction) | Dune Analytics |
-|---|---|---|
-| **Data Scope** | Real-time app state. | Historical trends & aggregates. |
-| **Query Style** | Specific accounts/events. | Complex SQL across millions of rows. |
-| **Primary Use** | Core app logic. | Dashboards & public reports. |
+| Feature         | [Initia Indexer](/api-reference/rollup-indexer/introduction) | Dune Analytics                       |
+| --------------- | ------------------------------------------------------------ | ------------------------------------ |
+| **Data Scope**  | Real-time app state.                                         | Historical trends & aggregates.      |
+| **Query Style** | Specific accounts/events.                                    | Complex SQL across millions of rows. |
+| **Primary Use** | Core app logic.                                              | Dashboards & public reports.         |
 
 ## Next Steps
 
