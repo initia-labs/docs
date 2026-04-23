@@ -202,7 +202,10 @@
           },
           {
             "group": "Quick Guides",
-            "pages": ["developers/developer-guides/guides/exchange-integration"]
+            "pages": [
+              "developers/developer-guides/guides/exchange-integration",
+              "developers/developer-guides/guides/dune-integration"
+            ]
           },
           {
             "group": "VM Specific Tutorials",
