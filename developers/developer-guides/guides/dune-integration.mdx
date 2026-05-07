@@ -70,26 +70,37 @@ Run these example templates in the Dune Query Editor and save each one to get a
 numeric query ID. You will plug those IDs into the backend allowlist and the
 frontend `.env` in the next steps.
 
+<Note>
+  You can also browse public examples on the [query page](https://dune.com/queries)
+  when signed in. For table-specific ideas, search for `Initia` in Dune's data
+  catalog.
+</Note>
+
 ### 1. Daily Transaction Volume
 
 ```sql
 SELECT
-  date_trunc('day', block_time) as day,
-  count(*) as tx_count,
-  count(distinct "from") as unique_users
-FROM initia.transactions
-WHERE block_time > now() - interval '30 days'
-GROUP BY 1 ORDER BY 1 DESC
+  date_trunc('day', b.block_timestamp) AS day,
+  count(*) AS tx_count,
+  count(distinct t.fee_payer) AS unique_fee_payers
+FROM initia.transactions t
+JOIN initia.blocks b
+  ON t.chain_id = b.chain_id
+ AND t.block_height = b.block_height
+WHERE b.block_date >= CURRENT_DATE - INTERVAL '30' DAY
+GROUP BY 1
+ORDER BY 1 DESC
 ```
 
 ### 2. Popular Message Types
 
 ```sql
 SELECT
-  type_url,
-  count(*) as count
+  message_type,
+  count(*) AS count
 FROM initia.tx_messages
-GROUP BY 1 ORDER BY 2 DESC
+GROUP BY 1
+ORDER BY 2 DESC
 LIMIT 10
 ```
 
