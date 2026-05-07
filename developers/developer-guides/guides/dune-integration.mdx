@@ -41,16 +41,16 @@ implementation where:
   </Card>
 </CardGroup>
 
-## Dune App Capabilities
+### Choosing the Right Tool
 
-If you want to work directly in Dune before wiring anything into an Initia app,
-the web app gives you the core building blocks you need: query editing,
-dashboards, search/discovery, and scheduled refreshes.
+Use the Initia Indexer for live app state and Dune for historical analysis,
+reporting, and dashboards.
 
-<Tip>
-  Use Dune directly to prototype queries and dashboards. Use the API when you
-  want to embed saved results into an Initia app or backend flow.
-</Tip>
+| Feature         | [Initia Indexer](/api-reference/rollup-indexer/introduction) | Dune Analytics                      |
+| --------------- | ------------------------------------------------------------ | ----------------------------------- |
+| **Data Scope**  | Real-time app state                                          | Historical trends and aggregates    |
+| **Query Style** | Specific accounts and events                                 | Complex SQL across millions of rows |
+| **Primary Use** | Core app logic                                               | Dashboards and public reports       |
 
 ## Prerequisites
 
@@ -62,6 +62,36 @@ dashboards, search/discovery, and scheduled refreshes.
 - **Foundry:** To deploy the preference registry contract to your Initia rollup.
 - **Registry Contract Address:** The deployed address for your saved-view
   contract.
+
+## Step 0: Build Your Dune Queries
+
+Before wiring anything together, create the SQL queries your app will display.
+Run these example templates in the Dune Query Editor and save each one to get a
+numeric query ID. You will plug those IDs into the backend allowlist and the
+frontend `.env` in the next steps.
+
+### 1. Daily Transaction Volume
+
+```sql
+SELECT
+  date_trunc('day', block_time) as day,
+  count(*) as tx_count,
+  count(distinct "from") as unique_users
+FROM initia.transactions
+WHERE block_time > now() - interval '30 days'
+GROUP BY 1 ORDER BY 1 DESC
+```
+
+### 2. Popular Message Types
+
+```sql
+SELECT
+  type_url,
+  count(*) as count
+FROM initia.tx_messages
+GROUP BY 1 ORDER BY 2 DESC
+LIMIT 10
+```
 
 ## Step 1: Backend Implementation
 
@@ -195,14 +225,8 @@ app.listen(port, () => {
 ## Step 2: Onchain Registry
 
 This example uses a MiniEVM Solidity contract to store user view preferences.
-The same registry pattern can be implemented on MiniMove or MiniWasm chains with
-the matching Move or CosmWasm contract/module instead.
-
-<Note>
-  The registry example is MiniEVM-specific, but the saved-view pattern itself is
-  VM-agnostic. Use the equivalent contract/module syntax for MiniMove or
-  MiniWasm if your rollup uses a different VM.
-</Note>
+The saved-view pattern is VM-agnostic, so you can implement the same registry
+on MiniMove or MiniWasm by using the equivalent Move or CosmWasm syntax.
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -243,6 +267,16 @@ contract DuneRadarRegistry {
         return results;
     }
 }
+```
+
+Deploy the contract to your rollup with Foundry, then set
+`VITE_REGISTRY_ADDRESS` in your frontend `.env` to the address it prints.
+
+```bash
+forge create src/DuneRadarRegistry.sol:DuneRadarRegistry \
+  --rpc-url $JSON_RPC_URL \
+  --private-key $DEPLOYER_KEY \
+  --broadcast
 ```
 
 ## Step 3: Frontend Implementation
@@ -317,6 +351,7 @@ VITE_DUNE_QUERY_ID_BRIDGES=2345678
 VITE_DUNE_QUERY_ID_WALLETS=3456789
 VITE_APPCHAIN_ID=your-appchain-id
 VITE_REGISTRY_ADDRESS=0xYourDeployedRegistryContractAddress
+VITE_JSON_RPC_URL=http://localhost:8545
 ```
 
 <Note>
@@ -327,15 +362,15 @@ VITE_REGISTRY_ADDRESS=0xYourDeployedRegistryContractAddress
 
 ### 2. Contract Helper
 
-This helper encodes the `MsgCall` for your registry contract using `viem` and
-keeps the frontend example focused on the transaction payload rather than the
-submission plumbing.
+This helper encodes the `MsgCall` write for your registry contract and reads
+saved views back through a JSON-RPC `eth_call`. Both paths reuse the same ABI.
 
 ```ts frontend/src/lib/contract.ts
-import { encodeFunctionData } from 'viem'
+import { decodeFunctionResult, encodeFunctionData } from 'viem'
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_REGISTRY_ADDRESS
 const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const JSON_RPC_URL = import.meta.env.VITE_JSON_RPC_URL
 
 export const REGISTRY_ABI = [
   {
@@ -344,6 +379,24 @@ export const REGISTRY_ABI = [
     stateMutability: 'nonpayable',
     inputs: [{ name: 'viewKey', type: 'string' }],
     outputs: [{ name: 'savedViewId', type: 'uint256' }],
+  },
+  {
+    name: 'getSavedViews',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'owner', type: 'address' }],
+    outputs: [
+      {
+        type: 'tuple[]',
+        components: [
+          { name: 'id', type: 'uint256' },
+          { name: 'owner', type: 'address' },
+          { name: 'viewKey', type: 'string' },
+          { name: 'createdAt', type: 'uint64' },
+          { name: 'archived', type: 'bool' },
+        ],
+      },
+    ],
   },
 ]
 
@@ -367,10 +420,48 @@ export function buildCreateSavedViewMessage(
           contractAddr: CONTRACT_ADDRESS,
           input,
           value: '0',
+          accessList: [],
+          authList: [],
         },
       },
     ],
   }
+}
+
+export async function fetchSavedViews(hexAddress: string) {
+  if (!hexAddress || !CONTRACT_ADDRESS) return []
+
+  const data = encodeFunctionData({
+    abi: REGISTRY_ABI,
+    functionName: 'getSavedViews',
+    args: [hexAddress],
+  })
+
+  const response = await fetch(JSON_RPC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'eth_call',
+      params: [{ to: CONTRACT_ADDRESS, data }, 'latest'],
+    }),
+  })
+
+  const { result, error } = await response.json()
+  if (error) throw new Error(error.message)
+
+  const decoded = decodeFunctionResult({
+    abi: REGISTRY_ABI,
+    functionName: 'getSavedViews',
+    data: result,
+  })
+
+  return decoded.map((view) => ({
+    ...view,
+    id: Number(view.id),
+    createdAt: Number(view.createdAt),
+  }))
 }
 ```
 
@@ -411,35 +502,56 @@ export function DuneTable({ rows }: { rows: any[] }) {
 
 ### 4. Integration Example
 
-Use `useInterwovenKit` to connect wallets and store preferences onchain.
+Use `useInterwovenKit` for the write path and `useHexAddress` for the read.
+The component loads the user's saved views on mount, lets them open any saved
+view to see the matching Dune result, and refreshes the list after a new
+preference is saved.
 
 ```tsx frontend/src/App.tsx
-import { useEffect, useState } from 'react'
-import { useInterwovenKit } from '@initia/interwovenkit-react'
+import { useCallback, useEffect, useState } from 'react'
+import {
+  useHexAddress,
+  useInterwovenKit,
+} from '@initia/interwovenkit-react'
 import {
   DUNE_QUERY_OPTIONS,
   fetchLatestDuneResult,
   getQueryConfig,
 } from './lib/dune'
-import { buildCreateSavedViewMessage } from './lib/contract'
+import {
+  buildCreateSavedViewMessage,
+  fetchSavedViews,
+} from './lib/contract'
 import { DuneTable } from './components/DuneTable'
 
 export function Analytics() {
   const { initiaAddress, requestTxBlock } = useInterwovenKit()
+  const hexAddress = useHexAddress()
   const [viewKey, setViewKey] = useState(
     DUNE_QUERY_OPTIONS[0]?.key ?? 'overview',
   )
-  const [data, setData] = useState([])
+  const [savedViews, setSavedViews] = useState([])
+  const [rows, setRows] = useState([])
+
+  const loadSavedViews = useCallback(async () => {
+    if (!hexAddress) return
+    setSavedViews(await fetchSavedViews(hexAddress))
+  }, [hexAddress])
 
   useEffect(() => {
-    void fetchLatestDuneResult(getQueryConfig(viewKey).queryId).then((res) =>
-      setData(res.result.rows),
-    )
+    void loadSavedViews()
+  }, [loadSavedViews])
+
+  useEffect(() => {
+    const queryId = getQueryConfig(viewKey).queryId
+    if (!queryId) return
+    void fetchLatestDuneResult(queryId).then((res) => setRows(res.result.rows))
   }, [viewKey])
 
-  const handleSaveView = async (key: string) => {
+  const handleSaveView = async () => {
     if (!initiaAddress) return
-    await requestTxBlock(buildCreateSavedViewMessage(initiaAddress, key))
+    await requestTxBlock(buildCreateSavedViewMessage(initiaAddress, viewKey))
+    await loadSavedViews()
   }
 
   return (
@@ -451,43 +563,24 @@ export function Analytics() {
           </option>
         ))}
       </select>
-      <button onClick={() => handleSaveView(viewKey)}>Save Preference</button>
-      <DuneTable rows={data} />
+      <button onClick={handleSaveView}>Save Preference</button>
+
+      <ul>
+        {savedViews
+          .filter((view) => !view.archived)
+          .map((view) => (
+            <li key={view.id}>
+              <button onClick={() => setViewKey(view.viewKey)}>
+                {getQueryConfig(view.viewKey).title}
+              </button>
+            </li>
+          ))}
+      </ul>
+
+      <DuneTable rows={rows} />
     </div>
   )
 }
-```
-
-In a complete implementation, the frontend also loads saved views from the
-contract, maps each saved `viewKey` back through `getQueryConfig`, and shows the
-matching Dune result for the selected preference. The snippet above keeps the
-core flow visible without repeating the full UI.
-
-## SQL Recipes for Initia
-
-Use these templates in the Dune Query Editor to build your analytics views.
-
-### 1. Daily Transaction Volume
-
-```sql
-SELECT
-  date_trunc('day', block_time) as day,
-  count(*) as tx_count,
-  count(distinct "from") as unique_users
-FROM initia.transactions
-WHERE block_time > now() - interval '30 days'
-GROUP BY 1 ORDER BY 1 DESC
-```
-
-### 2. Popular Message Types
-
-```sql
-SELECT
-  type_url,
-  count(*) as count
-FROM initia.tx_messages
-GROUP BY 1 ORDER BY 2 DESC
-LIMIT 10
 ```
 
 ## Troubleshooting and Security Tips
@@ -502,20 +595,10 @@ LIMIT 10
   execution. For real-time state, use the
   [Initia Indexer](/api-reference/rollup-indexer/introduction).
 
-## Resources
-
-### Common Dune Example Tables
+## Common Dune Tables for Initia
 
 | Table                     | Recommended Use                        |
 | ------------------------- | -------------------------------------- |
 | `initia.transactions`     | Network activity and gas trends.       |
 | `initia.bridge_transfers` | Asset flow and bridge route analytics. |
 | `initia.tx_messages`      | Detailed message-type activity.        |
-
-### Choosing the Right Tool
-
-| Feature         | [Initia Indexer](/api-reference/rollup-indexer/introduction) | Dune Analytics                       |
-| --------------- | ------------------------------------------------------------ | ------------------------------------ |
-| **Data Scope**  | Real-time app state.                                         | Historical trends & aggregates.      |
-| **Query Style** | Specific accounts/events.                                    | Complex SQL across millions of rows. |
-| **Primary Use** | Core app logic.                                              | Dashboards & public reports.         |
