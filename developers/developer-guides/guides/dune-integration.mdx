@@ -225,8 +225,8 @@ app.listen(port, () => {
 ## Step 2: Onchain Registry
 
 This example uses a MiniEVM Solidity contract to store user view preferences.
-The saved-view pattern is VM-agnostic, so you can implement the same registry
-on MiniMove or MiniWasm by using the equivalent Move or CosmWasm syntax.
+The saved-view pattern is VM-agnostic, so you can implement the same registry on
+MiniMove or MiniWasm by using the equivalent Move or CosmWasm syntax.
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -502,26 +502,20 @@ export function DuneTable({ rows }: { rows: any[] }) {
 
 ### 4. Integration Example
 
-Use `useInterwovenKit` for the write path and `useHexAddress` for the read.
-The component loads the user's saved views on mount, lets them open any saved
-view to see the matching Dune result, and refreshes the list after a new
-preference is saved.
+Use `useInterwovenKit` for the write path and `useHexAddress` for the read. The
+component loads the user's saved views on mount, lets them open any saved view
+to see the matching Dune result, and refreshes the list after a new preference
+is saved.
 
 ```tsx frontend/src/App.tsx
 import { useCallback, useEffect, useState } from 'react'
-import {
-  useHexAddress,
-  useInterwovenKit,
-} from '@initia/interwovenkit-react'
+import { useHexAddress, useInterwovenKit } from '@initia/interwovenkit-react'
 import {
   DUNE_QUERY_OPTIONS,
   fetchLatestDuneResult,
   getQueryConfig,
 } from './lib/dune'
-import {
-  buildCreateSavedViewMessage,
-  fetchSavedViews,
-} from './lib/contract'
+import { buildCreateSavedViewMessage, fetchSavedViews } from './lib/contract'
 import { DuneTable } from './components/DuneTable'
 
 export function Analytics() {
