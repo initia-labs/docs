@@ -500,6 +500,16 @@ paths:
                 warning: null
                 extra_warnings: null
                 required_op_hook: false
+        '400':
+          description: |-
+            Bad request — the computed route violates an IBC rate limit on the L1 chain. This applies to IBC transfers between the L1 and external (non-Initia) chains, where Stride-style rate limits cap the per-channel send/receive volume over a rolling window.
+
+            The error message includes the remaining capacity in the smallest denomination:
+
+              - `IBC send limit exceeded - Capacity: <amount>` — the route would send more than the channel's remaining send quota.
+              - `IBC receive limit exceeded - Capacity: <amount>` — the route would receive more than the channel's remaining receive quota.
+
+            Retry with a smaller `amount_in`, or wait until the rate-limit window resets.
   /v2/fungible/msgs:
     post:
       operationId: generateTransaction
