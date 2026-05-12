@@ -697,6 +697,10 @@ paths:
                 hook: []
         '400':
           description: Bad request — the route does not support OP withdraw.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /v2/tx/track:
     post:
       operationId: trackTransaction
@@ -951,3 +955,55 @@ paths:
                 msgs:
                   - typeUrl: /ibc.applications.nft_transfer.v1.MsgTransfer
                     value: {}
+components:
+  schemas:
+    Error:
+      type: object
+      description:
+        Standard error response returned by the Router API. The HTTP status code
+        is propagated from the underlying failure; for errors originating from
+        an upstream service, additional fields from the upstream response may be
+        included alongside the fields below.
+      properties:
+        error_message:
+          type: string
+          description:
+            Human-readable error message describing what went wrong.
+        details:
+          type: array
+          description:
+            Optional list of additional context strings describing the failure.
+          items:
+            type: string
+        info:
+          type: string
+          description:
+            Optional supplementary information about the error.
+        source:
+          type: string
+          description:
+            Identifier of the internal component or upstream service that
+            produced the error.
+      required:
+        - error_message
+        - source
+      example:
+        error_message: Request failed with status code 429
+        details:
+          - Failed to get IBC rate limits
+        source: TransferService
+  responses:
+    BadRequest:
+      description: Bad request — the request was rejected before processing.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalServerError:
+      description:
+        Internal server error — the request failed, often due to an upstream
+        service failure. The response body follows the standard error shape.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
