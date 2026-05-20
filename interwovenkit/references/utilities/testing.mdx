@@ -14,24 +14,22 @@ title: Testing Helpers
 
 <Warning>
   These helpers are intended for **testing and local development only**. They
-  read raw mnemonics and private keys directly from your environment. Never
-  ship them, or wallets created with them, with real user funds.
+  read raw mnemonics and private keys directly from your environment. Never ship
+  them, or wallets created with them, with real user funds.
 </Warning>
 
 ## Prerequisites
 
 - Must run in a browser-like environment for the EVM connector because it is
   implemented as an injected wagmi connector.
-- Provide test credentials via environment variables (e.g.
-  `TEST_MNEMONIC`, `TEST_PRIVATE_KEY`, `TEST_COSMOS_MNEMONIC`) — never hardcode
-  them in source.
+- Provide test credentials via environment variables (e.g. `TEST_MNEMONIC`,
+  `TEST_PRIVATE_KEY`, `TEST_COSMOS_MNEMONIC`) — never hardcode them in source.
 
 ## `createTestWalletConnector`
 
 An EVM wallet connector that handles chain switching, message signing, and
 transaction submission entirely in memory. Standard contract interactions and
-RPC reads (gas estimation, receipts, etc.) are proxied to the chain's RPC
-node.
+RPC reads (gas estimation, receipts, etc.) are proxied to the chain's RPC node.
 
 ```tsx
 import { createConfig, http } from 'wagmi'
@@ -92,17 +90,17 @@ const wagmiConfig = createConfig({
 
 ### Supported EIP-1193 methods
 
-| Method                                                  | Behavior                                                                       |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| `eth_requestAccounts`, `eth_accounts`                   | Returns the derived account address                                            |
-| `eth_chainId`                                           | Returns the current chain ID (hex)                                             |
-| `personal_sign`                                         | Signs the message with the test account                                        |
-| `eth_signTypedData`, `eth_signTypedData_v4`             | Signs raw bytes (not EIP-712 compliant — sufficient for InterwovenKit's flows) |
-| `wallet_switchEthereumChain`                            | Switches chain. Auto-registers from configured RPC URLs. Throws 4902 if unknown. |
-| `wallet_addEthereumChain`                               | Registers a new chain with its RPC URL                                         |
-| `wallet_getPermissions`, `wallet_requestPermissions`    | Returns the `eth_accounts` permission                                          |
-| `eth_sendTransaction`                                   | Signs locally via viem and broadcasts to the RPC node                          |
-| _Any other method_                                      | Proxied to the current chain's RPC node                                        |
+| Method                                               | Behavior                                                                         |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `eth_requestAccounts`, `eth_accounts`                | Returns the derived account address                                              |
+| `eth_chainId`                                        | Returns the current chain ID (hex)                                               |
+| `personal_sign`                                      | Signs the message with the test account                                          |
+| `eth_signTypedData`, `eth_signTypedData_v4`          | Signs raw bytes (not EIP-712 compliant — sufficient for InterwovenKit's flows)   |
+| `wallet_switchEthereumChain`                         | Switches chain. Auto-registers from configured RPC URLs. Throws 4902 if unknown. |
+| `wallet_addEthereumChain`                            | Registers a new chain with its RPC URL                                           |
+| `wallet_getPermissions`, `wallet_requestPermissions` | Returns the `eth_accounts` permission                                            |
+| `eth_sendTransaction`                                | Signs locally via viem and broadcasts to the RPC node                            |
+| _Any other method_                                   | Proxied to the current chain's RPC node                                          |
 
 ### Return value
 
@@ -154,8 +152,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
 <ParamField path="chains" type="Record<string, { prefix: string }>">
   Override the bech32 prefix for specific chain IDs. By default the prefix is
-  derived from the chain ID stem (e.g. `noble-1` → `noble`). Use this for
-  chains whose prefix differs from the stem (e.g. `cosmoshub-4` → `cosmos`).
+  derived from the chain ID stem (e.g. `noble-1` → `noble`). Use this for chains
+  whose prefix differs from the stem (e.g. `cosmoshub-4` → `cosmos`).
 </ParamField>
 
 <ParamField path="debug" type="boolean" default="false">
@@ -165,22 +163,22 @@ export function Providers({ children }: { children: React.ReactNode }) {
 ### Return value
 
 ```ts
-function createTestCosmosWallet(config: CreateTestCosmosWalletConfig): CosmosWallet
+function createTestCosmosWallet(
+  config: CreateTestCosmosWalletConfig,
+): CosmosWallet
 ```
 
 ## Notes
 
-- `createTestWalletConnector` accepts either a `mnemonic` or a `privateKey`,
-  not both. Built-in CORS-safe RPCs are provided for Ethereum mainnet,
-  Arbitrum One, and Base; pass `rpcUrls` to add or override others.
+- `createTestWalletConnector` accepts either a `mnemonic` or a `privateKey`, not
+  both. Built-in CORS-safe RPCs are provided for Ethereum mainnet, Arbitrum One,
+  and Base; pass `rpcUrls` to add or override others.
 - `wallet_addEthereumChain` does **not** auto-switch to the newly added chain,
-  unlike MetaMask. Call `wallet_switchEthereumChain` afterwards to activate
-  it.
+  unlike MetaMask. Call `wallet_switchEthereumChain` afterwards to activate it.
 - `eth_signTypedData` and `eth_signTypedData_v4` sign raw bytes rather than
-  performing full EIP-712 encoding. InterwovenKit only relies on
-  `personal_sign` for key derivation, so this is sufficient for its flows but
-  signatures will not validate against on-chain EIP-712 verifiers (e.g.
-  Permit2).
+  performing full EIP-712 encoding. InterwovenKit only relies on `personal_sign`
+  for key derivation, so this is sufficient for its flows but signatures will
+  not validate against on-chain EIP-712 verifiers (e.g. Permit2).
 - `createTestCosmosWallet` caches one signer per derived bech32 prefix, so
   repeated tests are deterministic and fast.
 - See [`InterwovenKitProvider`](../components/interwovenkit-provider) for the
