@@ -460,7 +460,10 @@
               },
               {
                 "group": "Utilities",
-                "pages": ["interwovenkit/references/utilities/inject-styles"]
+                "pages": [
+                  "interwovenkit/references/utilities/inject-styles",
+                  "interwovenkit/references/utilities/testing"
+                ]
               },
               {
                 "group": "Errors",

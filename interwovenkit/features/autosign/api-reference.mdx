@@ -27,11 +27,15 @@ function MyComponent() {
 ```tsx
 interface AutoSign {
   isLoading: boolean
-  enable: (chainId?: string) => Promise<void>
+  enable: (chainId?: string, options?: EnableAutoSignOptions) => Promise<void>
   disable: (chainId?: string) => Promise<void>
   expiredAtByChain: Record<string, Date | null | undefined>
   isEnabledByChain: Record<string, boolean>
   granteeByChain: Record<string, string | undefined>
+}
+
+interface EnableAutoSignOptions {
+  defaultDuration?: number
 }
 ```
 
@@ -157,7 +161,10 @@ function MultiChainStatus() {
 
 Enables autosign for a specific chain or the default chain.
 
-<ParamField path="enable" type="(chainId?: string) => Promise<void>">
+<ParamField
+  path="enable"
+  type="(chainId?: string, options?: EnableAutoSignOptions) => Promise<void>"
+>
   Opens a drawer for user confirmation, derives the AutoSign wallet for the
   current app origin, and creates the necessary authz and feegrant permissions.
   Returns a Promise that resolves when autosign is successfully enabled or
@@ -165,6 +172,8 @@ Enables autosign for a specific chain or the default chain.
 
 **Parameters:** - `chainId` (optional): Chain ID to enable autosign for. If not
 provided, uses the default chain ID from `InterwovenKitProvider`.
+- `options` (optional): Extra enable-flow options. `defaultDuration` preselects
+  the expiration duration shown in the enable drawer.
 
 **Returns:** Promise that resolves when autosign is enabled
 

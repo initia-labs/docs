@@ -365,6 +365,11 @@ fees:
   Pre-calculated fee for the transaction.
 </ParamField>
 
+<ParamField path="preferredFeeDenom" type="string">
+  When AutoSign is enabled, prefers this denom for the fee if it's allowed and
+  available. Falls back to the chain's default fee denom otherwise.
+</ParamField>
+
 ### Transaction Confirmation Options
 
 The `WaitForTxOptions` interface defines parameters for tracking transaction
@@ -472,7 +477,15 @@ signing:
   Whether AutoSign status is being loaded.
 </ParamField>
 
-<ParamField path="autoSign.enable" type="(chainId?: string) => Promise<void>">
+<ParamField path="autoSign.granteeByChain" type="Record<string, string | undefined>">
+  Map of chain IDs to the derived AutoSign wallet addresses authorized for each
+  chain.
+</ParamField>
+
+<ParamField
+  path="autoSign.enable"
+  type="(chainId?: string, options?: EnableAutoSignOptions) => Promise<void>"
+>
   Opens UI to enable AutoSign for a chain. Optionally specify a chain ID, or
   defaults to the provider's `defaultChainId` if omitted.
 </ParamField>
@@ -616,6 +629,7 @@ type TxParams = {
   memo?: string
   chainId?: string
   fee: StdFee
+  preferredFeeDenom?: string
 }
 
 type WaitForTxOptions = {
@@ -630,8 +644,12 @@ type AutoSignState = {
   isEnabledByChain: Record<string, boolean>
   granteeByChain: Record<string, string | undefined>
   isLoading: boolean
-  enable: (chainId?: string) => Promise<void>
+  enable: (chainId?: string, options?: EnableAutoSignOptions) => Promise<void>
   disable: (chainId?: string) => Promise<void>
+}
+
+type EnableAutoSignOptions = {
+  defaultDuration?: number
 }
 ```
 
