@@ -505,11 +505,11 @@ paths:
         '400':
           description: >-
             Bad request. Returned when the requested transfer exceeds the
-            current IBC rate-limit capacity for the source or destination
-            asset. The error `message` reports the remaining send or receive
-            capacity in human-readable decimal units, for example
-            `IBC rate limit exceeded - Remaining send capacity: 1234.567890`
-            or `IBC rate limit exceeded - Remaining receive capacity: 1234.567890`.
+            current IBC rate-limit capacity for the source or destination asset.
+            The error `message` reports the remaining send or receive capacity
+            in human-readable decimal units, for example `IBC rate limit
+            exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
+            exceeded - Remaining receive capacity: 1234.567890`.
           content:
             application/json:
               schema:
@@ -526,7 +526,9 @@ paths:
                     example: Bad Request
               example:
                 statusCode: 400
-                message: 'IBC rate limit exceeded - Remaining send capacity: 1234.567890'
+                message:
+                  'IBC rate limit exceeded - Remaining send capacity:
+                  1234.567890'
                 error: Bad Request
   /v2/fungible/msgs:
     post:
