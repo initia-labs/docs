@@ -26,22 +26,25 @@ set up your project, follow the steps below.
     ```
   </Step>
   <Step title="Test Installation">
-  Once you have installed InitiaJS, test your installation. Replace the contents of `src/quickstart.ts` with the following code.
-  ```ts
-  import { RESTClient, Coin } from '@initia/initia.js';
+    Once you have installed InitiaJS, test your installation. Replace the contents of `src/quickstart.ts` with the following code.
 
-const restClient = new RESTClient('https://rest.testnet.initia.xyz');
+    ```ts
+    import { RESTClient, Coin } from '@initia/initia.js';
 
-(async () => { const chainId = await restClient.tendermint.chainId();
-console.log(chainId); })();
+    const restClient = new RESTClient('https://rest.testnet.initia.xyz');
 
-```
-Then, run the script.
-```bash
-npx ts-node src/quickstart.ts
-```
+    (async () => {
+      const chainId = await restClient.tendermint.chainId();
+      console.log(chainId);
+    })();
+    ```
 
-If you get `initiation-2` as the output, your installation was successful!
+    Then, run the script.
 
+    ```bash
+    npx ts-node src/quickstart.ts
+    ```
+
+    If you get `initiation-2` as the output, your installation was successful!
   </Step>
 </Steps>
