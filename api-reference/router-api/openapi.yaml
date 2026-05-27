@@ -836,6 +836,90 @@ paths:
                 next_blocking_transfer: null
                 transfer_asset_release: null
                 error: null
+  /api/rpc/{chainId}:
+    post:
+      operationId: rpc
+      summary: Cosmos RPC Proxy
+      description: |-
+        JSON-RPC 2.0 proxy to the Cosmos RPC of a supported Cosmos chain. The request and response follow the standard [JSON-RPC 2.0 specification](https://www.jsonrpc.org/specification).
+
+        Only a limited set of RPC methods is supported:
+        - `status` — fetch the node status. `params` must be `{}`.
+        - `abci_query` — query application state. `params` must include `data` (string), `path` (string), and `prove` (boolean). Allowed `path` values:
+          - `/cosmos.auth.v1beta1.Query/Account`
+          - `/cosmos.bank.v1beta1.Query/AllBalances`
+          - `/cosmos.tx.v1beta1.Service/Simulate`
+        - `broadcast_tx_sync` — broadcast a signed transaction. `params` must contain a single `tx` field (string).
+        - `tx_search` — search for transactions. `params` must include `page` (string, only `"1"` is allowed) and `query` (string, must match `tx.hash='<64-hex>'`).
+
+        Any other method or unsupported parameter shape returns a `400` error.
+      tags:
+        - RPC
+      parameters:
+        - name: chainId
+          in: path
+          required: true
+          description: Cosmos chain ID to proxy the RPC call to.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+                - method
+                - params
+              properties:
+                id:
+                  type: integer
+                  description: JSON-RPC request ID.
+                method:
+                  type: string
+                  description: RPC method name.
+                  enum:
+                    - status
+                    - abci_query
+                    - broadcast_tx_sync
+                    - tx_search
+                params:
+                  type: object
+                  description:
+                    RPC method parameters. The expected shape depends on
+                    `method`.
+            example:
+              id: 1
+              method: abci_query
+              params:
+                data: '0a14...'
+                path: /cosmos.bank.v1beta1.Query/AllBalances
+                prove: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jsonrpc:
+                    type: string
+                    description: JSON-RPC protocol version.
+                  id:
+                    type: integer
+                    description: Echoed request ID.
+                  result:
+                    type: object
+                    description: RPC method result.
+              example:
+                jsonrpc: '2.0'
+                id: 1
+                result: {}
+        '400':
+          description:
+            Bad request — unsupported chain, method, or parameter shape.
   /nft:
     post:
       operationId: nftTransfer
