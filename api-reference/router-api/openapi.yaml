@@ -273,6 +273,8 @@ paths:
         This is the first step when bridging tokens between chains. Call this endpoint with your source and destination assets to find the optimal transfer route. The response includes the expected output amount, USD value estimates, and an ordered list of operations.
 
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
+
+        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
       tags:
         - Routing
       requestBody:
@@ -500,6 +502,34 @@ paths:
                 warning: null
                 extra_warnings: null
                 required_op_hook: false
+        '400':
+          description: >-
+            Bad request. Returned when the requested transfer exceeds the
+            current IBC rate-limit capacity for the source or destination asset.
+            The error `message` reports the remaining send or receive capacity
+            in human-readable decimal units, for example `IBC rate limit
+            exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
+            exceeded - Remaining receive capacity: 1234.567890`.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    description: Human-readable error message.
+                  error:
+                    type: string
+                    example: Bad Request
+              example:
+                statusCode: 400
+                message:
+                  'IBC rate limit exceeded - Remaining send capacity:
+                  1234.567890'
+                error: Bad Request
   /v2/fungible/msgs:
     post:
       operationId: generateTransaction
