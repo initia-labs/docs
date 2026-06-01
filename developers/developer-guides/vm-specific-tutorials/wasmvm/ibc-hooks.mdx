@@ -166,8 +166,8 @@ The crosschain swaps implementation sends an IBC transfer. If the transfer were
 to fail, the sender needs to be able to retrieve their funds (which would
 otherwise be stuck in the contract). To do this, users can retrieve the funds
 after the timeout has passed, but without the ack information, there is no
-guarantee that the send hasn't failed (i.e.: returned an error ack notifying
-that the receiving chain didn't accept it)
+guarantee that the send hasn't failed (i.e., returned an error ack notifying
+that the receiving chain didn't accept it).
 
 # Implementation
 
