@@ -88,6 +88,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
 | `disableAnalytics`       | `boolean`                             | `false` (mainnet), `true` (testnet) | When `true`, disables InterwovenKit's built‑in analytics events                                                                                                                                                      |
 | `enableAutoSign`         | `boolean \| Record<string, string[]>` | `undefined`                         | Enables AutoSign and optionally whitelists chains and message types. `true` enables the default message type for the current default chain. `Record<string, string[]>` is a per-chain allowlist of message type URLs |
 | `autoSignFeePolicy`      | `Record<string, AutoSignFeePolicy>`   | `undefined`                         | Optional per-chain fee policy overrides for AutoSign gas multiplier and allowed fee denoms                                                                                                                           |
+| `cosmosWallets`          | `CosmosWallet[]`                      | `undefined`                         | Additional Cosmos wallets shown in bridge wallet selection. Configured wallets are listed before the built-in Keplr and Leap entries, and a matching `name` replaces the built-in wallet with the same name          |
 
 ## Return Value
 
@@ -168,10 +169,11 @@ type Config = {
   disableAnalytics?: boolean
   enableAutoSign?: boolean | Record<string, string[]>
   autoSignFeePolicy?: Record<string, AutoSignFeePolicy>
+  cosmosWallets?: CosmosWallet[]
 }
 ```
 
-Types `Chain`, `GeneratedType`, `AminoConverters`, and `AutoSignFeePolicy` are
-from InterwovenKit source and its external dependencies. See
+Types `Chain`, `GeneratedType`, `AminoConverters`, `AutoSignFeePolicy`, and
+`CosmosWallet` are from InterwovenKit source and its external dependencies. See
 `@initia/initia-registry-types`, `@cosmjs/proto-signing`, and `@cosmjs/stargate`
 for related external types.
