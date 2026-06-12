@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Use Node
         uses: actions/setup-node@v4
@@ -24,6 +26,11 @@ jobs:
 
       - name: Install deps
         run: npm ci
+
+      - name: MDX spacing check
+        run: |
+          git fetch origin "${{ github.base_ref }}" --depth=1
+          npm run lint:mdx-spacing -- --diff "origin/${{ github.base_ref }}...HEAD"
 
       - name: Prettier check
         run: npm run format:check
