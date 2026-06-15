@@ -59,7 +59,7 @@ part of the bridging process as shown below.
 
 1. **Initiate Swap on Minitswap DEX**: The user sends a transaction to the
    Minitswap DEX to swap their $INIT$ tokens into $IbcOpINIT_m$ tokens.
-2. **Simulate Swap**: The DEX simulates swapping the user’s $INIT$ tokens into
+2. **Simulate Swap**: The DEX simulates swapping the user's $INIT$ tokens into
    $IbcOpINIT_m$ tokens.
 3. **Compare Swap and Direct Bridging**: The DEX compares the simulated amount
    of $IbcOpINIT_m$ tokens with the amount the user would receive if they
@@ -77,12 +77,12 @@ part of the bridging process as shown below.
      state, updating the state in the process.
    - **Fee Deduction**: Minitswap deducts a fee based on a predefined value and
      an additional fee from any extra $IbcOpINIT_m$ that the user receives.
-   - **Peg Keeper Swap Check**: Once the user’s swap action and fee calculation
+   - **Peg Keeper Swap Check**: Once the user's swap action and fee calculation
      are complete, Minitswap checks if a [Peg Keeper Swap](#peg-keeper-swaps)
      should be performed based on the latest Virtual Pool state.
    - **Internal Rebalancing Check**: After completing the Peg Keeper Swap,
      Minitswap checks if [Internal Rebalancing](#internal-rebalancing) is
-     possible based on the Peg Keeper’s $IbcOpINIT$ balance. If balancing is
+     possible based on the Peg Keeper's $IbcOpINIT$ balance. If balancing is
      possible, it is initiated.
 6. **Final Outcome**: In both cases, once the OP Bridge or IBC transfer is
    complete, the user receives the most amount of $OpINIT_m$ tokens in their
@@ -117,10 +117,10 @@ expire.
      the updated state of the Virtual Pool.
    - **Fee Deduction**: Minitswap deducts a predefined fee amount from the
      transaction.
-   - **Internal Rebalancing Check**: After completing the user’s swap
+   - **Internal Rebalancing Check**: After completing the user's swap
      transaction, Minitswap checks if
      [Internal Rebalancing](#internal-rebalancing) is possible based on the Peg
-     Keeper’s $IbcOpINIT$ balance. If balancing is possible, it is executed to
+     Keeper's $IbcOpINIT$ balance. If balancing is possible, it is executed to
      maintain market stability.
 4. **Final Outcome**: If the swap is successful, the user receives $INIT$ tokens
    in their wallet on Initia L1.
@@ -136,11 +136,11 @@ serves as an additional method of replenishing the Peg Keeper's $INIT$ balance
 alongside the [Internal Rebalancing](#internal-rebalancing).
 
 The Direct Swap allows any user to directly exchange their $INIT$ tokens for the
-Peg Keeper’s $IbcOpINIT$ tokens. This exchange occurs at the average price at
+Peg Keeper's $IbcOpINIT$ tokens. This exchange occurs at the average price at
 which the Peg Keeper purchased $INIT$ tokens. This price could sometimes be
 lower than what you would get through the traditional swap process. Initially,
 the Direct Swap might not seem attractive due to the Target Ratio being close to
-0.5. However, as the Peg Keeper’s balance of OP-bridged tokens increases, the
+0.5. However, as the Peg Keeper's balance of OP-bridged tokens increases, the
 Direct Swap option becomes more appealing to users.
 
 ## Swap Logic
