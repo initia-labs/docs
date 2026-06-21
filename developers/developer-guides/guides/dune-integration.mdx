@@ -1,0 +1,609 @@
+---
+title: Integrating Dune Analytics
+description:
+  Build analytics-driven Initia applications by bridging onchain state with
+  Dune's historical data.
+---
+
+## Overview
+
+Dune is an onchain analytics platform for exploring historical blockchain data,
+building SQL queries, and turning the results into dashboards or API-backed
+application views. While live contract reads tell you what's happening _right
+now_, Dune adds the historical context that helps you explain growth, usage, and
+network health.
+
+### The End-State
+
+By the end of this guide, you will have a functional **Onchain Saved Views**
+implementation where:
+
+1.  **Users** save their preferred analytics view (e.g., Bridge Volume) to a
+    smart contract on an Initia rollup.
+2.  **The Frontend** reads that onchain preference and fetches matching
+    historical data from Dune via a secure proxy.
+3.  **The Developer** maintains full control over API keys and allowed queries
+    without exposing secrets to the browser.
+
+<CardGroup cols={2}>
+  <Card title="Initia App" icon="cube">
+    The UI built with InterwovenKit for wallet connection and onchain actions.
+  </Card>
+  <Card title="Onchain Registry" icon="file-contract">
+    A VM-specific contract or module that stores user-specific analytics
+    preferences.
+  </Card>
+  <Card title="Secure Backend" icon="server">
+    A lightweight proxy that manages your `DUNE_API_KEY` and filters requests.
+  </Card>
+  <Card title="Dune Analytics" icon="chart-line">
+    The SQL engine that processes historical data and serves indexed results.
+  </Card>
+</CardGroup>
+
+### Choosing the Right Tool
+
+Use the Initia Indexer for live app state and Dune for historical analysis,
+reporting, and dashboards.
+
+| Feature         | [Initia Indexer](/api-reference/rollup-indexer/introduction) | Dune Analytics                      |
+| --------------- | ------------------------------------------------------------ | ----------------------------------- |
+| **Data Scope**  | Real-time app state                                          | Historical trends and aggregates    |
+| **Query Style** | Specific accounts and events                                 | Complex SQL across millions of rows |
+| **Primary Use** | Core app logic                                               | Dashboards and public reports       |
+
+## Prerequisites
+
+- **Dune API Key:** Obtained from your
+  [Dune settings](https://dune.com/settings/profile).
+- **Saved Query IDs:** The numeric IDs for the queries you want to display in
+  your app.
+- **Node.js Environment:** To run the backend proxy and frontend application.
+- **Foundry:** To deploy the preference registry contract to your Initia rollup.
+- **Registry Contract Address:** The deployed address for your saved-view
+  contract.
+
+## Step 0: Build Your Dune Queries
+
+Before wiring anything together, create the SQL queries your app will display.
+Run these example templates in the Dune Query Editor and save each one to get a
+numeric query ID. You will plug those IDs into the backend allowlist and the
+frontend `.env` in the next steps.
+
+<Note>
+  You can also browse public examples on the [query
+  page](https://dune.com/queries) when signed in. For table-specific ideas,
+  search for `Initia` in Dune's data catalog.
+</Note>
+
+### 1. Daily Transaction Volume
+
+```sql
+SELECT
+  date_trunc('day', b.block_timestamp) AS day,
+  count(*) AS tx_count,
+  count(distinct t.fee_payer) AS unique_fee_payers
+FROM initia.transactions t
+JOIN initia.blocks b
+  ON t.chain_id = b.chain_id
+ AND t.block_height = b.block_height
+WHERE b.block_date >= CURRENT_DATE - INTERVAL '30' DAY
+GROUP BY 1
+ORDER BY 1 DESC
+```
+
+### 2. Popular Message Types
+
+```sql
+SELECT
+  message_type,
+  count(*) AS count
+FROM initia.tx_messages
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 10
+```
+
+## Step 1: Backend Implementation
+
+Your backend acts as a secure proxy, ensuring your `DUNE_API_KEY` is never
+exposed to the frontend.
+
+<Warning>
+  Never expose `DUNE_API_KEY` in client-side code. Keep the key on the backend
+  and proxy all Dune requests through your server.
+</Warning>
+
+### 1. Setup and Configuration
+
+Create an `api/` directory and install the required dependencies:
+
+```bash
+mkdir api && cd api
+npm init -y
+npm install express cors dotenv
+```
+
+Create `api/.env` and store your backend configuration there:
+
+```env api/.env
+PORT=4000
+DUNE_API_KEY=YOUR_DUNE_API_KEY
+DUNE_ALLOWED_QUERY_IDS=1234567,2345678,3456789
+FRONTEND_ORIGIN=http://localhost:5173
+```
+
+Update `api/package.json` with these scripts:
+
+```json
+{
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  }
+}
+```
+
+### 2. Proxy Server
+
+This server validates requests and only forwards allowed query IDs to Dune.
+
+```js api/src/server.js
+import 'dotenv/config'
+import cors from 'cors'
+import express from 'express'
+
+const app = express()
+const port = Number(process.env.PORT ?? 4000)
+const duneApiKey = process.env.DUNE_API_KEY
+const frontendOrigin = process.env.FRONTEND_ORIGIN ?? 'http://localhost:5173'
+const allowedQueryIds = new Set(
+  (process.env.DUNE_ALLOWED_QUERY_IDS ?? '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean),
+)
+
+app.use(cors({ origin: frontendOrigin }))
+app.use(express.json())
+
+app.get('/api/health', (_req, res) => {
+  res.json({
+    ok: true,
+    duneConfigured: Boolean(duneApiKey),
+    allowedQueryIds: [...allowedQueryIds],
+  })
+})
+
+app.get('/api/dune/query/:queryId/results', async (req, res) => {
+  const { queryId } = req.params
+  const limit = String(req.query.limit ?? '8')
+
+  if (!duneApiKey) {
+    res
+      .status(500)
+      .json({ error: 'DUNE_API_KEY is not configured on the backend.' })
+    return
+  }
+
+  if (!/^\d+$/.test(queryId)) {
+    res.status(400).json({ error: 'Query ID must be numeric.' })
+    return
+  }
+
+  if (allowedQueryIds.size > 0 && !allowedQueryIds.has(queryId)) {
+    res.status(403).json({
+      error: `Query ${queryId} is not allowed by this backend.`,
+    })
+    return
+  }
+
+  if (!/^\d+$/.test(limit)) {
+    res.status(400).json({ error: 'limit must be numeric.' })
+    return
+  }
+
+  try {
+    const duneResponse = await fetch(
+      `https://api.dune.com/api/v1/query/${queryId}/results?limit=${limit}`,
+      {
+        headers: {
+          'x-dune-api-key': duneApiKey,
+        },
+      },
+    )
+    const bodyText = await duneResponse.text()
+    res
+      .status(duneResponse.status)
+      .type(duneResponse.headers.get('content-type') ?? 'application/json')
+      .send(bodyText)
+  } catch (error) {
+    res.status(502).json({
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to fetch Dune results.',
+    })
+  }
+})
+
+app.listen(port, () => {
+  console.log(`Dune Radar API listening on port ${port}`)
+})
+```
+
+## Step 2: Onchain Registry
+
+This example uses a MiniEVM Solidity contract to store user view preferences.
+The saved-view pattern is VM-agnostic, so you can implement the same registry on
+MiniMove or MiniWasm by using the equivalent Move or CosmWasm syntax.
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract DuneRadarRegistry {
+    struct SavedView {
+        uint256 id;
+        address owner;
+        string viewKey; // e.g., "overview", "bridges"
+        uint64 createdAt;
+        bool archived;
+    }
+
+    uint256 private _nextId = 1;
+    mapping(uint256 => SavedView) private _savedViews;
+    mapping(address => uint256[]) private _ownerViews;
+
+    function createSavedView(string calldata viewKey) external returns (uint256) {
+        uint256 id = _nextId++;
+        _savedViews[id] = SavedView(id, msg.sender, viewKey, uint64(block.timestamp), false);
+        _ownerViews[msg.sender].push(id);
+        return id;
+    }
+
+    function archiveSavedView(uint256 savedViewId) external {
+        SavedView storage savedView = _savedViews[savedViewId];
+        require(savedView.owner == msg.sender, "Not owner");
+        savedView.archived = true;
+    }
+
+    function getSavedViews(address owner) external view returns (SavedView[] memory) {
+        uint256[] storage ids = _ownerViews[owner];
+        SavedView[] memory results = new SavedView[](ids.length);
+        for (uint256 i = 0; i < ids.length; i++) {
+            results[i] = _savedViews[ids[i]];
+        }
+        return results;
+    }
+}
+```
+
+Deploy the contract to your rollup with Foundry, then set
+`VITE_REGISTRY_ADDRESS` in your frontend `.env` to the address it prints.
+
+```bash
+forge create src/DuneRadarRegistry.sol:DuneRadarRegistry \
+  --rpc-url $JSON_RPC_URL \
+  --private-key $DEPLOYER_KEY \
+  --broadcast
+```
+
+## Step 3: Frontend Implementation
+
+The frontend uses **InterwovenKit** to manage onchain preferences and the proxy
+for fetching historical data.
+
+### 1. Dune Helper
+
+Map stable application keys to your numeric Dune query IDs.
+
+```ts frontend/src/lib/dune.ts
+const DUNE_API_BASE_URL =
+  import.meta.env.VITE_DUNE_API_BASE_URL ?? 'http://localhost:4000/api'
+
+export const DUNE_QUERY_MAP = {
+  overview: {
+    title: 'Network Overview',
+    description:
+      'A high-level summary of Initia transaction activity and chain health.',
+    queryId: import.meta.env.VITE_DUNE_QUERY_ID_OVERVIEW,
+  },
+  bridges: {
+    title: 'Bridge Routes',
+    description:
+      'Cross-chain transfer flow across Initia bridge routes and assets.',
+    queryId: import.meta.env.VITE_DUNE_QUERY_ID_BRIDGES,
+  },
+  wallets: {
+    title: 'Message Activity',
+    description:
+      'Readable message activity showing what kinds of actions wallets are taking.',
+    queryId: import.meta.env.VITE_DUNE_QUERY_ID_WALLETS,
+  },
+}
+
+export const DUNE_QUERY_OPTIONS = Object.entries(DUNE_QUERY_MAP).map(
+  ([key, value]) => ({
+    key,
+    ...value,
+  }),
+)
+
+export function getQueryConfig(queryKey) {
+  return DUNE_QUERY_MAP[queryKey] ?? DUNE_QUERY_MAP.overview
+}
+
+export async function fetchLatestDuneResult(queryId: string, limit = 8) {
+  if (!queryId) {
+    throw new Error(
+      'Missing Dune query ID. Update the frontend .env with your Dune query IDs.',
+    )
+  }
+
+  const response = await fetch(
+    `${DUNE_API_BASE_URL}/dune/query/${queryId}/results?limit=${limit}`,
+  )
+  if (!response.ok) {
+    const text = await response.text()
+    throw new Error(
+      text || `Dune request failed with status ${response.status}`,
+    )
+  }
+  return response.json()
+}
+```
+
+```env frontend/.env
+VITE_DUNE_API_BASE_URL=http://localhost:4000/api
+VITE_DUNE_QUERY_ID_OVERVIEW=1234567
+VITE_DUNE_QUERY_ID_BRIDGES=2345678
+VITE_DUNE_QUERY_ID_WALLETS=3456789
+VITE_APPCHAIN_ID=your-appchain-id
+VITE_REGISTRY_ADDRESS=0xYourDeployedRegistryContractAddress
+VITE_JSON_RPC_URL=http://localhost:8545
+```
+
+<Note>
+  These examples use local-development defaults so you can run the guide
+  end-to-end on your machine. Replace the URLs with your deployed frontend and
+  backend origins when you publish the app.
+</Note>
+
+### 2. Contract Helper
+
+This helper encodes the `MsgCall` write for your registry contract and reads
+saved views back through a JSON-RPC `eth_call`. Both paths reuse the same ABI.
+
+```ts frontend/src/lib/contract.ts
+import { decodeFunctionResult, encodeFunctionData } from 'viem'
+
+const CONTRACT_ADDRESS = import.meta.env.VITE_REGISTRY_ADDRESS
+const CHAIN_ID = import.meta.env.VITE_APPCHAIN_ID
+const JSON_RPC_URL = import.meta.env.VITE_JSON_RPC_URL
+
+export const REGISTRY_ABI = [
+  {
+    name: 'createSavedView',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'viewKey', type: 'string' }],
+    outputs: [{ name: 'savedViewId', type: 'uint256' }],
+  },
+  {
+    name: 'getSavedViews',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'owner', type: 'address' }],
+    outputs: [
+      {
+        type: 'tuple[]',
+        components: [
+          { name: 'id', type: 'uint256' },
+          { name: 'owner', type: 'address' },
+          { name: 'viewKey', type: 'string' },
+          { name: 'createdAt', type: 'uint64' },
+          { name: 'archived', type: 'bool' },
+        ],
+      },
+    ],
+  },
+]
+
+export function buildCreateSavedViewMessage(
+  initiaAddress: string,
+  viewKey: string,
+) {
+  const input = encodeFunctionData({
+    abi: REGISTRY_ABI,
+    functionName: 'createSavedView',
+    args: [viewKey],
+  })
+
+  return {
+    chainId: CHAIN_ID,
+    messages: [
+      {
+        typeUrl: '/minievm.evm.v1.MsgCall',
+        value: {
+          sender: initiaAddress.toLowerCase(),
+          contractAddr: CONTRACT_ADDRESS,
+          input,
+          value: '0',
+          accessList: [],
+          authList: [],
+        },
+      },
+    ],
+  }
+}
+
+export async function fetchSavedViews(hexAddress: string) {
+  if (!hexAddress || !CONTRACT_ADDRESS) return []
+
+  const data = encodeFunctionData({
+    abi: REGISTRY_ABI,
+    functionName: 'getSavedViews',
+    args: [hexAddress],
+  })
+
+  const response = await fetch(JSON_RPC_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'eth_call',
+      params: [{ to: CONTRACT_ADDRESS, data }, 'latest'],
+    }),
+  })
+
+  const { result, error } = await response.json()
+  if (error) throw new Error(error.message)
+
+  const decoded = decodeFunctionResult({
+    abi: REGISTRY_ABI,
+    functionName: 'getSavedViews',
+    data: result,
+  })
+
+  return decoded.map((view) => ({
+    ...view,
+    id: Number(view.id),
+    createdAt: Number(view.createdAt),
+  }))
+}
+```
+
+### 3. Rendering Results
+
+Use a reusable table component to format Dune's tabular data.
+
+```tsx frontend/src/components/DuneTable.tsx
+export function DuneTable({ rows }: { rows: any[] }) {
+  if (!rows?.length) return <div>No data found for this view.</div>
+
+  const columns = Object.keys(rows[0]).slice(0, 5)
+
+  return (
+    <div className="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            {columns.map((col) => (
+              <th key={col}>{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i}>
+              {columns.map((col) => (
+                <td key={col}>{String(row[col] ?? '—')}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+```
+
+### 4. Integration Example
+
+Use `useInterwovenKit` for the write path and `useHexAddress` for the read. The
+component loads the user's saved views on mount, lets them open any saved view
+to see the matching Dune result, and refreshes the list after a new preference
+is saved.
+
+```tsx frontend/src/App.tsx
+import { useCallback, useEffect, useState } from 'react'
+import { useHexAddress, useInterwovenKit } from '@initia/interwovenkit-react'
+import {
+  DUNE_QUERY_OPTIONS,
+  fetchLatestDuneResult,
+  getQueryConfig,
+} from './lib/dune'
+import { buildCreateSavedViewMessage, fetchSavedViews } from './lib/contract'
+import { DuneTable } from './components/DuneTable'
+
+export function Analytics() {
+  const { initiaAddress, requestTxBlock } = useInterwovenKit()
+  const hexAddress = useHexAddress()
+  const [viewKey, setViewKey] = useState(
+    DUNE_QUERY_OPTIONS[0]?.key ?? 'overview',
+  )
+  const [savedViews, setSavedViews] = useState([])
+  const [rows, setRows] = useState([])
+
+  const loadSavedViews = useCallback(async () => {
+    if (!hexAddress) return
+    setSavedViews(await fetchSavedViews(hexAddress))
+  }, [hexAddress])
+
+  useEffect(() => {
+    void loadSavedViews()
+  }, [loadSavedViews])
+
+  useEffect(() => {
+    const queryId = getQueryConfig(viewKey).queryId
+    if (!queryId) return
+    void fetchLatestDuneResult(queryId).then((res) => setRows(res.result.rows))
+  }, [viewKey])
+
+  const handleSaveView = async () => {
+    if (!initiaAddress) return
+    await requestTxBlock(buildCreateSavedViewMessage(initiaAddress, viewKey))
+    await loadSavedViews()
+  }
+
+  return (
+    <div>
+      <select value={viewKey} onChange={(e) => setViewKey(e.target.value)}>
+        {DUNE_QUERY_OPTIONS.map((opt) => (
+          <option key={opt.key} value={opt.key}>
+            {opt.title}
+          </option>
+        ))}
+      </select>
+      <button onClick={handleSaveView}>Save Preference</button>
+
+      <ul>
+        {savedViews
+          .filter((view) => !view.archived)
+          .map((view) => (
+            <li key={view.id}>
+              <button onClick={() => setViewKey(view.viewKey)}>
+                {getQueryConfig(view.viewKey).title}
+              </button>
+            </li>
+          ))}
+      </ul>
+
+      <DuneTable rows={rows} />
+    </div>
+  )
+}
+```
+
+## Troubleshooting and Security Tips
+
+- **API Key Security:** **Never** expose `DUNE_API_KEY` in your frontend. It
+  must remain server-side in your proxy.
+- **Source of Truth:** Dune is an analytics layer. Keep critical app logic and
+  state validation onchain.
+- **Access Control:** Always use the `DUNE_ALLOWED_QUERY_IDS` allowlist on your
+  backend to prevent unauthorized proxying.
+- **Data Freshness:** Dune's results endpoint returns the latest saved
+  execution. For real-time state, use the
+  [Initia Indexer](/api-reference/rollup-indexer/introduction).
+
+## Common Dune Tables for Initia
+
+| Table                     | Recommended Use                        |
+| ------------------------- | -------------------------------------- |
+| `initia.transactions`     | Network activity and gas trends.       |
+| `initia.bridge_transfers` | Asset flow and bridge route analytics. |
+| `initia.tx_messages`      | Detailed message-type activity.        |
