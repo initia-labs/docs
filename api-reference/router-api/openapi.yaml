@@ -274,7 +274,9 @@ paths:
 
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
 
-        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
+        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose `info` field reports the remaining capacity in human-readable units.
+
+        If the only candidate route for an EVM source uses CCTP and targets an L2 destination directly, the request is rejected with a `400` error whose `info` field advises transferring to L1 first. When several candidate routes are considered and all of them fail, the endpoint returns the first captured route-processing error so the response describes the most relevant failure.
       tags:
         - Routing
       requestBody:
@@ -504,12 +506,32 @@ paths:
                 required_op_hook: false
         '400':
           description: >-
-            Bad request. Returned when the requested transfer exceeds the
-            current IBC rate-limit capacity for the source or destination asset.
-            The error `message` reports the remaining send or receive capacity
-            in human-readable decimal units, for example `IBC rate limit
-            exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
-            exceeded - Remaining receive capacity: 1234.567890`.
+            Bad request. Returned when no valid route can be produced for the
+            requested transfer.
+
+
+            Common cases:
+
+            - **IBC rate limit exceeded.** The requested transfer exceeds the
+              current IBC rate-limit capacity for the source or destination
+              asset. The response `info` field reports the remaining send or
+              receive capacity in human-readable decimal units, for example
+              `IBC rate limit exceeded - Remaining send capacity: 1234.567890`
+              or `IBC rate limit exceeded - Remaining receive capacity:
+              1234.567890`.
+
+            - **Direct EVM CCTP transfer to an L2 is not supported.** When the
+              only candidate route for an EVM source uses CCTP and targets an
+              L2 destination directly, the response includes an `info` field
+              with the user-facing guidance `No direct transfers to L2s for
+              this amount. Transfer your funds to L1 and try again.` The
+              technical `message` is `Invalid toL2, CCTP transfer doesn't
+              support post action.`
+
+
+            When every candidate route fails, the first captured route-
+            processing error is returned so the client sees the most relevant
+            failure reason instead of a generic "Route not found." error.
           content:
             application/json:
               schema:
@@ -520,15 +542,23 @@ paths:
                     example: 400
                   message:
                     type: string
-                    description: Human-readable error message.
+                    description: Human-readable technical error message.
+                  info:
+                    type: string
+                    description: >-
+                      Optional user-facing guidance describing how to recover
+                      from the error. Present on selected error cases such as
+                      IBC rate-limit failures and unsupported direct CCTP
+                      transfers to L2.
                   error:
                     type: string
                     example: Bad Request
               example:
                 statusCode: 400
-                message:
-                  'IBC rate limit exceeded - Remaining send capacity:
-                  1234.567890'
+                message: Invalid toL2, CCTP transfer doesn't support post action.
+                info: >-
+                  No direct transfers to L2s for this amount. Transfer your
+                  funds to L1 and try again.
                 error: Bad Request
   /v2/fungible/msgs:
     post:
