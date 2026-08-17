@@ -4,6 +4,59 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="August 14, 2026" description="v2.11.1" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- Move VM aborts surfaced during
+  [autosign](/interwovenkit/features/autosign/introduction) fee simulation are
+  now shown as formatted errors instead of raw RPC strings, so users see the
+  same readable message they would get from a manual signing prompt.
+- Wallet balances now refresh automatically once a transaction reaches a
+  success or error state, so the portfolio reflects the new balances without a
+  manual reload.
+- The bridge preview footer no longer flashes stale routing errors or
+  recipient-address results after you switch route, chain, or wallet.
+- Wallet controls in the connect and bridge screens now expose accessible
+  names for screen readers.
+
+</Update>
+
+<Update label="August 12, 2026" description="v2.11.0" tags={["Feature", "Bug Fix"]}>
+
+## New deposit methods: deposit address and buy with cash
+
+The [deposit flow](/interwovenkit/features/transfers/deposit-withdraw) now
+offers two additional ways to fund a connected wallet alongside the existing
+in-app transfer:
+
+- **Deposit address** generates a per-asset address that credits the connected
+  wallet from any supported source chain.
+- **Buy with cash** routes users through an onramp provider to purchase the
+  receive asset with fiat, with payment method and currency remembered between
+  sessions.
+
+Both methods appear as disabled with a reason when the host app passes a
+custom `recipientAddress` or a `srcOptions` allowlist, since those constraints
+only apply to the in-app wallet transfer.
+
+## Onramp presets for the buy-with-cash form
+
+`openDeposit` now accepts an optional `onramp` preset with an initial fiat
+`amount` and `currency`, so hosts can preselect the values shown when the buy
+form opens.
+
+## Bug fixes
+
+- The deposit asset picker is now skipped when only a single asset is
+  offered, so users land directly on the method selection screen.
+- External links opened from the widget now use hardened `target`/`rel`
+  attributes.
+- The send asset picker now pins iUSD directly after INIT, matching the
+  order used elsewhere in the widget.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
