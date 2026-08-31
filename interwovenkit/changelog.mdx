@@ -4,6 +4,22 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="August 28, 2026" description="v2.12.0" tags={["Feature", "Improvement"]}>
+
+## HD address indexes in test wallet connector
+
+`createTestWalletConnector` now accepts an optional `addressIndex` when created
+from a mnemonic, deriving the wallet from the corresponding HD path. This makes
+it easy to generate multiple distinct test wallets from a single mnemonic, each
+with its own auto-generated id and name.
+
+## Improvements
+
+- Asset picker search filtering now runs with lower priority, keeping the
+  search input responsive while typing in long asset lists.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
