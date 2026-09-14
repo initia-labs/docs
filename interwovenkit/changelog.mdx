@@ -4,6 +4,20 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="September 8, 2026" description="v2.12.1" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- Popup-based wallets (such as Privy) no longer fail with "Failed to initialize
+  request" when signing. Wallet popups now open inside the same user click that
+  triggered them, so browsers like Safari don't block them.
+- When a popup wallet is blocked, users now see a clear message telling them to
+  allow pop-ups instead of a generic error.
+- Fixed a case where a stale account sequence could be reused after a
+  background refetch, which could cause signing failures.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
