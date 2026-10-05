@@ -4,6 +4,49 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="October 2, 2026" description="v2.13.1" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- Fixed the wallet signing popup being blocked in Safari when enabling or
+  reconnecting [autosign](/interwovenkit/features/autosign/introduction). The
+  signature request now opens directly from the Enable click, so users no
+  longer need to retry or allow popups manually.
+
+</Update>
+
+<Update label="October 1, 2026" description="v2.13.0" tags={["Feature"]}>
+
+## USDC deposits from Ethereum, Base, and Arbitrum
+
+[Deposit](/interwovenkit/features/transfers/deposit-withdraw) via wallet now
+supports USDC deposits from Ethereum, Base, and Arbitrum. Users get a clearer
+path for bringing USDC into Initia from these networks.
+
+- Bridge options are ranked by speed among routes with nearly the same output,
+  so users get faster deposits without giving up meaningful value.
+- The selected provider and estimated time appear directly on the deposit form.
+- If the page reloads mid-transfer, a **Continue deposit** option lets users
+  resume tracking the deposit instead of starting over.
+
+## Scoped autosign approvals that persist across sessions
+
+[Autosign](/interwovenkit/features/autosign/introduction) approvals can now stay
+active across browser sessions on the same device. Users approve once and keep
+autosigning after reloads, with a **Reconnect autosign** prompt when needed.
+
+- Apps can limit autosign to specific contracts or modules per chain, so users
+  approve a narrower, clearer set of permissions.
+- Apps can choose browser persistence or tab-only sessions. Tab-only sessions
+  end when the tab reloads.
+- Autosign settings now show where each approval is active and let users
+  manage browser connections.
+
+See [autosign configuration](/interwovenkit/features/autosign/configuration) for
+setup details.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
