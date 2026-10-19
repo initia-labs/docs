@@ -4,6 +4,17 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="October 6, 2026" description="v2.13.2" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- USDC [deposits](/interwovenkit/features/transfers/deposit-withdraw) bridged
+  from Base and Arbitrum now check the entered amount against the bridge minimum
+  before bridge fees are applied. Amounts that are too small are caught before
+  users sign, instead of failing partway through the deposit.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
