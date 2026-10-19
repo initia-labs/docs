@@ -275,6 +275,14 @@ paths:
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
 
         If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
+
+        **USDC reserve routing.** On Initia L1, you continue to request Noble USDC as the source or destination asset. When the USDC reserve is active, the Router API routes the cross-chain leg through USDC.inj and converts between USDC and USDC.inj using the reserve:
+
+        - **Leaving Initia L1 with USDC:** the route starts with a reserve redeem from USDC to USDC.inj before the transfer.
+        - **Entering Initia L1 as USDC:** the route transfers USDC.inj to Initia L1 and converts it to USDC on arrival.
+        - **Converting between USDC and USDC.inj on Initia L1:** the route is a single direct reserve conversion.
+
+        Reserve conversion steps appear in `operations` as a swap with the `usdc-reserve` swap venue. Pass these operations unchanged to Generate Transaction. Each conversion requires the reserve to hold enough of the output asset. Otherwise the request fails with a `400` error. While the reserve is active, USDC deposits from EVM chains to Initia L1 are rejected with a `400` error.
       tags:
         - Routing
       requestBody:
@@ -509,7 +517,14 @@ paths:
             The error `message` reports the remaining send or receive capacity
             in human-readable decimal units, for example `IBC rate limit
             exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
-            exceeded - Remaining receive capacity: 1234.567890`.
+            exceeded - Remaining receive capacity: 1234.567890`. Also returned
+            for USDC reserve routes when the reserve cannot cover the amount
+            (`Insufficient USDC reserve backing.` when redeeming USDC to
+            USDC.inj, or `Insufficient USDC reserve inventory.` when converting
+            USDC.inj to USDC), and when a USDC deposit from an EVM chain to
+            Initia L1 is requested while the reserve is active (`USDC deposits
+            from EVM chains are not available yet, try a different asset or
+            route.`).
           content:
             application/json:
               schema:
@@ -538,6 +553,8 @@ paths:
         This is the second step when bridging tokens. After computing a route with Compute Route (`POST /v2/fungible/route`), pass the route details and your addresses to this endpoint. It returns signable transaction messages that you can broadcast to the source chain.
 
         The typical flow is: **Compute Route** → **Generate Transaction** → sign and broadcast → **Track Transaction**.
+
+        For USDC reserve routes, the returned transactions include the reserve conversion. When USDC leaves Initia L1, the source transaction redeems USDC to USDC.inj before the transfer. When USDC.inj arrives on Initia L1, the final IBC transfer carries a hook that converts it to USDC for the recipient. The endpoint rechecks reserve availability and returns a `400` error if the reserve no longer covers the amount.
       tags:
         - Routing
       requestBody:
@@ -655,6 +672,23 @@ paths:
                       chain_id: interwoven-1
                       msgs: []
                       signer_address: init1abc...
+        '400':
+          description: >-
+            Bad request. Returned for USDC reserve routes when the reserve
+            cannot cover the amount (`Insufficient USDC reserve backing.` or
+            `Insufficient USDC reserve inventory.`), or when the route requires
+            multiple transactions (`Multiple transactions are required for this
+            route, try with a different one.`).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                message: Insufficient USDC reserve backing.
   /op-hook:
     post:
       operationId: getOpHook
