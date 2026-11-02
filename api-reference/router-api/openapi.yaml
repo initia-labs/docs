@@ -275,6 +275,8 @@ paths:
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
 
         If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
+
+        If the route swaps through an Initia L1 concentrated liquidity (CLAMM) pool while CLAMM trading is gated to the operator or swaps are paused, the endpoint drops that route, because the swap would abort on execution. When no other route is available, the request is rejected with a `400` error whose `info` field names the affected pool and the reason, for example `Swap pool 0x... is temporarily unavailable (trading is gated). Please try again later.` This check applies to Initia mainnet only.
       tags:
         - Routing
       requestBody:
@@ -509,7 +511,12 @@ paths:
             The error `message` reports the remaining send or receive capacity
             in human-readable decimal units, for example `IBC rate limit
             exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
-            exceeded - Remaining receive capacity: 1234.567890`.
+            exceeded - Remaining receive capacity: 1234.567890`. Also returned
+            when every candidate route swaps through an Initia L1 CLAMM pool
+            whose trading is gated or whose swaps are paused. In that case the
+            response body contains an `info` field such as `Swap pool 0x... is
+            temporarily unavailable (swaps are paused). Please try again
+            later.`
           content:
             application/json:
               schema:
@@ -524,6 +531,16 @@ paths:
                   error:
                     type: string
                     example: Bad Request
+                  info:
+                    type: string
+                    description: >-
+                      Human-readable reason the route is unavailable. Returned
+                      when a route swaps through a gated or paused Initia L1
+                      CLAMM pool. The reason is either `trading is gated` or
+                      `swaps are paused`.
+                    example: >-
+                      Swap pool 0x... is temporarily unavailable (trading is
+                      gated). Please try again later.
               example:
                 statusCode: 400
                 message:
