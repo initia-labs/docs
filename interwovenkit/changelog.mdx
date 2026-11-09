@@ -4,6 +4,27 @@ description: Additions, updates, and fixes to InterwovenKit
 rss: true
 ---
 
+<Update label="November 2, 2026" description="v2.13.4" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- The bridge route preview now shows routes that include CCTP v2 transfers, such
+  as USDC from Initia to Base, as "Bridge via CCTP". These routes previously
+  failed with an "Unknown operation type" error, so you could not confirm them.
+
+</Update>
+
+<Update label="November 2, 2026" description="v2.13.3" tags={["Bug Fix"]}>
+
+## Bug fixes
+
+- You can now bridge from Injective using a connected Cosmos wallet. Signing on
+  Injective previously failed because its account type was not recognized.
+  Refund addresses on intermediate chains now also match the Injective account's
+  key type.
+
+</Update>
+
 <Update label="May 9, 2026" description="v2.9.0" tags={["Feature"]}>
 
 ## Strat perp and vault positions in portfolio
