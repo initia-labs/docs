@@ -80,7 +80,7 @@ msg := MsgCall{
 }
 ```
 
-# ICS20 packet structure
+# ICS20 Packet Structure
 
 Given the details above, here is the implied ICS20 packet data structure. ICS20
 is JSON native, so we use JSON for the memo format.
@@ -132,7 +132,7 @@ If an ICS20 packet is not directed towards evmhooks, evmhooks doesn't do
 anything. If an ICS20 packet is directed towards evmhooks, and is formatted
 incorrectly, then evmhooks returns an error.
 
-# Execution flow
+# Execution Flow
 
 Pre evm hooks:
 

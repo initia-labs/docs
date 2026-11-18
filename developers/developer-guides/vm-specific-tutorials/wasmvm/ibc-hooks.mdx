@@ -82,7 +82,7 @@ msg := MsgExecuteContract{
 }
 ```
 
-# ICS20 packet structure
+# ICS20 Packet Structure
 
 Given the details above, here is the implied ICS20 packet data structure. ICS20
 is JSON native, so the memo format uses JSON.
@@ -129,7 +129,7 @@ If an ICS20 packet is not directed towards wasmhooks, wasmhooks doesn't do
 anything. If an ICS20 packet is directed towards wasmhooks, and is formatted
 incorrectly, then wasmhooks returns an error.
 
-# Execution flow
+# Execution Flow
 
 Pre Wasm hooks:
 
@@ -148,7 +148,7 @@ In Wasm hooks, post packet execution:
 - if wasm message has error, return ErrAck
 - otherwise continue through middleware
 
-# Ack callbacks
+# Ack Callbacks
 
 A contract that sends an IBC transfer, may need to listen for the ACK from that
 packet. To allow contracts to listen on the ack of specific packets, the
