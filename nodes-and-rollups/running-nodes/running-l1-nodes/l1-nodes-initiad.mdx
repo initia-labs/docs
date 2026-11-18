@@ -182,7 +182,12 @@ external_address = "YOUR_PUBLIC_IP:26656"
 You can automatically set your public IP using:
 
 ```bash
-sed -i -e 's/external_address = \"\"/external_address = \"'$(curl httpbin.org/ip | jq -r .origin)':26656\"/g' ~/.initia/config/config.toml
+PUBLIC_IP=$(curl -fsS https://httpbin.org/ip | jq -r .origin)
+if [[ $PUBLIC_IP =~ ^[0-9]{1,3}(\.[0-9]{1,3}){3}$ ]]; then
+  sed -i -e "s/external_address = \"\"/external_address = \"${PUBLIC_IP}:26656\"/g" ~/.initia/config/config.toml
+else
+  echo "Could not detect a public IPv4 address. Set external_address manually."
+fi
 ```
 
 ## Connecting to Initia Network
