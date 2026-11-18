@@ -208,7 +208,9 @@ paths:
                 chains:
                   type: object
                   description:
-                    A map of chain IDs to address and denomination queries.
+                    A map of chain IDs to address and denomination queries. You
+                    can query at most 32 chains per request.
+                  maxProperties: 32
                   additionalProperties:
                     type: object
                     required:
@@ -218,11 +220,16 @@ paths:
                       address:
                         type: string
                         description: Account address on the chain.
+                        maxLength: 128
                       denoms:
                         type: array
-                        description: List of token denominations to query.
+                        description:
+                          List of token denominations to query (maximum 100 per
+                          chain).
+                        maxItems: 100
                         items:
                           type: string
+                          maxLength: 256
             example:
               chains:
                 interwoven-1:
@@ -294,7 +301,10 @@ paths:
                   type: string
                   description:
                     Amount to send in the smallest denomination (e.g. "1000000"
-                    for 1 INIT).
+                    for 1 INIT). Must be a positive integer that fits in a
+                    uint256, with at most 78 digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 source_asset_chain_id:
                   type: string
                   description: Source chain ID.
@@ -559,10 +569,19 @@ paths:
               properties:
                 amount_in:
                   type: string
-                  description: Input amount in smallest denomination.
+                  description:
+                    Input amount in smallest denomination. Must be a positive
+                    integer that fits in a uint256, with at most 78 digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 amount_out:
                   type: string
-                  description: Expected output amount from the route response.
+                  description:
+                    Expected output amount from the route response. Must be a
+                    positive integer that fits in a uint256, with at most 78
+                    digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 source_asset_chain_id:
                   type: string
                   description: Source chain ID.
@@ -773,6 +792,31 @@ paths:
               example:
                 tx_hash: 87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
                 explorer_link: https://scan.initia.xyz/strat-1/txs/87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /v2/tx/status:
     get:
       operationId: getTransactionStatus
@@ -866,6 +910,31 @@ paths:
                 next_blocking_transfer: null
                 transfer_asset_release: null
                 error: null
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /api/rpc/{chainId}:
     post:
       operationId: rpc
@@ -950,6 +1019,31 @@ paths:
         '400':
           description:
             Bad request — unsupported chain, method, or parameter shape.
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /nft:
     post:
       operationId: nftTransfer
