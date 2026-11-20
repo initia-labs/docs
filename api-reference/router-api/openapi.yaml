@@ -281,7 +281,9 @@ paths:
 
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
 
-        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
+        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current hourly IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity for the hour, the request is rejected with a `400` error whose `info` field reports the remaining capacity in human-readable units.
+
+        USDC transfers from a supported EVM chain to the Initia L1 have no single-transaction route through CCTP v2. When no route exists for such a transfer, the endpoint returns a `404` error whose `message` and `info` fields explain how to bridge through Injective with Skip Go instead. In some configurations the same message is returned with a `400` status.
       tags:
         - Routing
       requestBody:
@@ -515,31 +517,63 @@ paths:
         '400':
           description: >-
             Bad request. Returned when the requested transfer exceeds the
-            current IBC rate-limit capacity for the source or destination asset.
-            The error `message` reports the remaining send or receive capacity
-            in human-readable decimal units, for example `IBC rate limit
-            exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
-            exceeded - Remaining receive capacity: 1234.567890`.
+            current hourly IBC rate-limit capacity for the source or destination
+            asset. The `info` field reports the remaining send or receive
+            capacity in human-readable decimal units, for example `Hourly IBC
+            rate limit exceeded - Remaining send capacity: 1234.567890` or
+            `Hourly IBC rate limit exceeded - Remaining receive capacity:
+            1234.567890`.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  statusCode:
+                  info:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                info:
+                  'Hourly IBC rate limit exceeded - Remaining send capacity:
+                  1234.567890'
+        '404':
+          description: >-
+            Not found. Returned when no single-transaction route exists for a
+            USDC transfer from a supported EVM chain to the Initia L1. The
+            `message` and `info` fields explain how to bridge through Injective
+            with Skip Go instead.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
                     type: integer
-                    example: 400
+                    description: Upstream error code.
                   message:
                     type: string
                     description: Human-readable error message.
-                  error:
+                  info:
                     type: string
-                    example: Bad Request
+                    description: Same as `message`.
+                  source:
+                    type: string
+                    description: Service that reported the error.
+                  error_message:
+                    type: string
+                    description: Original upstream error message.
               example:
-                statusCode: 400
+                code: 5
                 message:
-                  'IBC rate limit exceeded - Remaining send capacity:
-                  1234.567890'
-                error: Bad Request
+                  'CCTP v2 does not currently support a single-transaction route
+                  from EVM chains to Initia. Please bridge to Injective via Skip
+                  Go, then bridge to Initia:
+                  https://go.skip.build?dest_asset=0xa00C59fF5a080D2b954d0c75e46E22a0c371235a&dest_chain=1776&src_asset=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&src_chain=1'
+                info:
+                  'CCTP v2 does not currently support a single-transaction route
+                  from EVM chains to Initia. Please bridge to Injective via Skip
+                  Go, then bridge to Initia:
+                  https://go.skip.build?dest_asset=0xa00C59fF5a080D2b954d0c75e46E22a0c371235a&dest_chain=1776&src_asset=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&src_chain=1'
+                source: SkipService
   /v2/fungible/msgs:
     post:
       operationId: generateTransaction
