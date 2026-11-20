@@ -208,7 +208,9 @@ paths:
                 chains:
                   type: object
                   description:
-                    A map of chain IDs to address and denomination queries.
+                    A map of chain IDs to address and denomination queries. You
+                    can query at most 32 chains per request.
+                  maxProperties: 32
                   additionalProperties:
                     type: object
                     required:
@@ -218,11 +220,16 @@ paths:
                       address:
                         type: string
                         description: Account address on the chain.
+                        maxLength: 128
                       denoms:
                         type: array
-                        description: List of token denominations to query.
+                        description:
+                          List of token denominations to query (maximum 100 per
+                          chain).
+                        maxItems: 100
                         items:
                           type: string
+                          maxLength: 256
             example:
               chains:
                 interwoven-1:
@@ -274,7 +281,9 @@ paths:
 
         After receiving a route, pass the full response (including `operations`) to the Generate Transaction endpoint (`POST /v2/fungible/msgs`) to get signable transaction messages you can broadcast.
 
-        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity, the request is rejected with a `400` error whose message reports the remaining capacity in human-readable units.
+        If the route involves an IBC transfer between the Initia L1 chain and an external Cosmos chain, the endpoint also checks that the transfer fits within the current hourly IBC rate-limit capacity. When the requested amount exceeds the remaining send or receive capacity for the hour, the request is rejected with a `400` error whose `info` field reports the remaining capacity in human-readable units.
+
+        USDC transfers from a supported EVM chain to the Initia L1 have no single-transaction route through CCTP v2. When no route exists for such a transfer, the endpoint returns a `404` error whose `message` and `info` fields explain how to bridge through Injective with Skip Go instead. In some configurations the same message is returned with a `400` status.
       tags:
         - Routing
       requestBody:
@@ -294,7 +303,10 @@ paths:
                   type: string
                   description:
                     Amount to send in the smallest denomination (e.g. "1000000"
-                    for 1 INIT).
+                    for 1 INIT). Must be a positive integer that fits in a
+                    uint256, with at most 78 digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 source_asset_chain_id:
                   type: string
                   description: Source chain ID.
@@ -505,31 +517,63 @@ paths:
         '400':
           description: >-
             Bad request. Returned when the requested transfer exceeds the
-            current IBC rate-limit capacity for the source or destination asset.
-            The error `message` reports the remaining send or receive capacity
-            in human-readable decimal units, for example `IBC rate limit
-            exceeded - Remaining send capacity: 1234.567890` or `IBC rate limit
-            exceeded - Remaining receive capacity: 1234.567890`.
+            current hourly IBC rate-limit capacity for the source or destination
+            asset. The `info` field reports the remaining send or receive
+            capacity in human-readable decimal units, for example `Hourly IBC
+            rate limit exceeded - Remaining send capacity: 1234.567890` or
+            `Hourly IBC rate limit exceeded - Remaining receive capacity:
+            1234.567890`.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  statusCode:
+                  info:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                info:
+                  'Hourly IBC rate limit exceeded - Remaining send capacity:
+                  1234.567890'
+        '404':
+          description: >-
+            Not found. Returned when no single-transaction route exists for a
+            USDC transfer from a supported EVM chain to the Initia L1. The
+            `message` and `info` fields explain how to bridge through Injective
+            with Skip Go instead.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
                     type: integer
-                    example: 400
+                    description: Upstream error code.
                   message:
                     type: string
                     description: Human-readable error message.
-                  error:
+                  info:
                     type: string
-                    example: Bad Request
+                    description: Same as `message`.
+                  source:
+                    type: string
+                    description: Service that reported the error.
+                  error_message:
+                    type: string
+                    description: Original upstream error message.
               example:
-                statusCode: 400
+                code: 5
                 message:
-                  'IBC rate limit exceeded - Remaining send capacity:
-                  1234.567890'
-                error: Bad Request
+                  'CCTP v2 does not currently support a single-transaction route
+                  from EVM chains to Initia. Please bridge to Injective via Skip
+                  Go, then bridge to Initia:
+                  https://go.skip.build?dest_asset=0xa00C59fF5a080D2b954d0c75e46E22a0c371235a&dest_chain=1776&src_asset=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&src_chain=1'
+                info:
+                  'CCTP v2 does not currently support a single-transaction route
+                  from EVM chains to Initia. Please bridge to Injective via Skip
+                  Go, then bridge to Initia:
+                  https://go.skip.build?dest_asset=0xa00C59fF5a080D2b954d0c75e46E22a0c371235a&dest_chain=1776&src_asset=0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48&src_chain=1'
+                source: SkipService
   /v2/fungible/msgs:
     post:
       operationId: generateTransaction
@@ -559,10 +603,19 @@ paths:
               properties:
                 amount_in:
                   type: string
-                  description: Input amount in smallest denomination.
+                  description:
+                    Input amount in smallest denomination. Must be a positive
+                    integer that fits in a uint256, with at most 78 digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 amount_out:
                   type: string
-                  description: Expected output amount from the route response.
+                  description:
+                    Expected output amount from the route response. Must be a
+                    positive integer that fits in a uint256, with at most 78
+                    digits.
+                  pattern: '^[0-9]+$'
+                  maxLength: 78
                 source_asset_chain_id:
                   type: string
                   description: Source chain ID.
@@ -773,6 +826,31 @@ paths:
               example:
                 tx_hash: 87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
                 explorer_link: https://scan.initia.xyz/strat-1/txs/87782A6A7C4EF4232FFC5B7C8204398AE73870049D8DC58E0146EFCAC3901979
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /v2/tx/status:
     get:
       operationId: getTransactionStatus
@@ -866,6 +944,31 @@ paths:
                 next_blocking_transfer: null
                 transfer_asset_release: null
                 error: null
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /api/rpc/{chainId}:
     post:
       operationId: rpc
@@ -950,6 +1053,31 @@ paths:
         '400':
           description:
             Bad request — unsupported chain, method, or parameter shape.
+        '429':
+          description: >-
+            Too many requests. Track Transaction, Get Transaction Status, and
+            Cosmos RPC Proxy share a limit of 120 requests per minute per client
+            IP. The `Retry-After` response header gives the number of seconds to
+            wait before retrying.
+          headers:
+            Retry-After:
+              description: Seconds to wait before sending another request.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    description: Human-readable error message.
+              example:
+                statusCode: 429
+                message: Skip relay rate limit exceeded.
   /nft:
     post:
       operationId: nftTransfer
