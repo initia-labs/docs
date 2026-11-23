@@ -84,6 +84,20 @@ paths:
                               trace:
                                 type: string
                                 description: IBC trace path.
+                  extra_infos:
+                    type: array
+                    description:
+                      Maintenance notices returned when the external asset
+                      catalog is temporarily unavailable. In that case,
+                      `chain_to_assets_map` contains only the requested Initia
+                      L1 and L2 assets, and assets on external chains are
+                      omitted. Omitted when the full catalog is available or no
+                      external lookup is needed.
+                    items:
+                      type: string
+                    example:
+                      - Some routes are temporarily under maintenance. Please
+                        try again later.
               example:
                 chain_to_assets_map:
                   interwoven-1:
@@ -175,6 +189,19 @@ paths:
                             symbol:
                               type: string
                               description: Token symbol.
+                  extra_infos:
+                    type: array
+                    description:
+                      Maintenance notices returned when the external chain
+                      catalog is temporarily unavailable. In that case, `chains`
+                      contains only the requested Initia L1 and L2 chains, and
+                      external chains are omitted. Omitted when the full
+                      catalog is available.
+                    items:
+                      type: string
+                    example:
+                      - Some routes are temporarily under maintenance. Please
+                        try again later.
               example:
                 chains:
                   - chain_id: interwoven-1
